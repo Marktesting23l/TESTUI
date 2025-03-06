@@ -1,14 +1,9 @@
----
 name: 📱 Android
 on:
-  push:
-    branches:
-      - master
-      - release-**
+
   pull_request:
   release:
     types: ['published']
-  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -28,34 +23,6 @@ jobs:
             qt_arch: 'android_arm64_v8a'
             all_files_access: 'OFF'
             artifact_name: 'android-arm64'
-          - triplet: 'arm64-android'
-            qt_arch: 'android_arm64_v8a'
-            all_files_access: 'ON'
-            artifact_name: 'android-arm64'
-          - triplet: 'arm-neon-android'
-            qt_arch: 'android_armv7'
-            all_files_access: 'OFF'
-            artifact_name: 'android-arm-neon'
-          - triplet: 'arm-neon-android'
-            qt_arch: 'android_armv7'
-            all_files_access: 'ON'
-            artifact_name: 'android-arm-neon'
-          - triplet: 'x64-android'
-            qt_arch: 'android_x86_64'
-            all_files_access: 'OFF'
-            artifact_name: 'android-x64'
-          - triplet: 'x64-android'
-            qt_arch: 'android_x86_64'
-            all_files_access: 'ON'
-            artifact_name: 'android-x64'
-          - triplet: 'x86-android'
-            qt_arch: 'android_x86'
-            all_files_access: 'OFF'
-            artifact_name: 'android-x86'
-          - triplet: 'x86-android'
-            qt_arch: 'android_x86'
-            all_files_access: 'ON'
-            artifact_name: 'android-x86'
 
     steps:
       - name: 🐣 Checkout
@@ -222,118 +189,6 @@ jobs:
           bundle exec fastlane run sentry_debug_files_upload path:${{ env.CMAKE_BUILD_DIR }}/src/app/android-build/build/intermediates/merged_native_libs/release
 
 
-  deploy_to_playstore:
-    name: deploy to play store
-    runs-on: ubuntu-20.04
-    needs: build
-    if: ${{ ( github.event_name == 'release' || ( github.event_name == 'push' && github.ref == 'refs/heads/master' ) ) }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-
-      - name: Vars
-        id: vars
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        run: |
-          ./scripts/ci/env_gh.sh
-
-      - name: Download apks
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        run: |
-          wget https://sos-ch-dk-2.exo.io/qfieldapks/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm64.apk
-          wget https://sos-ch-dk-2.exo.io/qfieldapks/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm-neon.apk
-          wget https://sos-ch-dk-2.exo.io/qfieldapks/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x64.apk
-          wget https://sos-ch-dk-2.exo.io/qfieldapks/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x86.apk
-
-      - name: Upload to Google Play Store
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        run: |
-          pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib oauth2client
-
-          if [[ -n "${{ env.CI_TAG }}" ]]
-          then
-            RELEASE_MESSAGE="Find out what's new on https://github.com/opengisch/QField/releases/tag/${{ env.CI_TAG }}"
-          else
-            RELEASE_MESSAGE="Update from commit ${GITHUB_SHA}"
-          fi
-
-          ./scripts/basic_upload_apks_service_account.py ch.opengis.${{ env.APP_PACKAGE_NAME }} beta "${RELEASE_MESSAGE}" \
-              qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm64.apk \
-              qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm-neon.apk \
-              qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x64.apk \
-              qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x86.apk
-        env:
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
 
 
-  comment_pr:
-    name: comment (pr)
-    runs-on: ubuntu-20.04
-    needs: build
-    if: ${{ github.event_name == 'pull_request' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-
-      - name: Vars
-        id: vars
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        run: |
-          ./scripts/ci/env_gh.sh
-
-      - name: 💬 Create comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        with:
-          GITHUB_TOKEN: ${{ secrets.FAIRY_TOKEN }}
-          message: |
-            🎉 Ta-daaa, freshly created APKs are available for ${{ github.event.pull_request.head.sha }}: [**arm64-android**](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm64.apk)
-            <details>
-            <summary>Other architectures</summary>
-
-            - [arm-neon-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm-neon.apk)
-            - [x64-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x64.apk)
-            - [x86-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x86.apk)
-            - [**all access arm64-android**](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm64.apk)
-            - [all access arm-neon-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm-neon.apk)
-            - [all access x64-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x64.apk)
-            - [all access x86-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x86.apk)
-            </details>
-
-  comment_commit:
-    name: comment (commit)
-    runs-on: ubuntu-20.04
-    needs: build
-    if: ${{ github.event_name == 'push' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-
-      - name: Vars
-        id: vars
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        run: |
-          ./scripts/ci/env_gh.sh
-
-      - name: Comment commit
-        uses: peter-evans/commit-comment@v3
-        if: ${{ env.SENTRY_AUTH_TOKEN != '' }}
-        with:
-          token: ${{ secrets.FAIRY_TOKEN }}
-          body: |
-            🎉 Ta-daaa, freshly created APKs are available: [**arm64-android**](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm64.apk)
-            <details>
-            <summary>Other architectures</summary>
-
-            - [arm-neon-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm-neon.apk)
-            - [x64-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x64.apk)
-            - [x86-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x86.apk)
-            - [**all access arm64-android**](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm64.apk)
-            - [all access arm-neon-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-arm-neon.apk)
-            - [all access x64-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x64.apk)
-            - [all access x86-android](https://qfieldapks.sos-ch-dk-2.exoscale-cdn.com/ci-builds/qfield_all_access-${{ env.CI_PACKAGE_FILE_SUFFIX }}-android-x86.apk)
-            </details>
 

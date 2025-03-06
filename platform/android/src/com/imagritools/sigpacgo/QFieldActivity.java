@@ -31,7 +31,7 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ch.opengis.qfield;
+package com.imagritools.sigpacgo;
 
 import android.Manifest;
 import android.app.Activity;
@@ -80,8 +80,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
-import ch.opengis.qfield.QFieldUtils;
-import ch.opengis.qfield.R;
+import com.imagritools.sigpacgo.QFieldUtils;
+import com.imagritools.sigpacgo.R;
 import io.sentry.android.core.SentryAndroid;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -884,7 +884,7 @@ public class QFieldActivity extends QtActivity {
                     resourceTempFilePath = tempFile.getAbsolutePath();
 
                     Uri fileURI = FileProvider.getUriForFile(
-                        this, "ch.opengis.qfield.fileprovider", tempFile);
+                        this, "com.imagritools.sigpacgo.fileprovider", tempFile);
 
                     Log.d("QField",
                           "Camera temporary file uri: " + fileURI.toString());
@@ -945,7 +945,7 @@ public class QFieldActivity extends QtActivity {
             Uri contentUri = Build.VERSION.SDK_INT < 24
                                  ? Uri.fromFile(resourceFile)
                                  : FileProvider.getUriForFile(
-                                       this, "ch.opengis.qfield.fileprovider",
+                                       this, "com.imagritools.sigpacgo.fileprovider",
                                        resourceCacheFile);
 
             Intent intent =

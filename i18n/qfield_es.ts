@@ -506,7 +506,7 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
     </message>
     <message>
         <source>Project Folder</source>
-        <translation type="unfinished"/>
+        <translation>Carpeta del proyecto</translation>
     </message>
 </context>
 <context>

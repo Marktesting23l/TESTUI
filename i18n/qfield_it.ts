@@ -506,7 +506,7 @@ Annullare per eseguire una scansione veloce del dispositivo.</translation>
     </message>
     <message>
         <source>Project Folder</source>
-        <translation type="unfinished"/>
+        <translation>Cartella del Progetto</translation>
     </message>
 </context>
 <context>

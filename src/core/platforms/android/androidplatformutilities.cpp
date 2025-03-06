@@ -72,7 +72,7 @@ inline void runOnAndroidMainThread( const std::function<void()> &runnable )
 const char *const applicationName = "QField";
 
 #define GLUE_HELPER( u, v, w, x, y, z ) u##v##w##x##y##z
-#define JNI_FUNCTION_NAME( package_name, class_name, function_name ) GLUE_HELPER( Java_ch_opengis_, package_name, _, class_name, _, function_name )
+#define JNI_FUNCTION_NAME( package_name, class_name, function_name ) GLUE_HELPER( Java_com_imagritools_, package_name, _, class_name, _, function_name )
 
 AndroidPlatformUtilities::AndroidPlatformUtilities()
   : mActivity( qtAndroidContext() )
@@ -744,7 +744,7 @@ void AndroidPlatformUtilities::uploadPendingAttachments( QFieldCloudConnection *
     if ( connection )
     {
       qInfo() << "Launching QFieldCloud service...";
-      QJniObject::callStaticMethod<void>( "ch/opengis/" APP_PACKAGE_NAME "/QFieldCloudService",
+      QJniObject::callStaticMethod<void>( "com/imagritools/" APP_PACKAGE_NAME "/QFieldCloudService",
                                           "startQFieldCloudService",
                                           "(Landroid/content/Context;)V",
                                           qtAndroidContext().object() );
@@ -790,7 +790,7 @@ void AndroidPlatformUtilities::startPositioningService() const
   }
 
   qInfo() << "Launching QField positioning service...";
-  QJniObject::callStaticMethod<void>( "ch/opengis/" APP_PACKAGE_NAME "/QFieldPositioningService",
+  QJniObject::callStaticMethod<void>( "com/imagritools/" APP_PACKAGE_NAME "/QFieldPositioningService",
                                       "startQFieldPositioningService",
                                       "(Landroid/content/Context;)V",
                                       qtAndroidContext().object() );
@@ -799,7 +799,7 @@ void AndroidPlatformUtilities::startPositioningService() const
 void AndroidPlatformUtilities::stopPositioningService() const
 {
   qInfo() << "Terminating QField positioning service...";
-  QJniObject::callStaticMethod<void>( "ch/opengis/" APP_PACKAGE_NAME "/QFieldPositioningService",
+  QJniObject::callStaticMethod<void>( "com/imagritools/" APP_PACKAGE_NAME "/QFieldPositioningService",
                                       "stopQFieldPositioningService",
                                       "(Landroid/content/Context;)V",
                                       qtAndroidContext().object() );

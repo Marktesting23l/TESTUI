@@ -506,7 +506,7 @@ Cancela para facer, porén, unha exploración mínima do dispositivo.</translati
     </message>
     <message>
         <source>Project Folder</source>
-        <translation type="unfinished"/>
+        <translation>Cartafol de proxecto </translation>
     </message>
 </context>
 <context>

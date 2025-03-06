@@ -506,7 +506,7 @@ Cancele para fazer uma verificação mínima.</translation>
     </message>
     <message>
         <source>Project Folder</source>
-        <translation type="unfinished"/>
+        <translation>Pasta do projeto</translation>
     </message>
 </context>
 <context>

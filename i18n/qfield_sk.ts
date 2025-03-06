@@ -506,7 +506,7 @@ Zrušiť a spraviť minimálny sken.</translation>
     </message>
     <message>
         <source>Project Folder</source>
-        <translation type="unfinished"/>
+        <translation>Priečinok projektu</translation>
     </message>
 </context>
 <context>

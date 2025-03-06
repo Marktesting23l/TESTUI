@@ -29,7 +29,7 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ch.opengis.qfield;
+package com.imagritools.sigpacgo;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -39,6 +39,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import org.qtproject.qt.android.bindings.QtService;
+
+import com.imagritools.sigpacgo.R;
 
 public class QFieldCloudService extends QtService {
 

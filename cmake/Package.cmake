@@ -87,18 +87,27 @@ if(ANDROID AND ANDROIDDEPLOYQT_EXECUTABLE)
 
     set(ANDROID_TEMPLATE_FOLDER "${CMAKE_BINARY_DIR}/android-template")
     file(COPY ${CMAKE_SOURCE_DIR}/platform/android/ DESTINATION ${ANDROID_TEMPLATE_FOLDER}/)
-    set(SRC_FOLDER "${ANDROID_TEMPLATE_FOLDER}/src/ch/opengis/${APP_PACKAGE_NAME}")
-    if (NOT APP_PACKAGE_NAME STREQUAL "qfield")
-        file(REMOVE_RECURSE ${SRC_FOLDER}) # remove any pre-existing content
-        file(RENAME "${ANDROID_TEMPLATE_FOLDER}/src/ch/opengis/qfield" ${SRC_FOLDER})
+    
+    # Create correct directory structure for com.imagritools.sigpacgo
+    set(NEW_SRC_FOLDER "${ANDROID_TEMPLATE_FOLDER}/src/com/imagritools/${APP_PACKAGE_NAME}")
+    
+    # Make sure the complete path exists
+    file(MAKE_DIRECTORY "${ANDROID_TEMPLATE_FOLDER}/src/com/imagritools/${APP_PACKAGE_NAME}")
+    
+    # First copy the Java files from the source qfield folder
+    if(EXISTS "${ANDROID_TEMPLATE_FOLDER}/src/ch/opengis/qfield")
+        file(COPY "${ANDROID_TEMPLATE_FOLDER}/src/ch/opengis/qfield/" DESTINATION "${NEW_SRC_FOLDER}")
+        # Remove the old structure completely
+        file(REMOVE_RECURSE "${ANDROID_TEMPLATE_FOLDER}/src/ch")
     endif()
-    file(GLOB JAVA_FILES "${SRC_FOLDER}/*.java")
+
+    # Update package names in Java files
+    file(GLOB JAVA_FILES "${NEW_SRC_FOLDER}/*.java")
     foreach(JAVA_FILE ${JAVA_FILES})
-      message(STATUS ${JAVA_FILE})
-      file(READ ${JAVA_FILE} CONTENT)
-      string(REGEX REPLACE "ch.opengis.qfield" "ch.opengis.${APP_PACKAGE_NAME}"
-                           CONTENT "${CONTENT}")
-      file(WRITE ${JAVA_FILE} "${CONTENT}")
+        file(READ ${JAVA_FILE} CONTENT)
+        string(REGEX REPLACE "ch.opengis.qfield" "com.imagritools.${APP_PACKAGE_NAME}"
+                            CONTENT "${CONTENT}")
+        file(WRITE ${JAVA_FILE} "${CONTENT}")
     endforeach()
 
     set(CPACK_EXTERNAL_PACKAGE_SCRIPT "${CMAKE_BINARY_DIR}/CPackExternal.cmake")

@@ -15,7 +15,7 @@
  *                                                                         *
  ***************************************************************************/
 
-package ch.opengis.qfield;
+package com.imagritools.sigpacgo;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

@@ -7,12 +7,12 @@ set(VCPKG_TAG 1aeec7b84d33cdaebdf479f24267c45c46bbc297)
 set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR}/src/qml/imports CACHE PATH "QML import path for Qt Creator to detect custom modules properly")
 
 set(CMAKE_COLOR_MAKEFILE ON)
-set(APP_NAME "QField" CACHE STRING "Application Name")
+set(APP_NAME "SIGPACGO" CACHE STRING "Application Name")
 set(APP_ICON "qfield_logo" CACHE STRING "Application Icon")
 set(APK_VERSION_CODE "1" CACHE STRING "Apk Version Code (Example: 1)")
 set(APP_VERSION "0" CACHE STRING "Application Version (Example: v1.0.0)")
 set(APP_VERSION_STR "local - dev" CACHE STRING "Application Version Name (Example: 1.0.0 - Homerun)")
-set(APP_PACKAGE_NAME "qfield" CACHE STRING "Package name suffix. E.g. qfield --> ch.opengis.qfield")
+set(APP_PACKAGE_NAME "sigpacgo" CACHE STRING "Package name suffix. E.g. sigpacgo --> com.imagritools.sigpacgo")
 
 string(REGEX REPLACE "v" "" CLEAN_APP_VERSION "${APP_VERSION}")
 
