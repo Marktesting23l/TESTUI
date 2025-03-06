@@ -4,8 +4,8 @@ import QtQuick.Controls
 ProgressBar {
   id: control
 
-  property int size: 56
-  property real strokeWidth: 6
+  property int size: 70
+  property real strokeWidth: 7
   property color color: Theme.mainColor
   property color backgroundColor: Theme.lightGray
 
