@@ -38,7 +38,7 @@ Page {
     gradient: Gradient {
       GradientStop {
         position: 0.0
-        color: Theme.darkTheme ? "#99000000" : "#99A5A5A5"
+        color: Theme.darkTheme ? "#37474F" : "#E3F2FD"
       }
       GradientStop {
         position: 0.33
@@ -967,11 +967,11 @@ Page {
       } else {
         var firstRun = !settings.valueBool("/QField/FirstRunDone", false);
         if (firstRun) {
-          welcomeText.text = qsTr("Welcome to QField. First time using this application? Try the sample projects listed below.");
+          welcomeText.text = qsTr("Welcome to SIGOPAC-Go");
           settings.setValue("/QField/FirstRunDone", true);
           settings.setValue("/QField/showMapCanvasGuide", true);
         } else {
-          welcomeText.text = qsTr("Welcome back to QField.");
+          welcomeText.text = qsTr("SIGPAC-Go SIG para el campo");
         }
       }
     }
