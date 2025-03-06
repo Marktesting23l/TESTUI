@@ -4,12 +4,12 @@ SKIP_EXISTING=FALSE
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 if [[ -z $1 ]]; then
-	FILES="${DIR}/../images/themes/qfield/nodpi/$1*.svg"
+	FILES="${DIR}/../images/themes/sigpacgo/nodpi/$1*.svg"
 else
 	FILES=$1
 fi
 if [[ -z $2 ]]; then
-	DESTINATION_PATH=${DIR}/../images/themes/qfield
+	DESTINATION_PATH=${DIR}/../images/themes/sigpacgo
 else
 	DESTINATION_PATH=${DIR}/../android/res
 	PREFIX="drawable-"

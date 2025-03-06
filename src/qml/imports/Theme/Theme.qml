@@ -6,10 +6,10 @@ QtObject {
   id: object
 
   property var darkThemeColors: {
-    "mainColor": "#80cc28",
+    "mainColor": "#FFA500", // Orange
     "mainOverlayColor": "#ffffff",
-    "accentColor": "#4CAF50",
-    "accentLightColor": "#994CAF50",
+    "accentColor": "#FF8C00", // Dark Orange
+    "accentLightColor": "#99FF8C00", // Light Orange with transparency
     "mainBackgroundColor": "#303030",
     "mainBackgroundColorSemiOpaque": "#bb303030",
     "mainTextColor": "#EEEEEE",
@@ -27,10 +27,10 @@ QtObject {
   }
 
   property var lightThemeColors: {
-    "mainColor": "#80cc28",
+    "mainColor": "#FFA500", // Orange
     "mainOverlayColor": "#ffffff",
-    "accentColor": "#4CAF50",
-    "accentLightColor": "#994CAF50",
+    "accentColor": "#FF8C00", // Dark Orange
+    "accentLightColor": "#99FF8C00", // Light Orange with transparency
     "mainBackgroundColor": "#fafafa",
     "mainBackgroundColorSemiOpaque": "#bbfafafa",
     "mainTextColor": "#000000",
@@ -49,10 +49,10 @@ QtObject {
 
   property bool darkTheme: false
 
-  property color mainColor: "#80cc28"
+  property color mainColor: "#FFA500" // Orange
   property color mainOverlayColor: "#ffffff"
-  property color accentColor: "#4CAF50"
-  property color accentLightColor: "#994CAF50"
+  property color accentColor: "#FF8C00" // Dark Orange
+  property color accentLightColor: "#99FF8C00" // Light Orange with transparency
 
   property color mainBackgroundColor: "#fafafa"
   property color mainBackgroundColorSemiOpaque: "#bbfafafa"
@@ -171,13 +171,13 @@ QtObject {
       ppiName = "hdpi";
     else
       ppiName = "mdpi";
-    var theme = 'qfield';
+    var theme = 'sigpacgo';
     var path = 'qrc:/themes/' + theme + '/' + ppiName + '/' + name + '.png';
     return path;
   }
 
   function getThemeVectorIcon(name) {
-    var theme = 'qfield';
+    var theme = 'sigpacgo';
     var path = 'qrc:/themes/' + theme + '/nodpi/' + name + '.svg';
     return path;
   }

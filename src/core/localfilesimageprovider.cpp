@@ -28,7 +28,7 @@ LocalFilesImageProvider::LocalFilesImageProvider()
 
 QImage LocalFilesImageProvider::requestImage( const QString &id, QSize *size, const QSize &requestedSize )
 {
-  static const QIcon defaultIcon( QStringLiteral( ":/themes/qfield/nodpi/ic_file_green_48dp.svg" ) );
+  static const QIcon defaultIcon( QStringLiteral( ":/themes/sigpacgo/nodpi/ic_file_green_48dp.svg" ) );
 
   // the id is passed on as an encoded URL string which needs decoding
   QString path = QUrl::fromPercentEncoding( id.toUtf8() );
