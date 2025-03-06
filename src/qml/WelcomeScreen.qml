@@ -41,7 +41,7 @@ Page {
         color: Theme.darkTheme ? "#37474F" : "#E3F2FD"
       }
       GradientStop {
-        position: 0.33
+        position: 0.50
         color: Theme.mainBackgroundColor
       }
     }
@@ -289,135 +289,6 @@ Page {
                     Qt.openUrlExternally("itms-apps://itunes.apple.com/app/qfield-for-qgis/id1531726814");
                   }
                   feedbackView.Layout.preferredHeight = 0;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      SwipeView {
-        id: collectionView
-        visible: false
-
-        Layout.margins: 0
-        Layout.topMargin: 10
-        Layout.bottomMargin: 10
-        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-        Layout.preferredWidth: Math.min(410, mainWindow.width - 20)
-        Layout.preferredHeight: Math.max(collectionOhno.childrenRect.height, collectionIntro.childrenRect.height)
-        clip: true
-
-        Behavior on Layout.preferredHeight  {
-          NumberAnimation {
-            duration: 100
-            easing.type: Easing.InQuad
-          }
-        }
-
-        interactive: false
-        currentIndex: 1
-        Item {
-          id: collectionOhno
-
-          Rectangle {
-            anchors.fill: parent
-            gradient: Gradient {
-              GradientStop {
-                position: 0.0
-                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.26)
-              }
-              GradientStop {
-                position: 0.88
-                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.02)
-              }
-            }
-
-            radius: 6
-          }
-
-          ColumnLayout {
-            spacing: 0
-            anchors.centerIn: parent
-
-            Text {
-              Layout.margins: 6
-              Layout.topMargin: 12
-              Layout.maximumWidth: collectionView.width - 12
-              text: qsTr("Anonymized metrics collection has been disabled. You can re-enable through the settings panel.")
-              font: Theme.defaultFont
-              color: Theme.mainTextColor
-              horizontalAlignment: Text.AlignHCenter
-              wrapMode: Text.WordWrap
-            }
-          }
-        }
-
-        Item {
-          id: collectionIntro
-
-          Rectangle {
-            anchors.fill: parent
-            gradient: Gradient {
-              GradientStop {
-                position: 0.0
-                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.26)
-              }
-              GradientStop {
-                position: 0.88
-                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.02)
-              }
-            }
-
-            radius: 6
-          }
-
-          ColumnLayout {
-            spacing: 0
-            anchors.centerIn: parent
-
-            Text {
-              Layout.margins: 6
-              Layout.topMargin: 12
-              Layout.maximumWidth: collectionView.width - 12
-              text: qsTr("To improve stability for everyone, QField collects and sends anonymized metrics.")
-              font: Theme.defaultFont
-              color: Theme.mainTextColor
-              horizontalAlignment: Text.AlignHCenter
-              wrapMode: Text.WordWrap
-            }
-
-            RowLayout {
-              spacing: 6
-              Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-              Layout.bottomMargin: 10
-              QfButton {
-                topPadding: 8
-                bottomPadding: 8
-                leftPadding: 10
-                rightPadding: 10
-
-                text: qsTr('I agree')
-
-                onClicked: {
-                  qfieldSettings.enableInfoCollection = true;
-                  collectionView.visible = false;
-                }
-              }
-
-              QfButton {
-                topPadding: 8
-                bottomPadding: 8
-                leftPadding: 10
-                rightPadding: 10
-
-                text: qsTr('I prefer not')
-                bgcolor: "transparent"
-                color: Theme.mainColor
-
-                onClicked: {
-                  qfieldSettings.enableInfoCollection = false;
-                  collectionView.visible = false;
                 }
               }
             }
@@ -997,12 +868,9 @@ Page {
       }
     }
     if (platformUtilities.capabilities & PlatformUtilities.SentryFramework) {
-      var collectionFormShown = settings.value("/QField/CollectionFormShownV2", false);
-      if (!collectionFormShown) {
-        collectionView.visible = true;
-        settings.setValue("/QField/CollectionFormShownV2", true);
-      }
+        qfieldSettings.enableInfoCollection = true;
     }
+
     settings.setValue("/QField/RunCount", runCount + 1);
     if (registry.defaultProject != '') {
       if (!FileUtils.fileExists(registry.defaultProject)) {
@@ -1015,7 +883,6 @@ Page {
     adjustWelcomeScreen();
     if (!visible) {
       feedbackView.visible = false;
-      collectionView.visible = false;
       firstShown = true;
     }
   }
