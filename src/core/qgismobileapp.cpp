@@ -254,12 +254,12 @@ QgisMobileapp::QgisMobileapp( QgsApplication *app, QObject *parent )
     QgsApplication::instance()->localizedDataPathRegistry()->setPaths( localizedDataPaths );
   }
 
-  QFontDatabase::addApplicationFont( ":/fonts/Cadastra-Bold.ttf" );
-  QFontDatabase::addApplicationFont( ":/fonts/Cadastra-BoldItalic.ttf" );
-  QFontDatabase::addApplicationFont( ":/fonts/Cadastra-Condensed.ttf" );
-  QFontDatabase::addApplicationFont( ":/fonts/Cadastra-Italic.ttf" );
-  QFontDatabase::addApplicationFont( ":/fonts/Cadastra-Regular.ttf" );
-  QFontDatabase::addApplicationFont( ":/fonts/Cadastra-Semibolditalic.ttf" );
+  QFontDatabase::addApplicationFont( ":/fonts/InterDisplay-Bold.ttf" );
+  QFontDatabase::addApplicationFont( ":/fonts/InterDisplay-BoldItalic.ttf" );
+  QFontDatabase::addApplicationFont( ":/fonts/InterDisplay-Light.ttf" );
+  QFontDatabase::addApplicationFont( ":/fonts/InterDisplay-Italic.ttf" );
+  QFontDatabase::addApplicationFont( ":/fonts/InterDisplay-Regular.ttf" );
+  QFontDatabase::addApplicationFont( ":/fonts/InterDisplay-SemiBoldItalic.ttf" );
   QFontDatabase::addApplicationFont( ":/fonts/CadastraSymbol-Mask.ttf" );
   QFontDatabase::addApplicationFont( ":/fonts/CadastraSymbol-Regular.ttf" );
 
