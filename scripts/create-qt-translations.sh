@@ -2,7 +2,7 @@
 
 GITDIR=$(git rev-parse --show-toplevel)
 
-for LANG in "ca" "de" "en" "es" "fi" "fr" "gl" "hu" "it" "lt" "mn" "nl" "pl" "pt" "ro" "uk" "zh"; do
+for LANG in "en" "es"; do
 	langfiles="$QTDIR/android_armv7/translations/*_${LANG}.qm"
 
 	echo "Translating $LANG ..."
