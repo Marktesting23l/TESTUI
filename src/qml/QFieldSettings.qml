@@ -57,7 +57,7 @@ Page {
     property bool autoSave: false
     property bool fingerTapDigitizing: false
     property bool mouseAsTouchScreen: false
-    property bool enableInfoCollection: true
+    property bool enableInfoCollection: false
     property bool enableMapRotation: true
     property double quality: 1.0
 
@@ -65,14 +65,6 @@ Page {
     property bool snapToCommonAngleIsRelative: true
     property double snapToCommonAngleDegrees: 45.0// = settings.valueInt("/QField/Digitizing/SnapToCommonAngleDegrees", 45);
     property int snapToCommonAngleTolerance: 1// = settings.valueInt("/QField/Digitizing/SnappingTolerance", 1);
-
-    onEnableInfoCollectionChanged: {
-      if (enableInfoCollection) {
-        iface.initiateSentry();
-      } else {
-        iface.closeSentry();
-      }
-    }
 
     onDigitizingVolumeKeysChanged: {
       platformUtilities.setHandleVolumeKeys(digitizingVolumeKeys && stateMachine.state != 'browse');
@@ -172,18 +164,11 @@ Page {
       settingAlias: "nativeCamera2"
       isVisible: true
     }
-    ListElement {
-      title: qsTr("Send anonymized metrics")
-      description: qsTr("If enabled, anonymized metrics will be collected and sent to help improve QField for everyone.")
-      settingAlias: "enableInfoCollection"
-      isVisible: true
     }
     Component.onCompleted: {
       for (var i = 0; i < count; i++) {
         if (get(i).settingAlias === 'nativeCamera2') {
           setProperty(i, 'isVisible', platformUtilities.capabilities & PlatformUtilities.NativeCamera ? true : false);
-        } else if (get(i).settingAlias === 'enableInfoCollection') {
-          setProperty(i, 'isVisible', platformUtilities.capabilities & PlatformUtilities.SentryFramework ? true : false);
         } else {
           setProperty(i, 'isVisible', true);
         }
@@ -754,18 +739,7 @@ Page {
                 }
               }
 
-              Label {
-                text: qsTr("Found a missing or incomplete language? %1Join the translator community.%2").arg('<a href="https://www.transifex.com/opengisch/qfield-for-qgis/">').arg('</a>')
-                font: Theme.tipFont
-                color: Theme.secondaryTextColor
-                textFormat: Qt.RichText
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-
-                onLinkActivated: link => {
-                  Qt.openUrlExternally(link);
-                }
-              }
+              
             }
 
             GridLayout {
@@ -1646,7 +1620,7 @@ Page {
   }
 
   header: QfPageHeader {
-    title: qsTr("QField Settings")
+    title: qsTr("SIGPAC-Go Settings")
 
     showBackButton: true
     showApplyButton: false

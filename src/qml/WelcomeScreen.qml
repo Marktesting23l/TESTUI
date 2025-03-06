@@ -458,14 +458,6 @@ Page {
           spacing: 12
 
           QfButton {
-            id: cloudProjectButton
-            Layout.fillWidth: true
-            text: qsTr("QFieldCloud projects")
-            onClicked: {
-              showQFieldCloudScreen();
-            }
-          }
-          QfButton {
             id: localProjectButton
             Layout.fillWidth: true
             text: qsTr("Open local file")
@@ -967,11 +959,11 @@ Page {
       } else {
         var firstRun = !settings.valueBool("/QField/FirstRunDone", false);
         if (firstRun) {
-          welcomeText.text = qsTr("Welcome to QField. First time using this application? Try the sample projects listed below.");
+          welcomeText.text = qsTr("Es tu primer use de SIGPAC-Go, por favcor lee la documentación para aprender a usar la aplicación.");
           settings.setValue("/QField/FirstRunDone", true);
           settings.setValue("/QField/showMapCanvasGuide", true);
         } else {
-          welcomeText.text = qsTr("Welcome back to QField.");
+          welcomeText.text = qsTr("SIGPAC-Go");
         }
       }
     }
