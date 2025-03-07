@@ -1450,8 +1450,8 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
 <context>
     <name>LocalFilesModel</name>
     <message>
-        <source>QField files directory</source>
-        <translation>QField files directory</translation>
+        <source>SIGPACGO directory</source>
+        <translation>SIGPACGO directory</translation>
     </message>
     <message>
         <source>Imported projects</source>

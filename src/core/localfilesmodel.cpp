@@ -28,7 +28,7 @@ LocalFilesModel::LocalFilesModel( QObject *parent )
   : QAbstractListModel( parent )
 {
   QSettings settings;
-  const bool favoritesInitialized = settings.value( QStringLiteral( "qfieldFavoritesInitialized" ), false ).toBool();
+  const bool favoritesInitialized = settings.value( QStringLiteral( "sigpacgoFavoritesInitialized" ), false ).toBool();
   if ( !favoritesInitialized )
   {
     const QString applicationDirectory = PlatformUtilities::instance()->applicationDirectory();
@@ -39,12 +39,12 @@ LocalFilesModel::LocalFilesModel( QObject *parent )
     }
     const QString sampleProjectPath = PlatformUtilities::instance()->systemLocalDataLocation( QLatin1String( "sample_projects" ) );
     mFavorites << sampleProjectPath;
-    settings.setValue( QStringLiteral( "qfieldFavorites" ), mFavorites );
-    settings.setValue( QStringLiteral( "qfieldFavoritesInitialized" ), true );
+    settings.setValue( QStringLiteral( "sigpacgoFavorites" ), mFavorites );
+    settings.setValue( QStringLiteral( "sigpacgoFavoritesInitialized" ), true );
   }
   else
   {
-    mFavorites = settings.value( QStringLiteral( "qfieldFavorites" ), QStringList() ).toStringList();
+    mFavorites = settings.value( QStringLiteral( "sigpacgoFavorites" ), QStringList() ).toStringList();
   }
   resetToRoot();
 }
@@ -96,7 +96,7 @@ void LocalFilesModel::addToFavorites( const QString &path )
   if ( !mFavorites.contains( path ) )
   {
     mFavorites << path;
-    QSettings().setValue( QStringLiteral( "qfieldFavorites" ), mFavorites );
+    QSettings().setValue( QStringLiteral( "sigpacgoFavorites" ), mFavorites );
     reloadModel();
   }
 }
@@ -105,7 +105,7 @@ void LocalFilesModel::removeFromFavorites( const QString &path )
 {
   if ( mFavorites.removeAll( path ) )
   {
-    QSettings().setValue( QStringLiteral( "qfieldFavorites" ), mFavorites );
+    QSettings().setValue( QStringLiteral( "sigpacgoFavorites" ), mFavorites );
     reloadModel();
   }
 }
@@ -123,7 +123,7 @@ const QString LocalFilesModel::getCurrentTitleFromPath( const QString &path ) co
   }
   else if ( path == PlatformUtilities::instance()->applicationDirectory() )
   {
-    return tr( "QField files directory" );
+    return tr( "SIGPACGO directory" );
   }
   else if ( path == PlatformUtilities::instance()->applicationDirectory() + QStringLiteral( "/Imported Projects" ) )
   {
@@ -215,7 +215,7 @@ void LocalFilesModel::reloadModel()
     const QString applicationDirectory = PlatformUtilities::instance()->applicationDirectory();
     if ( !applicationDirectory.isEmpty() )
     {
-      mItems << Item( ItemMetaType::Folder, ItemType::ApplicationFolder, tr( "QField files directory" ), QString(), applicationDirectory );
+      mItems << Item( ItemMetaType::Folder, ItemType::ApplicationFolder, tr( "SIGPACGO directory" ), QString(), applicationDirectory );
     }
 
     const QStringList additionalApplicationDirectories = PlatformUtilities::instance()->additionalApplicationDirectories();
@@ -238,7 +238,7 @@ void LocalFilesModel::reloadModel()
       }
     }
 
-    const QStringList favorites = QSettings().value( QStringLiteral( "qfieldFavorites" ), QStringList() ).toStringList();
+    const QStringList favorites = QSettings().value( QStringLiteral( "sigpacgoFavorites" ), QStringList() ).toStringList();
     QList<Item> favoriteItems;
     for ( const QString &item : favorites )
     {

@@ -1393,8 +1393,8 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
 <context>
     <name>LocalFilesModel</name>
     <message>
-        <source>QField files directory</source>
-        <translation>Directorio de archivos de QField</translation>
+        <source>SIGPACGO directory</source>
+        <translation>Directorio  de SIGPACGO</translation>
     </message>
     <message>
         <source>Imported projects</source>
