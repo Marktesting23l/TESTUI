@@ -747,37 +747,6 @@ Page {
     }
   }
 
-  Component.onCompleted: {
-    adjustWelcomeScreen();
-    var runCount = settings.value("/QField/RunCount", 0) * 1;
-    var feedbackFormShown = settings.value("/QField/FeedbackFormShown", false);
-    if (!feedbackFormShown) {
-      var now = new Date();
-      var dt = settings.value("/QField/FirstRunDate", "");
-      if (dt != "") {
-        dt = new Date(dt);
-        var daysToPrompt = 30;
-        var runsToPrompt = 5;
-        if (runCount >= runsToPrompt && (now - dt) >= (daysToPrompt * 24 * 60 * 60 * 1000)) {
-          feedbackView.visible = true;
-          settings.setValue("/QField/FeedbackFormShown", true);
-        }
-      } else {
-        settings.setValue("/QField/FirstRunDate", now.toISOString());
-      }
-    }
-    if (platformUtilities.capabilities & PlatformUtilities.SentryFramework) {
-        qfieldSettings.enableInfoCollection = true;
-    }
-
-    settings.setValue("/QField/RunCount", runCount + 1);
-    if (registry.defaultProject != '') {
-      if (!FileUtils.fileExists(registry.defaultProject)) {
-        registry.defaultProject = '';
-      }
-    }
-  }
-
   onVisibleChanged: {
     adjustWelcomeScreen();
     if (!visible) {
