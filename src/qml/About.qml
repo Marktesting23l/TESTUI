@@ -63,7 +63,7 @@ Item {
               width: parent.width
               height: parent.height
               fillMode: Image.PreserveAspectFit
-              source: "qrc:/images/qfield_logo.svg"
+              source: "qrc:/images/sigpacgo_logo.svg"
               sourceSize.width: width * screen.devicePixelRatio
               sourceSize.height: height * screen.devicePixelRatio
             }
