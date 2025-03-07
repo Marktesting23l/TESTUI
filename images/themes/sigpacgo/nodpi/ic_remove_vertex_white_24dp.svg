@@ -1,2 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" version="1.1" viewBox="0 -960 960 960" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="m280-440v-80h400v80z" fill="#fff"/><circle cx="480" cy="-480" r="360" fill="none" stop-color="#000000" stroke="#fff" stroke-linecap="square" stroke-width="80" style="paint-order:stroke fill markers"/></svg>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+<path fill-rule="evenodd" fill="rgb(100%, 100%, 100%)" fill-opacity="1" d="M 12 22 C 7.285156 22 4.929688 22 3.464844 20.535156 C 2 19.070312 2 16.714844 2 12 C 2 7.285156 2 4.929688 3.464844 3.464844 C 4.929688 2 7.285156 2 12 2 C 16.714844 2 19.070312 2 20.535156 3.464844 C 22 4.929688 22 7.285156 22 12 C 22 16.714844 22 19.070312 20.535156 20.535156 C 19.070312 22 16.714844 22 12 22 Z M 15.75 12 C 15.75 12.414062 15.414062 12.75 15 12.75 L 9 12.75 C 8.585938 12.75 8.25 12.414062 8.25 12 C 8.25 11.585938 8.585938 11.25 9 11.25 L 15 11.25 C 15.414062 11.25 15.75 11.585938 15.75 12 Z M 15.75 12 "/>
+</svg>

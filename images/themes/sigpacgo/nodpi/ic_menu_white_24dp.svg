@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" fill="#FFFFFF" version="1.1" viewBox="0 -960 960 960" xmlns="http://www.w3.org/2000/svg">
- <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+<path fill-rule="nonzero" fill="rgb(100%, 100%, 100%)" fill-opacity="1" d="M 3 18 L 3 16 L 21 16 L 21 18 Z M 3 13 L 3 11 L 21 11 L 21 13 Z M 3 8 L 3 6 L 21 6 L 21 8 Z M 3 8 "/>
 </svg>

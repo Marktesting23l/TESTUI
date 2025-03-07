@@ -1,7 +1,4 @@
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
-<svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="SVGRepo_bgCarrier" stroke-width="0"/>
-<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-<g id="SVGRepo_iconCarrier"> <g id="Edit / Add_Plus"> <path id="Vector" d="M6 12H12M12 12H18M12 12V18M12 12V6" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/> </g> </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+<path fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(100%, 100%, 100%)" stroke-opacity="1" stroke-miterlimit="4" d="M 8 12 L 12 12 M 12 12 L 16 12 M 12 12 L 12 16 M 12 12 L 12 8 M 4 16.800781 L 4 7.199219 C 4 6.082031 4 5.519531 4.21875 5.09375 C 4.410156 4.714844 4.714844 4.410156 5.09375 4.21875 C 5.519531 4 6.082031 4 7.199219 4 L 16.800781 4 C 17.921875 4 18.480469 4 18.90625 4.21875 C 19.285156 4.410156 19.589844 4.714844 19.78125 5.09375 C 20 5.519531 20 6.078125 20 7.199219 L 20 16.800781 C 20 17.917969 20 18.480469 19.78125 18.90625 C 19.589844 19.285156 19.285156 19.589844 18.90625 19.78125 C 18.480469 20 17.921875 20 16.804688 20 L 7.195312 20 C 6.078125 20 5.519531 20 5.09375 19.78125 C 4.714844 19.589844 4.410156 19.285156 4.21875 18.90625 C 4 18.480469 4 17.921875 4 16.800781 Z M 4 16.800781 "/>
+</svg>

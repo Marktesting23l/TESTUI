@@ -1,18 +1,19 @@
-<svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="4.5" x2="9.5" y1="2.5" y2="14.5">
-<stop offset="0" stop-color="#f1f1f1"/>
-<stop offset="1" stop-color="#d6d6d6"/>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18">
+<defs>
+<linearGradient id="linear-pattern-0" gradientUnits="userSpaceOnUse" x1="4.5" y1="2.5" x2="9.5" y2="14.5">
+<stop offset="0" stop-color="rgb(94.509804%, 94.509804%, 94.509804%)" stop-opacity="1"/>
+<stop offset="1" stop-color="rgb(83.921569%, 83.921569%, 83.921569%)" stop-opacity="1"/>
 </linearGradient>
-<g fill-rule="evenodd" stroke="#888a85" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -16)">
-<rect fill="url(#a)" height="15" overflow="visible" rx="1" transform="translate(0 16)" width="13" x="1.5" y=".5"/>
-<path d="m1.5 4.5l13 0" fill="#eeeeec" overflow="visible" transform="translate(0 16)"/>
-<path d="m3.5 23.5l2 0" fill="#eeeeec" overflow="visible"/>
-<path d="m3.5 26.5l2 0" fill="#eeeeec" overflow="visible"/>
-<path d="m3.5 29.5l2 0" fill="#eeeeec" overflow="visible"/>
-<path d="m8.5 23.5l4 0" fill="#eeeeec" overflow="visible"/>
-<path d="m8.4378776 26.458275l4.0621224.041725" fill="#eeeeec" overflow="visible"/>
-<path d="m8.5 29.5l4 0" fill="#eeeeec" overflow="visible"/>
-<path d="m3.5710868 2.5057164l1.9289132-.0057164" fill="#eeeeec" overflow="visible" transform="translate(0 16)"/>
-<path d="m8.5 2.5l4 0" fill="#eeeeec" overflow="visible" transform="translate(0 16)"/>
-</g>
+</defs>
+<path fill-rule="evenodd" fill="url(#linear-pattern-0)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 2.5 0.5 L 13.5 0.5 C 14.052083 0.5 14.5 0.947917 14.5 1.5 L 14.5 14.5 C 14.5 15.052083 14.052083 15.5 13.5 15.5 L 2.5 15.5 C 1.947917 15.5 1.5 15.052083 1.5 14.5 L 1.5 1.5 C 1.5 0.947917 1.947917 0.5 2.5 0.5 Z M 2.5 0.5 " transform="matrix(1.125, 0, 0, 1.125, 0, 0)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 1.5 4.5 L 14.5 4.5 " transform="matrix(1.125, 0, 0, 1.125, 0, 0)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 3.5 23.5 L 5.5 23.5 " transform="matrix(1.125, 0, 0, 1.125, 0, -18)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 3.5 26.5 L 5.5 26.5 " transform="matrix(1.125, 0, 0, 1.125, 0, -18)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 3.5 29.5 L 5.5 29.5 " transform="matrix(1.125, 0, 0, 1.125, 0, -18)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 8.5 23.5 L 12.5 23.5 " transform="matrix(1.125, 0, 0, 1.125, 0, -18)"/>
+<path fill-rule="evenodd" fill="rgb(93.333333%, 93.333333%, 92.54902%)" fill-opacity="1" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 8.4375 26.458333 L 12.5 26.5 " transform="matrix(1.125, 0, 0, 1.125, 0, -18)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 8.5 29.5 L 12.5 29.5 " transform="matrix(1.125, 0, 0, 1.125, 0, -18)"/>
+<path fill-rule="evenodd" fill="rgb(93.333333%, 93.333333%, 92.54902%)" fill-opacity="1" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 3.569444 2.506944 L 5.5 2.5 " transform="matrix(1.125, 0, 0, 1.125, 0, 0)"/>
+<path fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke="rgb(53.333333%, 54.117647%, 52.156863%)" stroke-opacity="1" stroke-miterlimit="4" d="M 8.5 2.5 L 12.5 2.5 " transform="matrix(1.125, 0, 0, 1.125, 0, 0)"/>
 </svg>

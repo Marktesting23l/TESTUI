@@ -1,2 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" version="1.1" viewBox="0 -960 960 960" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#fff" stroke-linecap="square" stroke-width="80"><path d="m240-600v-120h120" stop-color="#000000" style="paint-order:stroke fill markers"/><path d="m600-720h120v120" stop-color="#000000" style="paint-order:stroke fill markers"/><path d="m720-360v120h-120" stop-color="#000000" style="paint-order:stroke fill markers"/><path d="m360-240h-120v-120" stop-color="#000000" style="paint-order:stroke fill markers"/></g></svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+<path fill="none" stroke-width="80" stroke-linecap="square" stroke-linejoin="miter" stroke="rgb(100%, 100%, 100%)" stroke-opacity="1" stroke-miterlimit="4" d="M 240 -600 L 240 -720 L 360 -720 " transform="matrix(0.025, 0, 0, 0.025, 0, 24)"/>
+<path fill="none" stroke-width="80" stroke-linecap="square" stroke-linejoin="miter" stroke="rgb(100%, 100%, 100%)" stroke-opacity="1" stroke-miterlimit="4" d="M 600 -720 L 720 -720 L 720 -600 " transform="matrix(0.025, 0, 0, 0.025, 0, 24)"/>
+<path fill="none" stroke-width="80" stroke-linecap="square" stroke-linejoin="miter" stroke="rgb(100%, 100%, 100%)" stroke-opacity="1" stroke-miterlimit="4" d="M 720 -360 L 720 -240 L 600 -240 " transform="matrix(0.025, 0, 0, 0.025, 0, 24)"/>
+<path fill="none" stroke-width="80" stroke-linecap="square" stroke-linejoin="miter" stroke="rgb(100%, 100%, 100%)" stroke-opacity="1" stroke-miterlimit="4" d="M 360 -240 L 240 -240 L 240 -360 " transform="matrix(0.025, 0, 0, 0.025, 0, 24)"/>
+</svg>
