@@ -58,11 +58,11 @@ elif [[ ${CI_PULL_REQUEST} = false ]]; then
 else
 	echo "Building pull request beta"
 	if [[ ${ALL_FILES_ACCESS} == "ON" ]]; then
-		export APP_NAME="QField~ Beta ${CI_PULL_REQUEST_NUMBER}"
-		export APP_PACKAGE_NAME="qfield_all_access_beta"
+		export APP_NAME="SIGPACGO~ Beta ${CI_PULL_REQUEST_NUMBER}"
+		export APP_PACKAGE_NAME="sigpacgo_all_access_beta"
 	else
-		export APP_NAME="QField Beta ${CI_PULL_REQUEST_NUMBER}"
-		export APP_PACKAGE_NAME="qfield_beta"
+		export APP_NAME="SIGPACGO Beta ${CI_PULL_REQUEST_NUMBER}"
+		export APP_PACKAGE_NAME="sigpacgo_beta"
 	fi
 
 	export APP_ICON="sigpacgo_logo_pr"
