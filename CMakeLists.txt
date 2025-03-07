@@ -8,7 +8,7 @@ set(QML_IMPORT_PATH ${CMAKE_SOURCE_DIR}/src/qml/imports CACHE PATH "QML import p
 
 set(CMAKE_COLOR_MAKEFILE ON)
 set(APP_NAME "SIGPACGO" CACHE STRING "Application Name")
-set(APP_ICON "qfield_logo" CACHE STRING "Application Icon")
+set(APP_ICON "sigpacgo_logo" CACHE STRING "Application Icon")
 set(APK_VERSION_CODE "1" CACHE STRING "Apk Version Code (Example: 1)")
 set(APP_VERSION "0" CACHE STRING "Application Version (Example: v1.0.0)")
 set(APP_VERSION_STR "local - dev" CACHE STRING "Application Version Name (Example: 1.0.0 - Homerun)")
@@ -277,7 +277,7 @@ if(WITH_VCPKG)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  install(FILES ${CMAKE_SOURCE_DIR}/images/icons/qfield_logo.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/128x128/apps RENAME qfield.svg)
+  install(FILES ${CMAKE_SOURCE_DIR}/images/icons/sigpacgo_logo.svg DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/128x128/apps RENAME qfield.svg)
   install(FILES ${CMAKE_SOURCE_DIR}/platform/linux/qfield.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/qfield)
   install(FILES ${CMAKE_SOURCE_DIR}/platform/linux/qfield.metainfo.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
 endif()

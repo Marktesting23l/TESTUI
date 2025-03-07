@@ -93,7 +93,7 @@ public class QFieldCloudService extends QtService {
     private void showNotification() {
         Notification.Builder builder =
             new Notification.Builder(this)
-                .setSmallIcon(R.drawable.qfield_logo)
+                .setSmallIcon(R.drawable.sigpacgo_logo)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle("QFieldCloud")
                 .setContentText(getString(R.string.upload_pending_attachments))

@@ -9,7 +9,7 @@ ANDROID_NDK_VERSION=$(sed -En -e 's/^Pkg.Revision\s*=\s*([0-9a-f]+)/\1/p' ${ANDR
 
 [[ -z ${APP_NAME} ]] && APP_NAME="QField Home"
 [[ -z ${APP_PACKAGE_NAME} ]] && APP_PACKAGE_NAME="qfield_home"
-[[ -z ${APP_ICON} ]] && APP_ICON="qfield_logo_beta"
+[[ -z ${APP_ICON} ]] && APP_ICON="sigpacgo_logo_beta"
 
 echo "Package name ${APP_PACKAGE_NAME}"
 

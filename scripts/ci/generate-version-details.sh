@@ -25,7 +25,7 @@ if [[ -n ${CI_TAG} ]]; then
 		export APP_NAME="SIGPACGO"  # Changed from QField
 		export APP_PACKAGE_NAME="sigpacgo"  # Changed from qfield
 	fi
-	export APP_ICON="qfield_logo"
+	export APP_ICON="sigpacgo_logo"
 	export APP_VERSION="${CI_TAG}" # v1.2.3 or v1.2.3-rc4
 	export APP_VERSION_STR
 	export APK_VERSION_CODE
@@ -43,7 +43,7 @@ elif [[ ${CI_PULL_REQUEST} = false ]]; then
 		export APP_NAME="${CUSTOM_APP_NAME:-SIGPACGO Dev}"  # Changed from QField Dev
 		export APP_PACKAGE_NAME="${CUSTOM_APP_PACKAGE_NAME:-sigpacgo_dev}"  # Changed from qfield_dev
 	fi
-	export APP_ICON="qfield_logo_beta"
+	export APP_ICON="sigpacgo_logo_beta"
 	export APP_VERSION=""
 	# take 0 + (2020400 + number of CI runs) + arch(triplet) number
 	# 020204000 has no meaning - it's just where we had to start
@@ -65,7 +65,7 @@ else
 		export APP_PACKAGE_NAME="qfield_beta"
 	fi
 
-	export APP_ICON="qfield_logo_pr"
+	export APP_ICON="sigpacgo_logo_pr"
 	export APP_VERSION=""
 	export APP_VERSION_STR="PR${CI_PULL_REQUEST_NUMBER} - ${APP_VERSION_NAME}"
 	export APK_VERSION_CODE="1"
