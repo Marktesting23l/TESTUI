@@ -31,20 +31,20 @@ QtObject {
     "mainOverlayColor": "#ffffff",
     "accentColor": "#FF8C00", // Dark Orange
     "accentLightColor": "#99FF8C00", // Light Orange with transparency
-    "mainBackgroundColor": "#fafafa",
-    "mainBackgroundColorSemiOpaque": "#bbfafafa",
-    "mainTextColor": "#000000",
-    "mainTextDisabledColor": "#73000000",
-    "secondaryTextColor": "#999999",
-    "controlBackgroundColor": "#ffffff",
-    "controlBackgroundAlternateColor": "#e6e6e6",
+    "mainBackgroundColor": "#EEEEEE",
+    "mainBackgroundColorSemiOpaque": "#bbF5F5DC",
+    "mainTextColor": "#212121",
+    "mainTextDisabledColor": "#73212121",
+    "secondaryTextColor": "#757575",
+    "controlBackgroundColor": "#F0E6D2",
+    "controlBackgroundAlternateColor": "#E8D8C3",
     "controlBackgroundDisabledColor": "#33555555",
-    "controlBorderColor": "#e6e6e6",
+    "controlBorderColor": "#D0C0B0",
     "buttonTextColor": "#ffffff",
-    "toolButtonColor": "#ffffff",
-    "toolButtonBackgroundColor": Theme.darkGray,
-    "toolButtonBackgroundSemiOpaqueColor": Theme.darkGraySemiOpaque,
-    "scrollBarBackgroundColor": "#aaffffff"
+    "toolButtonColor": "#FF8C00",
+    "toolButtonBackgroundColor": "#E8D8C3",
+    "toolButtonBackgroundSemiOpaqueColor": "#4DE8D8C3",
+    "scrollBarBackgroundColor": "#aaF5F5DC"
   }
 
   property bool darkTheme: false
@@ -96,13 +96,13 @@ QtObject {
   property color accuracyTolerated: "orange"
   property color accuracyExcellent: "#80cc28"
 
-  property color navigationColor: "#984ea3"
-  property color navigationColorSemiOpaque: "#99984ea3"
-  property color navigationBackgroundColor: "#33984ea3"
+  property color navigationColor: "#388E3C"
+  property color navigationColorSemiOpaque: "#994CAF50"
+  property color navigationBackgroundColor: "#334CAF50"
 
   property color sensorBackgroundColor: "#33999999"
 
-  property color bookmarkDefault: "#80cc28"
+  property color bookmarkDefault: "#e0cb13"
   property color bookmarkOrange: "orange"
   property color bookmarkRed: "#c0392b"
   property color bookmarkBlue: "#64b5f6"
