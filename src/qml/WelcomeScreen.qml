@@ -81,15 +81,221 @@ Page {
 
         Layout.margins: 6
         Layout.topMargin: 14 + mainWindow.sceneTopMargin
-        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-        Layout.preferredWidth: Math.min(150, mainWindow.height / 3)
-        Layout.preferredHeight: Math.min(150, mainWindow.height / 3)
+        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        Layout.preferredWidth: Math.min(138, mainWindow.height / 4)
+        Layout.preferredHeight: Math.min(138, mainWindow.height / 4)
 
         source: "qrc:/images/sigpacgo_logo.svg"
         rotationOffset: 220
       }
 
-      
+      SwipeView {
+        id: feedbackView
+        visible: false
+
+        Layout.margins: 6
+        Layout.topMargin: 10
+        Layout.bottomMargin: 10
+        Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+        Layout.preferredWidth: Math.min(410, mainWindow.width - 30)
+        Layout.preferredHeight: Math.max(ohno.childrenRect.height, intro.childrenRect.height, ohyeah.childrenRect.height)
+        clip: true
+
+        Behavior on Layout.preferredHeight  {
+          NumberAnimation {
+            duration: 100
+            easing.type: Easing.InQuad
+          }
+        }
+
+        interactive: false
+        currentIndex: 1
+        Item {
+          id: ohno
+
+          Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+              GradientStop {
+                position: 0.0
+                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.26)
+              }
+              GradientStop {
+                position: 0.88
+                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.02)
+              }
+            }
+
+            radius: 6
+          }
+
+          ColumnLayout {
+            spacing: 0
+            anchors.centerIn: parent
+
+            Text {
+              Layout.margins: 6
+              Layout.topMargin: 12
+              Layout.maximumWidth: feedbackView.width - 12
+              text: qsTr("We're sorry to hear that. Click on the button below to comment or seek support.")
+              font: Theme.defaultFont
+              color: Theme.mainTextColor
+              horizontalAlignment: Text.AlignHCenter
+              wrapMode: Text.WordWrap
+            }
+
+            RowLayout {
+              spacing: 6
+              Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+              Layout.bottomMargin: 10
+
+              QfButton {
+                topPadding: 8
+                bottomPadding: 8
+                leftPadding: 10
+                rightPadding: 10
+
+                text: qsTr("Reach out")
+                icon.source: Theme.getThemeVectorIcon('ic_create_white_24dp')
+
+                onClicked: {
+                  Qt.openUrlExternally("https://www.qfield.org/");
+                  feedbackView.Layout.preferredHeight = 0;
+                }
+              }
+            }
+          }
+        }
+
+        Item {
+          id: intro
+
+          Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+              GradientStop {
+                position: 0.0
+                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.26)
+              }
+              GradientStop {
+                position: 0.88
+                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.02)
+              }
+            }
+
+            radius: 6
+          }
+
+          ColumnLayout {
+            spacing: 0
+            anchors.centerIn: parent
+
+            Text {
+              Layout.margins: 6
+              Layout.topMargin: 12
+              Layout.maximumWidth: feedbackView.width - 12
+              text: qsTr("Hey there, how do you like your experience with QField so far?")
+              font: Theme.defaultFont
+              color: Theme.mainTextColor
+              horizontalAlignment: Text.AlignHCenter
+              wrapMode: Text.WordWrap
+            }
+
+            RowLayout {
+              spacing: 6
+              Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+              Layout.bottomMargin: 10
+              QfToolButton {
+                iconSource: Theme.getThemeVectorIcon('ic_dissatisfied_white_24dp')
+                iconColor: Theme.mainOverlayColor
+                bgcolor: Theme.mainColor
+                round: true
+
+                onClicked: {
+                  feedbackView.currentIndex = 0;
+                }
+              }
+              QfToolButton {
+                iconSource: Theme.getThemeVectorIcon('ic_satisfied_white_24dp')
+                iconColor: Theme.mainOverlayColor
+                bgcolor: Theme.mainColor
+                round: true
+
+                onClicked: {
+                  if (Qt.platform.os === "android" || Qt.platform.os === "ios" || Qt.platform.os === "windows") {
+                    feedbackView.currentIndex = 2;
+                  } else {
+                    feedbackView.Layout.preferredHeight = 0;
+                  }
+                }
+              }
+            }
+          }
+        }
+        Item {
+          id: ohyeah
+
+          Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+              GradientStop {
+                position: 0.0
+                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.26)
+              }
+              GradientStop {
+                position: 0.88
+                color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.02)
+              }
+            }
+
+            radius: 6
+          }
+
+          ColumnLayout {
+            spacing: 0
+            anchors.centerIn: parent
+
+            Text {
+              Layout.margins: 6
+              Layout.topMargin: 12
+              Layout.maximumWidth: feedbackView.width - 12
+              text: qsTr("That's great! We'd love for you to click on the button below and leave a review.")
+              font: Theme.defaultFont
+              color: Theme.mainTextColor
+              horizontalAlignment: Text.AlignHCenter
+              wrapMode: Text.WordWrap
+            }
+
+            RowLayout {
+              spacing: 6
+              Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+              Layout.margins: 6
+              Layout.bottomMargin: 10
+              QfButton {
+                topPadding: 8
+                bottomPadding: 8
+                leftPadding: 10
+                rightPadding: 10
+
+                text: qsTr("Rate us")
+                icon.source: Theme.getThemeVectorIcon('ic_star_white_24dp')
+
+                onClicked: {
+                  if (Qt.platform.os === "windows") {
+                    Qt.openUrlExternally("https://apps.microsoft.com/detail/xp99h3bcx4bw7f");
+                  } else if (Qt.platform.os === "android") {
+                    Qt.openUrlExternally("market://details?id=ch.opengis.qfield");
+                  } else if (Qt.platform.os === "ios") {
+                    Qt.openUrlExternally("itms-apps://itunes.apple.com/app/qfield-for-qgis/id1531726814");
+                  }
+                  feedbackView.Layout.preferredHeight = 0;
+                }
+              }
+            }
+          }
+        }
+      }
+
       Text {
         id: welcomeText
         visible: !feedbackView.visible
@@ -228,16 +434,14 @@ Page {
                     height: details.childrenRect.height + details.topPadding + details.bottomPadding
                     anchors.bottom: parent.bottom
 
-                    RowLayout {
+                    Row {
                       id: details
                       width: parent.width
-                      topPadding: 4
-                      bottomPadding: 4
+                      topPadding: 3
+                      bottomPadding: 3
                       spacing: 0
-                      Layout.alignment: Qt.AlignHCenter
 
                       Image {
-                        Layout.alignment: Qt.AlignVCenter
                         id: type
                         anchors.verticalCenter: parent.verticalCenter
                         source: switch (ProjectType) {
@@ -253,10 +457,9 @@ Page {
                         sourceSize.width: 80
                         sourceSize.height: 80
                         width: 40
-                        height: 60
+                        height: 40
                       }
                       ColumnLayout {
-                        Layout.alignment: Qt.AlignVCenter
                         id: inner
                         anchors.verticalCenter: parent.verticalCenter
                         width: rectangle.width - type.width - 20
@@ -434,8 +637,8 @@ Page {
           }
 
           RowLayout {
-            Layout.leftMargin: 12
-            Layout.rightMargin: 12
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
             Layout.bottomMargin: mainWindow.sceneBottomMargin
             Label {
               Layout.fillWidth: true
@@ -473,7 +676,6 @@ Page {
   }
 
   Column {
-    id: topButtons
     spacing: 4
     anchors {
       top: parent.top
@@ -482,7 +684,7 @@ Page {
       leftMargin: 4
     }
 
-    QfToolButton {
+    QfActionButton {
       id: currentProjectButton
       toolImage: Theme.getThemeVectorIcon('ic_arrow_left_white_24dp')
       toolText: welcomeScreen.width > 420 ? qsTr('Return to map') : ""
@@ -494,13 +696,12 @@ Page {
       }
     }
 
-    QfActionButton {
+    QfToolButton {
       id: settingsButton
       iconSource: Theme.getThemeVectorIcon('ic_tune_white_24dp')
-      toolImage: Theme.getThemeVectorIcon('ic_tune_white_24dp')
-      toolText: ""
-      toolTextVisible: false
-      innerActionIcon.visible: true
+      iconColor: Theme.toolButtonColor
+      bgcolor: Theme.toolButtonBackgroundColor
+      round: true
 
       onClicked: {
         showSettings();
@@ -511,7 +712,7 @@ Page {
   QfToolButton {
     id: exitButton
     visible: qgisProject && !!qgisProject.homePath && (Qt.platform.os === "ios" || Qt.platform.os === "android" || mainWindow.sceneBorderless)
-      anchors {
+    anchors {
       top: parent.top
       right: parent.right
       topMargin: mainWindow.sceneTopMargin + 4
@@ -526,17 +727,9 @@ Page {
       mainWindow.closeAlreadyRequested = true;
       mainWindow.close();
     }
-    Connections {
-      target: Theme
-      onThemeChanged: {
-        iconColor = Theme.toolButtonColor;
-        bgcolor = Theme.toolButtonBackgroundColor;
-        round = false;
-      }
-    }
   }
 
-
+  
     function adjustWelcomeScreen() {
     if (visible) {
       if (firstShown) {
@@ -554,7 +747,45 @@ Page {
     }
   }
 
-  
+  Component.onCompleted: {
+    adjustWelcomeScreen();
+    var runCount = settings.value("/QField/RunCount", 0) * 1;
+    var feedbackFormShown = settings.value("/QField/FeedbackFormShown", false);
+    if (!feedbackFormShown) {
+      var now = new Date();
+      var dt = settings.value("/QField/FirstRunDate", "");
+      if (dt != "") {
+        dt = new Date(dt);
+        var daysToPrompt = 30;
+        var runsToPrompt = 5;
+        if (runCount >= runsToPrompt && (now - dt) >= (daysToPrompt * 24 * 60 * 60 * 1000)) {
+          feedbackView.visible = true;
+          settings.setValue("/QField/FeedbackFormShown", true);
+        }
+      } else {
+        settings.setValue("/QField/FirstRunDate", now.toISOString());
+      }
+    }
+    if (platformUtilities.capabilities & PlatformUtilities.SentryFramework) {
+        qfieldSettings.enableInfoCollection = true;
+    }
+
+    settings.setValue("/QField/RunCount", runCount + 1);
+    if (registry.defaultProject != '') {
+      if (!FileUtils.fileExists(registry.defaultProject)) {
+        registry.defaultProject = '';
+      }
+    }
+  }
+
+  onVisibleChanged: {
+    adjustWelcomeScreen();
+    if (!visible) {
+      feedbackView.visible = false;
+      firstShown = true;
+    }
+  }
+
   Keys.onReleased: event => {
     if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
       if (qgisProject.fileName != '') {

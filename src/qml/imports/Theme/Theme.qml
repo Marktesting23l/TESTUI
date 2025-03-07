@@ -10,20 +10,20 @@ QtObject {
     "mainOverlayColor": "#ffffff",
     "accentColor": "#FF8C00", // Dark Orange
     "accentLightColor": "#99FF8C00", // Light Orange with transparency
-    "mainBackgroundColor": "#3E2723",
-    "mainBackgroundColorSemiOpaque": "#bb3E2723",
+    "mainBackgroundColor": "#303030",
+    "mainBackgroundColorSemiOpaque": "#bb303030",
     "mainTextColor": "#EEEEEE",
     "mainTextDisabledColor": "#73EEEEEE",
     "secondaryTextColor": "#AAAAAA",
-    "controlBackgroundColor": "#4E342E",
-    "controlBackgroundAlternateColor": "#5D4037",
+    "controlBackgroundColor": "#202020",
+    "controlBackgroundAlternateColor": "#202020",
     "controlBackgroundDisabledColor": "#33555555",
     "controlBorderColor": "#404040",
     "buttonTextColor": "#202020",
-    "toolButtonColor": "#FFA500",
-    "toolButtonBackgroundColor": "#5D4037",
-    "toolButtonBackgroundSemiOpaqueColor": "#4D5D4037",
-    "scrollBarBackgroundColor": "#bb3E2723"
+    "toolButtonColor": "#ffffff",
+    "toolButtonBackgroundColor": Theme.darkGray,
+    "toolButtonBackgroundSemiOpaqueColor": Theme.darkGraySemiOpaque,
+    "scrollBarBackgroundColor": "#bb303030"
   }
 
   property var lightThemeColors: {
