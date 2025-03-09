@@ -1239,7 +1239,7 @@ bool QgisMobileapp::print( const QString &layoutName )
   std::unique_ptr<QgsPrintLayout> templateLayout;
   if ( layoutName.isEmpty() && printLayouts.isEmpty() )
   {
-    QFile templateFile( QStringLiteral( "%1/qfield/templates/layout.qpt" ).arg( PlatformUtilities::instance()->systemSharedDataLocation() ) );
+    QFile templateFile( QStringLiteral( "%1/sigpacgo/templates/layout.qpt" ).arg( PlatformUtilities::instance()->systemSharedDataLocation() ) );
     QDomDocument templateDoc;
     templateDoc.setContent( &templateFile );
 

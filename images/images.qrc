@@ -1,10 +1,7 @@
 <RCC>
     <qresource prefix="/images">
-        <file alias="qfieldcloud_logo.svg">icons/qfieldcloud_logo.svg</file>
-        <file alias="qfieldcloud_background.svg">icons/qfieldcloud_background.svg</file>
-        <file alias="opengis-logo.svg">icons/openGIS-logo-round-green.svg</file>
-        <file alias="karma-logo.svg">icons/karma-logo.svg</file>
-    </qresource>
+        <file alias="imagr-logo.svg">icons/Logo_imagr.svg</file>
+        </qresource>
     <qresource prefix="/pictures">
         <file alias="qfield-love.png">pictures/qfield-love.png</file>
     </qresource>

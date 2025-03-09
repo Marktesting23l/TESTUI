@@ -1,0 +1,12 @@
+SIGPAC-Go - SIG para el campo
+Explore mapas y datos geográficos en el campo
+Captura datos con precisión GPS
+Trabaja sin conexión en cualquier lugar
+Sincroniza tus datos cuando vuelvas a tener conexión
+Visualiza capas vectoriales y ráster
+Edita atributos y geometrías en el terreno
+Navega con GPS en tiempo real
+Toma fotos y vincúlalas a tus datos
+Personaliza formularios para captura de datos
+Mejora tu productividad en el campo
+Lleva tus mapas QGIS a donde vayas 

@@ -8,8 +8,8 @@
         <translation>Developed by</translation>
     </message>
     <message>
-        <source>Support QField</source>
-        <translation>Support QField</translation>
+        <source>Support SIGPACGO</source>
+        <translation>Support SIGPACGO</translation>
     </message>
     <message>
         <source>Changelog</source>
@@ -24,11 +24,11 @@
         <translation>Links Menu</translation>
     </message>
     <message>
-        <source>QField app directories</source>
+        <source>SIGPACGO app directories</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>QField app directory</source>
+        <source>SIGPACGO app directory</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -88,8 +88,8 @@
         <translation>No transform available between %1 and %2</translation>
     </message>
     <message>
-        <source>This grid is part of the “&lt;i&gt;%1&lt;/i&gt;” package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
-        <translation>This grid is part of the “&lt;i&gt;%1&lt;/i&gt;” package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</translation>
+        <source>This grid is part of the "&lt;i&gt;%1&lt;/i&gt;" package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
+        <translation>This grid is part of the "&lt;i&gt;%1&lt;/i&gt;" package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>This grid is available for download from &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
@@ -100,20 +100,20 @@
         <translation>projection</translation>
     </message>
     <message>
-        <source>This transformation requires the grid file “%1”, which is not available for use on the system.</source>
-        <translation>This transformation requires the grid file “%1”, which is not available for use on the system.</translation>
+        <source>This transformation requires the grid file "&lt;i&gt;%1&lt;/i&gt;", which is not available for use on the system.</source>
+        <translation>This transformation requires the grid file "&lt;i&gt;%1&lt;/i&gt;", which is not available for use on the system.</translation>
     </message>
     <message>
         <source>This grid is part of the &lt;i&gt;%1&lt;/i&gt; package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
         <translation>This grid is part of the &lt;i&gt;%1&lt;/i&gt; package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Current transform “&lt;i&gt;%1&lt;/i&gt;” has an accuracy of %2 meters, while the preferred transformation “&lt;i&gt;%3&lt;/i&gt;” has accuracy %4 meters.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Current transform “&lt;i&gt;%1&lt;/i&gt;” has an accuracy of %2 meters, while the preferred transformation “&lt;i&gt;%3&lt;/i&gt;” has accuracy %4 meters.&lt;/p&gt;</translation>
+        <source>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an accuracy of %2 meters, while the preferred transformation "&lt;i&gt;%3&lt;/i&gt;" has accuracy %4 meters.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an accuracy of %2 meters, while the preferred transformation "&lt;i&gt;%3&lt;/i&gt;" has accuracy %4 meters.&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Current transform “&lt;i&gt;%1&lt;/i&gt;” has an unknown accuracy, while the preferred transformation “&lt;i&gt;%2&lt;/i&gt;” has accuracy %3 meters.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Current transform “&lt;i&gt;%1&lt;/i&gt;” has an unknown accuracy, while the preferred transformation “&lt;i&gt;%2&lt;/i&gt;” has accuracy %3 meters.&lt;/p&gt;</translation>
+        <source>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an unknown accuracy, while the preferred transformation "&lt;i&gt;%2&lt;/i&gt;" has accuracy %3 meters.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an unknown accuracy, while the preferred transformation "&lt;i&gt;%2&lt;/i&gt;" has accuracy %3 meters.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;The preferred transform between &lt;i&gt;%1&lt;/i&gt; and &lt;i&gt;%2&lt;/i&gt; is not available for use on the system.&lt;/p&gt;</source>
@@ -158,8 +158,8 @@
         <translation>The following layers could not be loaded, please review those and reconfigure the QGIS project.</translation>
     </message>
     <message>
-        <source>You may check the Portable Project section in the QField documentation for more help.</source>
-        <translation type="vanished">You may check the Portable Project section in the QField documentation for more help.</translation>
+        <source>You may check the Portable Project section in the SIGPACGO documentation for more help.</source>
+        <translation type="vanished">You may check the Portable Project section in the SIGPACGO documentation for more help.</translation>
     </message>
     <message>
         <source>You may check the %1Portable Project%2 documentation page for more help.</source>
@@ -428,24 +428,24 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>Changelog</name>
     <message>
-        <source>What&apos;s new in QField</source>
-        <translation>What&apos;s new in QField</translation>
+        <source>What&apos;s new in SIGPACGO</source>
+        <translation>What&apos;s new in SIGPACGO</translation>
     </message>
     <message>
         <source>Error while fetching changelog, try again later.</source>
         <translation>Error while fetching changelog, try again later.</translation>
     </message>
     <message>
-        <source>Support QField</source>
-        <translation>Support QField</translation>
+        <source>Support SIGPACGO</source>
+        <translation>Support SIGPACGO</translation>
     </message>
     <message>
-        <source>Check the latest QField changes on </source>
-        <translation>Check the latest QField changes on </translation>
+        <source>Check the latest SIGPACGO changes on </source>
+        <translation>Check the latest SIGPACGO changes on </translation>
     </message>
     <message>
-        <source>QField releases page</source>
-        <translation>QField releases page</translation>
+        <source>SIGPACGO releases page</source>
+        <translation>SIGPACGO releases page</translation>
     </message>
 </context>
 <context>
@@ -552,12 +552,12 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Expected all array elements to be an object, but the element at #%1 is not</translation>
     </message>
     <message>
-        <source>Expected all array elements to be an object containing a key &quot;%1&quot;, but the element at #%2 is not</source>
-        <translation>Expected all array elements to be an object containing a key &quot;%1&quot;, but the element at #%2 is not</translation>
+        <source>Expected all array elements to be an object containing a key "&quot;%1&quot;", but the element at #%2 is not</source>
+        <translation>Expected all array elements to be an object containing a key "&quot;%1&quot;", but the element at #%2 is not</translation>
     </message>
     <message>
-        <source>Unrecognized status &quot;%1&quot; for $%2</source>
-        <translation>Unrecognized status &quot;%1&quot; for $%2</translation>
+        <source>Unrecognized status "&quot;%1&quot; for $%2</source>
+        <translation>Unrecognized status "&quot;%1&quot; for $%2</translation>
     </message>
 </context>
 <context>
@@ -684,7 +684,7 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>ExpressionCalculatorLocatorFilter</name>
     <message>
-        <source>Copy “%1” to clipboard</source>
+        <source>Copy "%1" to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -796,23 +796,23 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>FeatureHistory</name>
     <message>
-        <source>Failed to undo created features in layer &quot;%1&quot;</source>
+        <source>Failed to undo created features in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to undo deleted features in layer &quot;%1&quot;</source>
+        <source>Failed to undo deleted features in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to undo update features in layer &quot;%1&quot;</source>
+        <source>Failed to undo update features in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to commit undo feature modification in layer &quot;%1&quot;</source>
+        <source>Failed to commit undo feature modification in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to rollback undo feature modifications in layer &quot;%1&quot;</source>
+        <source>Failed to rollback undo feature modifications in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -945,15 +945,15 @@ Cancel to make a minimal device scan instead.</translation>
     <message numerus="yes">
         <source>Should the %n feature(s) selected really be merge?
 
-The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</source>
+The features geometries will be combined into feature '%1', which will keep its attributes.</source>
         <comment>0</comment>
         <translation>
             <numerusform>Should the %n feature(s) selected really be merge?
 
-The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</numerusform>
+The features geometries will be combined into feature '%1', which will keep its attributes.</numerusform>
             <numerusform>Should the %n feature(s) selected really be merge?
 
-The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</numerusform>
+The features geometries will be combined into feature '%1', which will keep its attributes.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1028,8 +1028,8 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
 <context>
     <name>FeatureModel</name>
     <message>
-        <source>Value &quot;%1&quot; %4 could not be converted to a compatible value for field %2(%3).</source>
-        <translation>Value &quot;%1&quot; %4 could not be converted to a compatible value for field %2(%3).</translation>
+        <source>Value "%1" %4 could not be converted to a compatible value for field %2(%3).</source>
+        <translation>Value "%1" %4 could not be converted to a compatible value for field %2(%3).</translation>
     </message>
     <message>
         <source>Cannot update feature</source>
@@ -1048,22 +1048,22 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Default value expression for %1:%2 has evaluation error: %3</translation>
     </message>
     <message>
-        <source>Cannot start editing on layer &quot;%1&quot; to create feature %2</source>
-        <translation>Cannot start editing on layer &quot;%1&quot; to create feature %2</translation>
+        <source>Cannot start editing on layer "%1" to create feature %2</source>
+        <translation>Cannot start editing on layer "%1" to create feature %2</translation>
     </message>
     <message>
-        <source>Layer &quot;%1&quot; has been commited but the newly created feature %2 could not be fetched</source>
-        <translation>Layer &quot;%1&quot; has been commited but the newly created feature %2 could not be fetched</translation>
+        <source>Layer "%1" has been commited but the newly created feature %2 could not be fetched</source>
+        <translation>Layer "%1" has been commited but the newly created feature %2 could not be fetched</translation>
     </message>
     <message>
-        <source>Layer &quot;%1&quot; cannot be commited with the newly created feature %2. Reason:
+        <source>Layer "%1" cannot be commited with the newly created feature %2. Reason:
 %3</source>
-        <translation>Layer &quot;%1&quot; cannot be commited with the newly created feature %2. Reason:
+        <translation>Layer "%1" cannot be commited with the newly created feature %2. Reason:
 %3</translation>
     </message>
     <message>
-        <source>Feature %2 could not be added in layer &quot;%1&quot;</source>
-        <translation>Feature %2 could not be added in layer &quot;%1&quot;</translation>
+        <source>Feature %2 could not be added in layer "%1"</source>
+        <translation>Feature %2 could not be added in layer "%1"</translation>
     </message>
     <message>
         <source>Could not save changes. Rolling back.</source>
@@ -1219,7 +1219,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
 <context>
     <name>HelpLocatorFilter</name>
     <message>
-        <source>QField Documentation</source>
+        <source>SIGPACGO Documentation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1268,12 +1268,12 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
 <context>
     <name>LayerObserver</name>
     <message>
-        <source>Failed to find a local primary key column in layer &quot;%1&quot;</source>
-        <translation>Failed to find a local primary key column in layer &quot;%1&quot;</translation>
+        <source>Failed to find a local primary key column in layer "%1"</source>
+        <translation>Failed to find a local primary key column in layer "%1"</translation>
     </message>
     <message>
-        <source>Failed to find a source primary key column in layer &quot;%1&quot;</source>
-        <translation>Failed to find a source primary key column in layer &quot;%1&quot;</translation>
+        <source>Failed to find a source primary key column in layer "%1"</source>
+        <translation>Failed to find a source primary key column in layer "%1"</translation>
     </message>
 </context>
 <context>
@@ -1351,12 +1351,12 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="vanished">Geometry Locked Layer</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</source>
-        <translation>This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</translation>
+        <source>This layer is configured as "Read-Only" which disables adding, deleting and editing features.</source>
+        <translation>This layer is configured as "Read-Only" which disables adding, deleting and editing features.</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
-        <translation>This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
+        <source>This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
+        <translation>This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
     </message>
     <message>
         <source>Show visible features list</source>
@@ -1386,15 +1386,15 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Cannot start editing</translation>
     </message>
     <message>
-        <source>Cannot commit deletion of feature %2 in layer &quot;%1&quot;. Reason:
+        <source>Cannot commit deletion of feature %2 in layer "%1". Reason:
 %3</source>
-        <translation>Cannot commit deletion of feature %2 in layer &quot;%1&quot;. Reason:
+        <translation>Cannot commit deletion of feature %2 in layer "%1". Reason:
 %3</translation>
     </message>
     <message>
-        <source>Cannot commit deletion in layer &quot;%1&quot;. Reason:
+        <source>Cannot commit deletion in layer "%1". Reason:
 %3</source>
-        <translation>Cannot commit deletion in layer &quot;%1&quot;. Reason:
+        <translation>Cannot commit deletion in layer "%1". Reason:
 %3</translation>
     </message>
     <message>
@@ -1410,14 +1410,14 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Cannot copy invalid feature</translation>
     </message>
     <message>
-        <source>Cannot add new feature in layer &quot;%1&quot;. Reason:
+        <source>Cannot add new feature in layer "%1". Reason:
 %2</source>
-        <translation>Cannot add new feature in layer &quot;%1&quot;. Reason:
+        <translation>Cannot add new feature in layer "%1". Reason:
 %2</translation>
     </message>
     <message>
-        <source>Cannot add new feature in layer &quot;%1&quot;.</source>
-        <translation type="vanished">Cannot add new feature in layer &quot;%1&quot;.</translation>
+        <source>Cannot add new feature in layer "%1".</source>
+        <translation type="vanished">Cannot add new feature in layer "%1".</translation>
     </message>
 </context>
 <context>
@@ -1427,12 +1427,12 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished">This layer is invalid. This might be due to a network issue, a missing file or a misconfiguration of the project.</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</source>
-        <translation type="unfinished">This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</translation>
+        <source>This layer is configured as "Read-Only" which disables adding, deleting and editing features.</source>
+        <translation type="unfinished">This layer is configured as "Read-Only" which disables adding, deleting and editing features.</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
-        <translation type="unfinished">This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
+        <source>This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
+        <translation type="unfinished">This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
     </message>
     <message>
         <source>This layer is is currently tracking positions.</source>
@@ -1493,7 +1493,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Search filters for your locations have been activated, customize results in the settings panel</translation>
     </message>
     <message>
-        <source>Returns a list of features from the active layer with matching attributes. Restricting matching to a single attribute is done by identifying its name prefixed with an &apos;@&apos;.</source>
+        <source>Returns a list of features from the active layer with matching attributes. Restricting matching to a single attribute is done by identifying its name prefixed with an '&apos;@&apos;'.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1517,7 +1517,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Returns QField documentation pages matching terms.</source>
+        <source>Returns SIGPACGO documentation pages matching terms.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2290,7 +2290,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldAppAuthRequestHandler</name>
+    <name>SIGPACGOAppAuthRequestHandler</name>
     <message>
         <source>Please enter credentials for database</source>
         <translation type="unfinished"></translation>
@@ -2305,14 +2305,14 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldAudioRecorder</name>
+    <name>SIGPACGOAudioRecorder</name>
     <message>
         <source>Audio Recorder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QFieldCamera</name>
+    <name>SIGPACGOCamera</name>
     <message>
         <source>Geotagging enabled</source>
         <translation type="unfinished"></translation>
@@ -2371,7 +2371,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldCloudConnection</name>
+    <name>SIGPACGOCloudConnection</name>
     <message>
         <source>[timeout] The request took too long to finish, please retry.</source>
         <translation>[timeout] The request took too long to finish, please retry.</translation>
@@ -2420,7 +2420,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldCloudDeltaHistory</name>
+    <name>SIGPACGOCloudDeltaHistory</name>
     <message>
         <source>Push History</source>
         <translation>Push History</translation>
@@ -2435,7 +2435,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldCloudLogin</name>
+    <name>SIGPACGOCloudLogin</name>
     <message>
         <source>Failed to login</source>
         <translation type="vanished">Failed to login</translation>
@@ -2495,50 +2495,50 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>The easiest way to transfer you project from QGIS to your devices!</translation>
     </message>
     <message>
-        <source>Learn more about QFieldCloud</source>
-        <translation>Learn more about QFieldCloud</translation>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation>Learn more about SIGPACGOCloud</translation>
     </message>
     <message>
-        <source>QFieldCloud</source>
-        <translation type="unfinished">QFieldCloud</translation>
-    </message>
-</context>
-<context>
-    <name>QFieldCloudPackageLayersFeedback</name>
-    <message>
-        <source>Problematic QFieldCloud layer packaging</source>
-        <translation type="vanished">Problematic QFieldCloud layer packaging</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server.</source>
-        <translation type="vanished">Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server.</translation>
-    </message>
-    <message>
-        <source>QFieldCloud had troubles packaging your project</source>
-        <translation>QFieldCloud had troubles packaging your project</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
-        <translation>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</translation>
+        <source>SIGPACGOCloud</source>
+        <translation type="unfinished">SIGPACGOCloud</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudPopup</name>
+    <name>SIGPACGOCloudPackageLayersFeedback</name>
     <message>
-        <source>QFieldCloud</source>
-        <translation>QFieldCloud</translation>
+        <source>Problematic SIGPACGOCloud layer packaging</source>
+        <translation type="vanished">Problematic SIGPACGOCloud layer packaging</translation>
     </message>
     <message>
-        <source>The current project is not stored on QFieldCloud.&lt;br&gt;&lt;br&gt;</source>
-        <translation>The current project is not stored on QFieldCloud.&lt;br&gt;&lt;br&gt;</translation>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</source>
+        <translation type="vanished">Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</translation>
     </message>
     <message>
-        <source>Storing projects on QFieldCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="vanished">Storing projects on QFieldCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</translation>
+        <source>SIGPACGOCloud had troubles packaging your project</source>
+        <translation>SIGPACGOCloud had troubles packaging your project</translation>
     </message>
     <message>
-        <source>Learn more about QFieldCloud</source>
-        <translation>Learn more about QFieldCloud</translation>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
+        <translation>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudPopup</name>
+    <message>
+        <source>SIGPACGOCloud</source>
+        <translation>SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</source>
+        <translation>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="vanished">Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation>Learn more about SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
@@ -2553,24 +2553,24 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <source>This QFieldCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the QFieldCloud functionality.</source>
-        <translation>This QFieldCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the QFieldCloud functionality.</translation>
+        <source>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</source>
+        <translation>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</translation>
     </message>
     <message>
         <source>Downloading %1%…</source>
         <translation type="vanished">Downloading %1%…</translation>
     </message>
     <message>
-        <source>QFieldCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">QFieldCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
     </message>
     <message>
         <source>Uploading %1%…</source>
         <translation>Uploading %1%…</translation>
     </message>
     <message>
-        <source>QFieldCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
-        <translation>QFieldCloud is applying the latest uploaded changes. This might take some time, please hold tight…</translation>
+        <source>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
+        <translation>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</translation>
     </message>
     <message>
         <source>A server error has occured, please try again.</source>
@@ -2600,8 +2600,8 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Synchronize</translation>
     </message>
     <message>
-        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from QFieldCloud.</source>
-        <translation>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from QFieldCloud.</translation>
+        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</source>
+        <translation>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</translation>
     </message>
     <message>
         <source>Push changes</source>
@@ -2715,7 +2715,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2727,7 +2727,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reaching out to QFieldCloud to download project</source>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -2742,39 +2742,39 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Storing projects on QFieldCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudProjectsModel</name>
+    <name>SIGPACGOCloudProjectsModel</name>
     <message>
         <source>Export failed</source>
         <translation type="vanished">Export failed</translation>
     </message>
     <message>
-        <source>Packaged layer &apos;%1&apos; is not valid: &apos;%2&apos;</source>
-        <translation type="vanished">Packaged layer &apos;%1&apos; is not valid: &apos;%2&apos;</translation>
+        <source>Packaged layer '&apos;%1&apos;' is not valid: '&apos;%2&apos;'</source>
+        <translation type="vanished">Packaged layer '&apos;%1&apos;' is not valid: '&apos;%2&apos;'</translation>
     </message>
     <message>
-        <source>Failed to open temporary file for &quot;%1&quot;, reason:
+        <source>Failed to open temporary file for "&quot;%1&quot;", reason:
 %2</source>
-        <translation type="vanished">Failed to open temporary file for &quot;%1&quot;, reason:
+        <translation type="vanished">Failed to open temporary file for "&quot;%1&quot;", reason:
 %2</translation>
     </message>
     <message>
-        <source>Failed to upload attachment stored at &quot;%1&quot;, reason:
+        <source>Failed to upload attachment stored at "&quot;%1&quot;", reason:
 %2</source>
-        <translation type="vanished">Failed to upload attachment stored at &quot;%1&quot;, reason:
+        <translation type="vanished">Failed to upload attachment stored at "&quot;%1&quot;", reason:
 %2</translation>
     </message>
     <message>
-        <source>Failed to download file &quot;%1&quot;, reason:</source>
-        <translation type="vanished">Failed to download file &quot;%1&quot;, reason:</translation>
+        <source>Failed to download file "&quot;%1&quot;", reason:</source>
+        <translation type="vanished">Failed to download file "&quot;%1&quot;", reason:</translation>
     </message>
     <message>
-        <source>Failed to write downloaded file stored at &quot;%1&quot;, fs reason:</source>
-        <translation type="vanished">Failed to write downloaded file stored at &quot;%1&quot;, fs reason:</translation>
+        <source>Failed to write downloaded file stored at "&quot;%1&quot;, fs reason:</source>
+        <translation type="vanished">Failed to write downloaded file stored at "&quot;%1&quot;, fs reason:</translation>
     </message>
     <message>
         <source>aborted</source>
@@ -2869,8 +2869,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>System message: </translation>
     </message>
     <message>
-        <source> (see more in the QField error log)…</source>
-        <translation> (see more in the QField error log)…</translation>
+        <source> (see more in the SIGPACGO error log)…</source>
+        <translation> (see more in the SIGPACGO error log)…</translation>
     </message>
     <message>
         <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
@@ -2878,10 +2878,10 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldCloudScreen</name>
+    <name>SIGPACGOCloudScreen</name>
     <message>
-        <source>QFieldCloud Projects</source>
-        <translation>QFieldCloud Projects</translation>
+        <source>SIGPACGOCloud Projects</source>
+        <translation>SIGPACGOCloud Projects</translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
@@ -2912,8 +2912,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="vanished">Downloading, %1% fetched…</translation>
     </message>
     <message>
-        <source>QFieldCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">QFieldCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
     </message>
     <message>
         <source>Uploading…</source>
@@ -2988,7 +2988,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3000,7 +3000,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reaching out to QFieldCloud to download project</source>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3013,7 +3013,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldCloudUtils</name>
+    <name>SIGPACGOCloudUtils</name>
     <message>
         <source>A server error has occured, please try again.</source>
         <translation type="unfinished">A server error has occured, please try again.</translation>
@@ -3028,7 +3028,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldGuide</name>
+    <name>SIGPACGOGuide</name>
     <message>
         <source>Finish</source>
         <translation type="unfinished"></translation>
@@ -3043,7 +3043,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldLocalDataPickerScreen</name>
+    <name>SIGPACGOLocalDataPickerScreen</name>
     <message>
         <source>Project Folder</source>
         <translation>Project Folder</translation>
@@ -3141,7 +3141,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>‘%1’ is being uploaded to QFieldCloud</source>
+        <source>'%1' is being uploaded to SIGPACGOCloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3157,7 +3157,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Push to QFieldCloud</source>
+        <source>Push to SIGPACGOCloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3274,7 +3274,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldPositioningService</name>
+    <name>SIGPACGOPositioningService</name>
     <message>
         <source>Positioning service running</source>
         <translation type="unfinished"></translation>
@@ -3285,7 +3285,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldSettings</name>
+    <name>SIGPACGOSettings</name>
     <message>
         <source>Show scale bar</source>
         <translation>Show scale bar</translation>
@@ -3300,7 +3300,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</source>
-        <translation>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</translation>
+        <translation>Search results only pan to feature without zooming.</translation>
     </message>
     <message>
         <source>Show digitizing information</source>
@@ -3308,7 +3308,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</source>
-        <translation>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</translation>
+        <translation>Shows coordinates on the map while digitizing or measuring.</translation>
     </message>
     <message>
         <source>Show bookmarks</source>
@@ -3316,15 +3316,15 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</source>
-        <translation>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</translation>
+        <translation>Shows saved and project bookmarks on the map.</translation>
     </message>
     <message>
         <source>Use native camera</source>
         <translation>Use native camera</translation>
     </message>
     <message>
-        <source>If disabled, QField will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
-        <translation>If disabled, QField will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</translation>
+        <source>If disabled, SIGPACGO will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
+        <translation>Uses device camera app instead of built-in camera. Good for geo-tagged photos.</translation>
     </message>
     <message>
         <source>Fast editing mode</source>
@@ -3332,7 +3332,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</source>
-        <translation>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</translation>
+        <translation>Auto-saves features when geometry is valid and constraints are met.</translation>
     </message>
     <message>
         <source>Dim screen when idling</source>
@@ -3355,8 +3355,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Send anonymized metrics</translation>
     </message>
     <message>
-        <source>If enabled, anonymized metrics will be collected and sent to help improve QField for everyone.</source>
-        <translation>If enabled, anonymized metrics will be collected and sent to help improve QField for everyone.</translation>
+        <source>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</source>
+        <translation>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</translation>
     </message>
     <message>
         <source>General</source>
@@ -3379,8 +3379,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="vanished">User interface language:</translation>
     </message>
     <message>
-        <source>To apply the selected user interface language, QField needs to completely shutdown and restart.</source>
-        <translation>To apply the selected user interface language, QField needs to completely shutdown and restart.</translation>
+        <source>To apply the selected user interface language, SIGPACGO needs to completely shutdown and restart.</source>
+        <translation>Restart SIGPAC-Go to apply language change.</translation>
     </message>
     <message>
         <source>system</source>
@@ -3520,12 +3520,12 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Vertical grid shift is used to increase the altitude accuracy.</translation>
     </message>
     <message>
-        <source>QField Settings</source>
-        <translation>QField Settings</translation>
+        <source>SIGPACGO Settings</source>
+        <translation>SIGPACGO Settings</translation>
     </message>
     <message>
         <source>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</source>
-        <translation>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</translation>
+        <translation>Seconds of inactivity before dimming screen to save battery.</translation>
     </message>
     <message>
         <source>Measure (M) value attached to vertices:</source>
@@ -3633,10 +3633,10 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>A lower quality trades rendering precision in favor of lower memory usage and rendering time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lower quality reduces memory usage and improves performance.</translation>
     </message>
     <message>
-        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, QField will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
+        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3649,7 +3649,7 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>If enabled, pressing the device&apos;s volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Volume up adds vertex, volume down removes last vertex.</translation>
     </message>
     <message>
         <source>Allow finger tap on canvas to add vertices</source>
@@ -3657,11 +3657,11 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tap on map to add vertex.</translation>
     </message>
     <message>
         <source>When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.</source>
-        <translation type="unfinished"></translation>
+        <translation>Mouse acts like finger. When off, mouse acts like stylus.</translation>
     </message>
     <message>
         <source>Map Canvas</source>
@@ -3701,7 +3701,7 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>When switched on, the map can be rotated by the user.</source>
-        <translation type="unfinished"></translation>
+        <translation>Allows rotating the map.</translation>
     </message>
     <message>
         <source>Bad accuracy threshold [m]</source>
@@ -3721,7 +3721,7 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
 </context>
 <context>
-    <name>QFieldSketcher</name>
+    <name>SIGPACGOSketcher</name>
     <message>
         <source>Select drawing template</source>
         <translation type="unfinished"></translation>
@@ -3738,8 +3738,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Authentication required</translation>
     </message>
     <message>
-        <source>QFieldCloud Unknown Error</source>
-        <translation>QFieldCloud Unknown Error</translation>
+        <source>SIGPACGOCloud Unknown Error</source>
+        <translation>SIGPACGOCloud Unknown Error</translation>
     </message>
     <message>
         <source>Status not ok</source>
@@ -3806,8 +3806,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Cloud User Info</translation>
     </message>
     <message>
-        <source>Please wait while QField installation finalizes.</source>
-        <translation>Please wait while QField installation finalizes.</translation>
+        <source>Please wait while SIGPACGO installation finalizes.</source>
+        <translation>Please wait while SIGPACGO installation finalizes.</translation>
     </message>
     <message>
         <source>averaged</source>
@@ -3861,8 +3861,8 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>QgisMobileapp</name>
     <message>
-        <source>Project file &quot;%1&quot; does not exist</source>
-        <translation type="vanished">Project file &quot;%1&quot; does not exist</translation>
+        <source>Project file "&quot;%1&quot;" does not exist</source>
+        <translation type="vanished">Project file "&quot;%1&quot;" does not exist</translation>
     </message>
     <message>
         <source>No project file currently opened</source>
@@ -3885,15 +3885,15 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Can&apos;t load project, file &quot;%1&quot; does not exist</source>
+        <source>Can&apos;t load project, file "&quot;%1&quot;" does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Can&apos;t read project, file &quot;%1&quot; does not exist</source>
+        <source>Can&apos;t read project, file "&quot;%1&quot;" does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Map printed on %1 using QField</source>
+        <source>Map printed on %1 using SIGPACGO</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4079,8 +4079,8 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>SystemLoader</name>
     <message>
-        <source>Preparing QField, this is a one time operation that might take some time</source>
-        <translation type="vanished">Preparing QField, this is a one time operation that might take some time</translation>
+        <source>Preparing SIGPACGO, this is a one time operation that might take some time</source>
+        <translation type="vanished">Preparing SIGPACGO, this is a one time operation that might take some time</translation>
     </message>
 </context>
 <context>
@@ -4588,8 +4588,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Reach out</translation>
     </message>
     <message>
-        <source>Hey there, how do you like your experience with QField so far?</source>
-        <translation>Hey there, how do you like your experience with QField so far?</translation>
+        <source>Hey there, how do you like your experience with SIGPACGO so far?</source>
+        <translation>Hey there, how do you like your experience with SIGPACGO so far?</translation>
     </message>
     <message>
         <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a comment on the store.</source>
@@ -4604,8 +4604,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Anonymized metrics collection has been disabled. You can re-enable through the settings panel.</translation>
     </message>
     <message>
-        <source>To improve stability for everyone, QField collects and sends anonymized metrics.</source>
-        <translation>To improve stability for everyone, QField collects and sends anonymized metrics.</translation>
+        <source>To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</source>
+        <translation>To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</translation>
     </message>
     <message>
         <source>I agree</source>
@@ -4616,8 +4616,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>I prefer not</translation>
     </message>
     <message>
-        <source>QFieldCloud projects</source>
-        <translation>QFieldCloud projects</translation>
+        <source>SIGPACGOCloud projects</source>
+        <translation>SIGPACGOCloud projects</translation>
     </message>
     <message>
         <source>Open local file</source>
@@ -4644,12 +4644,12 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Remove from Recent Projects</translation>
     </message>
     <message>
-        <source>Welcome to QField. First time using this application? Try out sample projects listed in the list below.</source>
-        <translation type="vanished">Welcome to QField. First time using this application? Try out sample projects listed in the list below.</translation>
+        <source>Welcome to SIGPACGO. First time using this application? Try out sample projects listed in the list below.</source>
+        <translation type="vanished">Welcome to SIGPACGO. First time using this application? Try out sample projects listed in the list below.</translation>
     </message>
     <message>
-        <source>Welcome back to QField.</source>
-        <translation>Welcome back to QField.</translation>
+        <source>Welcome back to SIGPACGO.</source>
+        <translation>Welcome back to SIGPACGO.</translation>
     </message>
     <message>
         <source>Default project</source>
@@ -4680,7 +4680,7 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Welcome to QField. First time using this application? Try the sample projects listed below.</source>
+        <source>Welcome to SIGPACGO. First time using this application? Try the sample projects listed below.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4948,8 +4948,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Message Log</translation>
     </message>
     <message>
-        <source>About QField</source>
-        <translation>About QField</translation>
+        <source>About SIGPACGO</source>
+        <translation>About SIGPACGO</translation>
     </message>
     <message>
         <source>Select template below</source>
@@ -4960,8 +4960,8 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Activating positioning service</translation>
     </message>
     <message>
-        <source>QField has no permissions to use positioning.</source>
-        <translation type="vanished">QField has no permissions to use positioning.</translation>
+        <source>SIGPACGO has no permissions to use positioning.</source>
+        <translation type="vanished">SIGPACGO has no permissions to use positioning.</translation>
     </message>
     <message>
         <source>Map Canvas Options</source>
@@ -5156,12 +5156,12 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Project %1 successfully downloaded, it&apos;s now available to open</translation>
     </message>
     <message>
-        <source>Changes failed to reach QFieldCloud: %1</source>
-        <translation>Changes failed to reach QFieldCloud: %1</translation>
+        <source>Changes failed to reach SIGPACGOCloud: %1</source>
+        <translation>Changes failed to reach SIGPACGOCloud: %1</translation>
     </message>
     <message>
-        <source>Changes successfully pushed to QFieldCloud</source>
-        <translation>Changes successfully pushed to QFieldCloud</translation>
+        <source>Changes successfully pushed to SIGPACGOCloud</source>
+        <translation>Changes successfully pushed to SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Press back again to close project and app</source>
@@ -5252,11 +5252,11 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Disconnecting sensor &apos;%1&apos;...</source>
+        <source>Disconnecting sensor '&apos;%1&apos;...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connecting sensor &apos;%1&apos;...</source>
+        <source>Connecting sensor '&apos;%1&apos;...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5300,19 +5300,19 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Position has trespassed into ‘%1’</source>
+        <source>Position has trespassed into '&apos;%1&apos;'</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Position outside areas after leaving ‘%1’</source>
+        <source>Position outside areas after leaving '&apos;%1&apos;'</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Position entered into ‘%1’</source>
+        <source>Position entered into '&apos;%1&apos;'</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Position left from ‘%1’</source>
+        <source>Position left from '&apos;%1&apos;'</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -67,7 +67,7 @@ PlatformUtilities::Capabilities PlatformUtilities::capabilities() const
 
 void PlatformUtilities::copySampleProjects()
 {
-  const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/qfield/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
+  const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/sigpacgo/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
   Q_ASSERT( success );
 }
 
@@ -158,7 +158,16 @@ void PlatformUtilities::loadQgsProject() const
 
 QStringList PlatformUtilities::appDataDirs() const
 {
-  return QStringList() << QStandardPaths::standardLocations( QStandardPaths::DocumentsLocation ).first() + QStringLiteral( "/QField Documents/QField/" );
+  QString appDataDir = QStandardPaths::standardLocations( QStandardPaths::DocumentsLocation ).first() + QStringLiteral( "/SIGPACGO Documents/SIGPACGO/" );
+  
+  // Ensure the directory exists
+  QDir dir(appDataDir);
+  if (!dir.exists())
+  {
+    dir.mkpath(".");
+  }
+  
+  return QStringList() << appDataDir;
 }
 
 QStringList PlatformUtilities::availableGrids() const
@@ -213,7 +222,23 @@ bool PlatformUtilities::renameFile( const QString &oldFilePath, const QString &n
 
 QString PlatformUtilities::applicationDirectory() const
 {
-  return QStandardPaths::standardLocations( QStandardPaths::DocumentsLocation ).first() + QStringLiteral( "/QField Documents/" );
+  QString appDir = QStandardPaths::standardLocations( QStandardPaths::DocumentsLocation ).first() + QStringLiteral( "/SIGPACGO Documents/" );
+  
+  // Ensure the directory exists
+  QDir dir(appDir);
+  if (!dir.exists())
+  {
+    dir.mkpath(".");
+  }
+  
+  // Also ensure the SIGPACGO subdirectory exists
+  QDir sigpacgoDir(appDir + "SIGPACGO/");
+  if (!sigpacgoDir.exists())
+  {
+    sigpacgoDir.mkpath(".");
+  }
+  
+  return appDir;
 }
 
 QStringList PlatformUtilities::additionalApplicationDirectories() const

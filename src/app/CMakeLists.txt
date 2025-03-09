@@ -7,7 +7,7 @@ if(MSVC)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  set(qfield_ICON ${CMAKE_SOURCE_DIR}/platform/macos/qfield_logo.icns)
+  set(qfield_ICON ${CMAKE_SOURCE_DIR}/platform/macos/sigpacgo_logo.icns)
   set_source_files_properties(${qfield_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION
                                                         "Resources")
   list(APPEND RESOURCES ${qfield_ICON})
@@ -128,7 +128,7 @@ function(create_executable)
       ${exe_TARGET}
       PROPERTIES MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
                  MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} OPENGIS.ch"
-                 MACOSX_BUNDLE_ICON_FILE "qfield_logo.icns"
+                 MACOSX_BUNDLE_ICON_FILE "sigpacgo_logo.icns"
                  MACOSX_BUNDLE_GUI_IDENTIFIER "${PROJECT_NAME}"
                  MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION}"
                  MACOSX_BUNDLE_SHORT_VERSION_STRING
@@ -165,7 +165,7 @@ if(IOS)
   include("${CMAKE_SOURCE_DIR}/cmake/AddQtIosApp.cmake")
   add_qt_ios_app(
     qfield
-    NAME "QField"
+    NAME "SIGPACGO"
     VERSION "${APK_VERSION_CODE}"
     SHORT_VERSION "${APK_VERSION_CODE}"
     LONG_VERSION "${APK_VERSION_CODE}"

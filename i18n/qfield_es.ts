@@ -6,8 +6,8 @@
         <translation>Desarrollado por</translation>
     </message>
     <message>
-        <source>Support QField</source>
-        <translation>Apoyar QField</translation>
+        <source>Support SIGPACGO</source>
+        <translation>Apoyar SIGPACGO</translation>
     </message>
     <message>
         <source>Changelog</source>
@@ -22,12 +22,12 @@
         <translation>Menú de enlaces</translation>
     </message>
     <message>
-        <source>QField app directories</source>
-        <translation>Directorios de la app QField</translation>
+        <source>SIGPACGO app directories</source>
+        <translation>Directorios de la app SIGPACGO</translation>
     </message>
     <message>
-        <source>QField app directory</source>
-        <translation>Directorio de la app QField</translation>
+        <source>SIGPACGO app directory</source>
+        <translation>Directorio de la app SIGPACGO</translation>
     </message>
 </context>
 <context>
@@ -156,8 +156,8 @@
         <translation>Las siguientes capas no se pudieron cargar. Por favor, revíselas y reconfigure el proyecto de QGIS.</translation>
     </message>
     <message>
-        <source>You may check the Portable Project section in the QField documentation for more help.</source>
-        <translation type="vanished">Puede revisar la sección Proyecto portátil en la documentación de QField para más información.</translation>
+        <source>You may check the Portable Project section in the SIGPACGO documentation for more help.</source>
+        <translation type="vanished">Puede revisar la sección Proyecto portátil en la documentación de SIGPACGO para más información.</translation>
     </message>
     <message>
         <source>You may check the %1Portable Project%2 documentation page for more help.</source>
@@ -423,24 +423,24 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
 <context>
     <name>Changelog</name>
     <message>
-        <source>What&apos;s new in QField</source>
-        <translation>¿Qué hay de nuevo en QField?</translation>
+        <source>What&apos;s new in SIGPACGO</source>
+        <translation>¿Qué hay de nuevo en SIGPACGO?</translation>
     </message>
     <message>
         <source>Error while fetching changelog, try again later.</source>
         <translation>Error al recopilar el registro de cambios, pruebe de nuevo más tarde.</translation>
     </message>
     <message>
-        <source>Support QField</source>
-        <translation>Apoyar QField</translation>
+        <source>Support SIGPACGO</source>
+        <translation>Apoyar SIGPACGO</translation>
     </message>
     <message>
-        <source>Check the latest QField changes on </source>
-        <translation>Compruebe los últimos cambios de QField en</translation>
+        <source>Check the latest SIGPACGO changes on </source>
+        <translation>Compruebe los últimos cambios de SIGPACGO en</translation>
     </message>
     <message>
-        <source>QField releases page</source>
-        <translation>Página de publicaciones de QField</translation>
+        <source>SIGPACGO releases page</source>
+        <translation>Página de publicaciones de SIGPACGO</translation>
     </message>
 </context>
 <context>
@@ -1162,8 +1162,8 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
 <context>
     <name>HelpLocatorFilter</name>
     <message>
-        <source>QField Documentation</source>
-        <translation>Documentación de QField</translation>
+        <source>SIGPACGO Documentation</source>
+        <translation>Documentación de SIGPACGO</translation>
     </message>
 </context>
 <context>
@@ -1460,8 +1460,8 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
         <translation>Devuelve una lista de localizaciones y direcciones dentro de Finlandia en las que coinciden los términos</translation>
     </message>
     <message>
-        <source>Returns QField documentation pages matching terms.</source>
-        <translation>Devuelve las páginas de la documentación de QField con los términos que coincidan.</translation>
+        <source>Returns SIGPACGO documentation pages matching terms.</source>
+        <translation>Devuelve las páginas de la documentación de SIGPACGO con los términos que coincidan.</translation>
     </message>
 </context>
 <context>
@@ -2233,7 +2233,7 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
 </context>
 <context>
-    <name>QFieldAppAuthRequestHandler</name>
+    <name>SIGPACGOAppAuthRequestHandler</name>
     <message>
         <source>Please enter credentials for database</source>
         <translation>Por favor, introduzca las credenciales para la base de datos</translation>
@@ -2248,14 +2248,14 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
 </context>
 <context>
-    <name>QFieldAudioRecorder</name>
+    <name>SIGPACGOAudioRecorder</name>
     <message>
         <source>Audio Recorder</source>
         <translation>Grabador de audio</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCamera</name>
+    <name>SIGPACGOCamera</name>
     <message>
         <source>Geotagging enabled</source>
         <translation>Geoetiquetado habilitado</translation>
@@ -2314,7 +2314,7 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
 </context>
 <context>
-    <name>QFieldCloudConnection</name>
+    <name>SIGPACGOCloudConnection</name>
     <message>
         <source>[timeout] The request took too long to finish, please retry.</source>
         <translation>[expiró] La solicitud llevó demasiado tiempo para terminar, pruebe otra vez.</translation>
@@ -2363,7 +2363,7 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
 </context>
 <context>
-    <name>QFieldCloudDeltaHistory</name>
+    <name>SIGPACGOCloudDeltaHistory</name>
     <message>
         <source>Push History</source>
         <translation>Subir historial</translation>
@@ -2378,7 +2378,7 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
 </context>
 <context>
-    <name>QFieldCloudLogin</name>
+    <name>SIGPACGOCloudLogin</name>
     <message>
         <source>Failed to login</source>
         <translation type="vanished">No se pudo iniciar la sesión</translation>
@@ -2438,50 +2438,50 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
         <translation>¡La forma más fácil de transferir su proyecto de QGIS a sus dispositivos!</translation>
     </message>
     <message>
-        <source>Learn more about QFieldCloud</source>
-        <translation>Aprender más sobre QFieldCloud</translation>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation>Aprender más sobre SIGPACGOCloud</translation>
     </message>
     <message>
-        <source>QFieldCloud</source>
-        <translation>QFieldCloud</translation>
-    </message>
-</context>
-<context>
-    <name>QFieldCloudPackageLayersFeedback</name>
-    <message>
-        <source>Problematic QFieldCloud layer packaging</source>
-        <translation type="vanished">Empaquetado de capas en QFieldCloud problemático</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server.</source>
-        <translation type="vanished">Algunas capas no se han empaquetado correctamente en QFieldCloud. Estas capas pueden estar mal configurada o su fuente de datos no es accesible desde el servidor de QFieldCloud.</translation>
-    </message>
-    <message>
-        <source>QFieldCloud had troubles packaging your project</source>
-        <translation>QFieldCloud tuvo problemas para empaquetar su proyecto</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
-        <translation>Algunas capas no se han empaquetado correctamente en QFieldCloud. Estas capas pueden estar mal configuradas o no se puede acceder a su fuente de datos desde el servidor QFieldCloud. Consulte los registros del último trabajo de empaquetado en el sitio web qfield.cloud.</translation>
+        <source>SIGPACGOCloud</source>
+        <translation>SIGPACGOCloud</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudPopup</name>
+    <name>SIGPACGOCloudPackageLayersFeedback</name>
     <message>
-        <source>QFieldCloud</source>
-        <translation>QFieldCloud</translation>
+        <source>Problematic SIGPACGOCloud layer packaging</source>
+        <translation type="vanished">Empaquetado de capas en SIGPACGOCloud problemático</translation>
     </message>
     <message>
-        <source>The current project is not stored on QFieldCloud.&lt;br&gt;&lt;br&gt;</source>
-        <translation>El proyecto actual no está guardado en QFieldCloud.&lt;br&gt;&lt;br&gt;</translation>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</source>
+        <translation type="vanished">Algunas capas no se han empaquetado correctamente en SIGPACGOCloud. Estas capas pueden estar mal configurada o su fuente de datos no es accesible desde el servidor de SIGPACGOCloud.</translation>
     </message>
     <message>
-        <source>Storing projects on QFieldCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="vanished">Guardar proyectos en QFieldCloud ofrece una sincronización automatizada, edición offline y gestión de equipos.&lt;br&gt;&lt;br&gt;</translation>
+        <source>SIGPACGOCloud had troubles packaging your project</source>
+        <translation>SIGPACGOCloud tuvo problemas para empaquetar su proyecto</translation>
     </message>
     <message>
-        <source>Learn more about QFieldCloud</source>
-        <translation>Aprender más sobre QFieldCloud</translation>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
+        <translation>Algunas capas no se han empaquetado correctamente en SIGPACGOCloud. Estas capas pueden estar mal configuradas o no se puede acceder a su fuente de datos desde el servidor SIGPACGOCloud. Consulte los registros del último trabajo de empaquetado en el sitio web qfield.cloud.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudPopup</name>
+    <message>
+        <source>SIGPACGOCloud</source>
+        <translation>SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</source>
+        <translation>El proyecto actual no está guardado en SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="vanished">Guardar proyectos en SIGPACGOCloud ofrece una sincronización automatizada, edición offline y gestión de equipos.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation>Aprender más sobre SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
@@ -2496,24 +2496,24 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
         <translation>Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <source>This QFieldCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the QFieldCloud functionality.</source>
-        <translation>Este proyecto de QFieldCloud se descargó por primera vez con otra cuenta en la nube. Inicie sesión con la cuenta original de este proyecto para usar la funcionalidad QFieldCloud.</translation>
+        <source>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</source>
+        <translation>Este proyecto de SIGPACGOCloud se descargó por primera vez con otra cuenta en la nube. Inicie sesión con la cuenta original de este proyecto para usar la funcionalidad SIGPACGOCloud.</translation>
     </message>
     <message>
         <source>Downloading %1%…</source>
         <translation type="vanished">Descargando %1%…</translation>
     </message>
     <message>
-        <source>QFieldCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">QFieldCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
     </message>
     <message>
         <source>Uploading %1%…</source>
         <translation>Subiendo %1%…</translation>
     </message>
     <message>
-        <source>QFieldCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
-        <translation>QFieldCloud está aplicando los últimos cambios subidos. Esto puede llevar algo de tiempo, mantente atento…</translation>
+        <source>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
+        <translation>SIGPACGOCloud está aplicando los últimos cambios subidos. Esto puede llevar algo de tiempo, mantente atento…</translation>
     </message>
     <message>
         <source>A server error has occured, please try again.</source>
@@ -2540,8 +2540,8 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
         <translation>Sincronizar</translation>
     </message>
     <message>
-        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from QFieldCloud.</source>
-        <translation>Sincronizar el proyecto completo con todos los objetos modificados y descargar el proyecto actualizado con todos los cambios aplicados desde QFieldCloud.</translation>
+        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</source>
+        <translation>Sincronizar el proyecto completo con todos los objetos modificados y descargar el proyecto actualizado con todos los cambios aplicados desde SIGPACGOCloud.</translation>
     </message>
     <message>
         <source>Push changes</source>
@@ -2650,8 +2650,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Este proyecto tiene datos actualizados en la nube, deberías sincronizarlos.</translation>
     </message>
     <message>
-        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
-        <translation>QFieldCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <translation>SIGPACGOCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
     </message>
     <message>
         <source>Downloading, %1% of %2 fetched</source>
@@ -2662,8 +2662,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Descargando, %1% obtenido</translation>
     </message>
     <message>
-        <source>Reaching out to QFieldCloud to download project</source>
-        <translation>Conectándose con QFieldCloud para descargar el proyecto</translation>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
+        <translation>Conectándose con SIGPACGOCloud para descargar el proyecto</translation>
     </message>
     <message numerus="yes">
         <source>Automatically push changes every %n minute(s)</source>
@@ -2674,12 +2674,12 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>El proyecto actual no permite desactivar la subida automática</translation>
     </message>
     <message>
-        <source>Storing projects on QFieldCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation>Almacenar los proyectos en QFieldCloud ofrece una sincronización perfecta, edición fuera de línea y administración de equipos.&lt;br&gt;&lt;br&gt;</translation>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation>Almacenar los proyectos en SIGPACGOCloud ofrece una sincronización perfecta, edición fuera de línea y administración de equipos.&lt;br&gt;&lt;br&gt;</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudProjectsModel</name>
+    <name>SIGPACGOCloudProjectsModel</name>
     <message>
         <source>Export failed</source>
         <translation type="vanished">Falló la exportación</translation>
@@ -2801,8 +2801,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Mensaje del sistema:</translation>
     </message>
     <message>
-        <source> (see more in the QField error log)…</source>
-        <translation>(ver más en el registro de errores de QField)…</translation>
+        <source> (see more in the SIGPACGO error log)…</source>
+        <translation>(ver más en el registro de errores de SIGPACGO)…</translation>
     </message>
     <message>
         <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
@@ -2810,10 +2810,10 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldCloudScreen</name>
+    <name>SIGPACGOCloudScreen</name>
     <message>
-        <source>QFieldCloud Projects</source>
-        <translation>Proyectos de QFieldCloud</translation>
+        <source>SIGPACGOCloud Projects</source>
+        <translation>Proyectos de SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
@@ -2844,8 +2844,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="vanished">Descargando, %1% recuperado…</translation>
     </message>
     <message>
-        <source>QFieldCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">QFieldCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
     </message>
     <message>
         <source>Uploading…</source>
@@ -2920,8 +2920,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>, datos actualizados disponibles en la nube</translation>
     </message>
     <message>
-        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
-        <translation>QFieldCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <translation>SIGPACGOCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
     </message>
     <message>
         <source>Downloading, %1% of %2 fetched</source>
@@ -2932,8 +2932,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Descargando, %1% obtenido</translation>
     </message>
     <message>
-        <source>Reaching out to QFieldCloud to download project</source>
-        <translation>Conectándose con QFieldCloud para descargar el proyecto</translation>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
+        <translation>Conectándose con SIGPACGOCloud para descargar el proyecto</translation>
     </message>
     <message>
         <source>No cloud projects found. To get started, %1read the documentation%2.</source>
@@ -2945,7 +2945,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldCloudUtils</name>
+    <name>SIGPACGOCloudUtils</name>
     <message>
         <source>A server error has occured, please try again.</source>
         <translation>Ha ocurrido un error del servidor, por favor prueba otra vez.</translation>
@@ -2960,7 +2960,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldGuide</name>
+    <name>SIGPACGOGuide</name>
     <message>
         <source>Finish</source>
         <translation>Terminar</translation>
@@ -2975,7 +2975,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldLocalDataPickerScreen</name>
+    <name>SIGPACGOLocalDataPickerScreen</name>
     <message>
         <source>Project Folder</source>
         <translation>Carpeta del proyecto</translation>
@@ -3073,8 +3073,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Actualizar proyecto desde ZIP</translation>
     </message>
     <message>
-        <source>‘%1’ is being uploaded to QFieldCloud</source>
-        <translation>‘%1’ se está subiendo a QFieldCloud</translation>
+        <source>‘%1’ is being uploaded to SIGPACGOCloud</source>
+        <translation>‘%1’ se está subiendo a SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Add to favorites</source>
@@ -3089,8 +3089,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Archivos</translation>
     </message>
     <message>
-        <source>Push to QFieldCloud</source>
-        <translation>Enviar a QFieldCloud</translation>
+        <source>Push to SIGPACGOCloud</source>
+        <translation>Enviar a SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Upload folder to WebDAV server</source>
@@ -3206,7 +3206,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldPositioningService</name>
+    <name>SIGPACGOPositioningService</name>
     <message>
         <source>Positioning service running</source>
         <translation>Servicio de posicionamiento en ejecución</translation>
@@ -3217,7 +3217,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldSettings</name>
+    <name>SIGPACGOSettings</name>
     <message>
         <source>Show scale bar</source>
         <translation>Mostrar barra de escala</translation>
@@ -3232,7 +3232,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</source>
-        <translation>Cuando la navegación a escala fija está activa, enfocar el resultado de una búsqueda desplazará al objeto. Con la navegación a escala fija desactivada desplazará y hará zoom al objeto.</translation>
+        <translation>Los resultados de búsqueda solo se desplazan al objeto sin hacer zoom.</translation>
     </message>
     <message>
         <source>Show digitizing information</source>
@@ -3240,7 +3240,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</source>
-        <translation>Cuando está activado, la información de coordenadas, tal como latitud y longitud, se superpone sobre el mapa al digitalizar nuevos objetos o al usar la herramienta de medida.</translation>
+        <translation>Muestra coordenadas en el mapa durante la digitalización o medición.</translation>
     </message>
     <message>
         <source>Show bookmarks</source>
@@ -3248,15 +3248,15 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</source>
-        <translation>Cuando está activado, se mostrarán en el mapa los marcadores de usuario guardados y los del proyecto abierto actualmente.</translation>
+        <translation>Muestra los marcadores guardados y del proyecto en el mapa.</translation>
     </message>
     <message>
         <source>Use native camera</source>
         <translation>Usar cámara nativa</translation>
     </message>
     <message>
-        <source>If disabled, QField will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
-        <translation>Si se deshabilita, QField usará una cámara interna minimalista en vez de la aplicación de la cámara del dispositivo. &lt;br&gt;Consejo: active esta opción e instale la App Open Camera para crear fotos georreferenciadas.</translation>
+        <source>If disabled, SIGPACGO will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
+        <translation>Usa la cámara del dispositivo en lugar de la cámara integrada. Ideal para fotos geoetiquetadas.</translation>
     </message>
     <message>
         <source>Fast editing mode</source>
@@ -3264,7 +3264,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</source>
-        <translation>Si se habilita, el objeto se guarda cuando tiene una geometría válida y se cumplen las restricciones y los atributos se acometen inmediatamente.</translation>
+        <translation>Guarda automáticamente los objetos cuando la geometría es válida y se cumplen las restricciones.</translation>
     </message>
     <message>
         <source>Dim screen when idling</source>
@@ -3287,8 +3287,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation>Enviar métricas anonimizadas</translation>
     </message>
     <message>
-        <source>If enabled, anonymized metrics will be collected and sent to help improve QField for everyone.</source>
-        <translation>Si se activa, se recopilarán métricas anonimizadas y se enviarán para ayudar a mejorar QField para todo el mundo.</translation>
+        <source>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</source>
+        <translation>Si se activa, se recopilarán métricas anonimizadas y se enviarán para ayudar a mejorar SIGPACGO para todo el mundo.</translation>
     </message>
     <message>
         <source>General</source>
@@ -3311,8 +3311,8 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="vanished">Idioma de la interfaz de usuario:</translation>
     </message>
     <message>
-        <source>To apply the selected user interface language, QField needs to completely shutdown and restart.</source>
-        <translation>QField necesita cerrarse por completo y reiniciar para aplicar el idioma seleccionado de la interfaz de usuario.</translation>
+        <source>To apply the selected user interface language, SIGPACGO needs to completely shutdown and restart.</source>
+        <translation>Reinicia SIGPAC-Go para aplicar el cambio de idioma.</translation>
     </message>
     <message>
         <source>system</source>
@@ -3449,12 +3449,12 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>El cambio de cuadrícula vertical se utiliza para aumentar la precisión de la altitud.</translation>
     </message>
     <message>
-        <source>QField Settings</source>
-        <translation>Configuración de QField</translation>
+        <source>SIGPACGO Settings</source>
+        <translation>Configuración de SIGPACGO</translation>
     </message>
     <message>
         <source>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</source>
-        <translation>Tiempo de inactividad en segundos antes de que el brillo de la pantalla se atenúe para conservar la batería.</translation>
+        <translation>Segundos de inactividad antes de atenuar la pantalla para ahorrar batería.</translation>
     </message>
     <message>
         <source>Measure (M) value attached to vertices:</source>
@@ -3562,11 +3562,11 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>A lower quality trades rendering precision in favor of lower memory usage and rendering time.</source>
-        <translation>Una calidad más baja reduce la precisión del renderizado en favor de un menor uso de memoria y tiempo de renderizado.</translation>
+        <translation>Menor calidad reduce el uso de memoria y mejora el rendimiento.</translation>
     </message>
     <message>
-        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, QField will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
-        <translation>Este valor corregirá los valores Z registrados por el dispositivo de posicionamiento. Si se introduce un valor de 1,6, QField restará automáticamente 1,6 a cada valor registrado. Asegúrese de insertar la altura efectiva de la antena, esto es, longitud de mástil + desplazamiento del centro de fase de la antena.</translation>
+        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
+        <translation>Este valor corregirá los valores Z registrados por el dispositivo de posicionamiento. Si se introduce un valor de 1,6, SIGPACGO restará automáticamente 1,6 a cada valor registrado. Asegúrese de insertar la altura efectiva de la antena, esto es, longitud de mástil + desplazamiento del centro de fase de la antena.</translation>
     </message>
     <message>
         <source>Orthometric from device</source>
@@ -3578,7 +3578,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>If enabled, pressing the device&apos;s volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.</source>
-        <translation>Si se habilita, presionar la tecla de subir el volumen del dispositivo añadirá un vértice mientras que presionar la tecla de bajar el volumen eliminará el último vértice introducido durante la sesión de digitalización.</translation>
+        <translation>Subir volumen añade vértice, bajar volumen elimina el último vértice.</translation>
     </message>
     <message>
         <source>Allow finger tap on canvas to add vertices</source>
@@ -3586,11 +3586,11 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.</source>
-        <translation>Cuando está activado, al tocar con un dedo en el lienzo se añadirá un vértice en la posición tocada.</translation>
+        <translation>Toca el mapa para añadir un vértice.</translation>
     </message>
     <message>
         <source>When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.</source>
-        <translation>Cuando está activado, el ratón actuará como si fuera un dedo. Cuando no está activado, el ratón funcionará como un lápiz óptico.</translation>
+        <translation>El ratón actúa como un dedo. Cuando está desactivado, actúa como un lápiz.</translation>
     </message>
     <message>
         <source>Map Canvas</source>
@@ -3630,7 +3630,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>When switched on, the map can be rotated by the user.</source>
-        <translation>Cuando se activa, el usuario puede rotar el mapa.</translation>
+        <translation>Permite rotar el mapa.</translation>
     </message>
     <message>
         <source>Bad accuracy threshold [m]</source>
@@ -3650,7 +3650,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
 </context>
 <context>
-    <name>QFieldSketcher</name>
+    <name>SIGPACGOSketcher</name>
     <message>
         <source>Select drawing template</source>
         <translation>Seleccionar plantilla de dibujo</translation>
@@ -3667,8 +3667,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Autenticación requerida</translation>
     </message>
     <message>
-        <source>QFieldCloud Unknown Error</source>
-        <translation>Error desconocido de QFieldCloud</translation>
+        <source>SIGPACGOCloud Unknown Error</source>
+        <translation>Error desconocido de SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Status not ok</source>
@@ -3735,8 +3735,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Información del usuario de Cloud</translation>
     </message>
     <message>
-        <source>Please wait while QField installation finalizes.</source>
-        <translation>Espere mientras finaliza la instalación de QField.</translation>
+        <source>Please wait while SIGPACGO installation finalizes.</source>
+        <translation>Espere mientras finaliza la instalación de SIGPACGO.</translation>
     </message>
     <message>
         <source>averaged</source>
@@ -3822,7 +3822,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>No se puede leer el proyecto, el archivo &quot;%1&quot; no existe</translation>
     </message>
     <message>
-        <source>Map printed on %1 using QField</source>
+        <source>Map printed on %1 using SIGPACGO</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4008,8 +4008,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
 <context>
     <name>SystemLoader</name>
     <message>
-        <source>Preparing QField, this is a one time operation that might take some time</source>
-        <translation type="vanished">Preparando QField,. Esta es una operación de una única vez que puede llevar algo de tiempo.</translation>
+        <source>Preparing SIGPACGO, this is a one time operation that might take some time</source>
+        <translation type="vanished">Preparando SIGPACGO,. Esta es una operación de una única vez que puede llevar algo de tiempo.</translation>
     </message>
 </context>
 <context>
@@ -4517,8 +4517,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>LLegar</translation>
     </message>
     <message>
-        <source>Hey there, how do you like your experience with QField so far?</source>
-        <translation>¿Qué tal su experiencia con QField hasta ahora?</translation>
+        <source>Hey there, how do you like your experience with SIGPACGO so far?</source>
+        <translation>¿Qué tal su experiencia con SIGPACGO hasta ahora?</translation>
     </message>
     <message>
         <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a comment on the store.</source>
@@ -4533,8 +4533,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Se ha deshabilitado la recopilación de métricas anonimizadas. Puede rehabilitarlas en el panel de configuración.</translation>
     </message>
     <message>
-        <source>To improve stability for everyone, QField collects and sends anonymized metrics.</source>
-        <translation>Para mejorar la estabilidad para todo el mundo, QField recopila y envía métricas anonimizadas.</translation>
+        <source>To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</source>
+        <translation>Para mejorar la estabilidad para todo el mundo, SIGPACGO recopila y envía métricas anonimizadas.</translation>
     </message>
     <message>
         <source>I agree</source>
@@ -4545,8 +4545,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Prefiero que no</translation>
     </message>
     <message>
-        <source>QFieldCloud projects</source>
-        <translation>Proyectos de QFieldCloud</translation>
+        <source>SIGPACGOCloud projects</source>
+        <translation>Proyectos de SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Open local file</source>
@@ -4573,12 +4573,12 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Eliminar de los proyectos recientes</translation>
     </message>
     <message>
-        <source>Welcome to QField. First time using this application? Try out sample projects listed in the list below.</source>
-        <translation type="vanished">Bienvenido a QField. ¿Primera vez que usa la aplicación? Pruebe los proyectos de muestra listados debajo.</translation>
+        <source>Welcome to SIGPACGO. First time using this application? Try out sample projects listed in the list below.</source>
+        <translation type="vanished">Bienvenido a SIGPACGO. ¿Primera vez que usa la aplicación? Pruebe los proyectos de muestra listados debajo.</translation>
     </message>
     <message>
-        <source>Welcome back to QField.</source>
-        <translation>Bienvenido de nuevo a QField.</translation>
+        <source>Welcome back to SIGPACGO.</source>
+        <translation>Bienvenido de nuevo a SIGPACGO.</translation>
     </message>
     <message>
         <source>Default project</source>
@@ -4609,8 +4609,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Acciones recientes del proyecto</translation>
     </message>
     <message>
-        <source>Welcome to QField. First time using this application? Try the sample projects listed below.</source>
-        <translation>Bienvenido a QField. ¿Primera vez que usa la aplicación? Pruebe los proyectos de muestra listados debajo.</translation>
+        <source>Welcome to SIGPACGO. First time using this application? Try the sample projects listed below.</source>
+        <translation>Bienvenido a SIGPACGO. ¿Primera vez que usa la aplicación? Pruebe los proyectos de muestra listados debajo.</translation>
     </message>
     <message>
         <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a review.</source>
@@ -4877,8 +4877,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Registro de mensajes</translation>
     </message>
     <message>
-        <source>About QField</source>
-        <translation>Acerca de QField</translation>
+        <source>About SIGPACGO</source>
+        <translation>Acerca de SIGPACGO</translation>
     </message>
     <message>
         <source>Select template below</source>
@@ -4889,8 +4889,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Activando el servicio de posicionamiento</translation>
     </message>
     <message>
-        <source>QField has no permissions to use positioning.</source>
-        <translation type="vanished">QField no tiene permiso para usar el posicionamiento.</translation>
+        <source>SIGPACGO has no permissions to use positioning.</source>
+        <translation type="vanished">SIGPACGO no tiene permiso para usar el posicionamiento.</translation>
     </message>
     <message>
         <source>Map Canvas Options</source>
@@ -5085,12 +5085,12 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Proyecto %1 descargado correctamente, ahora está disponible para abrirlo</translation>
     </message>
     <message>
-        <source>Changes failed to reach QFieldCloud: %1</source>
-        <translation>Los cambios no se pudieron subir a QFieldCloud: %1</translation>
+        <source>Changes failed to reach SIGPACGOCloud: %1</source>
+        <translation>Los cambios no se pudieron subir a SIGPACGOCloud: %1</translation>
     </message>
     <message>
-        <source>Changes successfully pushed to QFieldCloud</source>
-        <translation>Cambios subidos correctamente a QFieldCloud</translation>
+        <source>Changes successfully pushed to SIGPACGOCloud</source>
+        <translation>Cambios subidos correctamente a SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Press back again to close project and app</source>

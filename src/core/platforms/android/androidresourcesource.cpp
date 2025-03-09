@@ -34,9 +34,9 @@ void AndroidResourceSource::handleResourceReceived( const QString &path )
   disconnect( PlatformUtilities::instance(), &PlatformUtilities::resourceReceived, this, &AndroidResourceSource::handleResourceReceived );
   disconnect( PlatformUtilities::instance(), &PlatformUtilities::resourceCanceled, this, &AndroidResourceSource::handleResourceCanceled );
 
-  if ( QSettings().value( QStringLiteral( "QField/nativeCameraLaunched" ), false ).toBool() )
+  if ( QSettings().value( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), false ).toBool() )
   {
-    QSettings().setValue( QStringLiteral( "QField/nativeCameraLaunched" ), false );
+    QSettings().setValue( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), false );
   }
 
   if ( !path.isEmpty() )
@@ -56,8 +56,8 @@ void AndroidResourceSource::handleResourceCanceled( const QString &message )
   disconnect( PlatformUtilities::instance(), &PlatformUtilities::resourceReceived, this, &AndroidResourceSource::handleResourceReceived );
   disconnect( PlatformUtilities::instance(), &PlatformUtilities::resourceCanceled, this, &AndroidResourceSource::handleResourceCanceled );
 
-  if ( QSettings().value( QStringLiteral( "QField/nativeCameraLaunched" ), false ).toBool() )
+  if ( QSettings().value( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), false ).toBool() )
   {
-    QSettings().setValue( QStringLiteral( "QField/nativeCameraLaunched" ), false );
+    QSettings().setValue( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), false );
   }
 }

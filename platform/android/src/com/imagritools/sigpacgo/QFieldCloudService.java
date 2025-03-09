@@ -47,7 +47,7 @@ public class QFieldCloudService extends QtService {
     private NotificationManager notificationManager;
     private NotificationChannel notificationChannel;
 
-    private final String CHANNEL_ID = "qfield_service_01";
+    private final String CHANNEL_ID = "sigpacgo_service_01";
     private final int NOTIFICATION_ID = 101;
 
     public static void startQFieldCloudService(Context context) {
@@ -66,10 +66,10 @@ public class QFieldCloudService extends QtService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             notificationChannel =
-                new NotificationChannel(CHANNEL_ID, "QFieldCloud",
+                new NotificationChannel(CHANNEL_ID, "SIGPACGOCloud",
                                         NotificationManager.IMPORTANCE_DEFAULT);
             notificationChannel.setDescription(
-                "QFieldCloud background synchronization");
+                "SIGPACGOCloud background synchronization");
             notificationChannel.enableLights(false);
             notificationChannel.enableVibration(false);
             notificationManager.createNotificationChannel(notificationChannel);
@@ -95,7 +95,7 @@ public class QFieldCloudService extends QtService {
             new Notification.Builder(this)
                 .setSmallIcon(R.drawable.sigpacgo_logo)
                 .setWhen(System.currentTimeMillis())
-                .setContentTitle("QFieldCloud")
+                .setContentTitle("SIGPACGOCloud")
                 .setContentText(getString(R.string.upload_pending_attachments))
                 .setProgress(0, 0, true);
 

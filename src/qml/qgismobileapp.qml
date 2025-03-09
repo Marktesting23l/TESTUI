@@ -1037,17 +1037,17 @@ ApplicationWindow {
     onIsWithinChanged: {
       if (behavior == Geofencer.AlertWhenInsideGeofencedArea && geofencer.isWithin) {
         platformUtilities.vibrate(longVibration);
-        displayToast(qsTr("Position has trespassed into ‘%1’").arg(isWithinAreaName), 'error');
+        displayToast(qsTr("Position has trespassed into '%1'").arg(isWithinAreaName), 'error');
       } else if (behavior == Geofencer.AlertWhenOutsideGeofencedArea && !geofencer.isWithin) {
         platformUtilities.vibrate(longVibration);
-        displayToast(qsTr("Position outside areas after leaving ‘%1’").arg(lastWithinAreaName), 'error');
+        displayToast(qsTr("Position outside areas after leaving '%1'").arg(lastWithinAreaName), 'error');
       } else if (behavior == Geofencer.InformWhenEnteringLeavingGeofencedArea) {
         if (isWithin) {
           platformUtilities.vibrate(shortVibration);
-          displayToast(qsTr("Position entered into ‘%1’").arg(isWithinAreaName));
+          displayToast(qsTr("Position entered into '%1'").arg(isWithinAreaName));
         } else if (lastWithinAreaName != '') {
           platformUtilities.vibrate(shortVibration);
-          displayToast(qsTr("Position left from ‘%1’").arg(lastWithinAreaName));
+          displayToast(qsTr("Position left from '%1'").arg(lastWithinAreaName));
         }
       }
     }
@@ -1524,15 +1524,11 @@ ApplicationWindow {
 
       BusyIndicator {
       id: busyIndicator
-      anchors.right: mainMenuBar.right
-      anchors.top: mainToolbar.right
       width: menuButton.width + 15
       height: width
       running: mapCanvasMap.isRendering
     }
-
     
-
       QfActionButton {
         id: closeMeasureTool
         visible: stateMachine.state === 'measure'
@@ -1997,7 +1993,477 @@ ApplicationWindow {
       }
     }
 
+    Row {
+      id: locationToolbar
+      anchors.right: parent.right
+      anchors.rightMargin: 4
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: 4
+      spacing: 10
+        
+   
+         QfToolButton {
+        id: googleSearchButton
+        height: 40
+        width:  40
+        round: true
+        iconSource: Theme.getThemeVectorIcon("ic_map_black_24dp")
+        iconColor: googleSearchButton.enabled ? Theme.mainTextColor : Theme.mainTextDisabledColor
+        bgcolor: dashBoard.opened ? Theme.mainColor : Theme.darkGray
+        
+        property var lastCoordinates: null
+        property string lastClipboardText: ""
+        property bool manualInputMode: false
+        
+        // Custom dialog for coordinate input
+        property var coordInputDialog: Popup {
+          id: coordInputPopup
+          width: Math.min(mainWindow.width * 0.9, 400)
+          height: coordInputColumn.height + 40
+          x: (mainWindow.width - width) / 2
+          y: (mainWindow.height - height) / 2
+          modal: true
+          closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+          
+          Column {
+            id: coordInputColumn
+            width: parent.width - 40
+            anchors.centerIn: parent
+            spacing: 10
+            
+            Text {
+              width: parent.width
+              text: qsTr("Enter Coordinates")
+              font.bold: true
+              font.pixelSize: 16
+            }
+            
+            Text {
+              width: parent.width
+              text: qsTr("Format: 36.97550N, -2.51755E or decimal degrees")
+              font.pixelSize: 12
+              wrapMode: Text.WordWrap
+            }
+            
+            TextField {
+              id: coordInput
+              width: parent.width
+              placeholderText: qsTr("Enter coordinates")
+              text: googleSearchButton.lastClipboardText || ""
+            }
+            
+            Row {
+              width: parent.width
+              spacing: 10
+              
+              Button {
+                text: qsTr("Cancel")
+                onClicked: coordInputPopup.close()
+                width: (parent.width - 10) / 2
+              }
+              
+              Button {
+                text: qsTr("Open in Maps")
+                width: (parent.width - 10) / 2
+                onClicked: {
+                  var coords = googleSearchButton.parseCoordinates(coordInput.text);
+                  if (coords) {
+                    if (googleSearchButton.openCoordinatesInMaps(coords)) {
+                      // Save the text for future use
+                      googleSearchButton.lastClipboardText = coordInput.text;
+                      coordInputPopup.close();
+                    } else {
+                      displayToast(qsTr("Invalid coordinates"), "warning");
+                    }
+                  } else {
+                    displayToast(qsTr("Could not parse coordinates"), "warning");
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        // Show the coordinate input dialog
+        function showManualInputDialog(initialText) {
+          if (initialText) {
+            coordInputDialog.coordInput.text = initialText;
+          }
+          coordInputDialog.open();
+          return true;
+        }
+        
+        function parseCoordinates(text) {
+          // Check if text is undefined or empty
+          if (!text || text.trim() === '') {
+            return null;
+          }
+          
+          console.log("Parsing text for coordinates: " + text);
+          
+          // Try to match different coordinate formats
+          
+          // Format: "36.97550N, -2.51755E — EPSG:4258: ETRS89"
+          // This is the primary format mentioned in the requirements
+          var regex1 = /(\d+\.\d+)([NS]),\s*(-?\d+\.\d+)([EW])\s*(?:—|-)?\s*(?:EPSG|epsg)?/i;
+          var match = text.match(regex1);
+          
+          if (match) {
+            console.log("Matched format 1: " + JSON.stringify(match));
+            var lat = parseFloat(match[1]);
+            var latDir = match[2];
+            var lon = parseFloat(match[3]);
+            var lonDir = match[4];
+            
+            // Adjust sign based on direction
+            if (latDir.toUpperCase() === "S") lat = -lat;
+            // For longitude, E is positive, W is negative
+            if (lonDir.toUpperCase() === "W") lon = -lon;
+            
+            return { lat: lat, lng: lon };
+          }
+          
+          // Try alternative format with directions: "N36.97550, E-2.51755"
+          var regex2 = /([NS])(\d+\.\d+),\s*([EW])(-?\d+\.\d+)/i;
+          match = text.match(regex2);
+          
+          if (match) {
+            console.log("Matched format 2: " + JSON.stringify(match));
+            var latDir = match[1];
+            var lat = parseFloat(match[2]);
+            var lonDir = match[3];
+            var lon = parseFloat(match[4]);
+            
+            // Adjust sign based on direction
+            if (latDir.toUpperCase() === "S") lat = -lat;
+            if (lonDir.toUpperCase() === "W") lon = -lon;
+            
+            return { lat: lat, lng: lon };
+          }
+          
+          // Try alternative format: decimal degrees with sign
+          // Like "36.97550, -2.51755" or similar variations
+          var regex3 = /(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/;
+          match = text.match(regex3);
+          
+          if (match) {
+            console.log("Matched format 3: " + JSON.stringify(match));
+            var lat = parseFloat(match[1]);
+            var lon = parseFloat(match[2]);
+            
+            // Check if values are in valid range
+            if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+              return { lat: lat, lng: lon };
+            }
+            
+            // If lat is outside range but lon is in lat range, they might be swapped
+            if (Math.abs(lat) > 90 && Math.abs(lat) <= 180 && Math.abs(lon) <= 90) {
+              return { lat: lon, lng: lat };
+            }
+            
+            return { lat: lat, lng: lon };
+          }
+          
+          // Try to find any pair of coordinates in the text
+          var numbers = text.match(/-?\d+\.\d+/g);
+          if (numbers && numbers.length >= 2) {
+            console.log("Matched raw numbers: " + JSON.stringify(numbers));
+            var lat = parseFloat(numbers[0]);
+            var lon = parseFloat(numbers[1]);
+            
+            // Check if values are in valid range
+            if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+              return { lat: lat, lng: lon };
+            }
+            
+            // If lat is outside range but lon is in lat range, they might be swapped
+            if (Math.abs(lat) > 90 && Math.abs(lat) <= 180 && Math.abs(lon) <= 90) {
+              return { lat: lon, lng: lat };
+            }
+            
+            return { lat: lat, lng: lon };
+          }
+          
+          return null;
+        }
+        
+        function openCoordinatesInMaps(coords) {
+          if (!coords) return false;
+          
+          console.log("Opening coordinates in maps: " + JSON.stringify(coords));
+          
+          // Validate coordinates are in reasonable range
+          if (Math.abs(coords.lat) <= 90 && Math.abs(coords.lng) <= 180) {
+            // Add a timestamp to prevent caching issues
+            var timestamp = new Date().getTime();
+            
+            // Use the maps.google.com URL format which is more reliable for coordinates
+            var mapsUrl = "https://maps.google.com/?q=" + 
+                          coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
+                          "&t=" + timestamp;
+            
+            console.log("Opening URL: " + mapsUrl);
+            Qt.openUrlExternally(mapsUrl);
+            displayToast(qsTr("Opening location at ") + coords.lat.toFixed(6) + ", " + coords.lng.toFixed(6));
+            
+            // Store these coordinates for future use
+            lastCoordinates = coords;
+            return true;
+          }
+          
+          return false;
+        }
+
+        onClicked: {
+          // Toggle between manual input and auto modes
+          if (manualInputMode) {
+            showManualInputDialog(lastClipboardText);
+          } else {
+            // Try current position
+            if (positionSource.active && positionSource.positionInformation.latitudeValid && 
+                positionSource.positionInformation.longitudeValid) {
+              
+              var currentCoords = {
+                lat: positionSource.positionInformation.latitude,
+                lng: positionSource.positionInformation.longitude
+              };
+              
+              openCoordinatesInMaps(currentCoords);
+              displayToast(qsTr("Using current position"));
+            } else if (lastCoordinates) {
+              // Use last coordinates as fallback
+              openCoordinatesInMaps(lastCoordinates);
+              displayToast(qsTr("Using last coordinates"));
+            } else {
+              // If all else fails, show manual input
+              showManualInputDialog(lastClipboardText);
+            }
+          }
+        }
+        
+        onPressAndHold: {
+          // Set manual input mode
+          manualInputMode = !manualInputMode;
+          
+          if (manualInputMode) {
+            displayToast(qsTr("Manual input mode enabled"));
+          } else {
+            displayToast(qsTr("Auto mode enabled"));
+          }
+        }
+        
+        ToolTip.visible: hovered
+        ToolTip.text: manualInputMode ? 
+                     qsTr("Manual mode: Click to enter coordinates") : 
+                     qsTr("Auto mode: Click to use current position, long press for manual input")
+      }
+
+          QfToolButton {
+            id: navigationButton
+            visible: navigation.isActive
+            round: true
     
+            property bool isFollowLocationActive: positionSource.active && gnssButton.followActive && followIncludeDestination
+            iconSource: Theme.getThemeVectorIcon("ic_navigation_flag_purple_24dp")
+            iconColor: isFollowLocationActive ? Theme.toolButtonColor : Theme.navigationColor
+            bgcolor: isFollowLocationActive ? Theme.navigationColor : Theme.toolButtonBackgroundColor
+    
+            /*
+            / When set to true, when the map follows the device's current position, the extent
+            / will always include the destination marker.
+            */
+            property bool followIncludeDestination: true
+    
+            onClicked: {
+              if (positionSource.active && gnssButton.followActive) {
+                followIncludeDestination = !followIncludeDestination;
+                settings.setValue("/QField/Navigation/FollowIncludeDestination", followIncludeDestination);
+                gnssButton.followLocation(true);
+              } else {
+                mapCanvas.mapSettings.setCenter(navigation.destination);
+              }
+            }
+    
+            onPressAndHold: {
+              navigationMenu.popup(locationToolbar.x + locationToolbar.width - navigationMenu.width, locationToolbar.y + navigationButton.height - navigationMenu.height);
+            }
+    
+            Component.onCompleted: {
+              followIncludeDestination = settings.valueBool("/QField/Navigation/FollowIncludeDestination", true);
+            }
+          }
+    
+          QfToolButton {
+            id: gnssLockButton
+            visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
+            round: true
+            checkable: true
+            checked: positioningSettings.positioningCoordinateLock
+    
+            iconSource: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp") : Theme.getThemeVectorIcon("ic_location_locked_white_24dp")
+            iconColor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.positionColor : Theme.toolButtonColor
+            bgcolor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.toolButtonBackgroundColor : Theme.toolButtonBackgroundSemiOpaqueColor
+    
+            onCheckedChanged: {
+              if (gnssButton.state === "On") {
+                if (checked) {
+                  if (freehandButton.freehandDigitizing) {
+                    // deactivate freehand digitizing when cursor locked is on
+                    freehandButton.clicked();
+                  }
+                  displayToast(qsTr("Coordinate cursor now locked to position"));
+                  if (positionSource.positionInformation.latitudeValid) {
+                    var screenLocation = mapCanvas.mapSettings.coordinateToScreen(locationMarker.location);
+                    if (screenLocation.x < 0 || screenLocation.x > mainWindow.width || screenLocation.y < 0 || screenLocation.y > mainWindow.height) {
+                      mapCanvas.mapSettings.setCenter(positionSource.projectedPosition);
+                    }
+                  }
+                  positioningSettings.positioningCoordinateLock = true;
+                } else {
+                  displayToast(qsTr("Coordinate cursor unlocked"));
+                  positioningSettings.positioningCoordinateLock = false;
+                  // deactivate any active averaged position collection
+                  positionSource.averagedPosition = false;
+                }
+              }
+            }
+          }
+    
+          QfToolButton {
+            id: gnssButton
+            visible: positionSource.valid
+            round: true
+    
+            /*
+            / When set to true, the map will follow the device's current position; the map
+            / will stop following the position whe the user manually drag the map.
+            */
+            property bool followActive: false
+            /*
+            / When set to true, map canvas extent changes will not result in the
+            / deactivation of the above followActive mode.
+            */
+            property bool followActiveSkipExtentChanged: false
+            /*
+            / When set to true, the map will rotate to match the device's current magnetometer/compass orientatin.
+            */
+            property bool followOrientationActive: false
+            /*
+            / When set to true, map canvas rotation changes will not result in the
+            / deactivation of the above followOrientationActive mode.
+            */
+            property bool followActiveSkipRotationChanged: false
+    
+            iconSource: positionSource.active ? (trackings.count > 0 ? Theme.getThemeVectorIcon("ic_location_tracking_white_24dp") : positionSource.positionInformation && positionSource.positionInformation.latitudeValid ? Theme.getThemeVectorIcon("ic_location_valid_white_24dp") : Theme.getThemeVectorIcon("ic_location_white_24dp")) : Theme.getThemeVectorIcon("ic_location_disabled_white_24dp")
+            iconColor: followActive ? Theme.toolButtonColor : Theme.positionColor
+            bgcolor: followActive ? Theme.positionColor : Theme.toolButtonBackgroundSemiOpaqueColor
+    
+            onClicked: {
+              if (followActive) {
+                followOrientationActive = true;
+                followOrientation();
+                displayToast(qsTr("Canvas follows location and compass orientation"));
+              } else {
+                followActive = true;
+                if (positionSource.projectedPosition.x) {
+                  if (!positionSource.active) {
+                    positioningSettings.positioningActivated = true;
+                  } else {
+                    followLocation(true);
+                    displayToast(qsTr("Canvas follows location"));
+                  }
+                } else {
+                  if (positionSource.valid) {
+                    if (positionSource.active) {
+                      displayToast(qsTr("Waiting for location"));
+                    } else {
+                      positioningSettings.positioningActivated = true;
+                    }
+                  }
+                }
+              }
+            }
+
+        onPressAndHold: {
+          gnssMenu.popup(locationToolbar.x + locationToolbar.width - gnssMenu.width, locationToolbar.y + locationToolbar.height - gnssMenu.height);
+        }
+
+        property int followLocationMinScale: 125
+        property int followLocationMinMargin: 40
+        property int followLocationScreenFraction: settings ? settings.value("/QField/Positioning/FollowScreenFraction", 5) : 5
+
+        function followLocation(forceRecenter) {
+          var screenLocation = mapCanvas.mapSettings.coordinateToScreen(positionSource.projectedPosition);
+          if (navigation.isActive && navigationButton.followIncludeDestination) {
+            if (mapCanvas.mapSettings.scale > followLocationMinScale) {
+              var screenDestination = mapCanvas.mapSettings.coordinateToScreen(navigation.destination);
+              if (forceRecenter || screenDestination.x < followLocationMinMargin || screenDestination.x > (mainWindow.width - followLocationMinMargin) || screenDestination.y < followLocationMinMargin || screenDestination.y > (mainWindow.height - followLocationMinMargin) || screenLocation.x < followLocationMinMargin || screenLocation.x > (mainWindow.width - followLocationMinMargin) || screenLocation.y < followLocationMinMargin || screenLocation.y > (mainWindow.height - followLocationMinMargin) || (Math.abs(screenDestination.x - screenLocation.x) < mainWindow.width / 3 && Math.abs(screenDestination.y - screenLocation.y) < mainWindow.height / 3)) {
+                gnssButton.followActiveSkipExtentChanged = true;
+                var points = [positionSource.projectedPosition, navigation.destination];
+                mapCanvas.mapSettings.setExtentFromPoints(points, followLocationMinScale, true);
+              }
+            }
+          } else {
+            var threshold = Math.min(mainWindow.width, mainWindow.height) / followLocationScreenFraction;
+            if (forceRecenter || screenLocation.x < mapCanvas.x + threshold || screenLocation.x > mapCanvas.width - threshold || screenLocation.y < mapCanvas.y + threshold || screenLocation.y > mapCanvas.height - threshold) {
+              gnssButton.followActiveSkipExtentChanged = true;
+              mapCanvas.mapSettings.setCenter(positionSource.projectedPosition, true);
+            }
+          }
+        }
+        function followOrientation() {
+          if (!isNaN(positionSource.orientation) && Math.abs(-positionSource.orientation - mapCanvas.mapSettings.rotation) >= 10) {
+            gnssButton.followActiveSkipRotationChanged = true;
+            mapCanvas.mapSettings.rotation = -positionSource.orientation;
+          }
+        }
+
+        Rectangle {
+          anchors {
+            top: parent.top
+            right: parent.right
+            rightMargin: 2
+            topMargin: 2
+          }
+
+          width: 12
+          height: 12
+          radius: width / 2
+
+          border.width: 1.5
+          border.color: "white"
+
+          visible: positioningSettings.accuracyIndicator && gnssButton.state === "On"
+          color: !positionSource.positionInformation || !positionSource.positionInformation.haccValid || positionSource.positionInformation.hacc > positioningSettings.accuracyBad ? Theme.accuracyBad : positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent ? Theme.accuracyTolerated : Theme.accuracyExcellent
+        }
+      }
+
+      Connections {
+        target: mapCanvas.mapSettings
+
+        function onExtentChanged() {
+          if (gnssButton.followActive) {
+            if (gnssButton.followActiveSkipExtentChanged) {
+              gnssButton.followActiveSkipExtentChanged = false;
+            } else {
+              gnssButton.followActive = false;
+              gnssButton.followOrientationActive = false;
+              displayToast(qsTr("Canvas stopped following location"));
+            }
+          }
+        }
+
+        function onRotationChanged() {
+          if (gnssButton.followOrientationActive) {
+            if (gnssButton.followActiveSkipRotationChanged) {
+              gnssButton.followActiveSkipRotationChanged = false;
+            } else {
+              gnssButton.followOrientationActive = false;
+            }
+          }
+        }
+      }
+    }
 
     Row {
       id: digitizingToolbarContainer
@@ -2599,7 +3065,7 @@ ApplicationWindow {
     }
 
     MenuItem {
-      text: qsTr("About QField")
+      text: qsTr("About SIGPACGO")
 
       font: Theme.defaultFont
       icon.source: Theme.getThemeVectorIcon("ic_qfield_black_24dp")
@@ -3393,234 +3859,7 @@ ApplicationWindow {
     }
   }
 
-  Row {
-         id: locationToolbar
-         anchors.horizontalCenter: parent.horizontalCenter
-         anchors.rightMargin: 40
-         anchors.top: parent.top
-         spacing: 30
-        
-   
-         QfToolButton {
-        id: googleSearchButton
-        height: 55
-        width:  55
-        round: true
-        iconSource: Theme.getThemeVectorIcon("ic_copy_black_24dp")
-        iconColor: googleSearchButton.enabled ? Theme.mainTextColor : Theme.mainTextDisabledColor
-        bgcolor: dashBoard.opened ? Theme.mainColor : Theme.darkGray
-
-        onClicked: {
-          Qt.openUrlExternally("https://www.google.com/search?q=" + clipboardManager.text);
-        }
-      }
-
-          QfToolButton {
-            id: navigationButton
-            visible: navigation.isActive
-            round: true
-    
-            property bool isFollowLocationActive: positionSource.active && gnssButton.followActive && followIncludeDestination
-            iconSource: Theme.getThemeVectorIcon("ic_navigation_flag_purple_24dp")
-            iconColor: isFollowLocationActive ? Theme.toolButtonColor : Theme.navigationColor
-            bgcolor: isFollowLocationActive ? Theme.navigationColor : Theme.toolButtonBackgroundColor
-    
-            /*
-            / When set to true, when the map follows the device's current position, the extent
-            / will always include the destination marker.
-            */
-            property bool followIncludeDestination: true
-    
-            onClicked: {
-              if (positionSource.active && gnssButton.followActive) {
-                followIncludeDestination = !followIncludeDestination;
-                settings.setValue("/QField/Navigation/FollowIncludeDestination", followIncludeDestination);
-                gnssButton.followLocation(true);
-              } else {
-                mapCanvas.mapSettings.setCenter(navigation.destination);
-              }
-            }
-    
-            onPressAndHold: {
-              navigationMenu.popup(locationToolbar.x + locationToolbar.width - navigationMenu.width, locationToolbar.y + navigationButton.height - navigationMenu.height);
-            }
-    
-            Component.onCompleted: {
-              followIncludeDestination = settings.valueBool("/QField/Navigation/FollowIncludeDestination", true);
-            }
-          }
-    
-          QfToolButton {
-            id: gnssLockButton
-            visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
-            round: true
-            checkable: true
-            checked: positioningSettings.positioningCoordinateLock
-    
-            iconSource: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp") : Theme.getThemeVectorIcon("ic_location_locked_white_24dp")
-            iconColor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.positionColor : Theme.toolButtonColor
-            bgcolor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.toolButtonBackgroundColor : Theme.toolButtonBackgroundSemiOpaqueColor
-    
-            onCheckedChanged: {
-              if (gnssButton.state === "On") {
-                if (checked) {
-                  if (freehandButton.freehandDigitizing) {
-                    // deactivate freehand digitizing when cursor locked is on
-                    freehandButton.clicked();
-                  }
-                  displayToast(qsTr("Coordinate cursor now locked to position"));
-                  if (positionSource.positionInformation.latitudeValid) {
-                    var screenLocation = mapCanvas.mapSettings.coordinateToScreen(locationMarker.location);
-                    if (screenLocation.x < 0 || screenLocation.x > mainWindow.width || screenLocation.y < 0 || screenLocation.y > mainWindow.height) {
-                      mapCanvas.mapSettings.setCenter(positionSource.projectedPosition);
-                    }
-                  }
-                  positioningSettings.positioningCoordinateLock = true;
-                } else {
-                  displayToast(qsTr("Coordinate cursor unlocked"));
-                  positioningSettings.positioningCoordinateLock = false;
-                  // deactivate any active averaged position collection
-                  positionSource.averagedPosition = false;
-                }
-              }
-            }
-          }
-    
-          QfToolButton {
-            id: gnssButton
-            visible: positionSource.valid
-            round: true
-    
-            /*
-            / When set to true, the map will follow the device's current position; the map
-            / will stop following the position whe the user manually drag the map.
-            */
-            property bool followActive: false
-            /*
-            / When set to true, map canvas extent changes will not result in the
-            / deactivation of the above followActive mode.
-            */
-            property bool followActiveSkipExtentChanged: false
-            /*
-            / When set to true, the map will rotate to match the device's current magnetometer/compass orientatin.
-            */
-            property bool followOrientationActive: false
-            /*
-            / When set to true, map canvas rotation changes will not result in the
-            / deactivation of the above followOrientationActive mode.
-            */
-            property bool followActiveSkipRotationChanged: false
-    
-            iconSource: positionSource.active ? (trackings.count > 0 ? Theme.getThemeVectorIcon("ic_location_tracking_white_24dp") : positionSource.positionInformation && positionSource.positionInformation.latitudeValid ? Theme.getThemeVectorIcon("ic_location_valid_white_24dp") : Theme.getThemeVectorIcon("ic_location_white_24dp")) : Theme.getThemeVectorIcon("ic_location_disabled_white_24dp")
-            iconColor: followActive ? Theme.toolButtonColor : Theme.positionColor
-            bgcolor: followActive ? Theme.positionColor : Theme.toolButtonBackgroundSemiOpaqueColor
-    
-            onClicked: {
-              if (followActive) {
-                followOrientationActive = true;
-                followOrientation();
-                displayToast(qsTr("Canvas follows location and compass orientation"));
-              } else {
-                followActive = true;
-                if (positionSource.projectedPosition.x) {
-                  if (!positionSource.active) {
-                    positioningSettings.positioningActivated = true;
-                  } else {
-                    followLocation(true);
-                    displayToast(qsTr("Canvas follows location"));
-                  }
-                } else {
-                  if (positionSource.valid) {
-                    if (positionSource.active) {
-                      displayToast(qsTr("Waiting for location"));
-                    } else {
-                      positioningSettings.positioningActivated = true;
-                    }
-                  }
-                }
-              }
-            }
-
-        onPressAndHold: {
-          gnssMenu.popup(locationToolbar.x + locationToolbar.width - gnssMenu.width, locationToolbar.y + locationToolbar.height - gnssMenu.height);
-        }
-
-        property int followLocationMinScale: 125
-        property int followLocationMinMargin: 40
-        property int followLocationScreenFraction: settings ? settings.value("/QField/Positioning/FollowScreenFraction", 5) : 5
-
-        function followLocation(forceRecenter) {
-          var screenLocation = mapCanvas.mapSettings.coordinateToScreen(positionSource.projectedPosition);
-          if (navigation.isActive && navigationButton.followIncludeDestination) {
-            if (mapCanvas.mapSettings.scale > followLocationMinScale) {
-              var screenDestination = mapCanvas.mapSettings.coordinateToScreen(navigation.destination);
-              if (forceRecenter || screenDestination.x < followLocationMinMargin || screenDestination.x > (mainWindow.width - followLocationMinMargin) || screenDestination.y < followLocationMinMargin || screenDestination.y > (mainWindow.height - followLocationMinMargin) || screenLocation.x < followLocationMinMargin || screenLocation.x > (mainWindow.width - followLocationMinMargin) || screenLocation.y < followLocationMinMargin || screenLocation.y > (mainWindow.height - followLocationMinMargin) || (Math.abs(screenDestination.x - screenLocation.x) < mainWindow.width / 3 && Math.abs(screenDestination.y - screenLocation.y) < mainWindow.height / 3)) {
-                gnssButton.followActiveSkipExtentChanged = true;
-                var points = [positionSource.projectedPosition, navigation.destination];
-                mapCanvas.mapSettings.setExtentFromPoints(points, followLocationMinScale, true);
-              }
-            }
-          } else {
-            var threshold = Math.min(mainWindow.width, mainWindow.height) / followLocationScreenFraction;
-            if (forceRecenter || screenLocation.x < mapCanvas.x + threshold || screenLocation.x > mapCanvas.width - threshold || screenLocation.y < mapCanvas.y + threshold || screenLocation.y > mapCanvas.height - threshold) {
-              gnssButton.followActiveSkipExtentChanged = true;
-              mapCanvas.mapSettings.setCenter(positionSource.projectedPosition, true);
-            }
-          }
-        }
-        function followOrientation() {
-          if (!isNaN(positionSource.orientation) && Math.abs(-positionSource.orientation - mapCanvas.mapSettings.rotation) >= 10) {
-            gnssButton.followActiveSkipRotationChanged = true;
-            mapCanvas.mapSettings.rotation = -positionSource.orientation;
-          }
-        }
-
-        Rectangle {
-          anchors {
-            top: parent.top
-            right: parent.right
-            rightMargin: 2
-            topMargin: 2
-          }
-
-          width: 12
-          height: 12
-          radius: width / 2
-
-          border.width: 1.5
-          border.color: "white"
-
-          visible: positioningSettings.accuracyIndicator && gnssButton.state === "On"
-          color: !positionSource.positionInformation || !positionSource.positionInformation.haccValid || positionSource.positionInformation.hacc > positioningSettings.accuracyBad ? Theme.accuracyBad : positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent ? Theme.accuracyTolerated : Theme.accuracyExcellent
-        }
-      }
-
-      Connections {
-        target: mapCanvas.mapSettings
-
-        function onExtentChanged() {
-          if (gnssButton.followActive) {
-            if (gnssButton.followActiveSkipExtentChanged) {
-              gnssButton.followActiveSkipExtentChanged = false;
-            } else {
-              gnssButton.followActive = false;
-              gnssButton.followOrientationActive = false;
-              displayToast(qsTr("Canvas stopped following location"));
-            }
-          }
-        }
-
-        function onRotationChanged() {
-          if (gnssButton.followOrientationActive) {
-            if (gnssButton.followActiveSkipRotationChanged) {
-              gnssButton.followActiveSkipRotationChanged = false;
-            } else {
-              gnssButton.followOrientationActive = false;
-            }
-          }
-        }
-      }
-    }
+  
 
   /* The feature form */
   FeatureListForm {
@@ -4504,4 +4743,5 @@ ApplicationWindow {
     }
   }
 }
+
 

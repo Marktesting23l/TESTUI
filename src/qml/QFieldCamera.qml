@@ -95,6 +95,7 @@ Popup {
     property bool stamping: false
     property bool geoTagging: true
     property bool showGrid: false
+    property bool showOverlay: true
     property string deviceId: ''
     property size resolution: Qt.size(0, 0)
     property int pixelFormat: 0
@@ -202,6 +203,164 @@ Popup {
       id: videoOutput
       anchors.fill: parent
       visible: cameraItem.state == "PhotoCapture" || cameraItem.state == "VideoCapture"
+      
+      Rectangle {
+        id: infoOverlay
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: infoText.contentHeight + 20
+        color: "#80000000"
+        visible: cameraItem.state == "PhotoCapture" && cameraSettings.showOverlay
+        
+        Rectangle {
+          width: 4
+          anchors.top: parent.top
+          anchors.bottom: parent.bottom
+          anchors.left: parent.left
+          color: Theme.mainColor
+        }
+        
+        Row {
+          anchors.fill: parent
+          anchors.leftMargin: 14
+          anchors.rightMargin: 10
+          anchors.topMargin: 10
+          anchors.bottomMargin: 10
+          spacing: 10
+          
+          Column {
+            width: parent.width - compassIndicator.width - parent.spacing
+            height: parent.height
+            spacing: 4
+            
+            Text {
+              id: dateTimeText
+              width: parent.width
+              color: "white"
+              font.pixelSize: 16
+              font.bold: true
+              text: {
+                let dateTime = new Date()
+                return Qt.formatDateTime(dateTime, "yyyy-MM-dd @ HH:mm:ss")
+              }
+              
+              layer.enabled: true
+              layer.effect: QfDropShadow {
+                horizontalOffset: 1
+                verticalOffset: 1
+                radius: 3.0
+                color: "#80000000"
+                source: dateTimeText
+              }
+            }
+            
+            Text {
+              id: infoText
+              width: parent.width
+              color: "white"
+              font.pixelSize: 14
+              wrapMode: Text.WordWrap
+              visible: text !== ""
+              text: {
+                let coordsStr = ""
+                
+                if (positionSource.active && positionSource.positionInformation.latitudeValid && positionSource.positionInformation.longitudeValid) {
+                  let lat = positionSource.positionInformation.latitude.toFixed(7)
+                  let lon = positionSource.positionInformation.longitude.toFixed(7)
+                  let alt = positionSource.positionInformation.elevationValid ? positionSource.positionInformation.elevation.toFixed(2) + " m" : "N/A"
+                  coordsStr = qsTr("Lat") + ": " + lat + " | " + qsTr("Lon") + ": " + lon
+                  
+                  if (positionSource.positionInformation.elevationValid) {
+                    coordsStr += " | " + qsTr("Alt") + ": " + alt
+                  }
+                  
+                  if (positionSource.positionInformation.speedValid) {
+                    coordsStr += "\n" + qsTr("Speed") + ": " + positionSource.positionInformation.speed.toFixed(1) + " m/s"
+                  }
+                  
+                  return coordsStr
+                } else {
+                  return qsTr("GPS coordinates not available")
+                }
+              }
+              
+              layer.enabled: true
+              layer.effect: QfDropShadow {
+                horizontalOffset: 1
+                verticalOffset: 1
+                radius: 3.0
+                color: "#80000000"
+                source: infoText
+              }
+            }
+          }
+          
+          Item {
+            id: compassIndicator
+            width: 50
+            height: parent.height
+            visible: positionSource.active && positionSource.positionInformation.orientationValid
+            
+            Rectangle {
+              id: compassCircle
+              anchors.centerIn: parent
+              width: Math.min(parent.width, parent.height) - 4
+              height: width
+              radius: width / 2
+              color: "#40FFFFFF"
+              border.color: "white"
+              border.width: 1
+              
+              Text {
+                anchors.centerIn: parent
+                text: "N"
+                color: "white"
+                font.pixelSize: 12
+                font.bold: true
+              }
+              
+              Rectangle {
+                id: compassNeedle
+                anchors.centerIn: parent
+                width: 2
+                height: parent.height * 0.8
+                color: Theme.mainColor
+                antialiasing: true
+                transform: Rotation {
+                  origin.x: compassNeedle.width / 2
+                  origin.y: compassNeedle.height / 2
+                  angle: positionSource.positionInformation.orientationValid ? positionSource.positionInformation.orientation : 0
+                }
+              }
+            }
+            
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              anchors.top: compassCircle.bottom
+              anchors.topMargin: 2
+              text: positionSource.positionInformation.orientationValid ? Math.round(positionSource.positionInformation.orientation) + "°" : ""
+              color: "white"
+              font.pixelSize: 10
+              font.bold: true
+            }
+          }
+        }
+        
+        Timer {
+          interval: 1000
+          running: infoOverlay.visible
+          repeat: true
+          onTriggered: {
+            // Force update of the bindings
+            dateTimeText.text = dateTimeText.text
+            infoText.text = infoText.text
+            if (compassIndicator.visible) {
+              compassNeedle.rotation = positionSource.positionInformation.orientation
+            }
+          }
+        }
+      }
     }
 
     Shape {
@@ -606,6 +765,30 @@ Popup {
           cameraSettings.stamping = !cameraSettings.stamping;
           displayToast(cameraSettings.stamping ? qsTr("Details stamping enabled") : qsTr("Details stamping disabled"));
         }
+        
+        ToolTip.visible: hovered
+        ToolTip.text: cameraSettings.stamping ? qsTr("Disable photo stamping") : qsTr("Enable photo stamping")
+      }
+
+      QfToolButton {
+        id: overlayButton
+
+        width: 40
+        height: 40
+        padding: 2
+
+        iconSource: Theme.getThemeVectorIcon("ic_info_outline_black_24dp")
+        iconColor: cameraSettings.showOverlay ? Theme.mainColor : Theme.toolButtonColor
+        bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
+        round: true
+
+        onClicked: {
+          cameraSettings.showOverlay = !cameraSettings.showOverlay;
+          displayToast(cameraSettings.showOverlay ? qsTr("Info overlay enabled") : qsTr("Info overlay disabled"));
+        }
+        
+        ToolTip.visible: hovered
+        ToolTip.text: cameraSettings.showOverlay ? qsTr("Hide info overlay") : qsTr("Show info overlay")
       }
 
       QfToolButton {

@@ -145,7 +145,7 @@ void AndroidPlatformUtilities::loadQgsProject() const
 
 QStringList AndroidPlatformUtilities::appDataDirs() const
 {
-  const QString dataDirs = getIntentExtra( "QFIELD_APP_DATA_DIRS" );
+  const QString dataDirs = getIntentExtra( "SIGPACGO_APP_DATA_DIRS" );
   return ( !dataDirs.isEmpty() ? dataDirs.split( "--;--" ) : QStringList() );
 }
 
@@ -438,7 +438,7 @@ ResourceSource *AndroidPlatformUtilities::processCameraActivity( const QString &
         QJniObject filePathJni = QJniObject::fromString( filePath );
         QJniObject suffixJni = QJniObject::fromString( suffix );
 
-        QSettings().setValue( QStringLiteral( "QField/nativeCameraLaunched" ), true );
+        QSettings().setValue( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), true );
         activity.callMethod<void>( "getCameraResource", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V",
                                    prefixJni.object<jstring>(),
                                    filePathJni.object<jstring>(),
@@ -479,7 +479,7 @@ ResourceSource *AndroidPlatformUtilities::processGalleryActivity( const QString 
         QJniObject filePathJni = QJniObject::fromString( filePath );
         QJniObject mimeTypeJni = QJniObject::fromString( mimeType );
 
-        QSettings().setValue( QStringLiteral( "QField/nativeCameraLaunched" ), true );
+        QSettings().setValue( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), true );
         activity.callMethod<void>( "getGalleryResource", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
                                    prefixJni.object<jstring>(),
                                    filePathJni.object<jstring>(),
@@ -531,7 +531,7 @@ ResourceSource *AndroidPlatformUtilities::getFile( const QString &prefix, const 
         QJniObject filePathJni = QJniObject::fromString( filePath );
         QJniObject mimeTypeJni = QJniObject::fromString( mimeType );
 
-        QSettings().setValue( QStringLiteral( "QField/nativeCameraLaunched" ), true );
+        QSettings().setValue( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), true );
         activity.callMethod<void>( "getFilePickerResource", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
                                    prefixJni.object<jstring>(),
                                    filePathJni.object<jstring>(),
@@ -565,7 +565,7 @@ ViewStatus *AndroidPlatformUtilities::open( const QString &filePath, bool isEdit
         QJniObject filePathJni = QJniObject::fromString( filePath );
         QJniObject mimeTypeJni = QJniObject::fromString( mimeType );
 
-        QSettings().setValue( QStringLiteral( "QField/nativeCameraLaunched" ), true );
+        QSettings().setValue( QStringLiteral( "SIGPACGO/nativeCameraLaunched" ), true );
         activity.callMethod<void>( "openResource", "(Ljava/lang/String;Ljava/lang/String;Z)V",
                                    filePathJni.object<jstring>(),
                                    mimeTypeJni.object<jstring>(),
@@ -578,7 +578,7 @@ ViewStatus *AndroidPlatformUtilities::open( const QString &filePath, bool isEdit
 
 void AndroidPlatformUtilities::requestStoragePermission() const
 {
-  if ( !QSettings().value( QStringLiteral( "QField/storagePermissionChecked" ), false ).toBool() )
+  if ( !QSettings().value( QStringLiteral( "SIGPACGO/storagePermissionChecked" ), false ).toBool() )
   {
     QStringList permissions;
     permissions << "android.permission.READ_EXTERNAL_STORAGE"
@@ -586,7 +586,7 @@ void AndroidPlatformUtilities::requestStoragePermission() const
                 << "android.permission.ACCESS_MEDIA_LOCATION";
 
     checkAndAcquirePermissions( permissions, true );
-    QSettings().setValue( QStringLiteral( "QField/storagePermissionChecked" ), true );
+    QSettings().setValue( QStringLiteral( "SIGPACGO/storagePermissionChecked" ), true );
   }
 }
 

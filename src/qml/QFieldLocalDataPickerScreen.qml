@@ -281,7 +281,9 @@ Page {
             } else {
               var item = table.itemAt(table.contentX + mouse.x, table.contentY + mouse.y);
               if (item) {
+                console.log("Clicked item:", item.itemTitle, "Path:", item.itemPath, "Type:", item.itemMetaType, "ItemType:", item.itemType);
                 if (item.itemMetaType === LocalFilesModel.Folder || item.itemMetaType === LocalFilesModel.Favorite) {
+                  console.log("Setting current path to:", item.itemPath);
                   table.model.currentPath = item.itemPath;
                 } else if (!qfieldLocalDataPickerScreen.projectFolderView && (item.itemMetaType === LocalFilesModel.Project || item.itemMetaType === LocalFilesModel.Dataset)) {
                   iface.loadFile(item.itemPath, item.itemTitle);

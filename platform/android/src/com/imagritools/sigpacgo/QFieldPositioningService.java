@@ -29,7 +29,7 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ch.opengis.qfield;
+package com.imagritools.sigpacgo;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -48,7 +48,7 @@ public class QFieldPositioningService extends QtService {
     private NotificationManager notificationManager;
     private NotificationChannel notificationChannel;
 
-    private final String CHANNEL_ID = "qfield_service_02";
+    private final String CHANNEL_ID = "sigpacgo_service_02";
     private final int NOTIFICATION_ID = 102;
 
     private static QFieldPositioningService instance = null;
@@ -133,8 +133,8 @@ public class QFieldPositioningService extends QtService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             notificationChannel = new NotificationChannel(
-                CHANNEL_ID, "QField", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription("QField Positioning");
+                CHANNEL_ID, "SIGPACGO", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationChannel.setDescription("SIGPACGO Positioning");
             notificationChannel.setImportance(
                 NotificationManager.IMPORTANCE_LOW);
             notificationChannel.enableLights(false);

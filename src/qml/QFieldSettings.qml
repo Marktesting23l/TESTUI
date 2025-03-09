@@ -63,8 +63,8 @@ Page {
 
     property bool snapToCommonAngleIsEnabled: false
     property bool snapToCommonAngleIsRelative: true
-    property double snapToCommonAngleDegrees: 45.0// = settings.valueInt("/QField/Digitizing/SnapToCommonAngleDegrees", 45);
-    property int snapToCommonAngleTolerance: 1// = settings.valueInt("/QField/Digitizing/SnappingTolerance", 1);
+    property double snapToCommonAngleDegrees: 45.0// = settings.valueInt("/SIGPACGO/Digitizing/SnapToCommonAngleDegrees", 45);
+    property int snapToCommonAngleTolerance: 1// = settings.valueInt("/SIGPACGO/Digitizing/SnappingTolerance", 1);
     onDigitizingVolumeKeysChanged: {
       platformUtilities.setHandleVolumeKeys(digitizingVolumeKeys && stateMachine.state != 'browse');
     }
@@ -84,13 +84,13 @@ Page {
     }
     ListElement {
       title: qsTr("Show bookmarks")
-      description: qsTr("When switched on, user's saved and currently opened project bookmarks will be displayed on the map.")
+      description: qsTr("Shows saved and project bookmarks on the map.")
       settingAlias: "showBookmarks"
       isVisible: true
     }
     ListElement {
       title: qsTr("Enable map rotation")
-      description: qsTr("When switched on, the map can be rotated by the user.")
+      description: qsTr("Allows rotating the map.")
       settingAlias: "enableMapRotation"
       isVisible: true
     }
@@ -100,31 +100,31 @@ Page {
     id: digitizingEditingSettingsModel
     ListElement {
       title: qsTr("Show digitizing information")
-      description: qsTr("When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.")
+      description: qsTr("Shows coordinates on the map while digitizing or measuring.")
       settingAlias: "numericalDigitizingInformation"
       isVisible: true
     }
     ListElement {
       title: qsTr("Fast editing mode")
-      description: qsTr("If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.")
+      description: qsTr("Auto-saves features when geometry is valid and constraints are met.")
       settingAlias: "autoSave"
       isVisible: true
     }
     ListElement {
       title: qsTr("Use volume keys to digitize")
-      description: qsTr("If enabled, pressing the device's volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.")
+      description: qsTr("Volume up adds vertex, volume down removes last vertex.")
       settingAlias: "digitizingVolumeKeys"
       isVisible: true
     }
     ListElement {
       title: qsTr("Allow finger tap on canvas to add vertices")
-      description: qsTr("When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.")
+      description: qsTr("Tap on map to add vertex.")
       settingAlias: "fingerTapDigitizing"
       isVisible: true
     }
     ListElement {
       title: qsTr("Consider mouse as a touchscreen device")
-      description: qsTr("When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.")
+      description: qsTr("Mouse acts like finger. When off, mouse acts like stylus.")
       settingAlias: "mouseAsTouchScreen"
       isVisible: true
     }
@@ -149,7 +149,7 @@ Page {
     }
     ListElement {
       title: qsTr("Fixed scale navigation")
-      description: qsTr("When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.")
+      description: qsTr("Search results only pan to feature without zooming.")
       settingAlias: "locatorKeepScale"
       isVisible: true
     }
@@ -158,7 +158,7 @@ Page {
     id: advancedSettingsModel
     ListElement {
       title: qsTr("Use native camera")
-      description: qsTr("If disabled, QField will use a minimalist internal camera instead of the camera app on the device.<br>Tip: Enable this option and install the open camera app to create geo tagged photos.")
+      description: qsTr("Uses device camera app instead of built-in camera. Good for geo-tagged photos.")
       settingAlias: "nativeCamera2"
       isVisible: true
     }
@@ -373,7 +373,7 @@ Page {
               }
 
               Label {
-                text: qsTr("A lower quality trades rendering precision in favor of lower memory usage and rendering time.")
+                text: qsTr("Lower quality reduces memory usage and improves performance.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 textFormat: Qt.RichText
@@ -527,7 +527,7 @@ Page {
               Label {
                 Layout.fillWidth: true
 
-                text: qsTr('Dim screen when idling')
+                text: qsTr('Dim screen when idle')
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -551,7 +551,7 @@ Page {
 
               Label {
                 Layout.fillWidth: true
-                text: qsTr('Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.')
+                text: qsTr('Seconds of inactivity before dimming screen to save battery.')
 
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
@@ -694,7 +694,7 @@ Page {
                 visible: false
 
                 Layout.fillWidth: true
-                text: qsTr("To apply the  language, SIGPAC-Go must restart.")
+                text: qsTr("Restart SIGPAC-Go to apply language change.")
                 font: Theme.tipFont
                 color: Theme.warningColor
 
@@ -1407,7 +1407,7 @@ Page {
               }
 
               Label {
-                text: qsTr("This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, QField will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.")
+                text: qsTr("This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
 
@@ -1546,42 +1546,42 @@ Page {
                   reloading = false;
                 }
               }
+            }
 
-              Label {
-                topPadding: 0
-                rightPadding: antennaHeightActivated.width
-                text: qsTr("Vertical grid shift is used to increase the altitude accuracy.")
-                font: Theme.tipFont
-                color: Theme.secondaryTextColor
+            Label {
+              topPadding: 0
+              rightPadding: antennaHeightActivated.width
+              text: qsTr("Vertical grid shift is used to increase the altitude accuracy.")
+              font: Theme.tipFont
+              color: Theme.secondaryTextColor
 
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-                Layout.columnSpan: 2
+              wrapMode: Text.WordWrap
+              Layout.fillWidth: true
+              Layout.columnSpan: 2
+            }
+
+            Label {
+              text: qsTr("Log NMEA sentences from device to file")
+              font: Theme.defaultFont
+              color: Theme.mainTextColor
+              wrapMode: Text.WordWrap
+              Layout.fillWidth: true
+              visible: positionSource.deviceCapabilities & AbstractGnssReceiver.Logging
+
+              MouseArea {
+                anchors.fill: parent
+                onClicked: positionLogging.toggle()
               }
+            }
 
-              Label {
-                text: qsTr("Log NMEA sentences from device to file")
-                font: Theme.defaultFont
-                color: Theme.mainTextColor
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-                visible: positionSource.deviceCapabilities & AbstractGnssReceiver.Logging
-
-                MouseArea {
-                  anchors.fill: parent
-                  onClicked: positionLogging.toggle()
-                }
-              }
-
-              QfSwitch {
-                id: positionLogging
-                Layout.preferredWidth: implicitContentWidth
-                Layout.alignment: Qt.AlignTop
-                visible: positionSource.deviceCapabilities & AbstractGnssReceiver.Logging
-                checked: positioningSettings.logging
-                onCheckedChanged: {
-                  positioningSettings.logging = checked;
-                }
+            QfSwitch {
+              id: positionLogging
+              Layout.preferredWidth: implicitContentWidth
+              Layout.alignment: Qt.AlignTop
+              visible: positionSource.deviceCapabilities & AbstractGnssReceiver.Logging
+              checked: positioningSettings.logging
+              onCheckedChanged: {
+                positioningSettings.logging = checked;
               }
             }
 
@@ -1628,7 +1628,7 @@ Page {
   }
 
   header: QfPageHeader {
-    title: qsTr("QField Settings")
+    title: qsTr("SIGPACGO Settings")
 
     showBackButton: true
     showApplyButton: false

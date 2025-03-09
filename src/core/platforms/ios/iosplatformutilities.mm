@@ -77,11 +77,11 @@ void IosPlatformUtilities::afterUpdate() {
   QDir appDir(applicationDirectory());
   appDir.mkdir(QStringLiteral("Imported Projects"));
   appDir.mkdir(QStringLiteral("Imported Datasets"));
-  appDir.mkpath(QStringLiteral("QField/proj"));
-  appDir.mkpath(QStringLiteral("QField/auth"));
-  appDir.mkpath(QStringLiteral("QField/fonts"));
-  appDir.mkpath(QStringLiteral("QField/basemaps"));
-  appDir.mkpath(QStringLiteral("QField/logs"));
+  appDir.mkpath(QStringLiteral("SIGPACGO/proj"));
+  appDir.mkpath(QStringLiteral("SIGPACGO/auth"));
+  appDir.mkpath(QStringLiteral("SIGPACGO/fonts"));
+  appDir.mkpath(QStringLiteral("SIGPACGO/basemaps"));
+  appDir.mkpath(QStringLiteral("SIGPACGO/logs"));
 }
 
 QString IosPlatformUtilities::systemSharedDataLocation() const {
@@ -96,7 +96,7 @@ QString IosPlatformUtilities::applicationDirectory() const {
 }
 
 QStringList IosPlatformUtilities::appDataDirs() const {
-  return QStringList() << QStringLiteral("%1/QField/")
+  return QStringList() << QStringLiteral("%1/SIGPACGO/")
                               .arg(QStandardPaths::writableLocation(
                                   QStandardPaths::DocumentsLocation));
 }
