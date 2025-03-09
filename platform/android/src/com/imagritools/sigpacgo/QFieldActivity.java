@@ -11,6 +11,7 @@
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright
+ notice, this list of conditions and the following disclaimer.
  * Redistributions in binary form must reproduce the above copyright
  notice, this list of conditions and the following disclaimer in the
  documentation and/or other materials provided with the distribution.
@@ -18,7 +19,7 @@
  names of its contributors may be used to endorse or promote products
  derived from this software without specific prior written permission.
 
- THIS SOFTWARE IS PROVIDED BY Marco Bernasocchi <marco@opengis.ch> ``AS IS'' AND
+ THIS SOFTWARE IS PROVIDED BY Marco Bernasocchi <marco@opengis.ch> ''AS IS'' AND
  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  DISCLAIMED. IN NO EVENT SHALL Marco Bernasocchi <marco@opengis.ch> BE LIABLE
@@ -161,7 +162,7 @@ public class QFieldActivity extends QtActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (handleVolumeKeys &amp;&amp; (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+        if (handleVolumeKeys && (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
                                  keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
                                  keyCode == KeyEvent.KEYCODE_MUTE)) {
             // Forward volume keys' presses to QField
@@ -173,7 +174,7 @@ public class QFieldActivity extends QtActivity {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (handleVolumeKeys &amp;&amp; (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+        if (handleVolumeKeys && (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
                                  keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
                                  keyCode == KeyEvent.KEYCODE_MUTE)) {
             // Forward volume keys's releases to QField
@@ -184,7 +185,7 @@ public class QFieldActivity extends QtActivity {
     }
 
     private boolean isDarkTheme() {
-        switch (getResources().getConfiguration().uiMode &amp;
+        switch (getResources().getConfiguration().uiMode &
                 Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
                 return true;
@@ -235,7 +236,7 @@ public class QFieldActivity extends QtActivity {
                 }
 
                 if ((scheme.compareTo(ContentResolver.SCHEME_CONTENT) == 0 ||
-                     action.compareTo(Intent.ACTION_SEND) == 0) &amp;&amp;
+                     action.compareTo(Intent.ACTION_SEND) == 0) &&
                     importDatasetPath != "") {
                     DocumentFile documentFile =
                         DocumentFile.fromSingleUri(context, uri);
@@ -263,7 +264,7 @@ public class QFieldActivity extends QtActivity {
                         }
 
                         ContentResolver resolver = getContentResolver();
-                        if (type != null &amp;&amp; type.equals("application/zip")) {
+                        if (type != null && type.equals("application/zip")) {
                             String projectName = "";
                             try {
                                 InputStream input =
@@ -357,7 +358,7 @@ public class QFieldActivity extends QtActivity {
             int right = 0;
             int bottom = 0;
             int visibility = decorView.getSystemUiVisibility();
-            if ((visibility &amp; View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+            if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
                 left = insets.getSystemWindowInsetLeft();
                 top = insets.getSystemWindowInsetTop();
                 right = insets.getSystemWindowInsetRight();
@@ -472,7 +473,7 @@ public class QFieldActivity extends QtActivity {
             new File(dataDir + "Imported Projects/").mkdir();
 
             dataDir = dataDir + "SIGPACGO/";
-            // create SIGPACGO directories
+            
             new File(dataDir).mkdir();
             new File(dataDir + "basemaps/").mkdir();
             new File(dataDir + "fonts/").mkdir();
@@ -509,7 +510,7 @@ public class QFieldActivity extends QtActivity {
                     continue;
                 }
 
-                
+                // create QField directories
                 String dataDir = file.getAbsolutePath() + "/SIGPACGO/";
                 new File(dataDir + "basemaps/").mkdirs();
                 new File(dataDir + "fonts/").mkdirs();
@@ -566,7 +567,7 @@ public class QFieldActivity extends QtActivity {
                 QFieldActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED ||
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &amp;&amp;
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
              Environment.isExternalStorageManager())) {
             externalStorageDirectory =
                 Environment.getExternalStorageDirectory();
@@ -610,7 +611,7 @@ public class QFieldActivity extends QtActivity {
                 QFieldActivity.this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED ||
-            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &amp;&amp;
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
              Environment.isExternalStorageManager())) {
             externalStorageDirectory =
                 Environment.getExternalStorageDirectory();
@@ -907,6 +908,131 @@ public class QFieldActivity extends QtActivity {
         resourcePrefix = prefix;
         resourceFilePath = filePath;
 
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType(mimeType);
+        Log.d("QField", "Gallery intent starting");
+        startActivityForResult(intent, GALLERY_RESOURCE);
+        return;
+    }
+
+    private void getFilePickerResource(String prefix, String filePath,
+                                       String mimeType) {
+        resourcePrefix = prefix;
+        resourceFilePath = filePath;
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+        intent.setType(mimeType);
+        Log.d("QField", "File picker intent starting");
+        startActivityForResult(intent, FILE_PICKER_RESOURCE);
+        return;
+    }
+
+    private void openResource(String filePath, String mimeType,
+                              boolean isEditing) {
+        resourceFilePath = filePath;
+        resourceIsEditing = isEditing;
+
+        resourceFile = new File(filePath);
+        resourceCacheFile = new File(getCacheDir(), resourceFile.getName());
+
+        // Copy resource to a temporary file
+        if (QFieldUtils.copyFile(resourceFile, resourceCacheFile)) {
+            Uri contentUri = Build.VERSION.SDK_INT < 24
+                                 ? Uri.fromFile(resourceFile)
+                                 : FileProvider.getUriForFile(
+                                       this, "com.imagritools.sigpacgo.fileprovider",
+                                       resourceCacheFile);
+
+            Intent intent =
+                new Intent(isEditing ? Intent.ACTION_EDIT : Intent.ACTION_VIEW);
+            if (isEditing) {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                                Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                if (mimeType.contains("image/")) {
+                    intent.setDataAndType(contentUri, "image/*");
+                } else {
+                    intent.setDataAndType(contentUri, mimeType);
+                }
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+            } else {
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(contentUri, mimeType);
+            }
+            try {
+                Log.d("QField", "Open intent starting");
+                startActivityForResult(intent, OPEN_RESOURCE);
+            } catch (IllegalArgumentException e) {
+                Log.d("QField", e.getMessage());
+                resourceCanceled("");
+            } catch (Exception e) {
+                Log.d("QField", e.getMessage());
+                resourceCanceled("");
+            }
+        } else {
+            resourceCanceled("");
+        }
+
+        return;
+    }
+
+    void importDatasets(Uri[] datasetUris) {
+        File externalFilesDir = getExternalFilesDir(null);
+        if (externalFilesDir == null || datasetUris.length == 0) {
+            return;
+        }
+
+        ProgressDialog progressDialog =
+            new ProgressDialog(this, R.style.DialogTheme);
+        progressDialog.setMessage(getString(R.string.import_dataset_wait));
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        String importDatasetPath =
+            externalFilesDir.getAbsolutePath() + "/Imported Datasets/";
+        new File(importDatasetPath).mkdir();
+
+        Context context = getApplication().getApplicationContext();
+        ContentResolver resolver = getContentResolver();
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean imported = false;
+                for (Uri datasetUri : datasetUris) {
+                    DocumentFile documentFile =
+                        DocumentFile.fromSingleUri(context, datasetUri);
+                    String importFilePath =
+                        importDatasetPath + documentFile.getName();
+                    try {
+                        InputStream input =
+                            resolver.openInputStream(datasetUri);
+                        imported = QFieldUtils.inputStreamToFile(
+                            input, importFilePath, documentFile.length());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        imported = false;
+                    }
+                    if (!imported) {
+                        break;
+                    }
+                }
+
+                progressDialog.dismiss();
+                if (!imported) {
+                    if (!isFinishing()) {
+                        displayAlertDialog(
+                            getString(R.string.import_error),
+                            getString(R.string.import_dataset_error));
+                    }
+                } else {
+                    openPath(importDatasetPath);
+                }
             }
         });
     }
@@ -1146,10 +1272,11 @@ public class QFieldActivity extends QtActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         try {
+                            Uri uri = Uri.parse("package:ch.opengis.qfield");
                             Intent intent = new Intent(
-                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.parse("package:com.imagritools.sigpacgo");
-                            intent.setData(uri);
+                                Settings
+                                    .ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                uri);
                             startActivity(intent);
                         } catch (Exception e) {
                             Log.e(
