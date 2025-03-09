@@ -26,6 +26,7 @@
 #include "resourcesource.h"
 #include "stringutils.h"
 #include "urlutils.h"
+#include <qgsexiftools.h>
 
 #include <QApplication>
 #include <QClipboard>
@@ -463,6 +464,16 @@ void PlatformUtilities::copyTextToClipboard( const QString &string ) const
 QString PlatformUtilities::getTextFromClipboard() const
 {
   return QGuiApplication::clipboard()->text();
+}
+
+bool PlatformUtilities::setExifTag(const QString &imagePath, const QString &tag, const QString &value) const
+{
+  if (!QFileInfo::exists(imagePath))
+  {
+    return false;
+  }
+  
+  return QgsExifTools::tagImage(imagePath, tag, value);
 }
 
 QVariantMap PlatformUtilities::sceneMargins( QQuickWindow *window ) const

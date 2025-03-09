@@ -294,24 +294,83 @@ void FileUtils::addImageStamp( const QString &imagePath, const QString &text )
     QPainter painter( &img );
     painter.setRenderHint( QPainter::Antialiasing );
 
-    QFont font = painter.font();
-    font.setPixelSize( std::min( img.width(), img.height() ) / 40 );
-    font.setBold( true );
-
-    QgsRenderContext context = QgsRenderContext::fromQPainter( &painter );
-    QgsTextFormat format;
-    format.setFont( font );
-    format.setSize( font.pixelSize() );
-    format.setSizeUnit( Qgis::RenderUnit::Pixels );
-    format.setColor( Qt::white );
-    format.buffer().setColor( Qt::black );
-    format.buffer().setSize( 2 );
-    format.buffer().setSizeUnit( Qgis::RenderUnit::Pixels );
-    format.buffer().setEnabled( true );
-    QgsTextRenderer::drawText( QRectF( 10, 10, img.width() - 20, img.height() - 20 ), 0, Qgis::TextHorizontalAlignment::Left, text.split( QStringLiteral( "\n" ) ), context, format, true, Qgis::TextVerticalAlignment::Bottom, Qgis::TextRendererFlag::WrapLines );
+    // Parse the text to get lines
+    QStringList lines = text.split( QStringLiteral( "\n" ) );
+    
+    // Calculate font size based on image dimensions
+    int baseFontSize = std::min( img.width(), img.height() ) / 40;
+    
+    // Create fonts for title and regular text
+    QFont titleFont = painter.font();
+    titleFont.setPixelSize( baseFontSize * 1.2 );
+    titleFont.setBold( true );
+    
+    QFont regularFont = painter.font();
+    regularFont.setPixelSize( baseFontSize );
+    regularFont.setBold( true );
+    
+    // Measure text to determine background rectangle size
+    QFontMetrics titleMetrics(titleFont);
+    QFontMetrics regularMetrics(regularFont);
+    
+    int textWidth = 0;
+    int textHeight = 0;
+    
+    // Calculate total height and maximum width
+    for (int i = 0; i < lines.size(); ++i) {
+      QFont *currentFont = (i == 0 || i == lines.size() - 1) ? &titleFont : &regularFont;
+      QFontMetrics *metrics = (i == 0 || i == lines.size() - 1) ? &titleMetrics : &regularMetrics;
+      
+      textWidth = qMax(textWidth, metrics->horizontalAdvance(lines[i]));
+      textHeight += metrics->height();
+    }
+    
+    // Add padding
+    textWidth += 40;  // 20px padding on each side
+    textHeight += 30; // 15px padding on top and bottom
+    
+    // Create background rectangle
+    int rectX = 20;
+    int rectY = img.height() - textHeight - 20;
+    
+    // Draw semi-transparent background
+    painter.setBrush(QColor(0, 0, 0, 180));
+    painter.setPen(Qt::NoPen);
+    painter.drawRoundedRect(rectX, rectY, textWidth, textHeight, 10, 10);
+    
+    // Add accent bar on the left
+    painter.setBrush(QColor(0, 120, 215)); // Blue accent color
+    painter.drawRoundedRect(rectX, rectY, 6, textHeight, 3, 3);
+    
+    // Draw text
+    int currentY = rectY + 15; // Start with padding from top
+    
+    for (int i = 0; i < lines.size(); ++i) {
+      // Use title font for first and last line (date and SIGPACGO line)
+      if (i == 0 || i == lines.size() - 1) {
+        painter.setFont(titleFont);
+        painter.setPen(i == lines.size() - 1 ? QColor(0, 180, 255) : Qt::white); // Blue for SIGPACGO line
+      } else {
+        painter.setFont(regularFont);
+        painter.setPen(Qt::white);
+      }
+      
+      // Draw text with shadow effect
+      painter.setPen(QColor(0, 0, 0, 120));
+      painter.drawText(rectX + 20 + 1, currentY + 1, lines[i]);
+      
+      // Draw actual text
+      painter.setPen(i == lines.size() - 1 ? QColor(0, 180, 255) : Qt::white);
+      painter.drawText(rectX + 20, currentY, lines[i]);
+      
+      // Move to next line
+      currentY += (i == 0 || i == lines.size() - 1) ? 
+                  titleMetrics.height() : regularMetrics.height();
+    }
 
     img.save( imagePath, nullptr, 90 );
 
+    // Restore metadata
     for ( const QString &key : metadata.keys() )
     {
       QgsExifTools::tagImage( imagePath, key, metadata[key] );

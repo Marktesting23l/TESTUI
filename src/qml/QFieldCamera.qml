@@ -96,16 +96,79 @@ Popup {
     property bool geoTagging: true
     property bool showGrid: false
     property bool showOverlay: true
+    property string folderName: ""
     property string deviceId: ''
     property size resolution: Qt.size(0, 0)
     property int pixelFormat: 0
+  }
+
+  // Dialog for setting folder name
+  Popup {
+    id: folderNameDialog
+    width: Math.min(mainWindow.width * 0.9, 400)
+    height: folderNameColumn.height + 40
+    x: (mainWindow.width - width) / 2
+    y: (mainWindow.height - height) / 2
+    modal: true
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    
+    Column {
+      id: folderNameColumn
+      width: parent.width - 40
+      anchors.centerIn: parent
+      spacing: 10
+      
+      Text {
+        width: parent.width
+        text: qsTr("Set Folder Name")
+        font.bold: true
+        font.pixelSize: 16
+      }
+      
+      Text {
+        width: parent.width
+        text: qsTr("Enter a name for the photo folder. If left empty, photos will be saved in a folder with today's date.")
+        font.pixelSize: 12
+        wrapMode: Text.WordWrap
+      }
+      
+      TextField {
+        id: folderNameInput
+        width: parent.width
+        placeholderText: qsTr("e.g., Greenhouse 1")
+        text: cameraSettings.folderName
+      }
+      
+      Row {
+        width: parent.width
+        spacing: 10
+        
+        Button {
+          text: qsTr("Cancel")
+          onClicked: folderNameDialog.close()
+          width: (parent.width - 10) / 2
+        }
+        
+        Button {
+          text: qsTr("Save")
+          width: (parent.width - 10) / 2
+          onClicked: {
+            cameraSettings.folderName = folderNameInput.text.trim();
+            folderNameDialog.close();
+            displayToast(qsTr("Folder name set to: ") + (cameraSettings.folderName || qsTr("Date-based folder")));
+          }
+        }
+      }
+    }
   }
 
   ExpressionEvaluator {
     id: stampExpressionEvaluator
 
     mode: ExpressionEvaluator.ExpressionMode
-    expressionText: "format_date(now(), 'yyyy-MM-dd @ HH:mm') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')"
+    expressionText: "format_date(now(), 'yyyy-MM-dd @ HH:mm') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
+    (cameraSettings.folderName ? " || '\n" + qsTr("Location") + ": " + cameraSettings.folderName + "'" : "") + 
+    " || '\nSIGPACGO - Agricultural Field Survey'"
 
     project: qgisProject
     positionInformation: currentPosition
@@ -209,7 +272,7 @@ Popup {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: infoText.contentHeight + 20
+        height: infoText.contentHeight + dateTimeText.contentHeight + 30
         color: "#80000000"
         visible: cameraItem.state == "PhotoCapture" && cameraSettings.showOverlay
         
@@ -232,66 +295,137 @@ Popup {
           Column {
             width: parent.width - compassIndicator.width - parent.spacing
             height: parent.height
-            spacing: 4
+            spacing: 8
             
-            Text {
-              id: dateTimeText
+            Row {
               width: parent.width
-              color: "white"
-              font.pixelSize: 16
-              font.bold: true
-              text: {
-                let dateTime = new Date()
-                return Qt.formatDateTime(dateTime, "yyyy-MM-dd @ HH:mm:ss")
+              spacing: 8
+              
+              Image {
+                width: 20
+                height: 20
+                source: Theme.getThemeVectorIcon("ic_access_time_white_24dp")
+                sourceSize.width: 20
+                sourceSize.height: 20
               }
               
-              layer.enabled: true
-              layer.effect: QfDropShadow {
-                horizontalOffset: 1
-                verticalOffset: 1
-                radius: 3.0
-                color: "#80000000"
-                source: dateTimeText
+              Text {
+                id: dateTimeText
+                width: parent.width - 28
+                color: "white"
+                font.pixelSize: 16
+                font.bold: true
+                text: {
+                  let dateTime = new Date()
+                  return Qt.formatDateTime(dateTime, "yyyy-MM-dd @ HH:mm:ss")
+                }
+                
+                layer.enabled: true
+                layer.effect: QfDropShadow {
+                  horizontalOffset: 1
+                  verticalOffset: 1
+                  radius: 3.0
+                  color: "#80000000"
+                  source: dateTimeText
+                }
               }
             }
             
-            Text {
-              id: infoText
+            Row {
               width: parent.width
-              color: "white"
-              font.pixelSize: 14
-              wrapMode: Text.WordWrap
-              visible: text !== ""
-              text: {
-                let coordsStr = ""
-                
-                if (positionSource.active && positionSource.positionInformation.latitudeValid && positionSource.positionInformation.longitudeValid) {
-                  let lat = positionSource.positionInformation.latitude.toFixed(7)
-                  let lon = positionSource.positionInformation.longitude.toFixed(7)
-                  let alt = positionSource.positionInformation.elevationValid ? positionSource.positionInformation.elevation.toFixed(2) + " m" : "N/A"
-                  coordsStr = qsTr("Lat") + ": " + lat + " | " + qsTr("Lon") + ": " + lon
-                  
-                  if (positionSource.positionInformation.elevationValid) {
-                    coordsStr += " | " + qsTr("Alt") + ": " + alt
-                  }
-                  
-                  if (positionSource.positionInformation.speedValid) {
-                    coordsStr += "\n" + qsTr("Speed") + ": " + positionSource.positionInformation.speed.toFixed(1) + " m/s"
-                  }
-                  
-                  return coordsStr
-                } else {
-                  return qsTr("GPS coordinates not available")
-                }
+              spacing: 8
+              visible: infoText.text !== ""
+              
+              Image {
+                width: 20
+                height: 20
+                source: Theme.getThemeVectorIcon("ic_my_location_white_24dp")
+                sourceSize.width: 20
+                sourceSize.height: 20
+                anchors.verticalCenter: parent.verticalCenter
               }
               
-              layer.enabled: true
-              layer.effect: QfDropShadow {
-                horizontalOffset: 1
-                verticalOffset: 1
-                radius: 3.0
-                color: "#80000000"
-                source: infoText
+              Text {
+                id: infoText
+                width: parent.width - 28
+                color: "white"
+                font.pixelSize: 14
+                wrapMode: Text.WordWrap
+                text: {
+                  let coordsStr = ""
+                  
+                  if (positionSource.active && positionSource.positionInformation.latitudeValid && positionSource.positionInformation.longitudeValid) {
+                    let lat = positionSource.positionInformation.latitude.toFixed(7)
+                    let lon = positionSource.positionInformation.longitude.toFixed(7)
+                    let alt = positionSource.positionInformation.elevationValid ? positionSource.positionInformation.elevation.toFixed(2) + " m" : "N/A"
+                    coordsStr = qsTr("Lat") + ": " + lat + " | " + qsTr("Lon") + ": " + lon
+                    
+                    if (positionSource.positionInformation.elevationValid) {
+                      coordsStr += " | " + qsTr("Alt") + ": " + alt
+                    }
+                    
+                    if (positionSource.positionInformation.speedValid) {
+                      coordsStr += "\n" + qsTr("Speed") + ": " + positionSource.positionInformation.speed.toFixed(1) + " m/s"
+                    }
+                    
+                    // Add agricultural field info if available
+                    if (typeof fieldInfo !== 'undefined' && fieldInfo && fieldInfo.fieldName) {
+                      coordsStr += "\n" + qsTr("Field") + ": " + fieldInfo.fieldName
+                      if (fieldInfo.cropType) {
+                        coordsStr += " | " + qsTr("Crop") + ": " + fieldInfo.cropType
+                      }
+                    }
+                    // Add folder name if set
+                    else if (cameraSettings.folderName) {
+                      coordsStr += "\n" + qsTr("Location") + ": " + cameraSettings.folderName
+                    }
+                    
+                    return coordsStr
+                  } else {
+                    return qsTr("GPS coordinates not available")
+                  }
+                }
+                
+                layer.enabled: true
+                layer.effect: QfDropShadow {
+                  horizontalOffset: 1
+                  verticalOffset: 1
+                  radius: 3.0
+                  color: "#80000000"
+                  source: infoText
+                }
+              }
+            }
+            
+            // Weather info row (placeholder for future implementation)
+            Row {
+              width: parent.width
+              spacing: 8
+              visible: false // Hidden until weather data is available
+              
+              Image {
+                width: 20
+                height: 20
+                source: Theme.getThemeVectorIcon("ic_wb_sunny_white_24dp")
+                sourceSize.width: 20
+                sourceSize.height: 20
+              }
+              
+              Text {
+                id: weatherText
+                width: parent.width - 28
+                color: "white"
+                font.pixelSize: 14
+                text: "25°C | Sunny | Humidity: 45%"
+                
+                layer.enabled: true
+                layer.effect: QfDropShadow {
+                  horizontalOffset: 1
+                  verticalOffset: 1
+                  radius: 3.0
+                  color: "#80000000"
+                  source: weatherText
+                }
               }
             }
           }
@@ -546,7 +680,23 @@ Popup {
 
               onClicked: {
                 if (cameraItem.state == "PhotoCapture") {
-                  captureSession.imageCapture.captureToFile(qgisProject.homePath + '/DCIM/');
+                  // Create folder path based on settings
+                  let today = new Date();
+                  let dateFolder = today.getFullYear().toString() + 
+                                  (today.getMonth() + 1).toString().padStart(2, '0') + 
+                                  today.getDate().toString().padStart(2, '0');
+                  
+                  // Use custom folder name if set, otherwise use date
+                  let folderPath = cameraSettings.folderName ? 
+                                  'SIGPACGO_Photos/' + cameraSettings.folderName : 
+                                  'SIGPACGO_Photos/' + dateFolder;
+                  
+                  // Create the folder if it doesn't exist
+                  platformUtilities.createDir(qgisProject.homePath, folderPath);
+                  
+                  // Capture the photo to the specified folder
+                  captureSession.imageCapture.captureToFile(qgisProject.homePath + '/' + folderPath + '/');
+                  
                   if (positionSource.active) {
                     currentPosition = positionSource.positionInformation;
                   } else {
@@ -569,6 +719,9 @@ Popup {
                   if (cameraItem.state == "PhotoPreview") {
                     if (cameraSettings.geoTagging && positionSource.active) {
                       FileUtils.addImageMetadata(currentPath, currentPosition);
+                      // Set the Make to SIGPACGO instead of QField
+                      platformUtilities.setExifTag(currentPath, "Exif.Image.Make", "SIGPACGO");
+                      platformUtilities.setExifTag(currentPath, "Xmp.tiff.Make", "SIGPACGO");
                     }
                     if (cameraSettings.stamping) {
                       FileUtils.addImageStamp(currentPath, stampExpressionEvaluator.evaluate());
@@ -777,7 +930,7 @@ Popup {
         height: 40
         padding: 2
 
-        iconSource: Theme.getThemeVectorIcon("ic_info_outline_black_24dp")
+        iconSource: Theme.getThemeVectorIcon("ic_layers_white_24dp")
         iconColor: cameraSettings.showOverlay ? Theme.mainColor : Theme.toolButtonColor
         bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
         round: true
@@ -825,6 +978,28 @@ Popup {
           cameraSettings.showGrid = !cameraSettings.showGrid;
           displayToast(cameraSettings.showGrid ? qsTr("Grid enabled") : qsTr("Grid disabled"));
         }
+      }
+      
+      QfToolButton {
+        id: folderNameButton
+
+        width: 40
+        height: 40
+        padding: 2
+
+        iconSource: Theme.getThemeVectorIcon("ic_folder_white_24dp")
+        iconColor: cameraSettings.folderName ? Theme.mainColor : Theme.toolButtonColor
+        bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
+        round: true
+
+        onClicked: {
+          folderNameDialog.open();
+        }
+        
+        ToolTip.visible: hovered
+        ToolTip.text: cameraSettings.folderName ? 
+                     qsTr("Current folder: ") + cameraSettings.folderName : 
+                     qsTr("Set photo folder name")
       }
     }
 

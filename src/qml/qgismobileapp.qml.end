@@ -1,0 +1,14 @@
+  function openPhotoGallery() {
+    // Open the SIGPACGO_Photos folder using the platform's file browser
+    let photosPath = qgisProject.homePath + '/SIGPACGO_Photos'
+    
+    // Create the directory if it doesn't exist
+    platformUtilities.createDir(qgisProject.homePath, 'SIGPACGO_Photos')
+    
+    // Open the folder
+    platformUtilities.open(photosPath)
+    
+    // Display a toast
+    displayToast(qsTr("Opening photo gallery"))
+  }
+}

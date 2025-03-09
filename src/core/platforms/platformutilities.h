@@ -303,6 +303,14 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
      */
     Q_INVOKABLE virtual void vibrate( int milliseconds ) const { Q_UNUSED( milliseconds ) }
 
+    /**
+     * Sets an EXIF tag in an image file
+     * @param imagePath The path to the image file
+     * @param tag The EXIF tag to set (e.g., "Exif.Image.Make")
+     * @param value The value to set for the tag
+     * @return True if successful, false otherwise
+     */
+    Q_INVOKABLE virtual bool setExifTag( const QString &imagePath, const QString &tag, const QString &value ) const;
 
     /**
      * Starts a positioning service on supported platforms.
