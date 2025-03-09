@@ -7,10 +7,10 @@ QtObject {
 
   property var darkThemeColors: {
     "mainColor": "#FFA500", // Orange
-    "mainOverlayColor": "#ffffff",
+    "mainOverlayColor": "#25062d",
     "accentColor": "#FF8C00", // Dark Orange
     "accentLightColor": "#99FF8C00", // Light Orange with transparency
-    "mainBackgroundColor": "#3E2723",
+    "mainBackgroundColor": "#52342f",
     "mainBackgroundColorSemiOpaque": "#bb3E2723",
     "mainTextColor": "#EEEEEE",
     "mainTextDisabledColor": "#73EEEEEE",
@@ -21,17 +21,17 @@ QtObject {
     "controlBorderColor": "#404040",
     "buttonTextColor": "#202020",
     "toolButtonColor": "#FFA500",
-    "toolButtonBackgroundColor": "#5D4037",
+    "toolButtonBackgroundColor": "#5d4037",
     "toolButtonBackgroundSemiOpaqueColor": "#4D5D4037",
     "scrollBarBackgroundColor": "#bb3E2723"
   }
 
   property var lightThemeColors: {
     "mainColor": "#FFA500", // Orange
-    "mainOverlayColor": "#ffffff",
+    "mainOverlayColor": "#e9e56e",
     "accentColor": "#FF8C00", // Dark Orange
     "accentLightColor": "#99FF8C00", // Light Orange with transparency
-    "mainBackgroundColor": "#EEEEEE",
+    "mainBackgroundColor": "#d9c9b5",
     "mainBackgroundColorSemiOpaque": "#bbF5F5DC",
     "mainTextColor": "#212121",
     "mainTextDisabledColor": "#73212121",
@@ -40,7 +40,7 @@ QtObject {
     "controlBackgroundAlternateColor": "#E8D8C3",
     "controlBackgroundDisabledColor": "#33555555",
     "controlBorderColor": "#D0C0B0",
-    "buttonTextColor": "#ffffff",
+    "buttonTextColor": "#070707",
     "toolButtonColor": "#FF8C00",
     "toolButtonBackgroundColor": "#E8D8C3",
     "toolButtonBackgroundSemiOpaqueColor": "#4DE8D8C3",
@@ -50,37 +50,37 @@ QtObject {
   property bool darkTheme: false
 
   property color mainColor: "#FFA500" // Orange
-  property color mainOverlayColor: "#ffffff"
+  property color mainOverlayColor: "#eae2d8"
   property color accentColor: "#FF8C00" // Dark Orange
   property color accentLightColor: "#99FF8C00" // Light Orange with transparency
 
-  property color mainBackgroundColor: "#fafafa"
-  property color mainBackgroundColorSemiOpaque: "#bbfafafa"
-  property color mainTextColor: "#000000"
-  property color mainTextDisabledColor: "#73000000"
+  property color mainBackgroundColor: "#bbF5F5DC"
+  property color mainBackgroundColorSemiOpaque: "#bbF5F5DC"
+  property color mainTextColor: "#212121"
+  property color mainTextDisabledColor: "#73212121"
 
-  property color secondaryTextColor: "#999999"
+  property color secondaryTextColor: "#757575"
 
-  property color controlBackgroundColor: "#ffffff"
-  property color controlBackgroundAlternateColor: "#e6e6e6"
+  property color controlBackgroundColor: "#F0E6D2"
+  property color controlBackgroundAlternateColor: "#E8D8C3"
   property color controlBackgroundDisabledColor: "#33555555"
-  property color controlBorderColor: "#e6e6e6"
+  property color controlBorderColor: "#D0C0B0"
 
-  property color buttonTextColor: "#ffffff"
+  property color buttonTextColor: "#2a0275"
 
-  property color toolButtonColor: "#ffffff"
+  property color toolButtonColor: "#9b10d2"
   property color toolButtonBackgroundColor: Theme.darkGray
   property color toolButtonBackgroundSemiOpaqueColor: Theme.darkGraySemiOpaque
 
   property color scrollBarBackgroundColor: "#aaffffff"
 
-  property color darkRed: "#c0392b"
-  property color darkGray: "#212121"
-  property color darkGraySemiOpaque: "#4D212121"
-  property color gray: "#888888"
-  property color lightGray: "#dddddd"
-  property color lightestGray: "#eeeeee"
-  property color light: "#ffffff"
+  property color darkRed: "#c33626"
+  property color darkGray: "#5d4037"
+  property color darkGraySemiOpaque: "#4D5D4037"
+  property color gray: "#c3888888"
+  property color lightGray: "#bfdddddd"
+  property color lightestGray: "#cdeeeeee"
+  property color light: "#deffffff"
 
   property color errorColor: darkTheme ? "#df3422" : "#c0392b"
   property color warningColor: "orange"

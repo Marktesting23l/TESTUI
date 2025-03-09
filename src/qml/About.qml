@@ -167,7 +167,7 @@ Item {
       Layout.fillWidth: true
       icon.source: Theme.getThemeVectorIcon('ic_sponsor_white_24dp')
 
-      text: qsTr('Support QField')
+      text: qsTr('Support')
       onClicked: Qt.openUrlExternally("https://github.com/sponsors/opengisch")
     }
 

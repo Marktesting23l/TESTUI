@@ -34,7 +34,7 @@ Drawer {
     }
   }
 
-  width: Math.min(Math.max(330, closeButton.width + buttonsRow.width + menuButton.width), mainWindow.width)
+  width: Math.min(Math.max(280, closeButton.width + buttonsRow.width + menuButton.width), mainWindow.width)
   height: parent.height
   edge: Qt.LeftEdge
   dragMargin: 10
@@ -136,77 +136,8 @@ Drawer {
             }
           }
 
-          QfToolButton {
-            id: cloudButton
-            anchors.verticalCenter: parent.verticalCenter
-            iconSource: {
-              if (cloudConnection.status === QFieldCloudConnection.LoggedIn) {
-                switch (cloudProjectsModel.currentProjectData.Status) {
-                case QFieldCloudProjectsModel.Downloading:
-                  switch (cloudProjectsModel.currentProjectData.PackagingStatus) {
-                  case QFieldCloudProjectsModel.PackagingFinishedStatus:
-                    return Theme.getThemeVectorIcon('ic_cloud_download_24dp');
-                  default:
-                    return Theme.getThemeVectorIcon('ic_cloud_active_24dp');
-                  }
-                case QFieldCloudProjectsModel.Uploading:
-                  switch (cloudProjectsModel.currentProjectData.UploadDeltaStatus) {
-                  case QFieldCloudProjectsModel.DeltaFileLocalStatus:
-                    return Theme.getThemeVectorIcon('ic_cloud_upload_24dp');
-                  default:
-                    return Theme.getThemeVectorIcon('ic_cloud_active_24dp');
-                  }
-                case QFieldCloudProjectsModel.Idle:
-                  return cloudProjectsModel.currentProjectData.ProjectFileOutdated ? Theme.getThemeVectorIcon('ic_cloud_attention_24dp') : Theme.getThemeVectorIcon('ic_cloud_active_24dp');
-                default:
-                  return Theme.getThemeVectorIcon('ic_cloud_white_24dp');
-                }
-              } else {
-                return Theme.getThemeVectorIcon('ic_cloud_white_24dp');
-              }
-            }
-            iconColor: {
-              if (iconSource === Theme.getThemeVectorIcon('ic_cloud_white_24dp')) {
-                return Theme.mainOverlayColor;
-              } else {
-                return "transparent";
-              }
-            }
-            bgcolor: "transparent"
 
-            onClicked: {
-              if (featureForm.state == "FeatureFormEdit") {
-                featureForm.requestCancel();
-                return;
-              }
-              if (featureForm.visible) {
-                featureForm.hide();
-              }
-              showCloudPopup();
-            }
-            bottomRightIndicatorText: cloudProjectsModel.layerObserver.deltaFileWrapper.count > 0 ? cloudProjectsModel.layerObserver.deltaFileWrapper.count : cloudProjectsModel.layerObserver.deltaFileWrapper.count >= 10 ? '+' : ''
-
-            SequentialAnimation {
-              OpacityAnimator {
-                from: 1
-                to: 0.2
-                duration: 2000
-                target: cloudButton
-              }
-              OpacityAnimator {
-                from: 0.2
-                to: 1
-                duration: 2000
-                target: cloudButton
-              }
-              running: cloudProjectsModel.currentProjectData.Status === QFieldCloudProjectsModel.Downloading || cloudProjectsModel.currentProjectData.Status === QFieldCloudProjectsModel.Uploading
-              loops: Animation.Infinite
-
-              onStopped: {
-                cloudButton.opacity = 1;
-              }
-            }
-          }
+        
 
           QfToolButton {
             id: projectFolderButton
@@ -375,24 +306,24 @@ Drawer {
 
   Rectangle {
     id: bottomRow
-    height: 48 + mainWindow.sceneBottomMargin
+    height: 75+ mainWindow.sceneBottomMargin
     width: parent.width
     anchors.bottom: parent.bottom
     color: Theme.darkTheme ? Theme.mainBackgroundColorSemiOpaque : Theme.lightestGray
 
     Item {
       width: parent.width
-      height: 48
+      height: 75
       anchors.bottom: parent.bottom
       anchors.bottomMargin: mainWindow.sceneBottomMargin
 
       MenuItem {
         id: homeButton
         width: parent.width - modeSwitch.width
-        height: 48
+        height: 75
         icon.source: Theme.getThemeVectorIcon("ic_home_black_24dp")
         font: Theme.defaultFont
-        text: "Return home"
+        text: "Return"
 
         onClicked: returnHome()
       }
@@ -400,21 +331,21 @@ Drawer {
       Switch {
         id: modeSwitch
         visible: projectInfo.insertRights
-        width: 56 + 36
-        height: 48
+        width: 50 + 100
+        height: 75
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         indicator: Rectangle {
-          implicitHeight: 36
-          implicitWidth: 36 * 2
+          implicitHeight: 50
+          implicitWidth: 60 * 2
           x: modeSwitch.leftPadding
           radius: 4
           color: "#24212121"
           border.color: "#14FFFFFF"
           anchors.verticalCenter: parent.verticalCenter
           Image {
-            width: 28
-            height: 28
+            width: 50
+            height: 50
             anchors.left: parent.left
             anchors.leftMargin: 4
             anchors.verticalCenter: parent.verticalCenter
@@ -424,8 +355,8 @@ Drawer {
             opacity: 0.6
           }
           Image {
-            width: 28
-            height: 28
+            width: 50
+            height: 50
             anchors.right: parent.right
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
@@ -436,14 +367,14 @@ Drawer {
           }
           Rectangle {
             x: modeSwitch.checked ? parent.width - width : 0
-            width: 36
-            height: 36
+            width: 55
+            height: 50
             radius: 4
             color: Theme.mainColor
             border.color: Theme.mainOverlayColor
             Image {
-              width: 28
-              height: 28
+              width: 50
+              height: 50
               anchors.centerIn: parent
               source: modeSwitch.checked ? Theme.getThemeVectorIcon('ic_create_white_24dp') : Theme.getThemeVectorIcon('ic_map_white_24dp')
               sourceSize.width: parent.height * screen.devicePixelRatio

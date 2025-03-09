@@ -63,7 +63,7 @@ Item {
     width: mainWindow.width - Theme.popupScreenEdgeMargin * 2
     height: mainWindow.height - Math.max(Theme.popupScreenEdgeMargin * 2, mainWindow.sceneTopMargin * 2 + 4, mainWindow.sceneBottomMargin * 2 + 4)
     x: Theme.popupScreenEdgeMargin
-    y: (mainWindow.height - height) / 2
+    y: (mainWindow.height - height) / 2 + 5 // Move down a little
     z: 10000 // 1000s are embedded feature forms, use a higher value to insure feature form popups always show above embedded feature formes
     padding: 0
     modal: true
@@ -96,7 +96,7 @@ Item {
 
       QfSearchBar {
         id: searchBar
-        z: 1
+        z: 1000
         anchors.left: parent.left
         anchors.right: parent.right
         height: childrenRect.height

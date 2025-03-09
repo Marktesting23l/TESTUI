@@ -4,36 +4,30 @@ import org.qfield
 import Theme
 
 Item {
-  id: searchBar
-  z: 99999  // Very high z-index to ensure it's above other elements
-  
-  // Default height
-  height: 40
-  
-  // No default anchors - let parent components position this
-  
+ id: searchBar
+ z: 1000
+ anchors.top: parent.top
+ anchors.topMargin: 40
+
   property alias searchTerm: searchField.displayText
   property string placeHolderText: qsTr("Search")
 
   signal returnPressed
 
   Rectangle {
-    id: searchBarBackground
-    anchors.fill: parent
+    width: parent.width
+    height: 40
     radius: 6
     border.width: 1
-    z: 99999  // Very high z-index
     color: Theme.mainBackgroundColor
-    border.color: searchField.activeFocus ? Theme.mainColor : Theme.controlBorderColor  // Make border always visible
+    border.color: searchField.activeFocus ? Theme.mainColor : "transparent"
 
     QfToolButton {
       id: clearButton
       anchors.right: parent.right
-      anchors.rightMargin: 0
-      anchors.verticalCenter: parent.verticalCenter
       width: 40
       height: 40
-      z: 100000  // Even higher z-index
+      y: 50
       iconSource: Theme.getThemeVectorIcon('ic_clear_white_24dp')
       iconColor: Theme.mainTextColor
       bgcolor: "transparent"
@@ -48,9 +42,6 @@ Item {
       width: 40
       height: 40
       anchors.left: parent.left
-      anchors.leftMargin: 0
-      anchors.verticalCenter: parent.verticalCenter
-      z: 100000  // Even higher z-index
       bgcolor: "transparent"
       iconSource: Theme.getThemeVectorIcon("ic_baseline_search_white")
       iconColor: Theme.mainTextColor
@@ -66,9 +57,7 @@ Item {
       anchors.right: clearButton.left
       anchors.leftMargin: -16
       anchors.rightMargin: 4
-      anchors.verticalCenter: parent.verticalCenter
       height: 40
-      z: 99999  // Very high z-index
       selectByMouse: true
       inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase | Qt.ImhSensitiveData
       placeholderText: (!searchField.activeFocus && text === "" && displayText === "") ? searchBar.placeHolderText : ""

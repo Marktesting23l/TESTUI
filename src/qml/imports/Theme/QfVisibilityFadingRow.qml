@@ -1,6 +1,6 @@
 import QtQuick
 
-Row {
+Column {
   id: visibilityFadingRow
   property bool stateVisible: false
   visible: opacity > 0

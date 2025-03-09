@@ -13,12 +13,13 @@ RoundButton {
   property string bottomRightIndicatorBgColor: Theme.cloudColor
   property string bottomRightIndicatorFgColor: Theme.light
   property bool round: false
-  property bool roundborder: false
+  property bool roundborder: true
   property alias bgcolor: backgroundRectangle.color
   property color borderColor: 'transparent'
 
-  width: 48
-  height: 48
+  width: 54
+  height: 54
+  property bool square: true
   implicitWidth: width
   implicitHeight: height
   focusPolicy: Qt.NoFocus
@@ -36,7 +37,7 @@ RoundButton {
     border.width: round && roundborder ? height / 6 : 1
     border.color: button.borderColor
     color: 'transparent'
-    radius: round ? height / 2 : 0
+    radius:  height / 4
     clip: true
 
     Behavior on color  {
@@ -59,7 +60,7 @@ RoundButton {
   }
 
   icon.source: ""
-  icon.color: "transparent" // setting the color to transparent tells Qt to draw the icon using the original source color(s)
+  icon.color: Theme.mainTextColor // setting the color to transparent tells Qt to draw the icon using the original source color(s)
 
   Material.foreground: icon.color
   font: Theme.tipFont
@@ -89,3 +90,4 @@ RoundButton {
     }
   }
 }
+

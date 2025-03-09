@@ -9,6 +9,8 @@ import Theme
  */
 QfVisibilityFadingRow {
   id: digitizingToolbar
+  y: -80
+
 
   property RubberbandModel rubberbandModel
   property MapSettings mapSettings
@@ -27,7 +29,7 @@ QfVisibilityFadingRow {
 
   property bool geometryValid: false
 
-  spacing: 4
+  spacing: 10
 
   /* This signal is emitted when the digitized geometry has been confirmed.
    * The correspoding handler is \c onConfirmed.
@@ -78,6 +80,8 @@ QfVisibilityFadingRow {
 
   QfToolButton {
     id: cancelButton
+    width: 40
+    height: 40
     iconSource: Theme.getThemeVectorIcon("ic_clear_white_24dp")
     visible: rubberbandModel && rubberbandModel.vertexCount > 1
     round: true
@@ -132,7 +136,11 @@ QfVisibilityFadingRow {
 
   QfToolButton {
     id: removeVertexButton
+    width: 40
+    height: 40
     iconSource: Theme.getThemeVectorIcon("ic_remove_vertex_white_24dp")
+    icon.width: 18
+    icon.height: 18
     iconColor: Theme.toolButtonColor
     visible: rubberbandModel && rubberbandModel.vertexCount > 1
     round: true
@@ -157,13 +165,13 @@ QfVisibilityFadingRow {
     enabled: !screenHovering
     bgcolor: {
       if (!enabled) {
-        Theme.toolButtonBackgroundSemiOpaqueColor;
+        Theme.positionColor;
       } else if (!showConfirmButton) {
-        Theme.toolButtonBackgroundColor;
+        Theme.Theme.toolButtonColor;
       } else if (Number(rubberbandModel ? rubberbandModel.geometryType : 0) === Qgis.GeometryType.Point || Number(rubberbandModel.geometryType) === Qgis.GeometryType.Null) {
-        Theme.mainColor;
-      } else {
         Theme.toolButtonBackgroundColor;
+      } else {
+        Theme.darkGray;
       }
     }
     iconSource: Theme.getThemeVectorIcon("ic_add_vertex_white_24dp")
@@ -304,3 +312,4 @@ QfVisibilityFadingRow {
     confirmed();
   }
 }
+

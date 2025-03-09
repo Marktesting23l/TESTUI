@@ -18,7 +18,7 @@ Item {
   ScaleBarMeasurement {
     id: measurement
     project: qgisProject
-    referenceScreenLength: 300
+    referenceScreenLength: 350
   }
 
   Text {
@@ -26,9 +26,9 @@ Item {
     anchors.horizontalCenter: bar.horizontalCenter
     anchors.left: undefined
     font: Theme.defaultFont
-    color: Theme.toolButtonBackgroundColor
+    color: "black"
     style: Text.Outline
-    styleColor: Qt.hsla(Theme.toolButtonColor.hslHue, Theme.toolButtonColor.hslSaturation, Theme.toolButtonColor.hslLightness, 0.8)
+    styleColor: "black"
 
     states: State {
       name: "narrow"
@@ -51,8 +51,8 @@ Item {
     height: 8
 
     ShapePath {
-      strokeWidth: barLine.strokeWidth + 1.5
-      strokeColor: Qt.hsla(Theme.toolButtonColor.hslHue, Theme.toolButtonColor.hslSaturation, Theme.toolButtonColor.hslLightness, 0.8)
+      strokeWidth: barLine.strokeWidth + 2.5
+      strokeColor: "black"
       fillColor: "transparent"
       startX: 0
       startY: 0
@@ -74,7 +74,7 @@ Item {
     ShapePath {
       id: barLine
       strokeWidth: scaleBar.lineWidth
-      strokeColor: Theme.toolButtonBackgroundColor
+      strokeColor: "black"
       fillColor: "transparent"
       startX: 0
       startY: 0

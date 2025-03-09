@@ -246,7 +246,7 @@ Page {
             }
             QfToolButton {
               visible: itemMenuVisible
-              round: true
+              round: false
               opacity: 0.5
 
               Layout.topMargin: 5
@@ -336,7 +336,7 @@ Page {
 
       QfToolButton {
         id: nativeLocalDataPickerButton
-        round: true
+        round: false
 
         property ProjectSource __projectSource
 
@@ -358,8 +358,7 @@ Page {
 
       QfToolButton {
         id: actionButton
-        round: true
-
+        round: false
         // Since the project menu only has one action for now, hide if PlatformUtilities.UpdateProjectFromArchive is missing
         property bool isLocalProject: qgisProject && QFieldCloudUtils.getProjectId(qgisProject.fileName) === '' && (projectInfo.filePath.endsWith('.qgs') || projectInfo.filePath.endsWith('.qgz'))
         property bool isLocalProjectActionAvailable: updateProjectFromArchive.enabled || uploadProjectToWebdav.enabled
