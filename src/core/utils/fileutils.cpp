@@ -271,8 +271,8 @@ void FileUtils::addImageMetadata( const QString &imagePath, const GnssPositionIn
 
   metadata["Exif.GPSInfo.GPSSatellites"] = QString::number( positionInformation.satellitesUsed() ).rightJustified( 2, '0' );
 
-  metadata["Exif.Image.Make"] = QStringLiteral( "QField" );
-  metadata["Xmp.tiff.Make"] = QStringLiteral( "QField" );
+  metadata["Exif.Image.Make"] = QStringLiteral( "SIGPACGO" );
+  metadata["Xmp.tiff.Make"] = QStringLiteral( "SIGPACGO" );
 
   for ( const QString key : metadata.keys() )
   {

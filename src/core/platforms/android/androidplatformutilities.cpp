@@ -99,7 +99,23 @@ void AndroidPlatformUtilities::afterUpdate()
       auto activity = qtAndroidContext();
       if ( activity.isValid() )
       {
+        QJniObject messageJni = QJniObject::fromString( QObject::tr( "Please wait while SIGPACGO installation finalizes." ) );
+        activity.callMethod<void>( "showBlockingProgressDialog", "(Ljava/lang/String;)V", messageJni.object<jstring>() );
         activity.callMethod<void>( "copyAssets" );
+      }
+    } );
+  }
+
+  // Copy all assets to the system generic data location
+  FileUtils::copyRecursively( QStringLiteral( "assets:/" ), mSystemGenericDataLocation );
+
+  if ( mActivity.isValid() )
+  {
+    runOnAndroidMainThread( [] {
+      auto activity = qtAndroidContext();
+      if ( activity.isValid() )
+      {
+        activity.callMethod<void>( "dismissBlockingProgressDialog" );
       }
     } );
   }
