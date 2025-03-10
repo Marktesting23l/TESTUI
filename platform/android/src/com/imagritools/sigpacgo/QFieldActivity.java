@@ -210,70 +210,67 @@ public class QFieldActivity extends QtActivity {
      */
     public void copyAssets() {
         Log.i("QField", "Copying assets to application directory");
+        
+        AssetManager assetManager = getAssets();
+        
+        // Get the internal app storage path
+        String internalAppDir = getFilesDir().getAbsolutePath();
+        Log.i("QField", "Internal app directory: " + internalAppDir);
+        
+        // Create sample_projects directory in internal storage
+        File sampleProjectsDir = new File(internalAppDir, "sample_projects");
+        if (!sampleProjectsDir.exists()) {
+            sampleProjectsDir.mkdirs();
+            Log.i("QField", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
+        }
+        
+        // Copy sample projects if they exist
         try {
-            AssetManager assetManager = getAssets();
-            
-            // Get the internal app storage path
-            String internalAppDir = getFilesDir().getAbsolutePath();
-            Log.i("QField", "Internal app directory: " + internalAppDir);
-            
-            // Create sample_projects directory in internal storage
-            File sampleProjectsDir = new File(internalAppDir, "sample_projects");
-            if (!sampleProjectsDir.exists()) {
-                sampleProjectsDir.mkdirs();
-                Log.i("QField", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
-            }
-            
-            // Copy sample projects if they exist
-            try {
-                String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
-                if (sampleProjects != null && sampleProjects.length > 0) {
-                    Log.i("QField", "Found " + sampleProjects.length + " sample projects to copy");
-                    for (String project : sampleProjects) {
-                        Log.i("QField", "Copying sample project: " + project);
-                        copyAssetFolder("sigpacgo/sample_projects/" + project, 
-                                       sampleProjectsDir.getAbsolutePath() + "/" + project);
-                    }
-                    Log.i("QField", "Sample projects copied successfully");
-                } else {
-                    Log.w("QField", "No sample projects found in assets");
+            String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
+            if (sampleProjects != null && sampleProjects.length > 0) {
+                Log.i("QField", "Found " + sampleProjects.length + " sample projects to copy");
+                for (String project : sampleProjects) {
+                    Log.i("QField", "Copying sample project: " + project);
+                    copyAssetFolder("sigpacgo/sample_projects/" + project, 
+                                   sampleProjectsDir.getAbsolutePath() + "/" + project);
                 }
-            } catch (IOException e) {
-                Log.e("QField", "Error copying sample projects: " + e.getMessage());
+                Log.i("QField", "Sample projects copied successfully");
+            } else {
+                Log.w("QField", "No sample projects found in assets");
             }
-            
-            // Also copy to external storage for compatibility
-            File externalFilesDir = getExternalFilesDir(null);
-            if (externalFilesDir != null) {
-                File externalSampleProjectsDir = new File(externalFilesDir, "sample_projects");
-                if (!externalSampleProjectsDir.exists()) {
-                    externalSampleProjectsDir.mkdirs();
-                    Log.i("QField", "Created external sample_projects directory: " + externalSampleProjectsDir.getAbsolutePath());
-                    
-                    // Copy from internal to external
-                    if (sampleProjectsDir.exists() && sampleProjectsDir.isDirectory()) {
-                        File[] projects = sampleProjectsDir.listFiles();
-                        if (projects != null) {
-                            for (File project : projects) {
-                                if (project.isDirectory()) {
-                                    File destDir = new File(externalSampleProjectsDir, project.getName());
-                                    try {
-                                        copyDirectory(project, destDir);
-                                        Log.i("QField", "Copied project to external storage: " + project.getName());
-                                    } catch (IOException e) {
-                                        Log.e("QField", "Error copying project to external storage: " + e.getMessage());
-                                    }
+        } catch (IOException e) {
+            Log.e("QField", "Error copying sample projects: " + e.getMessage());
+        }
+        
+        // Also copy to external storage for compatibility
+        File externalFilesDir = getExternalFilesDir(null);
+        if (externalFilesDir != null) {
+            File externalSampleProjectsDir = new File(externalFilesDir, "sample_projects");
+            if (!externalSampleProjectsDir.exists()) {
+                externalSampleProjectsDir.mkdirs();
+                Log.i("QField", "Created external sample_projects directory: " + externalSampleProjectsDir.getAbsolutePath());
+                
+                // Copy from internal to external
+                if (sampleProjectsDir.exists() && sampleProjectsDir.isDirectory()) {
+                    File[] projects = sampleProjectsDir.listFiles();
+                    if (projects != null) {
+                        for (File project : projects) {
+                            if (project.isDirectory()) {
+                                File destDir = new File(externalSampleProjectsDir, project.getName());
+                                try {
+                                    copyDirectory(project, destDir);
+                                    Log.i("QField", "Copied project to external storage: " + project.getName());
+                                } catch (IOException e) {
+                                    Log.e("QField", "Error copying project to external storage: " + e.getMessage());
                                 }
                             }
                         }
                     }
                 }
             }
-            
-            Log.i("QField", "Assets copied successfully");
-        } catch (IOException e) {
-            Log.e("QField", "Error copying assets: " + e.getMessage());
         }
+        
+        Log.i("QField", "Assets copied successfully");
     }
     
     /**
