@@ -167,7 +167,7 @@ QfVisibilityFadingRow {
       if (!enabled) {
         Theme.positionColor;
       } else if (!showConfirmButton) {
-        Theme.Theme.toolButtonColor;
+        Theme.toolButtonColor;
       } else if (Number(rubberbandModel ? rubberbandModel.geometryType : 0) === Qgis.GeometryType.Point || Number(rubberbandModel.geometryType) === Qgis.GeometryType.Null) {
         Theme.toolButtonBackgroundColor;
       } else {

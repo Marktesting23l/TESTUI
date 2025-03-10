@@ -1627,18 +1627,34 @@ Page {
     }
   }
 
-  header: QfPageHeader {
-    title: qsTr("SIGPACGO Settings")
-
-    showBackButton: true
-    showApplyButton: false
-    showCancelButton: false
-
-    topMargin: mainWindow.sceneTopMargin
-
-    onFinished: {
-      parent.finished();
-      variableEditor.apply();
+  header: Rectangle {
+    color: Theme.mainColor
+    height: 50
+    
+    RowLayout {
+      anchors.fill: parent
+      anchors.leftMargin: 10
+      anchors.rightMargin: 10
+      
+      Label {
+        text: qsTr("Settings")
+        font: Theme.strongFont
+        color: Theme.light
+        Layout.fillWidth: true
+      }
+      
+      ToolButton {
+        text: qsTr("Close")
+        font: Theme.defaultFont
+        onClicked: finished()
+        contentItem: Text {
+          text: parent.text
+          font: parent.font
+          color: Theme.light
+          horizontalAlignment: Text.AlignHCenter
+          verticalAlignment: Text.AlignVCenter
+        }
+      }
     }
   }
 

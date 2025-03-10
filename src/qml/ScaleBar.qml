@@ -51,7 +51,7 @@ Item {
     height: 8
 
     ShapePath {
-      strokeWidth: barLine.strokeWidth + 2.5
+      strokeWidth: barLine.strokeWidth + 2
       strokeColor: "black"
       fillColor: "transparent"
       startX: 0

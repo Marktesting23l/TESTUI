@@ -10,109 +10,116 @@ QtObject {
     "mainOverlayColor": "#25062d",
     "accentColor": "#FF8C00", // Dark Orange
     "accentLightColor": "#99FF8C00", // Light Orange with transparency
-    "mainBackgroundColor": "#52342f",
+    "mainBackgroundColor": "#3E2723", // Dark Brown
     "mainBackgroundColorSemiOpaque": "#bb3E2723",
-    "mainTextColor": "#EEEEEE",
-    "mainTextDisabledColor": "#73EEEEEE",
-    "secondaryTextColor": "#AAAAAA",
-    "controlBackgroundColor": "#4E342E",
-    "controlBackgroundAlternateColor": "#5D4037",
+    "mainTextColor": "#F5F5DC", // Beige instead of white
+    "mainTextDisabledColor": "#73F5F5DC",
+    "secondaryTextColor": "#E8E4C9", // Light beige
+    "controlBackgroundColor": "#4E342E", // Brown
+    "controlBackgroundAlternateColor": "#5D4037", // Lighter Brown
     "controlBackgroundDisabledColor": "#33555555",
-    "controlBorderColor": "#404040",
-    "buttonTextColor": "#202020",
-    "toolButtonColor": "#FFA500",
-    "toolButtonBackgroundColor": "#5d4037",
+    "controlBorderColor": "#6D4C41", // Medium Brown
+    "buttonTextColor": "#F5F5DC", // Beige instead of white
+    "toolButtonColor": "#FFE0B2", // Light orange for icons
+    "toolButtonBackgroundColor": "#5D4037", // Brown
     "toolButtonBackgroundSemiOpaqueColor": "#4D5D4037",
     "scrollBarBackgroundColor": "#bb3E2723"
   }
 
   property var lightThemeColors: {
     "mainColor": "#FFA500", // Orange
-    "mainOverlayColor": "#e9e56e",
+    "mainOverlayColor": "#FFF8E1", // Very light orange
     "accentColor": "#FF8C00", // Dark Orange
     "accentLightColor": "#99FF8C00", // Light Orange with transparency
-    "mainBackgroundColor": "#d9c9b5",
-    "mainBackgroundColorSemiOpaque": "#bbF5F5DC",
-    "mainTextColor": "#212121",
-    "mainTextDisabledColor": "#73212121",
-    "secondaryTextColor": "#757575",
-    "controlBackgroundColor": "#F0E6D2",
-    "controlBackgroundAlternateColor": "#E8D8C3",
+    "mainBackgroundColor": "#FFF3E0", // Very light orange background
+    "mainBackgroundColorSemiOpaque": "#bbFFF3E0",
+    "mainTextColor": "#3E2723", // Dark Brown for good contrast
+    "mainTextDisabledColor": "#733E2723",
+    "secondaryTextColor": "#5D4037", // Medium Brown
+    "controlBackgroundColor": "#FFECB3", // Light Orange
+    "controlBackgroundAlternateColor": "#FFE0B2", // Lighter Orange
     "controlBackgroundDisabledColor": "#33555555",
-    "controlBorderColor": "#D0C0B0",
-    "buttonTextColor": "#070707",
-    "toolButtonColor": "#FF8C00",
-    "toolButtonBackgroundColor": "#E8D8C3",
-    "toolButtonBackgroundSemiOpaqueColor": "#4DE8D8C3",
-    "scrollBarBackgroundColor": "#aaF5F5DC"
+    "controlBorderColor": "#FFCC80", // Medium Light Orange
+    "buttonTextColor": "#3E2723", // Dark Brown for good contrast
+    "toolButtonColor": "#5D4037", // Brown for icons
+    "toolButtonBackgroundColor": "#FFE0B2", // Light Orange
+    "toolButtonBackgroundSemiOpaqueColor": "#4DFFE0B2",
+    "scrollBarBackgroundColor": "#aaFFF3E0"
   }
 
   property bool darkTheme: false
 
+  // Default properties that will be overridden by applyColors
   property color mainColor: "#FFA500" // Orange
-  property color mainOverlayColor: "#eae2d8"
+  property color mainOverlayColor: darkTheme ? "#25062d" : "#FFF8E1"
   property color accentColor: "#FF8C00" // Dark Orange
   property color accentLightColor: "#99FF8C00" // Light Orange with transparency
 
-  property color mainBackgroundColor: "#bbF5F5DC"
-  property color mainBackgroundColorSemiOpaque: "#bbF5F5DC"
-  property color mainTextColor: "#212121"
-  property color mainTextDisabledColor: "#73212121"
+  property color mainBackgroundColor: darkTheme ? "#3E2723" : "#FFF3E0"
+  property color mainBackgroundColorSemiOpaque: darkTheme ? "#bb3E2723" : "#bbFFF3E0"
+  property color mainTextColor: darkTheme ? "#F5F5DC" : "#3E2723"
+  property color mainTextDisabledColor: darkTheme ? "#73F5F5DC" : "#733E2723"
 
-  property color secondaryTextColor: "#757575"
+  property color secondaryTextColor: darkTheme ? "#E8E4C9" : "#5D4037"
 
-  property color controlBackgroundColor: "#F0E6D2"
-  property color controlBackgroundAlternateColor: "#E8D8C3"
+  property color controlBackgroundColor: darkTheme ? "#4E342E" : "#FFECB3"
+  property color controlBackgroundAlternateColor: darkTheme ? "#5D4037" : "#FFE0B2"
   property color controlBackgroundDisabledColor: "#33555555"
-  property color controlBorderColor: "#D0C0B0"
+  property color controlBorderColor: darkTheme ? "#6D4C41" : "#FFCC80"
 
-  property color buttonTextColor: "#2a0275"
+  property color buttonTextColor: darkTheme ? "#F5F5DC" : "#3E2723"
 
-  property color toolButtonColor: "#9b10d2"
-  property color toolButtonBackgroundColor: Theme.darkGray
-  property color toolButtonBackgroundSemiOpaqueColor: Theme.darkGraySemiOpaque
+  property color toolButtonColor: darkTheme ? "#FFE0B2" : "#5D4037"
+  property color toolButtonBackgroundColor: darkTheme ? "#5D4037" : "#FFE0B2"
+  property color toolButtonBackgroundSemiOpaqueColor: darkTheme ? "#4D5D4037" : "#4DFFE0B2"
 
-  property color scrollBarBackgroundColor: "#aaffffff"
+  property color scrollBarBackgroundColor: darkTheme ? "#bb3E2723" : "#aaFFF3E0"
 
+  // Standard colors
   property color darkRed: "#c33626"
-  property color darkGray: "#5d4037"
+  property color darkGray: "#5d4037" // Brown instead of gray to match theme
   property color darkGraySemiOpaque: "#4D5D4037"
-  property color gray: "#c3888888"
-  property color lightGray: "#bfdddddd"
-  property color lightestGray: "#cdeeeeee"
-  property color light: "#deffffff"
+  property color gray: "#8D6E63" // Brown-gray
+  property color lightGray: "#D7CCC8" // Light brown-gray
+  property color lightestGray: "#EFEBE9" // Very light brown-gray
+  property color light: "#F5F5DC" // Beige instead of white
 
-  property color errorColor: darkTheme ? "#df3422" : "#c0392b"
-  property color warningColor: "orange"
+  property color errorColor: "#c0392b"
+  property color warningColor: "#F57C00" // Darker orange for warning
   property color cloudColor: "#4c6dac"
 
-  property color positionColor: "#64b5f6"
-  property color positionColorSemiOpaque: "#3364b5f6"
-  property color positionBackgroundColor: "#3364b5f6"
-  property color darkPositionColor: "#2374b5"
-  property color darkPositionColorSemiOpaque: "#882374b5"
+  // GPS position colors with better state differentiation
+  property color positionColor: "#FF8C00" // Dark Orange to match theme
+  property color positionColorActive: "#FFA500" // Brighter orange for active state
+  property color positionColorInactive: "#8D6E63" // Brown-gray for inactive state
+  property color positionColorSemiOpaque: "#99FF8C00"
+  property color positionBackgroundColor: "#33FF8C00"
+  property color positionBackgroundActiveColor: "#66FFA500" // More opaque for active state
+  property color darkPositionColor: "#E65100" // Darker orange
+  property color darkPositionColorSemiOpaque: "#88E65100"
 
   property color accuracyBad: "#c0392b"
-  property color accuracyTolerated: "orange"
-  property color accuracyExcellent: "#80cc28"
+  property color accuracyTolerated: "#F57C00" // Darker orange
+  property color accuracyExcellent: "#4CAF50" // Green for excellent accuracy
 
-  property color navigationColor: "#388E3C"
-  property color navigationColorSemiOpaque: "#994CAF50"
-  property color navigationBackgroundColor: "#334CAF50"
+  // Navigation colors changed to dark green
+  property color navigationColor: "#2E7D32" // Dark Green
+  property color navigationColorSemiOpaque: "#992E7D32"
+  property color navigationBackgroundColor: "#332E7D32"
 
   property color sensorBackgroundColor: "#33999999"
 
-  property color bookmarkDefault: "#e0cb13"
-  property color bookmarkOrange: "orange"
+  property color bookmarkDefault: "#FFA500" // Orange to match theme
+  property color bookmarkOrange: "#FF8C00" // Dark Orange
   property color bookmarkRed: "#c0392b"
   property color bookmarkBlue: "#64b5f6"
 
-  property color vertexColor: "#FF0000"
-  property color vertexColorSemiOpaque: "#40FF0000"
+  property color vertexColor: "#9441e6"
+  property color vertexColorSemiOpaque: "#40cb4ce4"
   property color vertexSelectedColor: "#0000FF"
   property color vertexSelectedColorSemiOpaque: "#200000FF"
-  property color vertexNewColor: "#4CAF50"
-  property color vertexNewColorSemiOpaque: "#404CAF50"
+  property color vertexNewColor: "#FFA500" // Orange to match theme
+  property color vertexNewColorSemiOpaque: "#40FFA500"
 
   property color processingPreview: '#99000000'
 
