@@ -342,9 +342,6 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     void resourceCanceled( const QString &message );
 
   private:
-    ResourceSource *createResource( const QString &prefix, const QString &filePath, const QString &fileName, QObject *parent );
-
-  protected:
     /**
      * This method can be used to implement platform specific initialization tasks to be performed after an app update.
      * This is implemented for Android to extract app assets to location where it can
@@ -353,5 +350,7 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     virtual void afterUpdate();
 
     void copySampleProjects();
+
+    ResourceSource *createResource( const QString &prefix, const QString &filePath, const QString &fileName, QObject *parent );
 };
 #endif // PLATFORMUTILITIES_H
