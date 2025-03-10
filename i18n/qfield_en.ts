@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Support SIGPACGO</source>
-        <translation type="vanished">Support SIGPACGO</translation>
+        <translation>Support SIGPACGO</translation>
     </message>
     <message>
         <source>Changelog</source>
@@ -29,10 +29,6 @@
     </message>
     <message>
         <source>SIGPACGO app directory</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Support</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -58,6 +54,10 @@
 <context>
     <name>ActiveLayerFeaturesLocatorFilter</name>
     <message>
+        <source>Limit the search to the field &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Open form</source>
         <translation type="unfinished">Open form</translation>
     </message>
@@ -68,10 +68,6 @@
     <message>
         <source>Feature has no geometry</source>
         <translation type="unfinished">Feature has no geometry</translation>
-    </message>
-    <message>
-        <source>Limit the search to the field &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Features from active layer</source>
@@ -92,8 +88,8 @@
         <translation>No transform available between %1 and %2</translation>
     </message>
     <message>
-        <source>This grid is part of the &quot;&lt;i&gt;%1&lt;/i&gt;&quot; package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
-        <translation type="vanished">This grid is part of the &quot;&lt;i&gt;%1&lt;/i&gt;&quot; package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</translation>
+        <source>This grid is part of the "&lt;i&gt;%1&lt;/i&gt;" package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
+        <translation>This grid is part of the "&lt;i&gt;%1&lt;/i&gt;" package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</translation>
     </message>
     <message>
         <source>This grid is available for download from &lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;.</source>
@@ -104,20 +100,20 @@
         <translation>projection</translation>
     </message>
     <message>
-        <source>This transformation requires the grid file &quot;&lt;i&gt;%1&lt;/i&gt;&quot;, which is not available for use on the system.</source>
-        <translation type="vanished">This transformation requires the grid file &quot;&lt;i&gt;%1&lt;/i&gt;&quot;, which is not available for use on the system.</translation>
+        <source>This transformation requires the grid file "&lt;i&gt;%1&lt;/i&gt;", which is not available for use on the system.</source>
+        <translation>This transformation requires the grid file "&lt;i&gt;%1&lt;/i&gt;", which is not available for use on the system.</translation>
     </message>
     <message>
         <source>This grid is part of the &lt;i&gt;%1&lt;/i&gt; package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
         <translation>This grid is part of the &lt;i&gt;%1&lt;/i&gt; package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Current transform &quot;&lt;i&gt;%1&lt;/i&gt;&quot; has an accuracy of %2 meters, while the preferred transformation &quot;&lt;i&gt;%3&lt;/i&gt;&quot; has accuracy %4 meters.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;p&gt;Current transform &quot;&lt;i&gt;%1&lt;/i&gt;&quot; has an accuracy of %2 meters, while the preferred transformation &quot;&lt;i&gt;%3&lt;/i&gt;&quot; has accuracy %4 meters.&lt;/p&gt;</translation>
+        <source>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an accuracy of %2 meters, while the preferred transformation "&lt;i&gt;%3&lt;/i&gt;" has accuracy %4 meters.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an accuracy of %2 meters, while the preferred transformation "&lt;i&gt;%3&lt;/i&gt;" has accuracy %4 meters.&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;p&gt;Current transform &quot;&lt;i&gt;%1&lt;/i&gt;&quot; has an unknown accuracy, while the preferred transformation &quot;&lt;i&gt;%2&lt;/i&gt;&quot; has accuracy %3 meters.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;p&gt;Current transform &quot;&lt;i&gt;%1&lt;/i&gt;&quot; has an unknown accuracy, while the preferred transformation &quot;&lt;i&gt;%2&lt;/i&gt;&quot; has accuracy %3 meters.&lt;/p&gt;</translation>
+        <source>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an unknown accuracy, while the preferred transformation "&lt;i&gt;%2&lt;/i&gt;" has accuracy %3 meters.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Current transform "&lt;i&gt;%1&lt;/i&gt;" has an unknown accuracy, while the preferred transformation "&lt;i&gt;%2&lt;/i&gt;" has accuracy %3 meters.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;The preferred transform between &lt;i&gt;%1&lt;/i&gt; and &lt;i&gt;%2&lt;/i&gt; is not available for use on the system.&lt;/p&gt;</source>
@@ -134,22 +130,6 @@
     <message>
         <source>Used a ballpark transform from %1 to %2</source>
         <translation>Used a ballpark transform from %1 to %2</translation>
-    </message>
-    <message>
-        <source>This grid is part of the “&lt;i&gt;%1&lt;/i&gt;” package, available for download from &lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This transformation requires the grid file “%1”, which is not available for use on the system.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Current transform “&lt;i&gt;%1&lt;/i&gt;” has an accuracy of %2 meters, while the preferred transformation “&lt;i&gt;%3&lt;/i&gt;” has accuracy %4 meters.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Current transform “&lt;i&gt;%1&lt;/i&gt;” has an unknown accuracy, while the preferred transformation “&lt;i&gt;%2&lt;/i&gt;” has accuracy %3 meters.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -449,7 +429,7 @@ Cancel to make a minimal device scan instead.</translation>
     <name>Changelog</name>
     <message>
         <source>What&apos;s new in SIGPACGO</source>
-        <translation type="vanished">What&apos;s new in SIGPACGO</translation>
+        <translation>What&apos;s new in SIGPACGO</translation>
     </message>
     <message>
         <source>Error while fetching changelog, try again later.</source>
@@ -457,31 +437,15 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Support SIGPACGO</source>
-        <translation type="vanished">Support SIGPACGO</translation>
+        <translation>Support SIGPACGO</translation>
     </message>
     <message>
         <source>Check the latest SIGPACGO changes on </source>
-        <translation type="vanished">Check the latest SIGPACGO changes on </translation>
+        <translation>Check the latest SIGPACGO changes on </translation>
     </message>
     <message>
         <source>SIGPACGO releases page</source>
-        <translation type="vanished">SIGPACGO releases page</translation>
-    </message>
-    <message>
-        <source>What&apos;s new in QField</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Support QField</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check the latest QField changes on </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>QField releases page</source>
-        <translation type="unfinished"></translation>
+        <translation>SIGPACGO releases page</translation>
     </message>
 </context>
 <context>
@@ -523,12 +487,12 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>CodeReader</name>
     <message>
-        <source>Code Reader</source>
-        <translation type="unfinished">Code Reader</translation>
-    </message>
-    <message>
         <source>NFC text tag detected</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Code Reader</source>
+        <translation type="unfinished">Code Reader</translation>
     </message>
     <message>
         <source>Center your device on a code</source>
@@ -547,7 +511,7 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Project Folder</source>
-        <translation type="obsolete">Project Folder</translation>
+        <translation type="unfinished">Project Folder</translation>
     </message>
 </context>
 <context>
@@ -588,20 +552,12 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Expected all array elements to be an object, but the element at #%1 is not</translation>
     </message>
     <message>
-        <source>Expected all array elements to be an object containing a key &quot;&quot;%1&quot;&quot;, but the element at #%2 is not</source>
-        <translation type="vanished">Expected all array elements to be an object containing a key &quot;&quot;%1&quot;&quot;, but the element at #%2 is not</translation>
+        <source>Expected all array elements to be an object containing a key "&quot;%1&quot;", but the element at #%2 is not</source>
+        <translation>Expected all array elements to be an object containing a key "&quot;%1&quot;", but the element at #%2 is not</translation>
     </message>
     <message>
-        <source>Unrecognized status &quot;&quot;%1&quot; for $%2</source>
-        <translation type="vanished">Unrecognized status &quot;&quot;%1&quot; for $%2</translation>
-    </message>
-    <message>
-        <source>Expected all array elements to be an object containing a key &quot;%1&quot;, but the element at #%2 is not</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unrecognized status &quot;%1&quot; for $%2</source>
-        <translation type="unfinished"></translation>
+        <source>Unrecognized status "&quot;%1&quot; for $%2</source>
+        <translation>Unrecognized status "&quot;%1&quot; for $%2</translation>
     </message>
 </context>
 <context>
@@ -671,18 +627,6 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="obsolete">Disconnected</translation>
     </message>
     <message>
-        <source>Could not find the remote host</source>
-        <translation type="unfinished">Could not find the remote host</translation>
-    </message>
-    <message>
-        <source>Attempt to read or write from socket returned an error</source>
-        <translation type="unfinished">Attempt to read or write from socket returned an error</translation>
-    </message>
-    <message>
-        <source>The connection was refused by the remote host</source>
-        <translation type="unfinished">The connection was refused by the remote host</translation>
-    </message>
-    <message>
         <source>Received data is too short to process</source>
         <translation type="unfinished"></translation>
     </message>
@@ -697,6 +641,18 @@ Cancel to make a minimal device scan instead.</translation>
     <message>
         <source>Failed to parse JSON</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not find the remote host</source>
+        <translation type="unfinished">Could not find the remote host</translation>
+    </message>
+    <message>
+        <source>Attempt to read or write from socket returned an error</source>
+        <translation type="unfinished">Attempt to read or write from socket returned an error</translation>
+    </message>
+    <message>
+        <source>The connection was refused by the remote host</source>
+        <translation type="unfinished">The connection was refused by the remote host</translation>
     </message>
     <message>
         <source>TCP receiver error (%1)</source>
@@ -728,7 +684,7 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>ExpressionCalculatorLocatorFilter</name>
     <message>
-        <source>Copy “%1” to clipboard</source>
+        <source>Copy "%1" to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -840,23 +796,23 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>FeatureHistory</name>
     <message>
-        <source>Failed to undo created features in layer &quot;%1&quot;</source>
+        <source>Failed to undo created features in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to undo deleted features in layer &quot;%1&quot;</source>
+        <source>Failed to undo deleted features in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to undo update features in layer &quot;%1&quot;</source>
+        <source>Failed to undo update features in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to commit undo feature modification in layer &quot;%1&quot;</source>
+        <source>Failed to commit undo feature modification in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to rollback undo feature modifications in layer &quot;%1&quot;</source>
+        <source>Failed to rollback undo feature modifications in layer "%1"</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -989,15 +945,15 @@ Cancel to make a minimal device scan instead.</translation>
     <message numerus="yes">
         <source>Should the %n feature(s) selected really be merge?
 
-The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</source>
+The features geometries will be combined into feature '%1', which will keep its attributes.</source>
         <comment>0</comment>
         <translation>
             <numerusform>Should the %n feature(s) selected really be merge?
 
-The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</numerusform>
+The features geometries will be combined into feature '%1', which will keep its attributes.</numerusform>
             <numerusform>Should the %n feature(s) selected really be merge?
 
-The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</numerusform>
+The features geometries will be combined into feature '%1', which will keep its attributes.</numerusform>
         </translation>
     </message>
     <message numerus="yes">
@@ -1045,14 +1001,6 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Changes discarded</translation>
     </message>
     <message>
-        <source>Features</source>
-        <translation type="unfinished">Features</translation>
-    </message>
-    <message>
-        <source>Processing Algorithms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Transfer Feature Attributes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1068,12 +1016,20 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <source>No feature attributes were transferred</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Features</source>
+        <translation type="unfinished">Features</translation>
+    </message>
+    <message>
+        <source>Processing Algorithms</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FeatureModel</name>
     <message>
-        <source>Value &quot;%1&quot; %4 could not be converted to a compatible value for field %2(%3).</source>
-        <translation>Value &quot;%1&quot; %4 could not be converted to a compatible value for field %2(%3).</translation>
+        <source>Value "%1" %4 could not be converted to a compatible value for field %2(%3).</source>
+        <translation>Value "%1" %4 could not be converted to a compatible value for field %2(%3).</translation>
     </message>
     <message>
         <source>Cannot update feature</source>
@@ -1092,22 +1048,22 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Default value expression for %1:%2 has evaluation error: %3</translation>
     </message>
     <message>
-        <source>Cannot start editing on layer &quot;%1&quot; to create feature %2</source>
-        <translation>Cannot start editing on layer &quot;%1&quot; to create feature %2</translation>
+        <source>Cannot start editing on layer "%1" to create feature %2</source>
+        <translation>Cannot start editing on layer "%1" to create feature %2</translation>
     </message>
     <message>
-        <source>Layer &quot;%1&quot; has been commited but the newly created feature %2 could not be fetched</source>
-        <translation>Layer &quot;%1&quot; has been commited but the newly created feature %2 could not be fetched</translation>
+        <source>Layer "%1" has been commited but the newly created feature %2 could not be fetched</source>
+        <translation>Layer "%1" has been commited but the newly created feature %2 could not be fetched</translation>
     </message>
     <message>
-        <source>Layer &quot;%1&quot; cannot be commited with the newly created feature %2. Reason:
+        <source>Layer "%1" cannot be commited with the newly created feature %2. Reason:
 %3</source>
-        <translation>Layer &quot;%1&quot; cannot be commited with the newly created feature %2. Reason:
+        <translation>Layer "%1" cannot be commited with the newly created feature %2. Reason:
 %3</translation>
     </message>
     <message>
-        <source>Feature %2 could not be added in layer &quot;%1&quot;</source>
-        <translation>Feature %2 could not be added in layer &quot;%1&quot;</translation>
+        <source>Feature %2 could not be added in layer "%1"</source>
+        <translation>Feature %2 could not be added in layer "%1"</translation>
     </message>
     <message>
         <source>Could not save changes. Rolling back.</source>
@@ -1263,19 +1219,19 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
 <context>
     <name>HelpLocatorFilter</name>
     <message>
-        <source>QField Documentation</source>
+        <source>SIGPACGO Documentation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>InformationDrawer</name>
     <message>
-        <source>Positioning</source>
-        <translation type="unfinished">Positioning</translation>
-    </message>
-    <message>
         <source>Navigation</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Positioning</source>
+        <translation type="unfinished">Positioning</translation>
     </message>
     <message>
         <source>Precise view</source>
@@ -1283,7 +1239,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
     <message>
         <source>Sensors</source>
-        <translation type="unfinished">Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Elevation profile</source>
@@ -1312,12 +1268,12 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
 <context>
     <name>LayerObserver</name>
     <message>
-        <source>Failed to find a local primary key column in layer &quot;%1&quot;</source>
-        <translation>Failed to find a local primary key column in layer &quot;%1&quot;</translation>
+        <source>Failed to find a local primary key column in layer "%1"</source>
+        <translation>Failed to find a local primary key column in layer "%1"</translation>
     </message>
     <message>
-        <source>Failed to find a source primary key column in layer &quot;%1&quot;</source>
-        <translation>Failed to find a source primary key column in layer &quot;%1&quot;</translation>
+        <source>Failed to find a source primary key column in layer "%1"</source>
+        <translation>Failed to find a source primary key column in layer "%1"</translation>
     </message>
 </context>
 <context>
@@ -1395,12 +1351,12 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="vanished">Geometry Locked Layer</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</source>
-        <translation>This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</translation>
+        <source>This layer is configured as "Read-Only" which disables adding, deleting and editing features.</source>
+        <translation>This layer is configured as "Read-Only" which disables adding, deleting and editing features.</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
-        <translation>This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
+        <source>This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
+        <translation>This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
     </message>
     <message>
         <source>Show visible features list</source>
@@ -1430,15 +1386,15 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Cannot start editing</translation>
     </message>
     <message>
-        <source>Cannot commit deletion of feature %2 in layer &quot;%1&quot;. Reason:
+        <source>Cannot commit deletion of feature %2 in layer "%1". Reason:
 %3</source>
-        <translation>Cannot commit deletion of feature %2 in layer &quot;%1&quot;. Reason:
+        <translation>Cannot commit deletion of feature %2 in layer "%1". Reason:
 %3</translation>
     </message>
     <message>
-        <source>Cannot commit deletion in layer &quot;%1&quot;. Reason:
+        <source>Cannot commit deletion in layer "%1". Reason:
 %3</source>
-        <translation>Cannot commit deletion in layer &quot;%1&quot;. Reason:
+        <translation>Cannot commit deletion in layer "%1". Reason:
 %3</translation>
     </message>
     <message>
@@ -1454,14 +1410,14 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Cannot copy invalid feature</translation>
     </message>
     <message>
-        <source>Cannot add new feature in layer &quot;%1&quot;. Reason:
+        <source>Cannot add new feature in layer "%1". Reason:
 %2</source>
-        <translation>Cannot add new feature in layer &quot;%1&quot;. Reason:
+        <translation>Cannot add new feature in layer "%1". Reason:
 %2</translation>
     </message>
     <message>
-        <source>Cannot add new feature in layer &quot;%1&quot;.</source>
-        <translation type="vanished">Cannot add new feature in layer &quot;%1&quot;.</translation>
+        <source>Cannot add new feature in layer "%1".</source>
+        <translation type="vanished">Cannot add new feature in layer "%1".</translation>
     </message>
 </context>
 <context>
@@ -1471,16 +1427,12 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished">This layer is invalid. This might be due to a network issue, a missing file or a misconfiguration of the project.</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</source>
-        <translation type="unfinished">This layer is configured as &quot;Read-Only&quot; which disables adding, deleting and editing features.</translation>
+        <source>This layer is configured as "Read-Only" which disables adding, deleting and editing features.</source>
+        <translation type="unfinished">This layer is configured as "Read-Only" which disables adding, deleting and editing features.</translation>
     </message>
     <message>
-        <source>This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
-        <translation type="unfinished">This layer is configured as &quot;Lock Geometries&quot; which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
-    </message>
-    <message>
-        <source>Track on layer %1 stopped</source>
-        <translation type="unfinished">Track on layer %1 stopped</translation>
+        <source>This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</source>
+        <translation type="unfinished">This layer is configured as "Lock Geometries" which disables adding and deleting features, as well as modifying the geometries of existing features.</translation>
     </message>
     <message>
         <source>This layer is is currently tracking positions.</source>
@@ -1489,6 +1441,10 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     <message>
         <source>Stop</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Track on layer %1 stopped</source>
+        <translation type="unfinished">Track on layer %1 stopped</translation>
     </message>
 </context>
 <context>
@@ -1537,7 +1493,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Search filters for your locations have been activated, customize results in the settings panel</translation>
     </message>
     <message>
-        <source>Returns a list of features from the active layer with matching attributes. Restricting matching to a single attribute is done by identifying its name prefixed with an &apos;@&apos;.</source>
+        <source>Returns a list of features from the active layer with matching attributes. Restricting matching to a single attribute is done by identifying its name prefixed with an '&apos;@&apos;'.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1557,11 +1513,11 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Returns QField documentation pages matching terms.</source>
+        <source>Returns a list of locations and addresses within Finland with matching terms.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Returns a list of locations and addresses within Finland with matching terms.</source>
+        <source>Returns SIGPACGO documentation pages matching terms.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1634,15 +1590,15 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This will send a log of your current session to the development team. You only need to do this when you are asked for it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Type optional details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Include cloud user details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will send a log of your current session to the development team. You only need to do this when you are asked for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1764,10 +1720,6 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Atlas feature(s) successfully printed and placed in your project folder</translation>
     </message>
     <message>
-        <source>Process Selected Feature(s)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Feature attributes copied to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1784,11 +1736,15 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Rotate Feature</source>
+        <source>Update Attributes From Feature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Update Attributes From Feature</source>
+        <source>Process Selected Feature(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rotate Feature</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1940,6 +1896,10 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Select File</translation>
     </message>
     <message>
+        <source>Audio files (*.mp3 *.aac *.ogg *.m4a *.mp4 *.mov)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Removal Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1949,10 +1909,6 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
     <message>
         <source>The project folder will be deleted, proceed with removal?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Audio files (*.mp3 *.aac *.ogg *.m4a *.mp4 *.mov)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1986,11 +1942,31 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>No plugins have been installed yet.</source>
+        <source>No plugins have been installed yet. To learn more about plugins, %1read the documentation%2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Install plugin from URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear remembered permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type a URL below to download and install a plugin:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Installing %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Authored by %1%2%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to uninstall `%1`?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2002,31 +1978,11 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Install plugin from URL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Plugins management menu</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clear remembered permissions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The author details shown above are self-reported by the plugin and not independently verified. Please make sure you trust the plugin&apos;s origin.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Type a URL below to download and install a plugin:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to uninstall `%1`?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Installing %1</source>
+        <source>Plugins management menu</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2147,16 +2103,16 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation>Serial port (NMEA)</translation>
     </message>
     <message>
-        <source>Name</source>
-        <translation type="unfinished">Name</translation>
-    </message>
-    <message>
         <source>Egeniouss</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Connection type</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation type="unfinished">Name</translation>
     </message>
     <message>
         <source> (leave empty to auto-fill)</source>
@@ -2334,7 +2290,7 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldAppAuthRequestHandler</name>
+    <name>SIGPACGOAppAuthRequestHandler</name>
     <message>
         <source>Please enter credentials for database</source>
         <translation type="unfinished"></translation>
@@ -2349,40 +2305,44 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldAudioRecorder</name>
+    <name>SIGPACGOAudioRecorder</name>
     <message>
         <source>Audio Recorder</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QFieldCamera</name>
+    <name>SIGPACGOCamera</name>
     <message>
-        <source>Set Folder Name</source>
+        <source>Geotagging enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enter a name for the photo folder. If left empty, photos will be saved in a folder with today&apos;s date.</source>
+        <source>Geotagging disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>e.g., Greenhouse 1</source>
+        <source>Grid enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished">Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Save</source>
+        <source>Grid disabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folder name set to: </source>
+        <source>front</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Date-based folder</source>
+        <source>back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image geotagging requires positioning to be turned on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details stamping enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2406,160 +2366,68 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lat</source>
-        <translation type="unfinished">Lat</translation>
-    </message>
-    <message>
-        <source>Lon</source>
-        <translation type="unfinished">Lon</translation>
-    </message>
-    <message>
-        <source>Alt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Field</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Crop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>GPS coordinates not available</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Image geotagging requires positioning to be turned on</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Details stamping enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Details stamping disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disable photo stamping</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable photo stamping</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Info overlay enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Info overlay disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hide info overlay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show info overlay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Geotagging enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Geotagging disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Grid enabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Grid disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Current folder: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set photo folder name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>front</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>back</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudConnection</name>
-    <message>
-        <source>Login error due to unexpected redirect, please retry later</source>
-        <translation type="unfinished">Login error due to unexpected redirect, please retry later</translation>
-    </message>
-    <message>
-        <source>Server not found, please check the server URL</source>
-        <translation type="unfinished">Server not found, please check the server URL</translation>
-    </message>
-    <message>
-        <source>Timeout error, please retry</source>
-        <translation type="unfinished">Timeout error, please retry</translation>
-    </message>
-    <message>
-        <source>Wrong username or password</source>
-        <translation type="unfinished">Wrong username or password</translation>
-    </message>
-    <message>
-        <source>Session expired</source>
-        <translation type="unfinished">Session expired</translation>
-    </message>
-    <message>
-        <source>Login temporary unavailable</source>
-        <translation type="unfinished">Login temporary unavailable</translation>
-    </message>
+    <name>SIGPACGOCloudConnection</name>
     <message>
         <source>[timeout] The request took too long to finish, please retry.</source>
-        <translation type="unfinished">[timeout] The request took too long to finish, please retry.</translation>
+        <translation>[timeout] The request took too long to finish, please retry.</translation>
     </message>
     <message>
         <source>[aborted] The request has been aborted.</source>
-        <translation type="unfinished">[aborted] The request has been aborted.</translation>
+        <translation>[aborted] The request has been aborted.</translation>
     </message>
     <message>
         <source>Server Error.</source>
-        <translation type="unfinished">Server Error.</translation>
+        <translation>Server Error.</translation>
     </message>
     <message>
         <source>Network Error.</source>
-        <translation type="unfinished">Network Error.</translation>
+        <translation>Network Error.</translation>
+    </message>
+    <message>
+        <source>Server not found, please check the server URL</source>
+        <translation>Server not found, please check the server URL</translation>
+    </message>
+    <message>
+        <source>Timeout error, please retry</source>
+        <translation>Timeout error, please retry</translation>
+    </message>
+    <message>
+        <source>Wrong username or password</source>
+        <translation>Wrong username or password</translation>
+    </message>
+    <message>
+        <source>Session expired</source>
+        <translation>Session expired</translation>
+    </message>
+    <message>
+        <source>Login temporary unavailable</source>
+        <translation>Login temporary unavailable</translation>
     </message>
     <message>
         <source>Failed to upload attachment stored at `%1`, reason:
 %2</source>
-        <translation type="unfinished">Failed to upload attachment stored at `%1`, reason:
+        <translation>Failed to upload attachment stored at `%1`, reason:
 %2</translation>
+    </message>
+    <message>
+        <source>Login error due to unexpected redirect, please retry later</source>
+        <translation>Login error due to unexpected redirect, please retry later</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudDeltaHistory</name>
+    <name>SIGPACGOCloudDeltaHistory</name>
     <message>
         <source>Push History</source>
-        <translation type="unfinished">Push History</translation>
+        <translation>Push History</translation>
     </message>
     <message>
         <source>Loading…</source>
-        <translation type="unfinished">Loading…</translation>
+        <translation>Loading…</translation>
     </message>
     <message>
         <source>No changes have been pushed yet!</source>
@@ -2567,105 +2435,287 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
     </message>
 </context>
 <context>
-    <name>QFieldCloudLogin</name>
+    <name>SIGPACGOCloudLogin</name>
     <message>
-        <source>QFieldCloud</source>
-        <translation type="unfinished"></translation>
+        <source>Failed to login</source>
+        <translation type="vanished">Failed to login</translation>
     </message>
     <message>
         <source>Failed to sign in</source>
-        <translation type="unfinished">Failed to sign in</translation>
+        <translation>Failed to sign in</translation>
     </message>
     <message>
         <source>Server URL
 (Leave empty to use the default server)</source>
-        <translation type="unfinished">Server URL
+        <translation>Server URL
 (Leave empty to use the default server)</translation>
     </message>
     <message>
         <source>Username or email</source>
-        <translation type="unfinished">Username or email</translation>
+        <translation>Username or email</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished">Password</translation>
+        <translation>Password</translation>
     </message>
     <message>
         <source>Sign out</source>
-        <translation type="unfinished">Sign out</translation>
+        <translation>Sign out</translation>
     </message>
     <message>
         <source>Signing in, please wait</source>
-        <translation type="unfinished">Signing in, please wait</translation>
+        <translation>Signing in, please wait</translation>
     </message>
     <message>
         <source>Sign in</source>
-        <translation type="unfinished">Sign in</translation>
+        <translation>Sign in</translation>
     </message>
     <message>
         <source>New user?</source>
-        <translation type="unfinished">New user?</translation>
+        <translation>New user?</translation>
     </message>
     <message>
         <source>Register an account</source>
-        <translation type="unfinished">Register an account</translation>
+        <translation>Register an account</translation>
+    </message>
+    <message>
+        <source>Logout</source>
+        <translation type="vanished">Logout</translation>
+    </message>
+    <message>
+        <source>Logging in, please wait</source>
+        <translation type="vanished">Logging in, please wait</translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation type="vanished">Login</translation>
     </message>
     <message>
         <source>The easiest way to transfer you project from QGIS to your devices!</source>
-        <translation type="unfinished">The easiest way to transfer you project from QGIS to your devices!</translation>
+        <translation>The easiest way to transfer you project from QGIS to your devices!</translation>
     </message>
     <message>
-        <source>Learn more about QFieldCloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QFieldCloudPackageLayersFeedback</name>
-    <message>
-        <source>QFieldCloud had troubles packaging your project</source>
-        <translation type="unfinished"></translation>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation>Learn more about SIGPACGOCloud</translation>
     </message>
     <message>
-        <source>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
-        <translation type="unfinished"></translation>
+        <source>SIGPACGOCloud</source>
+        <translation type="unfinished">SIGPACGOCloud</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudPopup</name>
+    <name>SIGPACGOCloudPackageLayersFeedback</name>
     <message>
-        <source>QFieldCloud</source>
-        <translation type="unfinished"></translation>
+        <source>Problematic SIGPACGOCloud layer packaging</source>
+        <translation type="vanished">Problematic SIGPACGOCloud layer packaging</translation>
     </message>
     <message>
-        <source>The current project is not stored on QFieldCloud.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</source>
+        <translation type="vanished">Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</translation>
     </message>
     <message>
-        <source>Storing projects on QFieldCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>SIGPACGOCloud had troubles packaging your project</source>
+        <translation>SIGPACGOCloud had troubles packaging your project</translation>
     </message>
     <message>
-        <source>Learn more about QFieldCloud</source>
-        <translation type="unfinished"></translation>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
+        <translation>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudPopup</name>
+    <message>
+        <source>SIGPACGOCloud</source>
+        <translation>SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</source>
+        <translation>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="vanished">Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation>Learn more about SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
-        <translation type="unfinished">Disconnected from the cloud.</translation>
+        <translation>Disconnected from the cloud.</translation>
     </message>
     <message>
         <source>Connecting to the cloud.</source>
-        <translation type="unfinished">Connecting to the cloud.</translation>
+        <translation>Connecting to the cloud.</translation>
     </message>
     <message>
         <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation type="unfinished">Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
+        <translation>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <source>This QFieldCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the QFieldCloud functionality.</source>
+        <source>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</source>
+        <translation>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</translation>
+    </message>
+    <message>
+        <source>Downloading %1%…</source>
+        <translation type="vanished">Downloading %1%…</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
+    </message>
+    <message>
+        <source>Uploading %1%…</source>
+        <translation>Uploading %1%…</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
+        <translation>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</translation>
+    </message>
+    <message>
+        <source>A server error has occured, please try again.</source>
+        <translation type="vanished">A server error has occured, please try again.</translation>
+    </message>
+    <message>
+        <source>A network error has occured, please try again.</source>
+        <translation type="vanished">A network error has occured, please try again.</translation>
+    </message>
+    <message numerus="yes">
+        <source>There is/are %n local change(s)</source>
+        <translation>
+            <numerusform>There is/are %n local change(s)</numerusform>
+            <numerusform>There is/are %n local change(s)</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>There are no local changes</source>
+        <translation>There are no local changes</translation>
+    </message>
+    <message>
+        <source>The locally stored cloud project has been corrupted</source>
+        <translation>The locally stored cloud project has been corrupted</translation>
+    </message>
+    <message>
+        <source>Synchronize</source>
+        <translation>Synchronize</translation>
+    </message>
+    <message>
+        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</source>
+        <translation>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</translation>
+    </message>
+    <message>
+        <source>Push changes</source>
+        <translation>Push changes</translation>
+    </message>
+    <message>
+        <source>Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</source>
+        <translation>Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</translation>
+    </message>
+    <message>
+        <source>Revert local changes</source>
+        <translation>Revert local changes</translation>
+    </message>
+    <message>
+        <source>Reset project</source>
+        <translation>Reset project</translation>
+    </message>
+    <message>
+        <source>Revert all modified features in the local layers. You cannot restore those changes.</source>
+        <translation>Revert all modified features in the local layers. You cannot restore those changes.</translation>
+    </message>
+    <message>
+        <source>Revert all modified features in the local cloud layers. You cannot restore those changes.</source>
+        <translation type="vanished">Revert all modified features in the local cloud layers. You cannot restore those changes.</translation>
+    </message>
+    <message>
+        <source>The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
+
+While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</source>
+        <translation>The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
+
+While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</translation>
+    </message>
+    <message>
+        <source>Last synchronized just now</source>
+        <translation>Last synchronized just now</translation>
+    </message>
+    <message>
+        <source>Last synchronized %1 minutes ago</source>
+        <translation>Last synchronized %1 minutes ago</translation>
+    </message>
+    <message>
+        <source>Last synchronized at %1</source>
+        <translation>Last synchronized at %1</translation>
+    </message>
+    <message>
+        <source>Last synchronized on %1</source>
+        <translation>Last synchronized on %1</translation>
+    </message>
+    <message>
+        <source>Last changes pushed just now</source>
+        <translation>Last changes pushed just now</translation>
+    </message>
+    <message>
+        <source>Last changes pushed %1 minutes ago</source>
+        <translation>Last changes pushed %1 minutes ago</translation>
+    </message>
+    <message>
+        <source>Last changes pushed at %1</source>
+        <translation>Last changes pushed at %1</translation>
+    </message>
+    <message>
+        <source>Last changes pushed on %1</source>
+        <translation>Last changes pushed on %1</translation>
+    </message>
+    <message>
+        <source>No changes pushed yet</source>
+        <translation>No changes pushed yet</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n attachment(s) are currently being uploaded in the background.</source>
+        <translation type="vanished">
+            <numerusform>%n attachment(s) are currently being uploaded in the background.</numerusform>
+            <numerusform>%n attachment(s) are currently being uploaded in the background.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Should local changes be reverted?</source>
+        <translation>Should local changes be reverted?</translation>
+    </message>
+    <message>
+        <source>Reset cloud project</source>
+        <translation>Reset cloud project</translation>
+    </message>
+    <message>
+        <source>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</source>
+        <translation>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</translation>
+    </message>
+    <message>
+        <source>Connecting cloud</source>
+        <translation>Connecting cloud</translation>
+    </message>
+    <message>
+        <source>Local changes reverted</source>
+        <translation>Local changes reverted</translation>
+    </message>
+    <message>
+        <source>Failed to revert changes</source>
+        <translation>Failed to revert changes</translation>
+    </message>
+    <message>
+        <source>No changes to revert</source>
+        <translation>No changes to revert</translation>
+    </message>
+    <message>
+        <source>This project has an updated project file on the cloud, you are advised to synchronize.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <source>This project has updated data on the cloud, you should synchronize.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2677,67 +2727,8 @@ The features geometries will be combined into feature &apos;%1&apos;, which will
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reaching out to QFieldCloud to download project</source>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uploading %1%…</source>
-        <translation type="unfinished">Uploading %1%…</translation>
-    </message>
-    <message>
-        <source>QFieldCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <source>There is/are %n local change(s)</source>
-        <translation type="unfinished">
-            <numerusform>There is/are %n local change(s)</numerusform>
-            <numerusform>There is/are %n local change(s)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>There are no local changes</source>
-        <translation type="unfinished">There are no local changes</translation>
-    </message>
-    <message>
-        <source>The locally stored cloud project has been corrupted</source>
-        <translation type="unfinished">The locally stored cloud project has been corrupted</translation>
-    </message>
-    <message>
-        <source>Synchronize</source>
-        <translation type="unfinished">Synchronize</translation>
-    </message>
-    <message>
-        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from QFieldCloud.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Push changes</source>
-        <translation type="unfinished">Push changes</translation>
-    </message>
-    <message>
-        <source>Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</source>
-        <translation type="unfinished">Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</translation>
-    </message>
-    <message>
-        <source>Revert local changes</source>
-        <translation type="unfinished">Revert local changes</translation>
-    </message>
-    <message>
-        <source>Reset project</source>
-        <translation type="unfinished">Reset project</translation>
-    </message>
-    <message>
-        <source>Revert all modified features in the local layers. You cannot restore those changes.</source>
-        <translation type="unfinished">Revert all modified features in the local layers. You cannot restore those changes.</translation>
-    </message>
-    <message>
-        <source>The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
-
-While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</source>
-        <translation type="unfinished">The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
-
-While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</translation>
     </message>
     <message numerus="yes">
         <source>Automatically push changes every %n minute(s)</source>
@@ -2751,211 +2742,253 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Last synchronized just now</source>
-        <translation type="unfinished">Last synchronized just now</translation>
-    </message>
-    <message>
-        <source>Last synchronized %1 minutes ago</source>
-        <translation type="unfinished">Last synchronized %1 minutes ago</translation>
-    </message>
-    <message>
-        <source>Last synchronized at %1</source>
-        <translation type="unfinished">Last synchronized at %1</translation>
-    </message>
-    <message>
-        <source>Last synchronized on %1</source>
-        <translation type="unfinished">Last synchronized on %1</translation>
-    </message>
-    <message>
-        <source>Last changes pushed just now</source>
-        <translation type="unfinished">Last changes pushed just now</translation>
-    </message>
-    <message>
-        <source>Last changes pushed %1 minutes ago</source>
-        <translation type="unfinished">Last changes pushed %1 minutes ago</translation>
-    </message>
-    <message>
-        <source>Last changes pushed at %1</source>
-        <translation type="unfinished">Last changes pushed at %1</translation>
-    </message>
-    <message>
-        <source>Last changes pushed on %1</source>
-        <translation type="unfinished">Last changes pushed on %1</translation>
-    </message>
-    <message>
-        <source>No changes pushed yet</source>
-        <translation type="unfinished">No changes pushed yet</translation>
-    </message>
-    <message>
-        <source>Should local changes be reverted?</source>
-        <translation type="unfinished">Should local changes be reverted?</translation>
-    </message>
-    <message>
-        <source>Reset cloud project</source>
-        <translation type="unfinished">Reset cloud project</translation>
-    </message>
-    <message>
-        <source>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</source>
-        <translation type="unfinished">Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</translation>
-    </message>
-    <message>
-        <source>Connecting cloud</source>
-        <translation type="unfinished">Connecting cloud</translation>
-    </message>
-    <message>
-        <source>This project has an updated project file on the cloud, you are advised to synchronize.</source>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This project has updated data on the cloud, you should synchronize.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Local changes reverted</source>
-        <translation type="unfinished">Local changes reverted</translation>
-    </message>
-    <message>
-        <source>Failed to revert changes</source>
-        <translation type="unfinished">Failed to revert changes</translation>
-    </message>
-    <message>
-        <source>No changes to revert</source>
-        <translation type="unfinished">No changes to revert</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudProjectsModel</name>
+    <name>SIGPACGOCloudProjectsModel</name>
+    <message>
+        <source>Export failed</source>
+        <translation type="vanished">Export failed</translation>
+    </message>
+    <message>
+        <source>Packaged layer '&apos;%1&apos;' is not valid: '&apos;%2&apos;'</source>
+        <translation type="vanished">Packaged layer '&apos;%1&apos;' is not valid: '&apos;%2&apos;'</translation>
+    </message>
+    <message>
+        <source>Failed to open temporary file for "&quot;%1&quot;", reason:
+%2</source>
+        <translation type="vanished">Failed to open temporary file for "&quot;%1&quot;", reason:
+%2</translation>
+    </message>
+    <message>
+        <source>Failed to upload attachment stored at "&quot;%1&quot;", reason:
+%2</source>
+        <translation type="vanished">Failed to upload attachment stored at "&quot;%1&quot;", reason:
+%2</translation>
+    </message>
+    <message>
+        <source>Failed to download file "&quot;%1&quot;", reason:</source>
+        <translation type="vanished">Failed to download file "&quot;%1&quot;", reason:</translation>
+    </message>
+    <message>
+        <source>Failed to write downloaded file stored at "&quot;%1&quot;, fs reason:</source>
+        <translation type="vanished">Failed to write downloaded file stored at "&quot;%1&quot;, fs reason:</translation>
+    </message>
     <message>
         <source>aborted</source>
-        <translation type="unfinished">aborted</translation>
+        <translation>aborted</translation>
     </message>
     <message>
         <source>project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</source>
-        <translation type="unfinished">project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</translation>
+        <translation>project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</translation>
     </message>
     <message>
         <source>Getting job status, but the project is deleted.</source>
-        <translation type="unfinished">Getting job status, but the project is deleted.</translation>
+        <translation>Getting job status, but the project is deleted.</translation>
     </message>
     <message>
         <source>Job creation finished, but the server response is missing required fields: id(string)</source>
-        <translation type="unfinished">Job creation finished, but the server response is missing required fields: id(string)</translation>
+        <translation>Job creation finished, but the server response is missing required fields: id(string)</translation>
     </message>
     <message>
         <source>Getting job status, but no `%2` job triggered yet.</source>
-        <translation type="unfinished">Getting job status, but no `%2` job triggered yet.</translation>
+        <translation>Getting job status, but no `%2` job triggered yet.</translation>
     </message>
     <message>
         <source>Getting job status finished, but the project is deleted.</source>
-        <translation type="unfinished">Getting job status finished, but the project is deleted.</translation>
+        <translation>Getting job status finished, but the project is deleted.</translation>
     </message>
     <message>
         <source>job(%1) status response does not contain all the expected keys: status(string)</source>
-        <translation type="unfinished">job(%1) status response does not contain all the expected keys: status(string)</translation>
+        <translation>job(%1) status response does not contain all the expected keys: status(string)</translation>
     </message>
     <message>
         <source>Job(%1) finished with a failed status.</source>
-        <translation type="unfinished">Job(%1) finished with a failed status.</translation>
+        <translation>Job(%1) finished with a failed status.</translation>
     </message>
     <message>
         <source>Project busy.</source>
-        <translation type="unfinished">Project busy.</translation>
+        <translation>Project busy.</translation>
     </message>
     <message>
         <source>Packaging job finished unsuccessfully for `%1`. %2</source>
-        <translation type="unfinished">Packaging job finished unsuccessfully for `%1`. %2</translation>
+        <translation>Packaging job finished unsuccessfully for `%1`. %2</translation>
     </message>
     <message>
         <source>Failed to refresh the latest info for `%1`: %2</source>
-        <translation type="unfinished">Failed to refresh the latest info for `%1`: %2</translation>
+        <translation>Failed to refresh the latest info for `%1`: %2</translation>
     </message>
     <message>
         <source>Failed to get latest package data.</source>
-        <translation type="unfinished">Failed to get latest package data.</translation>
+        <translation>Failed to get latest package data.</translation>
     </message>
     <message>
         <source>Latest package data response error.</source>
-        <translation type="unfinished">Latest package data response error.</translation>
+        <translation>Latest package data response error.</translation>
     </message>
     <message>
         <source>Latest package data structure error.</source>
-        <translation type="unfinished">Latest package data structure error.</translation>
+        <translation>Latest package data structure error.</translation>
     </message>
     <message>
         <source>Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</source>
-        <translation type="unfinished">Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</translation>
+        <translation>Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</translation>
     </message>
     <message>
         <source>Failed to open temporary file for `%1`, reason:
 %2</source>
-        <translation type="unfinished">Failed to open temporary file for `%1`, reason:
+        <translation>Failed to open temporary file for `%1`, reason:
 %2</translation>
     </message>
     <message>
-        <source>File system error. Failed to write file to temporary location `%1`.</source>
-        <translation type="unfinished">File system error. Failed to write file to temporary location `%1`.</translation>
-    </message>
-    <message>
-        <source>File system error. Failed to open file for writing on temporary `%1`.</source>
-        <translation type="unfinished">File system error. Failed to open file for writing on temporary `%1`.</translation>
+        <source>Failed to upload attachment stored at `%1`, reason:
+%2</source>
+        <translation type="vanished">Failed to upload attachment stored at `%1`, reason:
+%2</translation>
     </message>
     <message>
         <source>Network error. Failed to download file `%1`.</source>
-        <translation type="unfinished">Network error. Failed to download file `%1`.</translation>
+        <translation>Network error. Failed to download file `%1`.</translation>
     </message>
     <message>
-        <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
-        <translation type="unfinished">Failed to copy some of the downloaded files on your device. Check your device storage.</translation>
+        <source>File system error. Failed to write file to temporary location `%1`.</source>
+        <translation>File system error. Failed to write file to temporary location `%1`.</translation>
+    </message>
+    <message>
+        <source>File system error. Failed to open file for writing on temporary `%1`.</source>
+        <translation>File system error. Failed to open file for writing on temporary `%1`.</translation>
     </message>
     <message>
         <source>Project `%1`, file `%2`: %3</source>
-        <translation type="unfinished">Project `%1`, file `%2`: %3</translation>
+        <translation>Project `%1`, file `%2`: %3</translation>
     </message>
     <message>
         <source>System message: </source>
-        <translation type="unfinished">System message: </translation>
+        <translation>System message: </translation>
     </message>
     <message>
-        <source> (see more in the QField error log)…</source>
-        <translation type="unfinished"></translation>
+        <source> (see more in the SIGPACGO error log)…</source>
+        <translation> (see more in the SIGPACGO error log)…</translation>
+    </message>
+    <message>
+        <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
+        <translation>Failed to copy some of the downloaded files on your device. Check your device storage.</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudScreen</name>
+    <name>SIGPACGOCloudScreen</name>
     <message>
-        <source>QFieldCloud Projects</source>
-        <translation type="unfinished"></translation>
+        <source>SIGPACGOCloud Projects</source>
+        <translation>SIGPACGOCloud Projects</translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
-        <translation type="unfinished">Disconnected from the cloud.</translation>
+        <translation>Disconnected from the cloud.</translation>
     </message>
     <message>
         <source>Connecting to the cloud.</source>
-        <translation type="unfinished">Connecting to the cloud.</translation>
+        <translation>Connecting to the cloud.</translation>
     </message>
     <message>
         <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation type="unfinished">Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
+        <translation>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
         <source>My Projects</source>
-        <translation type="unfinished">My Projects</translation>
+        <translation>My Projects</translation>
     </message>
     <message>
         <source>Community</source>
-        <translation type="unfinished">Community</translation>
-    </message>
-    <message>
-        <source>Search for project</source>
-        <translation type="unfinished"></translation>
+        <translation>Community</translation>
     </message>
     <message>
         <source>(Available locally)</source>
-        <translation type="unfinished">(Available locally)</translation>
+        <translation>(Available locally)</translation>
     </message>
     <message>
-        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <source>Downloading, %1% fetched…</source>
+        <translation type="vanished">Downloading, %1% fetched…</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
+    </message>
+    <message>
+        <source>Uploading…</source>
+        <translation>Uploading…</translation>
+    </message>
+    <message>
+        <source>Downloading error. </source>
+        <translation>Downloading error. </translation>
+    </message>
+    <message>
+        <source>Uploading error. </source>
+        <translation>Uploading error. </translation>
+    </message>
+    <message>
+        <source>Available locally, missing on the cloud</source>
+        <translation>Available locally, missing on the cloud</translation>
+    </message>
+    <message>
+        <source>Available on the cloud, missing locally</source>
+        <translation>Available on the cloud, missing locally</translation>
+    </message>
+    <message>
+        <source>Available locally</source>
+        <translation>Available locally</translation>
+    </message>
+    <message>
+        <source>Has changes. </source>
+        <translation>Has changes. </translation>
+    </message>
+    <message>
+        <source>Downloading project %1</source>
+        <translation>Downloading project %1</translation>
+    </message>
+    <message>
+        <source>Download Project</source>
+        <translation>Download Project</translation>
+    </message>
+    <message>
+        <source>Open Project</source>
+        <translation>Open Project</translation>
+    </message>
+    <message>
+        <source>Remove Stored Project</source>
+        <translation>Remove Stored Project</translation>
+    </message>
+    <message>
+        <source>Cancel Project Download</source>
+        <translation>Cancel Project Download</translation>
+    </message>
+    <message>
+        <source>Press and hold over a cloud project for a menu of additional actions.</source>
+        <translation>Press and hold over a cloud project for a menu of additional actions.</translation>
+    </message>
+    <message>
+        <source>Refresh projects list</source>
+        <translation>Refresh projects list</translation>
+    </message>
+    <message>
+        <source>Refreshing projects list</source>
+        <translation>Refreshing projects list</translation>
+    </message>
+    <message>
+        <source>No projects found</source>
+        <translation type="vanished">No projects found</translation>
+    </message>
+    <message>
+        <source>Project Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, updated data available on the cloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2967,84 +3000,20 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Reaching out to QFieldCloud to download project</source>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Uploading…</source>
-        <translation type="unfinished">Uploading…</translation>
-    </message>
-    <message>
-        <source>Downloading error. </source>
-        <translation type="unfinished">Downloading error. </translation>
-    </message>
-    <message>
-        <source>Uploading error. </source>
-        <translation type="unfinished">Uploading error. </translation>
-    </message>
-    <message>
-        <source>Available locally, missing on the cloud</source>
-        <translation type="unfinished">Available locally, missing on the cloud</translation>
-    </message>
-    <message>
-        <source>Available on the cloud, missing locally</source>
-        <translation type="unfinished">Available on the cloud, missing locally</translation>
-    </message>
-    <message>
-        <source>Available locally</source>
-        <translation type="unfinished">Available locally</translation>
-    </message>
-    <message>
-        <source>, updated data available on the cloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Has changes. </source>
-        <translation type="unfinished">Has changes. </translation>
-    </message>
-    <message>
-        <source>Refreshing projects list</source>
-        <translation type="unfinished">Refreshing projects list</translation>
     </message>
     <message>
         <source>No cloud projects found. To get started, %1read the documentation%2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Downloading project %1</source>
-        <translation type="unfinished">Downloading project %1</translation>
-    </message>
-    <message>
-        <source>Project Actions</source>
+        <source>Search for project</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download Project</source>
-        <translation type="unfinished">Download Project</translation>
-    </message>
-    <message>
-        <source>Open Project</source>
-        <translation type="unfinished">Open Project</translation>
-    </message>
-    <message>
-        <source>Remove Stored Project</source>
-        <translation type="unfinished">Remove Stored Project</translation>
-    </message>
-    <message>
-        <source>Cancel Project Download</source>
-        <translation type="unfinished">Cancel Project Download</translation>
-    </message>
-    <message>
-        <source>Press and hold over a cloud project for a menu of additional actions.</source>
-        <translation type="unfinished">Press and hold over a cloud project for a menu of additional actions.</translation>
-    </message>
-    <message>
-        <source>Refresh projects list</source>
-        <translation type="unfinished">Refresh projects list</translation>
     </message>
 </context>
 <context>
-    <name>QFieldCloudUtils</name>
+    <name>SIGPACGOCloudUtils</name>
     <message>
         <source>A server error has occured, please try again.</source>
         <translation type="unfinished">A server error has occured, please try again.</translation>
@@ -3059,7 +3028,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldGuide</name>
+    <name>SIGPACGOGuide</name>
     <message>
         <source>Finish</source>
         <translation type="unfinished"></translation>
@@ -3074,122 +3043,94 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
 </context>
 <context>
-    <name>QFieldLocalDataPickerScreen</name>
+    <name>SIGPACGOLocalDataPickerScreen</name>
     <message>
         <source>Project Folder</source>
-        <translation type="unfinished">Project Folder</translation>
+        <translation>Project Folder</translation>
     </message>
     <message>
         <source>Local Projects &amp; Datasets</source>
-        <translation type="unfinished">Local Projects &amp; Datasets</translation>
+        <translation>Local Projects &amp; Datasets</translation>
     </message>
     <message>
         <source>Folders</source>
-        <translation type="unfinished">Folders</translation>
+        <translation>Folders</translation>
     </message>
     <message>
         <source>Projects</source>
-        <translation type="unfinished">Projects</translation>
+        <translation>Projects</translation>
     </message>
     <message>
         <source>Datasets</source>
-        <translation type="unfinished">Datasets</translation>
-    </message>
-    <message>
-        <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>Datasets</translation>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="unfinished">Favorites</translation>
+        <translation>Favorites</translation>
     </message>
     <message>
         <source>Project file</source>
-        <translation type="unfinished">Project file</translation>
+        <translation>Project file</translation>
     </message>
     <message>
         <source>Vector dataset</source>
-        <translation type="unfinished">Vector dataset</translation>
+        <translation>Vector dataset</translation>
     </message>
     <message>
         <source>Raster dataset</source>
-        <translation type="unfinished">Raster dataset</translation>
-    </message>
-    <message>
-        <source>Item Actions</source>
-        <translation type="unfinished"></translation>
+        <translation>Raster dataset</translation>
     </message>
     <message>
         <source>Send to...</source>
-        <translation type="unfinished">Send to...</translation>
-    </message>
-    <message>
-        <source>Push to QFieldCloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>‘%1’ is being uploaded to QFieldCloud</source>
-        <translation type="unfinished"></translation>
+        <translation>Send to...</translation>
     </message>
     <message>
         <source>Export to folder...</source>
-        <translation type="unfinished">Export to folder...</translation>
-    </message>
-    <message>
-        <source>Add to favorites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove from favorites</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send compressed folder to...</source>
-        <translation type="unfinished">Send compressed folder to...</translation>
-    </message>
-    <message>
-        <source>Upload folder to WebDAV server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download folder from WebDAV server</source>
-        <translation type="unfinished"></translation>
+        <translation>Export to folder...</translation>
     </message>
     <message>
         <source>Remove dataset</source>
-        <translation type="unfinished">Remove dataset</translation>
+        <translation>Remove dataset</translation>
     </message>
     <message>
-        <source>Remove folder</source>
-        <translation type="unfinished"></translation>
+        <source>Send compressed folder to...</source>
+        <translation>Send compressed folder to...</translation>
     </message>
     <message>
-        <source>Import Actions</source>
-        <translation type="unfinished"></translation>
+        <source>Remove project folder</source>
+        <translation type="vanished">Remove project folder</translation>
     </message>
     <message>
         <source>Import project from folder</source>
-        <translation type="unfinished">Import project from folder</translation>
+        <translation>Import project from folder</translation>
     </message>
     <message>
         <source>Import project from ZIP</source>
-        <translation type="unfinished">Import project from ZIP</translation>
+        <translation>Import project from ZIP</translation>
     </message>
     <message>
         <source>Import dataset(s)</source>
-        <translation type="unfinished">Import dataset(s)</translation>
+        <translation>Import dataset(s)</translation>
+    </message>
+    <message>
+        <source>Storage management help</source>
+        <translation>Storage management help</translation>
     </message>
     <message>
         <source>Import URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Import WebDAV folder</source>
+        <source>Type a URL below to download and import the project or dataset:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Storage management help</source>
-        <translation type="unfinished">Storage management help</translation>
+        <source>Item Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Actions</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Project Actions</source>
@@ -3200,15 +3141,47 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>'%1' is being uploaded to SIGPACGOCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add to favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove from favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Push to SIGPACGOCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Upload folder to WebDAV server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download folder from WebDAV server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import WebDAV folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Upload project to WebDAV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Download project from WebDAV</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type a URL below to download and import the project or dataset:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3264,11 +3237,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>User and password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>leave empty to use remembered</source>
+        <source>Select the remote folder to import:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3280,15 +3249,15 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Select the remote folder to import:</source>
+        <source>User and password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>leave empty to use remembered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>(root folder)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Imported and available locally</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3299,114 +3268,351 @@ While you can still view and use the project, it is strongly recommended to rese
         <source>Refresh remote folders</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QFieldPositioningService</name>
     <message>
-        <source>Latitude %1 | Longitude %2 | Altitude %3 m | Speed %4 m/s | Direction %5°</source>
+        <source>Imported and available locally</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>SIGPACGOPositioningService</name>
     <message>
         <source>Positioning service running</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Latitude %1 | Longitude %2 | Altitude %3 m | Speed %4 m/s | Direction %5°</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>QFieldSettings</name>
+    <name>SIGPACGOSettings</name>
     <message>
         <source>Show scale bar</source>
-        <translation type="unfinished">Show scale bar</translation>
-    </message>
-    <message>
-        <source>Show bookmarks</source>
-        <translation type="unfinished">Show bookmarks</translation>
-    </message>
-    <message>
-        <source>Shows saved and project bookmarks on the map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable map rotation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allows rotating the map.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show digitizing information</source>
-        <translation type="unfinished">Show digitizing information</translation>
-    </message>
-    <message>
-        <source>Shows coordinates on the map while digitizing or measuring.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fast editing mode</source>
-        <translation type="unfinished">Fast editing mode</translation>
-    </message>
-    <message>
-        <source>Auto-saves features when geometry is valid and constraints are met.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use volume keys to digitize</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume up adds vertex, volume down removes last vertex.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Allow finger tap on canvas to add vertices</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tap on map to add vertex.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Consider mouse as a touchscreen device</source>
-        <translation type="unfinished">Consider mouse as a touchscreen device</translation>
-    </message>
-    <message>
-        <source>Mouse acts like finger. When off, mouse acts like stylus.</source>
-        <translation type="unfinished"></translation>
+        <translation>Show scale bar</translation>
     </message>
     <message>
         <source>Maximized attribute form</source>
-        <translation type="unfinished">Maximized attribute form</translation>
+        <translation>Maximized attribute form</translation>
     </message>
     <message>
         <source>Fixed scale navigation</source>
-        <translation type="unfinished">Fixed scale navigation</translation>
+        <translation>Fixed scale navigation</translation>
     </message>
     <message>
-        <source>Search results only pan to feature without zooming.</source>
-        <translation type="unfinished"></translation>
+        <source>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</source>
+        <translation>Search results only pan to feature without zooming.</translation>
+    </message>
+    <message>
+        <source>Show digitizing information</source>
+        <translation>Show digitizing information</translation>
+    </message>
+    <message>
+        <source>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</source>
+        <translation>Shows coordinates on the map while digitizing or measuring.</translation>
+    </message>
+    <message>
+        <source>Show bookmarks</source>
+        <translation>Show bookmarks</translation>
+    </message>
+    <message>
+        <source>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</source>
+        <translation>Shows saved and project bookmarks on the map.</translation>
     </message>
     <message>
         <source>Use native camera</source>
-        <translation type="unfinished">Use native camera</translation>
+        <translation>Use native camera</translation>
     </message>
     <message>
-        <source>Uses device camera app instead of built-in camera. Good for geo-tagged photos.</source>
-        <translation type="unfinished"></translation>
+        <source>If disabled, SIGPACGO will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
+        <translation>Uses device camera app instead of built-in camera. Good for geo-tagged photos.</translation>
+    </message>
+    <message>
+        <source>Fast editing mode</source>
+        <translation>Fast editing mode</translation>
+    </message>
+    <message>
+        <source>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</source>
+        <translation>Auto-saves features when geometry is valid and constraints are met.</translation>
+    </message>
+    <message>
+        <source>Dim screen when idling</source>
+        <translation>Dim screen when idling</translation>
+    </message>
+    <message>
+        <source>If enabled, the screen brightness will be dimmed after 20 seconds of inactivity to preserve battery.</source>
+        <translation type="vanished">If enabled, the screen brightness will be dimmed after 20 seconds of inactivity to preserve battery.</translation>
+    </message>
+    <message>
+        <source>Consider mouse as a touchscreen device</source>
+        <translation>Consider mouse as a touchscreen device</translation>
+    </message>
+    <message>
+        <source>If disabled, the mouse will act as a stylus pen.</source>
+        <translation type="vanished">If disabled, the mouse will act as a stylus pen.</translation>
+    </message>
+    <message>
+        <source>Send anonymized metrics</source>
+        <translation>Send anonymized metrics</translation>
+    </message>
+    <message>
+        <source>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</source>
+        <translation>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>Positioning</source>
-        <translation type="unfinished">Positioning</translation>
+        <translation>Positioning</translation>
     </message>
     <message>
         <source>Variables</source>
-        <translation type="unfinished">Variables</translation>
+        <translation>Variables</translation>
     </message>
     <message>
-        <source>Map Canvas</source>
+        <source>Customize search bar</source>
+        <translation>Customize search bar</translation>
+    </message>
+    <message>
+        <source>User interface language:</source>
+        <translation type="vanished">User interface language:</translation>
+    </message>
+    <message>
+        <source>To apply the selected user interface language, SIGPACGO needs to completely shutdown and restart.</source>
+        <translation>Restart SIGPAC-Go to apply language change.</translation>
+    </message>
+    <message>
+        <source>system</source>
+        <translation>system</translation>
+    </message>
+    <message>
+        <source>Found a missing or incomplete language? %1Join the translator community.%2</source>
+        <translation>Found a missing or incomplete language? %1Join the translator community.%2</translation>
+    </message>
+    <message>
+        <source>Positioning device in use:</source>
+        <translation>Positioning device in use:</translation>
+    </message>
+    <message>
+        <source>Scanning for paired devices</source>
+        <translation type="vanished">Scanning for paired devices</translation>
+    </message>
+    <message>
+        <source>Scanning failed: %1</source>
+        <translation type="vanished">Scanning failed: %1</translation>
+    </message>
+    <message>
+        <source>Scanning done</source>
+        <translation type="vanished">Scanning done</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n device(s) found</source>
+        <translation type="vanished">
+            <numerusform>%n device(s) found</numerusform>
+            <numerusform>%n device(s) found</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Scanning canceled</source>
+        <translation type="vanished">Scanning canceled</translation>
+    </message>
+    <message>
+        <source>Scan</source>
+        <translation type="vanished">Scan</translation>
+    </message>
+    <message>
+        <source>Make a full service discovery</source>
+        <translation type="vanished">Make a full service discovery</translation>
+    </message>
+    <message>
+        <source>A full device scan can take longer. You really want to do it?
+Cancel to make a minimal device scan instead.</source>
+        <translation type="vanished">A full device scan can take longer. You really want to do it?
+Cancel to make a minimal device scan instead.</translation>
+    </message>
+    <message>
+        <source>Connected to %1</source>
+        <translation>Connected to %1</translation>
+    </message>
+    <message>
+        <source>Connect  to %1</source>
+        <translation type="vanished">Connect  to %1</translation>
+    </message>
+    <message>
+        <source>Connecting to %1</source>
+        <translation>Connecting to %1</translation>
+    </message>
+    <message>
+        <source>Use orthometric altitude from device</source>
+        <translation type="vanished">Use orthometric altitude from device</translation>
+    </message>
+    <message>
+        <source>Show position information</source>
+        <translation>Show position information</translation>
+    </message>
+    <message>
+        <source>Activate accuracy indicator</source>
+        <translation>Activate accuracy indicator</translation>
+    </message>
+    <message>
+        <source>Bad accuracy below [m]</source>
+        <translation type="vanished">Bad accuracy below [m]</translation>
+    </message>
+    <message>
+        <source>Excellent accuracy above [m]</source>
+        <translation type="vanished">Excellent accuracy above [m]</translation>
+    </message>
+    <message>
+        <source>Enable accuracy requirement</source>
+        <translation type="vanished">Enable accuracy requirement</translation>
+    </message>
+    <message>
+        <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is below bad, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of excellent, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value above the bad threshold.</source>
+        <translation type="vanished">When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is below bad, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of excellent, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value above the bad threshold.</translation>
+    </message>
+    <message>
+        <source>Enable averaged positioning requirement</source>
+        <translation>Enable averaged positioning requirement</translation>
+    </message>
+    <message>
+        <source>Minimum number of positions collected</source>
+        <translation>Minimum number of positions collected</translation>
+    </message>
+    <message>
+        <source>Automatically end collection when minimum number is met</source>
+        <translation>Automatically end collection when minimum number is met</translation>
+    </message>
+    <message>
+        <source>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</source>
+        <translation>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</translation>
+    </message>
+    <message>
+        <source>Antenna height compensation</source>
+        <translation>Antenna height compensation</translation>
+    </message>
+    <message>
+        <source>Antenna height [m]</source>
+        <translation>Antenna height [m]</translation>
+    </message>
+    <message>
+        <source>Z values which are recorded from the positioning device will be corrected by this value. If a value of 1.6 is entered, this will result in a correction of -1.6 for each recorded value.</source>
+        <translation type="vanished">Z values which are recorded from the positioning device will be corrected by this value. If a value of 1.6 is entered, this will result in a correction of -1.6 for each recorded value.</translation>
+    </message>
+    <message>
+        <source>Skip altitude correction</source>
+        <translation>Skip altitude correction</translation>
+    </message>
+    <message>
+        <source>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</source>
+        <translation>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</translation>
+    </message>
+    <message>
+        <source>Vertical grid shift in use:</source>
+        <translation>Vertical grid shift in use:</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>None</translation>
+    </message>
+    <message>
+        <source>Vertical grid shift is used to increase the altitude accuracy.</source>
+        <translation>Vertical grid shift is used to increase the altitude accuracy.</translation>
+    </message>
+    <message>
+        <source>SIGPACGO Settings</source>
+        <translation>SIGPACGO Settings</translation>
+    </message>
+    <message>
+        <source>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</source>
+        <translation>Seconds of inactivity before dimming screen to save battery.</translation>
+    </message>
+    <message>
+        <source>Measure (M) value attached to vertices:</source>
+        <translation>Measure (M) value attached to vertices:</translation>
+    </message>
+    <message>
+        <source>Timestamp (milliseconds since epoch)</source>
+        <translation>Timestamp (milliseconds since epoch)</translation>
+    </message>
+    <message>
+        <source>Ground speed</source>
+        <translation>Ground speed</translation>
+    </message>
+    <message>
+        <source>Bearing</source>
+        <translation>Bearing</translation>
+    </message>
+    <message>
+        <source>Horizontal accuracy</source>
+        <translation>Horizontal accuracy</translation>
+    </message>
+    <message>
+        <source>Vertical accuracy</source>
+        <translation>Vertical accuracy</translation>
+    </message>
+    <message>
+        <source>PDOP</source>
+        <translation>PDOP</translation>
+    </message>
+    <message>
+        <source>HDOP</source>
+        <translation>HDOP</translation>
+    </message>
+    <message>
+        <source>VDOP</source>
+        <translation>VDOP</translation>
+    </message>
+    <message>
+        <source>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</source>
+        <translation>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Add</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Remove</translation>
+    </message>
+    <message>
+        <source>Connect to %1</source>
+        <translation>Connect to %1</translation>
+    </message>
+    <message>
+        <source>Follow system appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Light theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tiny</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra-large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Log NMEA sentences from device to file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3426,7 +3632,39 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lower quality reduces memory usage and improves performance.</source>
+        <source>A lower quality trades rendering precision in favor of lower memory usage and rendering time.</source>
+        <translation>Lower quality reduces memory usage and improves performance.</translation>
+    </message>
+    <message>
+        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Orthometric from device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use volume keys to digitize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If enabled, pressing the device&apos;s volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.</source>
+        <translation>Volume up adds vertex, volume down removes last vertex.</translation>
+    </message>
+    <message>
+        <source>Allow finger tap on canvas to add vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.</source>
+        <translation>Tap on map to add vertex.</translation>
+    </message>
+    <message>
+        <source>When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.</source>
+        <translation>Mouse acts like finger. When off, mouse acts like stylus.</translation>
+    </message>
+    <message>
+        <source>Map Canvas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3438,35 +3676,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Customize search bar</source>
-        <translation type="unfinished">Customize search bar</translation>
-    </message>
-    <message>
-        <source>Manage plugins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dim screen when idle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Seconds of inactivity before dimming screen to save battery.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Appearance:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Follow system appearance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Light theme</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dark theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3474,35 +3684,7 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tiny</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation type="unfinished">Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Large</source>
-        <translation type="unfinished">Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Extra-large</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Language:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Restart SIGPAC-Go to apply language change.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>system</source>
-        <translation type="unfinished">system</translation>
-    </message>
-    <message>
-        <source>Spanish and English available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3510,80 +3692,16 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Positioning device in use:</source>
-        <translation type="unfinished">Positioning device in use:</translation>
+        <source>Manage plugins</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add</source>
-        <translation type="unfinished">Add</translation>
+        <source>Enable map rotation</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Edit</source>
-        <translation type="unfinished">Edit</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="unfinished">Remove</translation>
-    </message>
-    <message>
-        <source>Connected to %1</source>
-        <translation type="unfinished">Connected to %1</translation>
-    </message>
-    <message>
-        <source>Connect to %1</source>
-        <translation type="unfinished">Connect to %1</translation>
-    </message>
-    <message>
-        <source>Connecting to %1</source>
-        <translation type="unfinished">Connecting to %1</translation>
-    </message>
-    <message>
-        <source>Show position information</source>
-        <translation type="unfinished">Show position information</translation>
-    </message>
-    <message>
-        <source>Measure (M) value attached to vertices:</source>
-        <translation type="unfinished">Measure (M) value attached to vertices:</translation>
-    </message>
-    <message>
-        <source>Timestamp (milliseconds since epoch)</source>
-        <translation type="unfinished">Timestamp (milliseconds since epoch)</translation>
-    </message>
-    <message>
-        <source>Ground speed</source>
-        <translation type="unfinished">Ground speed</translation>
-    </message>
-    <message>
-        <source>Bearing</source>
-        <translation type="unfinished">Bearing</translation>
-    </message>
-    <message>
-        <source>Horizontal accuracy</source>
-        <translation type="unfinished">Horizontal accuracy</translation>
-    </message>
-    <message>
-        <source>Vertical accuracy</source>
-        <translation type="unfinished">Vertical accuracy</translation>
-    </message>
-    <message>
-        <source>PDOP</source>
-        <translation type="unfinished">PDOP</translation>
-    </message>
-    <message>
-        <source>HDOP</source>
-        <translation type="unfinished">HDOP</translation>
-    </message>
-    <message>
-        <source>VDOP</source>
-        <translation type="unfinished">VDOP</translation>
-    </message>
-    <message>
-        <source>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</source>
-        <translation type="unfinished">When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</translation>
-    </message>
-    <message>
-        <source>Activate accuracy indicator</source>
-        <translation type="unfinished">Activate accuracy indicator</translation>
+        <source>When switched on, the map can be rotated by the user.</source>
+        <translation>Allows rotating the map.</translation>
     </message>
     <message>
         <source>Bad accuracy threshold [m]</source>
@@ -3601,73 +3719,9 @@ While you can still view and use the project, it is strongly recommended to rese
         <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is worse than &lt;i&gt;bad&lt;/i&gt;, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of &lt;i&gt;excellent&lt;/i&gt;, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value worse than the bad threshold.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Enable averaged positioning requirement</source>
-        <translation type="unfinished">Enable averaged positioning requirement</translation>
-    </message>
-    <message>
-        <source>Minimum number of positions collected</source>
-        <translation type="unfinished">Minimum number of positions collected</translation>
-    </message>
-    <message>
-        <source>Automatically end collection when minimum number is met</source>
-        <translation type="unfinished">Automatically end collection when minimum number is met</translation>
-    </message>
-    <message>
-        <source>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</source>
-        <translation type="unfinished">When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</translation>
-    </message>
-    <message>
-        <source>Antenna height compensation</source>
-        <translation type="unfinished">Antenna height compensation</translation>
-    </message>
-    <message>
-        <source>Antenna height [m]</source>
-        <translation type="unfinished">Antenna height [m]</translation>
-    </message>
-    <message>
-        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Skip altitude correction</source>
-        <translation type="unfinished">Skip altitude correction</translation>
-    </message>
-    <message>
-        <source>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</source>
-        <translation type="unfinished">Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</translation>
-    </message>
-    <message>
-        <source>Vertical grid shift in use:</source>
-        <translation type="unfinished">Vertical grid shift in use:</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation type="unfinished">None</translation>
-    </message>
-    <message>
-        <source>Orthometric from device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vertical grid shift is used to increase the altitude accuracy.</source>
-        <translation type="unfinished">Vertical grid shift is used to increase the altitude accuracy.</translation>
-    </message>
-    <message>
-        <source>Log NMEA sentences from device to file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="unfinished">Settings</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
-    <name>QFieldSketcher</name>
+    <name>SIGPACGOSketcher</name>
     <message>
         <source>Select drawing template</source>
         <translation type="unfinished"></translation>
@@ -3685,7 +3739,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>SIGPACGOCloud Unknown Error</source>
-        <translation type="vanished">SIGPACGOCloud Unknown Error</translation>
+        <translation>SIGPACGOCloud Unknown Error</translation>
     </message>
     <message>
         <source>Status not ok</source>
@@ -3753,7 +3807,7 @@ While you can still view and use the project, it is strongly recommended to rese
     </message>
     <message>
         <source>Please wait while SIGPACGO installation finalizes.</source>
-        <translation type="vanished">Please wait while SIGPACGO installation finalizes.</translation>
+        <translation>Please wait while SIGPACGO installation finalizes.</translation>
     </message>
     <message>
         <source>averaged</source>
@@ -3762,10 +3816,6 @@ While you can still view and use the project, it is strongly recommended to rese
     <message>
         <source>centroid</source>
         <translation>centroid</translation>
-    </message>
-    <message>
-        <source>QFieldCloud Unknown Error</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3805,14 +3855,14 @@ While you can still view and use the project, it is strongly recommended to rese
     <name>QfSearchBar</name>
     <message>
         <source>Search</source>
-        <translation type="unfinished">Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QgisMobileapp</name>
     <message>
-        <source>Project file &quot;&quot;%1&quot;&quot; does not exist</source>
-        <translation type="vanished">Project file &quot;&quot;%1&quot;&quot; does not exist</translation>
+        <source>Project file "&quot;%1&quot;" does not exist</source>
+        <translation type="vanished">Project file "&quot;%1&quot;" does not exist</translation>
     </message>
     <message>
         <source>No project file currently opened</source>
@@ -3827,23 +3877,23 @@ While you can still view and use the project, it is strongly recommended to rese
         <translation type="vanished">Loading font %1</translation>
     </message>
     <message>
-        <source>Could not load font: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t load project, file &quot;%1&quot; does not exist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Can&apos;t read project, file &quot;%1&quot; does not exist</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Project Plugin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Map printed on %1 using QField</source>
+        <source>Could not load font: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t load project, file "&quot;%1&quot;" does not exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t read project, file "&quot;%1&quot;" does not exist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map printed on %1 using SIGPACGO</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3954,994 +4004,6 @@ While you can still view and use the project, it is strongly recommended to rese
     <message>
         <source>The geometry could not be reshaped</source>
         <translation type="vanished">The geometry could not be reshaped</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCamera</name>
-    <message>
-        <source>Altitude</source>
-        <translation type="obsolete">Altitude</translation>
-    </message>
-    <message>
-        <source>Speed</source>
-        <translation type="obsolete">Speed</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudConnection</name>
-    <message>
-        <source>[timeout] The request took too long to finish, please retry.</source>
-        <translation type="vanished">[timeout] The request took too long to finish, please retry.</translation>
-    </message>
-    <message>
-        <source>[aborted] The request has been aborted.</source>
-        <translation type="vanished">[aborted] The request has been aborted.</translation>
-    </message>
-    <message>
-        <source>Server Error.</source>
-        <translation type="vanished">Server Error.</translation>
-    </message>
-    <message>
-        <source>Network Error.</source>
-        <translation type="vanished">Network Error.</translation>
-    </message>
-    <message>
-        <source>Server not found, please check the server URL</source>
-        <translation type="vanished">Server not found, please check the server URL</translation>
-    </message>
-    <message>
-        <source>Timeout error, please retry</source>
-        <translation type="vanished">Timeout error, please retry</translation>
-    </message>
-    <message>
-        <source>Wrong username or password</source>
-        <translation type="vanished">Wrong username or password</translation>
-    </message>
-    <message>
-        <source>Session expired</source>
-        <translation type="vanished">Session expired</translation>
-    </message>
-    <message>
-        <source>Login temporary unavailable</source>
-        <translation type="vanished">Login temporary unavailable</translation>
-    </message>
-    <message>
-        <source>Failed to upload attachment stored at `%1`, reason:
-%2</source>
-        <translation type="vanished">Failed to upload attachment stored at `%1`, reason:
-%2</translation>
-    </message>
-    <message>
-        <source>Login error due to unexpected redirect, please retry later</source>
-        <translation type="vanished">Login error due to unexpected redirect, please retry later</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudDeltaHistory</name>
-    <message>
-        <source>Push History</source>
-        <translation type="vanished">Push History</translation>
-    </message>
-    <message>
-        <source>Loading…</source>
-        <translation type="vanished">Loading…</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudLogin</name>
-    <message>
-        <source>Failed to login</source>
-        <translation type="vanished">Failed to login</translation>
-    </message>
-    <message>
-        <source>Failed to sign in</source>
-        <translation type="vanished">Failed to sign in</translation>
-    </message>
-    <message>
-        <source>Server URL
-(Leave empty to use the default server)</source>
-        <translation type="vanished">Server URL
-(Leave empty to use the default server)</translation>
-    </message>
-    <message>
-        <source>Username or email</source>
-        <translation type="vanished">Username or email</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation type="vanished">Password</translation>
-    </message>
-    <message>
-        <source>Sign out</source>
-        <translation type="vanished">Sign out</translation>
-    </message>
-    <message>
-        <source>Signing in, please wait</source>
-        <translation type="vanished">Signing in, please wait</translation>
-    </message>
-    <message>
-        <source>Sign in</source>
-        <translation type="vanished">Sign in</translation>
-    </message>
-    <message>
-        <source>New user?</source>
-        <translation type="vanished">New user?</translation>
-    </message>
-    <message>
-        <source>Register an account</source>
-        <translation type="vanished">Register an account</translation>
-    </message>
-    <message>
-        <source>Logout</source>
-        <translation type="vanished">Logout</translation>
-    </message>
-    <message>
-        <source>Logging in, please wait</source>
-        <translation type="vanished">Logging in, please wait</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="vanished">Login</translation>
-    </message>
-    <message>
-        <source>The easiest way to transfer you project from QGIS to your devices!</source>
-        <translation type="vanished">The easiest way to transfer you project from QGIS to your devices!</translation>
-    </message>
-    <message>
-        <source>Learn more about SIGPACGOCloud</source>
-        <translation type="vanished">Learn more about SIGPACGOCloud</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud</source>
-        <translation type="obsolete">SIGPACGOCloud</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudPackageLayersFeedback</name>
-    <message>
-        <source>Problematic SIGPACGOCloud layer packaging</source>
-        <translation type="vanished">Problematic SIGPACGOCloud layer packaging</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</source>
-        <translation type="vanished">Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud had troubles packaging your project</source>
-        <translation type="vanished">SIGPACGOCloud had troubles packaging your project</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
-        <translation type="vanished">Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudPopup</name>
-    <message>
-        <source>SIGPACGOCloud</source>
-        <translation type="vanished">SIGPACGOCloud</translation>
-    </message>
-    <message>
-        <source>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="vanished">The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</translation>
-    </message>
-    <message>
-        <source>Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="vanished">Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</translation>
-    </message>
-    <message>
-        <source>Learn more about SIGPACGOCloud</source>
-        <translation type="vanished">Learn more about SIGPACGOCloud</translation>
-    </message>
-    <message>
-        <source>Disconnected from the cloud.</source>
-        <translation type="vanished">Disconnected from the cloud.</translation>
-    </message>
-    <message>
-        <source>Connecting to the cloud.</source>
-        <translation type="vanished">Connecting to the cloud.</translation>
-    </message>
-    <message>
-        <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation type="vanished">Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
-    </message>
-    <message>
-        <source>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</source>
-        <translation type="vanished">This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</translation>
-    </message>
-    <message>
-        <source>Downloading %1%…</source>
-        <translation type="vanished">Downloading %1%…</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
-    </message>
-    <message>
-        <source>Uploading %1%…</source>
-        <translation type="vanished">Uploading %1%…</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
-        <translation type="vanished">SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</translation>
-    </message>
-    <message>
-        <source>A server error has occured, please try again.</source>
-        <translation type="vanished">A server error has occured, please try again.</translation>
-    </message>
-    <message>
-        <source>A network error has occured, please try again.</source>
-        <translation type="vanished">A network error has occured, please try again.</translation>
-    </message>
-    <message numerus="yes">
-        <source>There is/are %n local change(s)</source>
-        <translation type="vanished">
-            <numerusform>There is/are %n local change(s)</numerusform>
-            <numerusform>There is/are %n local change(s)</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>There are no local changes</source>
-        <translation type="vanished">There are no local changes</translation>
-    </message>
-    <message>
-        <source>The locally stored cloud project has been corrupted</source>
-        <translation type="vanished">The locally stored cloud project has been corrupted</translation>
-    </message>
-    <message>
-        <source>Synchronize</source>
-        <translation type="vanished">Synchronize</translation>
-    </message>
-    <message>
-        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</source>
-        <translation type="vanished">Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</translation>
-    </message>
-    <message>
-        <source>Push changes</source>
-        <translation type="vanished">Push changes</translation>
-    </message>
-    <message>
-        <source>Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</source>
-        <translation type="vanished">Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</translation>
-    </message>
-    <message>
-        <source>Revert local changes</source>
-        <translation type="vanished">Revert local changes</translation>
-    </message>
-    <message>
-        <source>Reset project</source>
-        <translation type="vanished">Reset project</translation>
-    </message>
-    <message>
-        <source>Revert all modified features in the local layers. You cannot restore those changes.</source>
-        <translation type="vanished">Revert all modified features in the local layers. You cannot restore those changes.</translation>
-    </message>
-    <message>
-        <source>Revert all modified features in the local cloud layers. You cannot restore those changes.</source>
-        <translation type="vanished">Revert all modified features in the local cloud layers. You cannot restore those changes.</translation>
-    </message>
-    <message>
-        <source>The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
-
-While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</source>
-        <translation type="vanished">The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
-
-While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</translation>
-    </message>
-    <message>
-        <source>Last synchronized just now</source>
-        <translation type="vanished">Last synchronized just now</translation>
-    </message>
-    <message>
-        <source>Last synchronized %1 minutes ago</source>
-        <translation type="vanished">Last synchronized %1 minutes ago</translation>
-    </message>
-    <message>
-        <source>Last synchronized at %1</source>
-        <translation type="vanished">Last synchronized at %1</translation>
-    </message>
-    <message>
-        <source>Last synchronized on %1</source>
-        <translation type="vanished">Last synchronized on %1</translation>
-    </message>
-    <message>
-        <source>Last changes pushed just now</source>
-        <translation type="vanished">Last changes pushed just now</translation>
-    </message>
-    <message>
-        <source>Last changes pushed %1 minutes ago</source>
-        <translation type="vanished">Last changes pushed %1 minutes ago</translation>
-    </message>
-    <message>
-        <source>Last changes pushed at %1</source>
-        <translation type="vanished">Last changes pushed at %1</translation>
-    </message>
-    <message>
-        <source>Last changes pushed on %1</source>
-        <translation type="vanished">Last changes pushed on %1</translation>
-    </message>
-    <message>
-        <source>No changes pushed yet</source>
-        <translation type="vanished">No changes pushed yet</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n attachment(s) are currently being uploaded in the background.</source>
-        <translation type="vanished">
-            <numerusform>%n attachment(s) are currently being uploaded in the background.</numerusform>
-            <numerusform>%n attachment(s) are currently being uploaded in the background.</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Should local changes be reverted?</source>
-        <translation type="vanished">Should local changes be reverted?</translation>
-    </message>
-    <message>
-        <source>Reset cloud project</source>
-        <translation type="vanished">Reset cloud project</translation>
-    </message>
-    <message>
-        <source>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</source>
-        <translation type="vanished">Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</translation>
-    </message>
-    <message>
-        <source>Connecting cloud</source>
-        <translation type="vanished">Connecting cloud</translation>
-    </message>
-    <message>
-        <source>Local changes reverted</source>
-        <translation type="vanished">Local changes reverted</translation>
-    </message>
-    <message>
-        <source>Failed to revert changes</source>
-        <translation type="vanished">Failed to revert changes</translation>
-    </message>
-    <message>
-        <source>No changes to revert</source>
-        <translation type="vanished">No changes to revert</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudProjectsModel</name>
-    <message>
-        <source>Export failed</source>
-        <translation type="vanished">Export failed</translation>
-    </message>
-    <message>
-        <source>Packaged layer &apos;&apos;%1&apos;&apos; is not valid: &apos;&apos;%2&apos;&apos;</source>
-        <translation type="vanished">Packaged layer &apos;&apos;%1&apos;&apos; is not valid: &apos;&apos;%2&apos;&apos;</translation>
-    </message>
-    <message>
-        <source>Failed to open temporary file for &quot;&quot;%1&quot;&quot;, reason:
-%2</source>
-        <translation type="vanished">Failed to open temporary file for &quot;&quot;%1&quot;&quot;, reason:
-%2</translation>
-    </message>
-    <message>
-        <source>Failed to upload attachment stored at &quot;&quot;%1&quot;&quot;, reason:
-%2</source>
-        <translation type="vanished">Failed to upload attachment stored at &quot;&quot;%1&quot;&quot;, reason:
-%2</translation>
-    </message>
-    <message>
-        <source>Failed to download file &quot;&quot;%1&quot;&quot;, reason:</source>
-        <translation type="vanished">Failed to download file &quot;&quot;%1&quot;&quot;, reason:</translation>
-    </message>
-    <message>
-        <source>Failed to write downloaded file stored at &quot;&quot;%1&quot;, fs reason:</source>
-        <translation type="vanished">Failed to write downloaded file stored at &quot;&quot;%1&quot;, fs reason:</translation>
-    </message>
-    <message>
-        <source>aborted</source>
-        <translation type="vanished">aborted</translation>
-    </message>
-    <message>
-        <source>project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</source>
-        <translation type="vanished">project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</translation>
-    </message>
-    <message>
-        <source>Getting job status, but the project is deleted.</source>
-        <translation type="vanished">Getting job status, but the project is deleted.</translation>
-    </message>
-    <message>
-        <source>Job creation finished, but the server response is missing required fields: id(string)</source>
-        <translation type="vanished">Job creation finished, but the server response is missing required fields: id(string)</translation>
-    </message>
-    <message>
-        <source>Getting job status, but no `%2` job triggered yet.</source>
-        <translation type="vanished">Getting job status, but no `%2` job triggered yet.</translation>
-    </message>
-    <message>
-        <source>Getting job status finished, but the project is deleted.</source>
-        <translation type="vanished">Getting job status finished, but the project is deleted.</translation>
-    </message>
-    <message>
-        <source>job(%1) status response does not contain all the expected keys: status(string)</source>
-        <translation type="vanished">job(%1) status response does not contain all the expected keys: status(string)</translation>
-    </message>
-    <message>
-        <source>Job(%1) finished with a failed status.</source>
-        <translation type="vanished">Job(%1) finished with a failed status.</translation>
-    </message>
-    <message>
-        <source>Project busy.</source>
-        <translation type="vanished">Project busy.</translation>
-    </message>
-    <message>
-        <source>Packaging job finished unsuccessfully for `%1`. %2</source>
-        <translation type="vanished">Packaging job finished unsuccessfully for `%1`. %2</translation>
-    </message>
-    <message>
-        <source>Failed to refresh the latest info for `%1`: %2</source>
-        <translation type="vanished">Failed to refresh the latest info for `%1`: %2</translation>
-    </message>
-    <message>
-        <source>Failed to get latest package data.</source>
-        <translation type="vanished">Failed to get latest package data.</translation>
-    </message>
-    <message>
-        <source>Latest package data response error.</source>
-        <translation type="vanished">Latest package data response error.</translation>
-    </message>
-    <message>
-        <source>Latest package data structure error.</source>
-        <translation type="vanished">Latest package data structure error.</translation>
-    </message>
-    <message>
-        <source>Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</source>
-        <translation type="vanished">Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</translation>
-    </message>
-    <message>
-        <source>Failed to open temporary file for `%1`, reason:
-%2</source>
-        <translation type="vanished">Failed to open temporary file for `%1`, reason:
-%2</translation>
-    </message>
-    <message>
-        <source>Failed to upload attachment stored at `%1`, reason:
-%2</source>
-        <translation type="vanished">Failed to upload attachment stored at `%1`, reason:
-%2</translation>
-    </message>
-    <message>
-        <source>Network error. Failed to download file `%1`.</source>
-        <translation type="vanished">Network error. Failed to download file `%1`.</translation>
-    </message>
-    <message>
-        <source>File system error. Failed to write file to temporary location `%1`.</source>
-        <translation type="vanished">File system error. Failed to write file to temporary location `%1`.</translation>
-    </message>
-    <message>
-        <source>File system error. Failed to open file for writing on temporary `%1`.</source>
-        <translation type="vanished">File system error. Failed to open file for writing on temporary `%1`.</translation>
-    </message>
-    <message>
-        <source>Project `%1`, file `%2`: %3</source>
-        <translation type="vanished">Project `%1`, file `%2`: %3</translation>
-    </message>
-    <message>
-        <source>System message: </source>
-        <translation type="vanished">System message: </translation>
-    </message>
-    <message>
-        <source> (see more in the SIGPACGO error log)…</source>
-        <translation type="vanished"> (see more in the SIGPACGO error log)…</translation>
-    </message>
-    <message>
-        <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
-        <translation type="vanished">Failed to copy some of the downloaded files on your device. Check your device storage.</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudScreen</name>
-    <message>
-        <source>SIGPACGOCloud Projects</source>
-        <translation type="vanished">SIGPACGOCloud Projects</translation>
-    </message>
-    <message>
-        <source>Disconnected from the cloud.</source>
-        <translation type="vanished">Disconnected from the cloud.</translation>
-    </message>
-    <message>
-        <source>Connecting to the cloud.</source>
-        <translation type="vanished">Connecting to the cloud.</translation>
-    </message>
-    <message>
-        <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation type="vanished">Greetings &lt;strong&gt;%1&lt;/strong&gt;.</translation>
-    </message>
-    <message>
-        <source>My Projects</source>
-        <translation type="vanished">My Projects</translation>
-    </message>
-    <message>
-        <source>Community</source>
-        <translation type="vanished">Community</translation>
-    </message>
-    <message>
-        <source>(Available locally)</source>
-        <translation type="vanished">(Available locally)</translation>
-    </message>
-    <message>
-        <source>Downloading, %1% fetched…</source>
-        <translation type="vanished">Downloading, %1% fetched…</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</translation>
-    </message>
-    <message>
-        <source>Uploading…</source>
-        <translation type="vanished">Uploading…</translation>
-    </message>
-    <message>
-        <source>Downloading error. </source>
-        <translation type="vanished">Downloading error. </translation>
-    </message>
-    <message>
-        <source>Uploading error. </source>
-        <translation type="vanished">Uploading error. </translation>
-    </message>
-    <message>
-        <source>Available locally, missing on the cloud</source>
-        <translation type="vanished">Available locally, missing on the cloud</translation>
-    </message>
-    <message>
-        <source>Available on the cloud, missing locally</source>
-        <translation type="vanished">Available on the cloud, missing locally</translation>
-    </message>
-    <message>
-        <source>Available locally</source>
-        <translation type="vanished">Available locally</translation>
-    </message>
-    <message>
-        <source>Has changes. </source>
-        <translation type="vanished">Has changes. </translation>
-    </message>
-    <message>
-        <source>Downloading project %1</source>
-        <translation type="vanished">Downloading project %1</translation>
-    </message>
-    <message>
-        <source>Download Project</source>
-        <translation type="vanished">Download Project</translation>
-    </message>
-    <message>
-        <source>Open Project</source>
-        <translation type="vanished">Open Project</translation>
-    </message>
-    <message>
-        <source>Remove Stored Project</source>
-        <translation type="vanished">Remove Stored Project</translation>
-    </message>
-    <message>
-        <source>Cancel Project Download</source>
-        <translation type="vanished">Cancel Project Download</translation>
-    </message>
-    <message>
-        <source>Press and hold over a cloud project for a menu of additional actions.</source>
-        <translation type="vanished">Press and hold over a cloud project for a menu of additional actions.</translation>
-    </message>
-    <message>
-        <source>Refresh projects list</source>
-        <translation type="vanished">Refresh projects list</translation>
-    </message>
-    <message>
-        <source>Refreshing projects list</source>
-        <translation type="vanished">Refreshing projects list</translation>
-    </message>
-    <message>
-        <source>No projects found</source>
-        <translation type="vanished">No projects found</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudUtils</name>
-    <message>
-        <source>A server error has occured, please try again.</source>
-        <translation type="obsolete">A server error has occured, please try again.</translation>
-    </message>
-    <message>
-        <source>A network error has occured, please try again.</source>
-        <translation type="obsolete">A network error has occured, please try again.</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOLocalDataPickerScreen</name>
-    <message>
-        <source>Project Folder</source>
-        <translation type="vanished">Project Folder</translation>
-    </message>
-    <message>
-        <source>Local Projects &amp; Datasets</source>
-        <translation type="vanished">Local Projects &amp; Datasets</translation>
-    </message>
-    <message>
-        <source>Folders</source>
-        <translation type="vanished">Folders</translation>
-    </message>
-    <message>
-        <source>Projects</source>
-        <translation type="vanished">Projects</translation>
-    </message>
-    <message>
-        <source>Datasets</source>
-        <translation type="vanished">Datasets</translation>
-    </message>
-    <message>
-        <source>Favorites</source>
-        <translation type="vanished">Favorites</translation>
-    </message>
-    <message>
-        <source>Project file</source>
-        <translation type="vanished">Project file</translation>
-    </message>
-    <message>
-        <source>Vector dataset</source>
-        <translation type="vanished">Vector dataset</translation>
-    </message>
-    <message>
-        <source>Raster dataset</source>
-        <translation type="vanished">Raster dataset</translation>
-    </message>
-    <message>
-        <source>Send to...</source>
-        <translation type="vanished">Send to...</translation>
-    </message>
-    <message>
-        <source>Export to folder...</source>
-        <translation type="vanished">Export to folder...</translation>
-    </message>
-    <message>
-        <source>Remove dataset</source>
-        <translation type="vanished">Remove dataset</translation>
-    </message>
-    <message>
-        <source>Send compressed folder to...</source>
-        <translation type="vanished">Send compressed folder to...</translation>
-    </message>
-    <message>
-        <source>Remove project folder</source>
-        <translation type="vanished">Remove project folder</translation>
-    </message>
-    <message>
-        <source>Import project from folder</source>
-        <translation type="vanished">Import project from folder</translation>
-    </message>
-    <message>
-        <source>Import project from ZIP</source>
-        <translation type="vanished">Import project from ZIP</translation>
-    </message>
-    <message>
-        <source>Import dataset(s)</source>
-        <translation type="vanished">Import dataset(s)</translation>
-    </message>
-    <message>
-        <source>Storage management help</source>
-        <translation type="vanished">Storage management help</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation type="obsolete">Password</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOSettings</name>
-    <message>
-        <source>Show scale bar</source>
-        <translation type="vanished">Show scale bar</translation>
-    </message>
-    <message>
-        <source>Maximized attribute form</source>
-        <translation type="vanished">Maximized attribute form</translation>
-    </message>
-    <message>
-        <source>Fixed scale navigation</source>
-        <translation type="vanished">Fixed scale navigation</translation>
-    </message>
-    <message>
-        <source>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</source>
-        <translation type="vanished">Search results only pan to feature without zooming.</translation>
-    </message>
-    <message>
-        <source>Show digitizing information</source>
-        <translation type="vanished">Show digitizing information</translation>
-    </message>
-    <message>
-        <source>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</source>
-        <translation type="vanished">Shows coordinates on the map while digitizing or measuring.</translation>
-    </message>
-    <message>
-        <source>Show bookmarks</source>
-        <translation type="vanished">Show bookmarks</translation>
-    </message>
-    <message>
-        <source>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</source>
-        <translation type="vanished">Shows saved and project bookmarks on the map.</translation>
-    </message>
-    <message>
-        <source>Use native camera</source>
-        <translation type="vanished">Use native camera</translation>
-    </message>
-    <message>
-        <source>If disabled, SIGPACGO will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
-        <translation type="vanished">Uses device camera app instead of built-in camera. Good for geo-tagged photos.</translation>
-    </message>
-    <message>
-        <source>Fast editing mode</source>
-        <translation type="vanished">Fast editing mode</translation>
-    </message>
-    <message>
-        <source>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</source>
-        <translation type="vanished">Auto-saves features when geometry is valid and constraints are met.</translation>
-    </message>
-    <message>
-        <source>Dim screen when idling</source>
-        <translation type="vanished">Dim screen when idling</translation>
-    </message>
-    <message>
-        <source>If enabled, the screen brightness will be dimmed after 20 seconds of inactivity to preserve battery.</source>
-        <translation type="vanished">If enabled, the screen brightness will be dimmed after 20 seconds of inactivity to preserve battery.</translation>
-    </message>
-    <message>
-        <source>Consider mouse as a touchscreen device</source>
-        <translation type="vanished">Consider mouse as a touchscreen device</translation>
-    </message>
-    <message>
-        <source>If disabled, the mouse will act as a stylus pen.</source>
-        <translation type="vanished">If disabled, the mouse will act as a stylus pen.</translation>
-    </message>
-    <message>
-        <source>Send anonymized metrics</source>
-        <translation type="vanished">Send anonymized metrics</translation>
-    </message>
-    <message>
-        <source>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</source>
-        <translation type="vanished">If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation type="vanished">General</translation>
-    </message>
-    <message>
-        <source>Positioning</source>
-        <translation type="vanished">Positioning</translation>
-    </message>
-    <message>
-        <source>Variables</source>
-        <translation type="vanished">Variables</translation>
-    </message>
-    <message>
-        <source>Customize search bar</source>
-        <translation type="vanished">Customize search bar</translation>
-    </message>
-    <message>
-        <source>User interface language:</source>
-        <translation type="vanished">User interface language:</translation>
-    </message>
-    <message>
-        <source>To apply the selected user interface language, SIGPACGO needs to completely shutdown and restart.</source>
-        <translation type="vanished">Restart SIGPAC-Go to apply language change.</translation>
-    </message>
-    <message>
-        <source>system</source>
-        <translation type="vanished">system</translation>
-    </message>
-    <message>
-        <source>Found a missing or incomplete language? %1Join the translator community.%2</source>
-        <translation type="vanished">Found a missing or incomplete language? %1Join the translator community.%2</translation>
-    </message>
-    <message>
-        <source>Positioning device in use:</source>
-        <translation type="vanished">Positioning device in use:</translation>
-    </message>
-    <message>
-        <source>Scanning for paired devices</source>
-        <translation type="vanished">Scanning for paired devices</translation>
-    </message>
-    <message>
-        <source>Scanning failed: %1</source>
-        <translation type="vanished">Scanning failed: %1</translation>
-    </message>
-    <message>
-        <source>Scanning done</source>
-        <translation type="vanished">Scanning done</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n device(s) found</source>
-        <translation type="vanished">
-            <numerusform>%n device(s) found</numerusform>
-            <numerusform>%n device(s) found</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Scanning canceled</source>
-        <translation type="vanished">Scanning canceled</translation>
-    </message>
-    <message>
-        <source>Scan</source>
-        <translation type="vanished">Scan</translation>
-    </message>
-    <message>
-        <source>Make a full service discovery</source>
-        <translation type="vanished">Make a full service discovery</translation>
-    </message>
-    <message>
-        <source>A full device scan can take longer. You really want to do it?
-Cancel to make a minimal device scan instead.</source>
-        <translation type="vanished">A full device scan can take longer. You really want to do it?
-Cancel to make a minimal device scan instead.</translation>
-    </message>
-    <message>
-        <source>Connected to %1</source>
-        <translation type="vanished">Connected to %1</translation>
-    </message>
-    <message>
-        <source>Connect  to %1</source>
-        <translation type="vanished">Connect  to %1</translation>
-    </message>
-    <message>
-        <source>Connecting to %1</source>
-        <translation type="vanished">Connecting to %1</translation>
-    </message>
-    <message>
-        <source>Use orthometric altitude from device</source>
-        <translation type="vanished">Use orthometric altitude from device</translation>
-    </message>
-    <message>
-        <source>Show position information</source>
-        <translation type="vanished">Show position information</translation>
-    </message>
-    <message>
-        <source>Activate accuracy indicator</source>
-        <translation type="vanished">Activate accuracy indicator</translation>
-    </message>
-    <message>
-        <source>Bad accuracy below [m]</source>
-        <translation type="vanished">Bad accuracy below [m]</translation>
-    </message>
-    <message>
-        <source>Excellent accuracy above [m]</source>
-        <translation type="vanished">Excellent accuracy above [m]</translation>
-    </message>
-    <message>
-        <source>Enable accuracy requirement</source>
-        <translation type="vanished">Enable accuracy requirement</translation>
-    </message>
-    <message>
-        <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is below bad, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of excellent, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value above the bad threshold.</source>
-        <translation type="vanished">When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is below bad, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of excellent, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value above the bad threshold.</translation>
-    </message>
-    <message>
-        <source>Enable averaged positioning requirement</source>
-        <translation type="vanished">Enable averaged positioning requirement</translation>
-    </message>
-    <message>
-        <source>Minimum number of positions collected</source>
-        <translation type="vanished">Minimum number of positions collected</translation>
-    </message>
-    <message>
-        <source>Automatically end collection when minimum number is met</source>
-        <translation type="vanished">Automatically end collection when minimum number is met</translation>
-    </message>
-    <message>
-        <source>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</source>
-        <translation type="vanished">When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</translation>
-    </message>
-    <message>
-        <source>Antenna height compensation</source>
-        <translation type="vanished">Antenna height compensation</translation>
-    </message>
-    <message>
-        <source>Antenna height [m]</source>
-        <translation type="vanished">Antenna height [m]</translation>
-    </message>
-    <message>
-        <source>Z values which are recorded from the positioning device will be corrected by this value. If a value of 1.6 is entered, this will result in a correction of -1.6 for each recorded value.</source>
-        <translation type="vanished">Z values which are recorded from the positioning device will be corrected by this value. If a value of 1.6 is entered, this will result in a correction of -1.6 for each recorded value.</translation>
-    </message>
-    <message>
-        <source>Skip altitude correction</source>
-        <translation type="vanished">Skip altitude correction</translation>
-    </message>
-    <message>
-        <source>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</source>
-        <translation type="vanished">Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</translation>
-    </message>
-    <message>
-        <source>Vertical grid shift in use:</source>
-        <translation type="vanished">Vertical grid shift in use:</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation type="vanished">None</translation>
-    </message>
-    <message>
-        <source>Vertical grid shift is used to increase the altitude accuracy.</source>
-        <translation type="vanished">Vertical grid shift is used to increase the altitude accuracy.</translation>
-    </message>
-    <message>
-        <source>SIGPACGO Settings</source>
-        <translation type="vanished">SIGPACGO Settings</translation>
-    </message>
-    <message>
-        <source>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</source>
-        <translation type="vanished">Seconds of inactivity before dimming screen to save battery.</translation>
-    </message>
-    <message>
-        <source>Measure (M) value attached to vertices:</source>
-        <translation type="vanished">Measure (M) value attached to vertices:</translation>
-    </message>
-    <message>
-        <source>Timestamp (milliseconds since epoch)</source>
-        <translation type="vanished">Timestamp (milliseconds since epoch)</translation>
-    </message>
-    <message>
-        <source>Ground speed</source>
-        <translation type="vanished">Ground speed</translation>
-    </message>
-    <message>
-        <source>Bearing</source>
-        <translation type="vanished">Bearing</translation>
-    </message>
-    <message>
-        <source>Horizontal accuracy</source>
-        <translation type="vanished">Horizontal accuracy</translation>
-    </message>
-    <message>
-        <source>Vertical accuracy</source>
-        <translation type="vanished">Vertical accuracy</translation>
-    </message>
-    <message>
-        <source>PDOP</source>
-        <translation type="vanished">PDOP</translation>
-    </message>
-    <message>
-        <source>HDOP</source>
-        <translation type="vanished">HDOP</translation>
-    </message>
-    <message>
-        <source>VDOP</source>
-        <translation type="vanished">VDOP</translation>
-    </message>
-    <message>
-        <source>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</source>
-        <translation type="vanished">When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation type="vanished">Add</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation type="vanished">Edit</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="vanished">Remove</translation>
-    </message>
-    <message>
-        <source>Connect to %1</source>
-        <translation type="vanished">Connect to %1</translation>
-    </message>
-    <message>
-        <source>A lower quality trades rendering precision in favor of lower memory usage and rendering time.</source>
-        <translation type="vanished">Lower quality reduces memory usage and improves performance.</translation>
-    </message>
-    <message>
-        <source>If enabled, pressing the device&apos;s volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.</source>
-        <translation type="vanished">Volume up adds vertex, volume down removes last vertex.</translation>
-    </message>
-    <message>
-        <source>When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.</source>
-        <translation type="vanished">Tap on map to add vertex.</translation>
-    </message>
-    <message>
-        <source>When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.</source>
-        <translation type="vanished">Mouse acts like finger. When off, mouse acts like stylus.</translation>
-    </message>
-    <message>
-        <source>When switched on, the map can be rotated by the user.</source>
-        <translation type="vanished">Allows rotating the map.</translation>
     </message>
 </context>
 <context>
@@ -5112,12 +4174,72 @@ Cancel to make a minimal device scan instead.</translation>
 <context>
     <name>TrackerSettings</name>
     <message>
+        <source>Tracking: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tracking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Requirement Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Time requirement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Minimum time [sec]</source>
         <translation type="unfinished">Minimum time [sec]</translation>
     </message>
     <message>
+        <source>When enabled, vertex additions will occur when the time between the last and new vertex meets a configured mimimum value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance requirement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Minimum distance [%1]</source>
         <translation type="unfinished">Minimum distance [%1]</translation>
+    </message>
+    <message>
+        <source>When enabled, vertex additions will occur when the distance between the last and new vertex meets a configured mimimum value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sensor data requirement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, vertex additions will occur when sensors have captured new data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wait for all active requirements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, vertices will only be recorded when all active requirements are met. When disabled, individual requirement met will trigger vertex additions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erroneous distance safeguard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum tolerated distance [%1]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, vertex addition will not occur when the distance between the last and new vertex is greater than a configured maximum value.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Measure (M) value attached to vertices:</source>
@@ -5170,66 +4292,6 @@ Cancel to make a minimal device scan instead.</translation>
     <message>
         <source>Track on layer %1 started</source>
         <translation type="unfinished">Track on layer %1 started</translation>
-    </message>
-    <message>
-        <source>Tracking: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tracking</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Requirement Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Time requirement</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, vertex additions will occur when the time between the last and new vertex meets a configured mimimum value.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Distance requirement</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, vertex additions will occur when the distance between the last and new vertex meets a configured mimimum value.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sensor data requirement</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, vertex additions will occur when sensors have captured new data.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wait for all active requirements</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, vertices will only be recorded when all active requirements are met. When disabled, individual requirement met will trigger vertex additions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>General Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Erroneous distance safeguard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Maximum tolerated distance [%1]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, vertex addition will not occur when the distance between the last and new vertex is greater than a configured maximum value.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Resume tracking</source>
@@ -5519,15 +4581,15 @@ Cancel to make a minimal device scan instead.</translation>
     <name>WelcomeScreen</name>
     <message>
         <source>We&apos;re sorry to hear that. Click on the button below to comment or seek support.</source>
-        <translation type="vanished">We&apos;re sorry to hear that. Click on the button below to comment or seek support.</translation>
+        <translation>We&apos;re sorry to hear that. Click on the button below to comment or seek support.</translation>
     </message>
     <message>
         <source>Reach out</source>
-        <translation type="vanished">Reach out</translation>
+        <translation>Reach out</translation>
     </message>
     <message>
         <source>Hey there, how do you like your experience with SIGPACGO so far?</source>
-        <translation type="vanished">Hey there, how do you like your experience with SIGPACGO so far?</translation>
+        <translation>Hey there, how do you like your experience with SIGPACGO so far?</translation>
     </message>
     <message>
         <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a comment on the store.</source>
@@ -5535,27 +4597,27 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Rate us</source>
-        <translation type="vanished">Rate us</translation>
+        <translation>Rate us</translation>
     </message>
     <message>
         <source>Anonymized metrics collection has been disabled. You can re-enable through the settings panel.</source>
-        <translation type="vanished">Anonymized metrics collection has been disabled. You can re-enable through the settings panel.</translation>
+        <translation>Anonymized metrics collection has been disabled. You can re-enable through the settings panel.</translation>
     </message>
     <message>
         <source>To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</source>
-        <translation type="vanished">To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</translation>
+        <translation>To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</translation>
     </message>
     <message>
         <source>I agree</source>
-        <translation type="vanished">I agree</translation>
+        <translation>I agree</translation>
     </message>
     <message>
         <source>I prefer not</source>
-        <translation type="vanished">I prefer not</translation>
+        <translation>I prefer not</translation>
     </message>
     <message>
         <source>SIGPACGOCloud projects</source>
-        <translation type="vanished">SIGPACGOCloud projects</translation>
+        <translation>SIGPACGOCloud projects</translation>
     </message>
     <message>
         <source>Open local file</source>
@@ -5587,23 +4649,7 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Welcome back to SIGPACGO.</source>
-        <translation type="vanished">Welcome back to SIGPACGO.</translation>
-    </message>
-    <message>
-        <source>SIGPAC-Go Base Map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Official base map for field work</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No recent projects</source>
-        <translation type="unfinished"></translation>
+        <translation>Welcome back to SIGPACGO.</translation>
     </message>
     <message>
         <source>Default project</source>
@@ -5611,10 +4657,6 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Base map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Recent Project Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5634,15 +4676,19 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Recent Project Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Welcome to SIGPACGO. First time using this application? Try the sample projects listed below.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a review.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Return to map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Welcome to SIGOPAC-Go</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SIGPAC-Go SIG para el campo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5739,7 +4785,7 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Failed to delete referencing feature</translation>
     </message>
     <message>
-        <source>Ensure contraints are met</source>
+        <source>Cannot add child feature: attribute value linking parent and children is not set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5747,7 +4793,7 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot add child feature: attribute value linking parent and children is not set</source>
+        <source>Ensure contraints are met</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6111,11 +5157,11 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Changes failed to reach SIGPACGOCloud: %1</source>
-        <translation type="vanished">Changes failed to reach SIGPACGOCloud: %1</translation>
+        <translation>Changes failed to reach SIGPACGOCloud: %1</translation>
     </message>
     <message>
         <source>Changes successfully pushed to SIGPACGOCloud</source>
-        <translation type="vanished">Changes successfully pushed to SIGPACGOCloud</translation>
+        <translation>Changes successfully pushed to SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Press back again to close project and app</source>
@@ -6159,39 +5205,39 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Snapping turned on</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Snapping turned off</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Snap to %1° angle turned on</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Snap to common angle turned off</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Relative angle</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Canvas follows location and compass orientation</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Learn more</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sensors</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No sensor available</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Project Folder</source>
@@ -6199,63 +5245,87 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Select sensor below</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sensor error: %1</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disconnecting sensor '&apos;%1&apos;...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connecting sensor '&apos;%1&apos;...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Select layout below</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Layer:</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Feature:</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Feature Form</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Feature duplication not available</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Importing %1</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Import URL failed</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Do you grant permission to activate `%1`?</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Remember my choice</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy Feature Attributes</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position has trespassed into '&apos;%1&apos;'</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position outside areas after leaving '&apos;%1&apos;'</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position entered into '&apos;%1&apos;'</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position left from '&apos;%1&apos;'</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enable Map Rotation</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Dashboard</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This button opens the dashboard. With the dashboard you can interact with the legend and map theme, or start digitizing by activating the editing mode. Long-pressing the button gives you immediate access to the main menu.</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Positioning</source>
@@ -6263,43 +5333,43 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>This button toggles the positioning system. When enabled, a position marker will appear top of the map. Long-pressing the button will open the positioning menu where additional functionalities can be explored.</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The search bar provides you with a quick way to find features within your project, jump to a typed latitude and longitude point, and much more.</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Zoom</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>In addition to the pinch gesture, these buttons help you quickly zoom in and out.</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel algorithm operation</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>You are about to dismiss the ongoing algorithm operation, proceed?</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unlock the screen to close project and app</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Borderless mode activated, use the top left and botom right corner to move and resize the window</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Finish or dimiss the digitizing feature before toggling to browse mode</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Variables</source>
@@ -6307,175 +5377,43 @@ Cancel to make a minimal device scan instead.</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Replaying collected positions, hold on</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Snapping to every</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1°</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Snapping tolerance</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Narrow</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Large</source>
-        <translation>Create Sample Projects</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Snapping tolerance set to %1</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Position has trespassed into &apos;%1&apos;</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Position outside areas after leaving &apos;%1&apos;</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Position entered into &apos;%1&apos;</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Position left from &apos;%1&apos;</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Snap requires positioning to be active and returning a valid position</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Snap requires the active vector layer to be a point geometry</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Snap requires the active vector layer to contain a field named &apos;photo&apos; or &apos;picture&apos;</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Camera for attributes</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Take photos</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Enter Coordinates</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Supported formats:</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Enter coordinates</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Invalid coordinates</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Could not parse coordinates</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Open in Maps</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Marked Location</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Opening location at </source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Opening maps at current position</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Opening maps at last used coordinates</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Manual coordinate input mode enabled</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Automatic position mode enabled</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Manual mode: Click to enter coordinates</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Auto mode: Uses current position. Long press to switch to manual input</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Photo Gallery</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Create Sample Projects</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Disconnecting sensor &apos;%1&apos;...</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Connecting sensor &apos;%1&apos;...</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Changes failed to reach QFieldCloud: %1</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Changes successfully pushed to QFieldCloud</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Photo saved to </source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Opening photo gallery</source>
-        <translation>Create Sample Projects</translation>
-    </message>
-    <message>
-        <source>Sample projects folder created</source>
-        <translation>Sample projects folder created</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6513,7 +5451,7 @@ Cancel to make a minimal device scan instead.</translation>
         <translation>Failed to delete referencing feature</translation>
     </message>
     <message>
-        <source>Ensure contraints are met</source>
+        <source>Cannot add child feature: attribute value linking parent and children is not set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6521,7 +5459,7 @@ Cancel to make a minimal device scan instead.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot add child feature: attribute value linking parent and children is not set</source>
+        <source>Ensure contraints are met</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
