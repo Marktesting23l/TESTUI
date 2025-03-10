@@ -50,6 +50,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -198,8 +199,107 @@ public class QFieldActivity extends QtActivity {
 
     private void vibrate(int milliseconds) {
         Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(VibrationEffect.createOneShot(
-            milliseconds, VibrationEffect.DEFAULT_AMPLITUDE));
+        if (v != null) {
+            v.vibrate(VibrationEffect.createOneShot(milliseconds,
+                                                    VibrationEffect.DEFAULT_AMPLITUDE));
+        }
+    }
+
+    /**
+     * Copies the assets from the APK to the application's data directory
+     */
+    public void copyAssets() {
+        Log.i("SIGPACGO", "Copying assets to application directory");
+        try {
+            AssetManager assetManager = getAssets();
+            String[] files = assetManager.list("sigpacgo");
+            if (files != null && files.length > 0) {
+                String appDir = getFilesDir().getAbsolutePath();
+                File shareDir = new File(appDir + "/share");
+                if (!shareDir.exists()) {
+                    shareDir.mkdirs();
+                }
+                
+                File sigpacgoDir = new File(shareDir, "sigpacgo");
+                if (!sigpacgoDir.exists()) {
+                    sigpacgoDir.mkdirs();
+                }
+                
+                // Create sample_projects directory
+                File sampleProjectsDir = new File(sigpacgoDir, "sample_projects");
+                if (!sampleProjectsDir.exists()) {
+                    sampleProjectsDir.mkdirs();
+                }
+                
+                // Copy all files from assets/sigpacgo to the app's data directory
+                for (String filename : files) {
+                    copyAssetFile("sigpacgo/" + filename, shareDir.getAbsolutePath() + "/sigpacgo/" + filename);
+                }
+                
+                // Copy sample projects if they exist
+                try {
+                    String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
+                    if (sampleProjects != null) {
+                        for (String project : sampleProjects) {
+                            copyAssetFolder("sigpacgo/sample_projects/" + project, 
+                                           sampleProjectsDir.getAbsolutePath() + "/" + project);
+                        }
+                    }
+                } catch (IOException e) {
+                    Log.e("SIGPACGO", "Error copying sample projects: " + e.getMessage());
+                }
+                
+                Log.i("SIGPACGO", "Assets copied successfully");
+            }
+        } catch (IOException e) {
+            Log.e("SIGPACGO", "Error copying assets: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Copies a single asset file to the destination
+     */
+    private void copyAssetFile(String assetPath, String destPath) throws IOException {
+        InputStream in = getAssets().open(assetPath);
+        File outFile = new File(destPath);
+        
+        // Create parent directories if they don't exist
+        if (!outFile.getParentFile().exists()) {
+            outFile.getParentFile().mkdirs();
+        }
+        
+        OutputStream out = new FileOutputStream(outFile);
+        byte[] buffer = new byte[1024];
+        int read;
+        while ((read = in.read(buffer)) != -1) {
+            out.write(buffer, 0, read);
+        }
+        in.close();
+        out.flush();
+        out.close();
+    }
+    
+    /**
+     * Recursively copies an asset folder to the destination
+     */
+    private void copyAssetFolder(String assetPath, String destPath) throws IOException {
+        AssetManager assetManager = getAssets();
+        String[] assets = assetManager.list(assetPath);
+        
+        if (assets.length == 0) {
+            // It's a file, copy it
+            copyAssetFile(assetPath, destPath);
+        } else {
+            // It's a folder, create it and copy its contents
+            File dir = new File(destPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            
+            for (String asset : assets) {
+                copyAssetFolder(assetPath + "/" + asset, destPath + "/" + asset);
+            }
+        }
     }
 
     private void processProjectIntent() {
@@ -1020,7 +1120,6 @@ public class QFieldActivity extends QtActivity {
                     }
                     if (!imported) {
                         break;
-                    }
                 }
 
                 progressDialog.dismiss();
