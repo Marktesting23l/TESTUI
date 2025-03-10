@@ -2021,16 +2021,16 @@ ApplicationWindow {
         onClicked: {
           dashBoard.ensureEditableLayerSelected()
           if (!positionSource.active || !positionSource.positionInformation.latitudeValid || !positionSource.positionInformation.longitudeValid) {
-            mainWindow.displayToast(qsTr('Snap requires positioning to be active and returning a valid position'))
+            mainWindow.displayToast(qsTr('requires positioning to be active and returning a valid position'))
             return
           }
           if (dashBoard.activeLayer.geometryType() != Qgis.GeometryType.Point) {
-            mainWindow.displayToast(qsTr('Snap requires the active vector layer to be a point geometry'))
+            mainWindow.displayToast(qsTr('requires the active vector layer to be a point geometry'))
             return
           }
           let fieldNames = dashBoard.activeLayer.fields.names
           if (fieldNames.indexOf('photo') == -1 && fieldNames.indexOf('picture') == -1) {
-            mainWindow.displayToast(qsTr('Snap requires the active vector layer to contain a field named \'photo\' or \'picture\''))
+            mainWindow.displayToast(qsTr('requires the active vector layer to contain a field named \'photo\' or \'picture\''))
             return
           }
           cameraLoader.active = true
@@ -2056,11 +2056,31 @@ ApplicationWindow {
         ToolTip.text: qsTr("Take photos")
       }
       
+      // Add a button to create a DCIM folder in the project directory
+      QfToolButton {
+        id: createDCIMButton
+        width: 40
+        height: 40
+        round: true
+        visible: qgisProject && !!qgisProject.homePath
+        
+        iconSource: Theme.getThemeVectorIcon('ic_folder_white_24dp')
+        iconColor: Theme.toolButtonColor
+        bgcolor: Theme.mainColor
+        
+        onClicked: {
+          createDCIMFolder()
+        }
+        
+        ToolTip.visible: hovered
+        ToolTip.text: qsTr("Create DCIM folder")
+      }
+      
       // Add compass indicator to the locationToolbar
       Item {
         id: compassIndicator
-        width: 40
-        height: 40
+        width: 30
+        height: 30
         visible: positionSource.active && positionSource.positionInformation.orientationValid
         
         Rectangle {
@@ -3305,6 +3325,22 @@ ApplicationWindow {
       onTriggered: {
         dashBoard.close();
         openPhotoGallery();
+        highlighted = false;
+      }
+    }
+
+    MenuItem {
+      text: qsTr("Create DCIM Folder")
+      visible: qgisProject && !!qgisProject.homePath
+
+      font: Theme.defaultFont
+      icon.source: Theme.getThemeVectorIcon("ic_folder_white_24dp")
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+
+      onTriggered: {
+        dashBoard.close();
+        createDCIMFolder();
         highlighted = false;
       }
     }
@@ -5068,36 +5104,26 @@ ApplicationWindow {
   }
 
   function savePhoto(path) {
-    // Get current date for folder structure
-    let today = new Date()
-    let dateFolder = today.getFullYear().toString() +
-                    (today.getMonth() + 1).toString().padStart(2, '0') +
-                    today.getDate().toString().padStart(2, '0')
-    
-    // Use custom folder name if set in camera settings, otherwise use date
-    let folderName = ""
+    // Get the folder name from camera settings or use DCIM as default
+    let folderName = "DCIM"
     if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
       folderName = standaloneCameraLoader.item.cameraSettings.folderName
     }
     
-    let folderPath = folderName ? 
-                    'SIGPACGO_Photos/' + folderName : 
-                    'SIGPACGO_Photos/' + dateFolder
-    
     // Create the folder if it doesn't exist
-    platformUtilities.createDir(qgisProject.homePath, 'SIGPACGO_Photos')
-    if (folderName) {
-      platformUtilities.createDir(qgisProject.homePath + '/SIGPACGO_Photos', folderName)
-    } else {
-      platformUtilities.createDir(qgisProject.homePath + '/SIGPACGO_Photos', dateFolder)
-    }
+    platformUtilities.createDir(qgisProject.homePath, folderName)
     
     // Generate a unique filename with timestamp
+    let today = new Date()
+    let dateStr = today.getFullYear().toString() +
+                 (today.getMonth() + 1).toString().padStart(2, '0') +
+                 today.getDate().toString().padStart(2, '0')
+    
     let timestamp = today.getHours().toString().padStart(2, '0') +
                    today.getMinutes().toString().padStart(2, '0') +
                    today.getSeconds().toString().padStart(2, '0')
     
-    let relativePath = folderPath + '/IMG_' + dateFolder + '_' + timestamp + '.' + FileUtils.fileSuffix(path)
+    let relativePath = folderName + '/IMG_' + dateStr + '_' + timestamp + '.' + FileUtils.fileSuffix(path)
     
     // Move the file to the destination folder
     platformUtilities.renameFile(path, qgisProject.homePath + '/' + relativePath)
@@ -5119,21 +5145,37 @@ ApplicationWindow {
     }
     
     // Display a toast with the saved location
-    displayToast(qsTr("Photo saved to ") + folderPath)
+    displayToast(qsTr("Photo saved to ") + folderName)
   }
 
   function openPhotoGallery() {
-    // Open the SIGPACGO_Photos folder using the platform's file browser
-    let photosPath = qgisProject.homePath + '/SIGPACGO_Photos'
+    // Get the folder name from camera settings or use DCIM as default
+    let folderName = "DCIM"
+    if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
+      folderName = standaloneCameraLoader.item.cameraSettings.folderName
+    }
     
     // Create the directory if it doesn't exist
-    platformUtilities.createDir(qgisProject.homePath, 'SIGPACGO_Photos')
+    let photosPath = qgisProject.homePath + '/' + folderName
+    platformUtilities.createDir(qgisProject.homePath, folderName)
     
     // Open the folder
     platformUtilities.open(photosPath)
     
     // Display a toast
-    displayToast(qsTr("Opening photo gallery"))
+    displayToast(qsTr("Opening photo folder: ") + folderName)
+  }
+  
+  // Function to create a DCIM folder in the project directory
+  function createDCIMFolder() {
+    // Create the DCIM directory if it doesn't exist
+    platformUtilities.createDir(qgisProject.homePath, "DCIM")
+    
+    // Display a toast
+    displayToast(qsTr("DCIM folder created in project directory"))
+    
+    // Open the folder
+    platformUtilities.open(qgisProject.homePath + '/DCIM')
   }
   
   // Function to ensure sample projects are available

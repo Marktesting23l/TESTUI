@@ -96,8 +96,8 @@ Popup {
     property bool geoTagging: true
     property bool showGrid: false
     property bool showOverlay: true
-    property string folderName: ""
     property string deviceId: ''
+    property string folderName: "DCIM" // Default folder name is DCIM
     property size resolution: Qt.size(0, 0)
     property int pixelFormat: 0
   }
@@ -105,6 +105,7 @@ Popup {
   // Dialog for setting folder name
   Popup {
     id: folderNameDialog
+    visible: false // Hide this dialog since we're using date-based folders only
     width: Math.min(mainWindow.width * 0.9, 400)
     height: folderNameColumn.height + 40
     x: (mainWindow.width - width) / 2
@@ -167,7 +168,6 @@ Popup {
 
     mode: ExpressionEvaluator.ExpressionMode
     expressionText: "format_date(now(), 'yyyy-MM-dd @ HH:mm') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
-    (cameraSettings.folderName ? " || '\n" + qsTr("Location") + ": " + cameraSettings.folderName + "'" : "") + 
     " || '\nSIGPACGO - Agricultural Field Survey'"
 
     project: qgisProject
@@ -375,9 +375,9 @@ Popup {
                         coordsStr += " | " + qsTr("Crop") + ": " + fieldInfo.cropType
                       }
                     }
-                    // Add folder name if set
-                    else if (cameraSettings.folderName) {
-                      coordsStr += "\n" + qsTr("Location") + ": " + cameraSettings.folderName
+                    // Add folder info
+                    else {
+                      coordsStr += "\n" + qsTr("Saving to") + ": " + cameraSettings.folderName
                     }
                     
                     return coordsStr
@@ -680,22 +680,11 @@ Popup {
 
               onClicked: {
                 if (cameraItem.state == "PhotoCapture") {
-                  // Create folder path based on settings
-                  let today = new Date();
-                  let dateFolder = today.getFullYear().toString() + 
-                                  (today.getMonth() + 1).toString().padStart(2, '0') + 
-                                  today.getDate().toString().padStart(2, '0');
+                  // Create DCIM folder if it doesn't exist
+                  platformUtilities.createDir(qgisProject.homePath, cameraSettings.folderName);
                   
-                  // Use custom folder name if set, otherwise use date
-                  let folderPath = cameraSettings.folderName ? 
-                                  'SIGPACGO_Photos/' + cameraSettings.folderName : 
-                                  'SIGPACGO_Photos/' + dateFolder;
-                  
-                  // Create the folder if it doesn't exist
-                  platformUtilities.createDir(qgisProject.homePath, folderPath);
-                  
-                  // Capture the photo to the specified folder
-                  captureSession.imageCapture.captureToFile(qgisProject.homePath + '/' + folderPath + '/');
+                  // Capture the photo to the DCIM folder
+                  captureSession.imageCapture.captureToFile(qgisProject.homePath + '/' + cameraSettings.folderName + '/');
                   
                   if (positionSource.active) {
                     currentPosition = positionSource.positionInformation;
@@ -986,20 +975,76 @@ Popup {
         width: 40
         height: 40
         padding: 2
+        visible: true // Make the button visible
 
         iconSource: Theme.getThemeVectorIcon("ic_folder_white_24dp")
-        iconColor: cameraSettings.folderName ? Theme.mainColor : Theme.toolButtonColor
+        iconColor: Theme.mainColor // Always show as enabled
         bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
         round: true
 
         onClicked: {
-          folderNameDialog.open();
+          // Create a dialog to set the folder name
+          let dialog = Qt.createQmlObject(`
+            import QtQuick
+            import QtQuick.Controls
+            import QtQuick.Layouts
+            import Theme
+            
+            Dialog {
+              id: folderDialog
+              title: qsTr("Set Photo Folder")
+              standardButtons: Dialog.Ok | Dialog.Cancel
+              modal: true
+              
+              x: (parent.width - width) / 2
+              y: (parent.height - height) / 2
+              width: Math.min(parent.width * 0.8, 400)
+              
+              ColumnLayout {
+                width: parent.width
+                
+                Label {
+                  text: qsTr("Enter folder name:")
+                  Layout.fillWidth: true
+                }
+                
+                TextField {
+                  id: folderNameField
+                  text: cameraSettings.folderName
+                  placeholderText: "DCIM"
+                  Layout.fillWidth: true
+                  
+                  onAccepted: {
+                    folderDialog.accept()
+                  }
+                }
+                
+                Label {
+                  text: qsTr("Default is DCIM. This folder will be created in the project directory.")
+                  wrapMode: Text.WordWrap
+                  Layout.fillWidth: true
+                  font.pixelSize: 12
+                }
+              }
+              
+              onAccepted: {
+                let newFolderName = folderNameField.text.trim()
+                if (newFolderName) {
+                  cameraSettings.folderName = newFolderName
+                  displayToast(qsTr("Photos will be saved to: ") + newFolderName)
+                  
+                  // Create the folder if it doesn't exist
+                  platformUtilities.createDir(qgisProject.homePath, cameraSettings.folderName)
+                }
+              }
+            }
+          `, cameraItem, "folderDialog")
+          
+          dialog.open()
         }
         
         ToolTip.visible: hovered
-        ToolTip.text: cameraSettings.folderName ? 
-                     qsTr("Current folder: ") + cameraSettings.folderName : 
-                     qsTr("Set photo folder name")
+        ToolTip.text: qsTr("Set photo folder (current: ") + cameraSettings.folderName + ")"
       }
     }
 
