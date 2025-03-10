@@ -5070,9 +5070,10 @@ ApplicationWindow {
   function savePhoto(path) {
     // Get current date for folder structure
     let today = new Date()
-    let dateFolder = today.getFullYear().toString() +
-                    (today.getMonth() + 1).toString().padStart(2, '0') +
-                    today.getDate().toString().padStart(2, '0')
+    // Format date as dd-MM-yyyy for folder structure
+    let dateFolder = today.getDate().toString().padStart(2, '0') + '-' +
+                    (today.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                    today.getFullYear().toString()
     
     // Use custom folder name if set in camera settings, otherwise use date
     let folderName = ""
@@ -5093,8 +5094,8 @@ ApplicationWindow {
     }
     
     // Generate a unique filename with timestamp
-    let timestamp = today.getHours().toString().padStart(2, '0') +
-                   today.getMinutes().toString().padStart(2, '0') +
+    let timestamp = today.getHours().toString().padStart(2, '0') + '-' +
+                   today.getMinutes().toString().padStart(2, '0') + '-' +
                    today.getSeconds().toString().padStart(2, '0')
     
     let relativePath = folderPath + '/IMG_' + dateFolder + '_' + timestamp + '.' + FileUtils.fileSuffix(path)

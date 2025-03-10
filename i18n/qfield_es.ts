@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="es">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="es">
 <context>
     <name>About</name>
     <message>
@@ -7,7 +9,7 @@
     </message>
     <message>
         <source>Support SIGPACGO</source>
-        <translation>Apoyar SIGPACGO</translation>
+        <translation type="vanished">Apoyar SIGPACGO</translation>
     </message>
     <message>
         <source>Changelog</source>
@@ -28,6 +30,10 @@
     <message>
         <source>SIGPACGO app directory</source>
         <translation>Directorio de la app SIGPACGO</translation>
+    </message>
+    <message>
+        <source>Support</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -202,7 +208,10 @@
     </message>
     <message numerus="yes">
         <source>%n device(s) found</source>
-        <translation><numerusform>1 dispositivo encontrado</numerusform><numerusform>%n dispositivos encontrados</numerusform><numerusform>%n dispositivo(s) encontrado(s)</numerusform></translation>
+        <translation>
+            <numerusform>1 dispositivo encontrado</numerusform>
+            <numerusform>%n dispositivos encontrados</numerusform>
+        </translation>
     </message>
     <message>
         <source>Scanning canceled</source>
@@ -424,7 +433,7 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
     <name>Changelog</name>
     <message>
         <source>What&apos;s new in SIGPACGO</source>
-        <translation>¿Qué hay de nuevo en SIGPACGO?</translation>
+        <translation type="vanished">¿Qué hay de nuevo en SIGPACGO?</translation>
     </message>
     <message>
         <source>Error while fetching changelog, try again later.</source>
@@ -432,15 +441,31 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
     </message>
     <message>
         <source>Support SIGPACGO</source>
-        <translation>Apoyar SIGPACGO</translation>
+        <translation type="vanished">Apoyar SIGPACGO</translation>
     </message>
     <message>
         <source>Check the latest SIGPACGO changes on </source>
-        <translation>Compruebe los últimos cambios de SIGPACGO en</translation>
+        <translation type="vanished">Compruebe los últimos cambios de SIGPACGO en</translation>
     </message>
     <message>
         <source>SIGPACGO releases page</source>
-        <translation>Página de publicaciones de SIGPACGO</translation>
+        <translation type="vanished">Página de publicaciones de SIGPACGO</translation>
+    </message>
+    <message>
+        <source>What&apos;s new in QField</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Support QField</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check the latest QField changes on </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>QField releases page</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -506,7 +531,7 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
     </message>
     <message>
         <source>Project Folder</source>
-        <translation>Carpeta del proyecto</translation>
+        <translation type="vanished">Carpeta del proyecto</translation>
     </message>
 </context>
 <context>
@@ -613,14 +638,6 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
 </context>
 <context>
     <name>EgenioussReceiver</name>
-    <message>
-        <source>Successfully connected</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Disconnected</source>
-        <translation type="unfinished"/>
-    </message>
     <message>
         <source>Received data is too short to process</source>
         <translation>Los datos recibidos son demasiado cortos para procesarlos</translation>
@@ -812,51 +829,87 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
     </message>
     <message numerus="yes">
         <source>Undo creation of %n feature(s) on layer %1.</source>
-        <translation><numerusform>Deshacer creación de un objeto en la capa %1.</numerusform><numerusform>Deshacer creación de %n objetos en la capa %1.</numerusform><numerusform>Deshacer creación de %n objetos en la capa %1.</numerusform></translation>
+        <translation>
+            <numerusform>Deshacer creación de un objeto en la capa %1.</numerusform>
+            <numerusform>Deshacer creación de %n objetos en la capa %1.</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Undo creation of %n feature(s).</source>
-        <translation><numerusform>Deshacer creación de un objeto.</numerusform><numerusform>Deshacer creación de %n objetos.</numerusform><numerusform>Deshacer creación de %n objetos.</numerusform></translation>
+        <translation>
+            <numerusform>Deshacer creación de un objeto.</numerusform>
+            <numerusform>Deshacer creación de %n objetos.</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Undo deletion of %n feature(s) on layer %1.</source>
-        <translation><numerusform>Deshacer borrado de un objeto en la capa %1.</numerusform><numerusform>Deshacer borrado de %n objetos en la capa %1.</numerusform><numerusform>Deshacer borrado de %n objetos en la capa %1.</numerusform></translation>
+        <translation>
+            <numerusform>Deshacer borrado de un objeto en la capa %1.</numerusform>
+            <numerusform>Deshacer borrado de %n objetos en la capa %1.</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Undo deletion of %n feature(s).</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Undo modifications on %n feature(s) on layer %1.</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Undo modifications on %n feature(s).</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Redo creation of %n feature(s) on layer %1</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Redo creation of %n feature(s)</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Redo deletion of %n feature(s) on layer %1</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Redo deletion of %n feature(s)</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Redo modifications on %n feature(s) on layer %1</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Redo modifications on %n feature(s)</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation type="unfinished">
+            <numerusform></numerusform>
+            <numerusform></numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -906,21 +959,28 @@ Cancele para hacer una búsqueda mínima de dispositivos en su lugar.</translati
 
 The features geometries will be combined into feature &apos;%1&apos;, which will keep its attributes.</source>
         <comment>0</comment>
-        <translation><numerusform>¿Realmente se debe combinar el objeto seleccionado?
+        <translation>
+            <numerusform>¿Realmente se debe combinar el objeto seleccionado?
 
-Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que conservará sus atributos.</numerusform><numerusform>¿Realmente se deben combinar los %n objetos seleccionados?
+Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que conservará sus atributos.</numerusform>
+            <numerusform>¿Realmente se deben combinar los %n objetos seleccionados?
 
-Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que conservará sus atributos.</numerusform><numerusform>¿Realmente se deben combinar los %n objetos seleccionados?
-
-Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que conservará sus atributos.</numerusform></translation>
+Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que conservará sus atributos.</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Successfully merged %n feature(s)</source>
-        <translation><numerusform>Un objeto combinado con éxito</numerusform><numerusform>%n objetos combinados con éxito</numerusform><numerusform>%n objetos combinados con éxito</numerusform></translation>
+        <translation>
+            <numerusform>Un objeto combinado con éxito</numerusform>
+            <numerusform>%n objetos combinados con éxito</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Failed to merge %n feature(s)</source>
-        <translation><numerusform>No se pudo combinar un objetos</numerusform><numerusform>No se pudieron combinar %n objetos</numerusform><numerusform>No se pudieron combinar %n objetos</numerusform></translation>
+        <translation>
+            <numerusform>No se pudo combinar un objetos</numerusform>
+            <numerusform>No se pudieron combinar %n objetos</numerusform>
+        </translation>
     </message>
     <message>
         <source>Delete feature(s)</source>
@@ -929,15 +989,24 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     <message numerus="yes">
         <source>Should the %n feature(s) selected really be deleted?</source>
         <comment>0</comment>
-        <translation><numerusform>¿Se deben borrar realmente el objeto seleccionado?</numerusform><numerusform>¿Se deben borrar realmente los %n objetos seleccionados?</numerusform><numerusform>¿Se deben borrar realmente los %n objetos seleccionados?</numerusform></translation>
+        <translation>
+            <numerusform>¿Se deben borrar realmente el objeto seleccionado?</numerusform>
+            <numerusform>¿Se deben borrar realmente los %n objetos seleccionados?</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Successfully deleted %n feature(s)</source>
-        <translation><numerusform>Un objeto borrado con éxito</numerusform><numerusform>%n objetos borrados con éxito</numerusform><numerusform>%n objetos borrados con éxito</numerusform></translation>
+        <translation>
+            <numerusform>Un objeto borrado con éxito</numerusform>
+            <numerusform>%n objetos borrados con éxito</numerusform>
+        </translation>
     </message>
     <message numerus="yes">
         <source>Failed to delete %n feature(s)</source>
-        <translation><numerusform>No se pudo borrar un objeto</numerusform><numerusform>No se pudieron borrar %n objetos</numerusform><numerusform>No se pudieron borrar %n objetos</numerusform></translation>
+        <translation>
+            <numerusform>No se pudo borrar un objeto</numerusform>
+            <numerusform>No se pudieron borrar %n objetos</numerusform>
+        </translation>
     </message>
     <message>
         <source>Changes discarded</source>
@@ -1163,7 +1232,11 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     <name>HelpLocatorFilter</name>
     <message>
         <source>SIGPACGO Documentation</source>
-        <translation>Documentación de SIGPACGO</translation>
+        <translation type="vanished">Documentación de SIGPACGO</translation>
+    </message>
+    <message>
+        <source>QField Documentation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1461,7 +1534,11 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
     <message>
         <source>Returns SIGPACGO documentation pages matching terms.</source>
-        <translation>Devuelve las páginas de la documentación de SIGPACGO con los términos que coincidan.</translation>
+        <translation type="vanished">Devuelve las páginas de la documentación de SIGPACGO con los términos que coincidan.</translation>
+    </message>
+    <message>
+        <source>Returns QField documentation pages matching terms.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1848,11 +1925,11 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
     <message>
         <source>The dataset will be deleted, proceed with removal?</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The project folder will be deleted, proceed with removal?</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1886,7 +1963,7 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
     <message>
         <source>No plugins have been installed yet. To learn more about plugins, %1read the documentation%2.</source>
-        <translation>Aún no se han instalado complementos. Para aprender más sobre los complementos, %1lea la documentación%2.</translation>
+        <translation type="vanished">Aún no se han instalado complementos. Para aprender más sobre los complementos, %1lea la documentación%2.</translation>
     </message>
     <message>
         <source>Install plugin from URL</source>
@@ -1927,6 +2004,10 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     <message>
         <source>Plugins management menu</source>
         <translation>Menú de administración de complementos</translation>
+    </message>
+    <message>
+        <source>No plugins have been installed yet.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2050,20 +2131,20 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
         <translation>Egeniouss</translation>
     </message>
     <message>
-        <source>Connection type</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
     <message>
+        <source>Connection type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source> (leave empty to auto-fill)</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Connection details</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2233,1427 +2314,1341 @@ Las geometrías de los objetos se combinarán en el objeto &apos;%1&apos;, que c
     </message>
 </context>
 <context>
-    <name>SIGPACGOAppAuthRequestHandler</name>
+    <name>QFieldAppAuthRequestHandler</name>
     <message>
         <source>Please enter credentials for database</source>
-        <translation>Por favor, introduzca las credenciales para la base de datos</translation>
+        <translation type="unfinished">Por favor, introduzca las credenciales para la base de datos</translation>
     </message>
     <message>
         <source>at host</source>
-        <translation>en el servidor</translation>
+        <translation type="unfinished">en el servidor</translation>
     </message>
     <message>
         <source>at service</source>
-        <translation>en el servicio</translation>
+        <translation type="unfinished">en el servicio</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOAudioRecorder</name>
+    <name>QFieldAudioRecorder</name>
     <message>
         <source>Audio Recorder</source>
-        <translation>Grabador de audio</translation>
+        <translation type="unfinished">Grabador de audio</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCamera</name>
+    <name>QFieldCamera</name>
     <message>
-        <source>Geotagging enabled</source>
-        <translation>Geoetiquetado habilitado</translation>
+        <source>Set Folder Name</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Geotagging disabled</source>
-        <translation>Geoetiquetado deshabilitado</translation>
+        <source>Enter a name for the photo folder. If left empty, photos will be saved in a folder with today&apos;s date.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Grid enabled</source>
-        <translation>Grid habilitado</translation>
+        <source>e.g., Greenhouse 1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Grid disabled</source>
-        <translation>Grid deshabilitado</translation>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>front</source>
-        <translation>delantera</translation>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>back</source>
-        <translation>trasera</translation>
+        <source>Folder name set to: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Image geotagging requires positioning to be turned on</source>
-        <translation>El geoetiquetado de imágenes requiere que el posicionamiento está activado</translation>
-    </message>
-    <message>
-        <source>Details stamping enabled</source>
-        <translation>Marcado de detalles habilitado</translation>
+        <source>Date-based folder</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Latitude</source>
-        <translation>Latitud</translation>
+        <translation type="unfinished">Latitud</translation>
     </message>
     <message>
         <source>Longitude</source>
-        <translation>Longitud</translation>
+        <translation type="unfinished">Longitud</translation>
     </message>
     <message>
         <source>Altitude</source>
-        <translation>Altitud</translation>
+        <translation type="unfinished">Altitud</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation>Velocidad</translation>
+        <translation type="unfinished">Velocidad</translation>
     </message>
     <message>
         <source>Orientation</source>
-        <translation>Orientación</translation>
+        <translation type="unfinished">Orientación</translation>
+    </message>
+    <message>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lat</source>
+        <translation type="unfinished">Lat</translation>
+    </message>
+    <message>
+        <source>Lon</source>
+        <translation type="unfinished">Lon</translation>
+    </message>
+    <message>
+        <source>Alt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Field</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Crop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPS coordinates not available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image geotagging requires positioning to be turned on</source>
+        <translation type="unfinished">El geoetiquetado de imágenes requiere que el posicionamiento está activado</translation>
+    </message>
+    <message>
+        <source>Details stamping enabled</source>
+        <translation type="unfinished">Marcado de detalles habilitado</translation>
     </message>
     <message>
         <source>Details stamping disabled</source>
-        <translation>Marcado de detalles deshabilitado</translation>
+        <translation type="unfinished">Marcado de detalles deshabilitado</translation>
+    </message>
+    <message>
+        <source>Disable photo stamping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable photo stamping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Info overlay enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Info overlay disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hide info overlay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show info overlay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Geotagging enabled</source>
+        <translation type="unfinished">Geoetiquetado habilitado</translation>
+    </message>
+    <message>
+        <source>Geotagging disabled</source>
+        <translation type="unfinished">Geoetiquetado deshabilitado</translation>
+    </message>
+    <message>
+        <source>Grid enabled</source>
+        <translation type="unfinished">Grid habilitado</translation>
+    </message>
+    <message>
+        <source>Grid disabled</source>
+        <translation type="unfinished">Grid deshabilitado</translation>
+    </message>
+    <message>
+        <source>Current folder: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set photo folder name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>front</source>
+        <translation type="unfinished">delantera</translation>
+    </message>
+    <message>
+        <source>back</source>
+        <translation type="unfinished">trasera</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudConnection</name>
+    <name>QFieldCloudConnection</name>
     <message>
-        <source>[timeout] The request took too long to finish, please retry.</source>
-        <translation>[expiró] La solicitud llevó demasiado tiempo para terminar, pruebe otra vez.</translation>
-    </message>
-    <message>
-        <source>[aborted] The request has been aborted.</source>
-        <translation>[abortado] La solicitud se ha cancelado.</translation>
-    </message>
-    <message>
-        <source>Server Error.</source>
-        <translation>Error de servidor.</translation>
-    </message>
-    <message>
-        <source>Network Error.</source>
-        <translation>Error de red.</translation>
+        <source>Login error due to unexpected redirect, please retry later</source>
+        <translation type="unfinished">Error de inicio de sesión debido a una redirección inesperada, vuelva a intentarlo más tarde</translation>
     </message>
     <message>
         <source>Server not found, please check the server URL</source>
-        <translation>Servidor no encontrado, por favor compruebe la URL del servidor</translation>
+        <translation type="unfinished">Servidor no encontrado, por favor compruebe la URL del servidor</translation>
     </message>
     <message>
         <source>Timeout error, please retry</source>
-        <translation>Expiró el tiempo, por favor vuelva a intentarlo</translation>
+        <translation type="unfinished">Expiró el tiempo, por favor vuelva a intentarlo</translation>
     </message>
     <message>
         <source>Wrong username or password</source>
-        <translation>Nombre de usuario o contraseña incorrectos</translation>
+        <translation type="unfinished">Nombre de usuario o contraseña incorrectos</translation>
     </message>
     <message>
         <source>Session expired</source>
-        <translation>Expiró la sesión</translation>
+        <translation type="unfinished">Expiró la sesión</translation>
     </message>
     <message>
         <source>Login temporary unavailable</source>
-        <translation>Inicio de sesión no disponible temporalmente</translation>
+        <translation type="unfinished">Inicio de sesión no disponible temporalmente</translation>
+    </message>
+    <message>
+        <source>[timeout] The request took too long to finish, please retry.</source>
+        <translation type="unfinished">[expiró] La solicitud llevó demasiado tiempo para terminar, pruebe otra vez.</translation>
+    </message>
+    <message>
+        <source>[aborted] The request has been aborted.</source>
+        <translation type="unfinished">[abortado] La solicitud se ha cancelado.</translation>
+    </message>
+    <message>
+        <source>Server Error.</source>
+        <translation type="unfinished">Error de servidor.</translation>
+    </message>
+    <message>
+        <source>Network Error.</source>
+        <translation type="unfinished">Error de red.</translation>
     </message>
     <message>
         <source>Failed to upload attachment stored at `%1`, reason:
 %2</source>
-        <translation>No se pudo cargar el archivo adjunto almacenado en `%1`, motivo:
+        <translation type="unfinished">No se pudo cargar el archivo adjunto almacenado en `%1`, motivo:
 %2</translation>
-    </message>
-    <message>
-        <source>Login error due to unexpected redirect, please retry later</source>
-        <translation>Error de inicio de sesión debido a una redirección inesperada, vuelva a intentarlo más tarde</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudDeltaHistory</name>
+    <name>QFieldCloudDeltaHistory</name>
     <message>
         <source>Push History</source>
-        <translation>Subir historial</translation>
+        <translation type="unfinished">Subir historial</translation>
     </message>
     <message>
         <source>Loading…</source>
-        <translation>Cargando</translation>
+        <translation type="unfinished">Cargando</translation>
     </message>
     <message>
         <source>No changes have been pushed yet!</source>
-        <translation>¡Aún no se han subido cambios!</translation>
+        <translation type="unfinished">¡Aún no se han subido cambios!</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudLogin</name>
+    <name>QFieldCloudLogin</name>
     <message>
-        <source>Failed to login</source>
-        <translation type="vanished">No se pudo iniciar la sesión</translation>
+        <source>QFieldCloud</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Failed to sign in</source>
-        <translation>Error al iniciar sesión</translation>
+        <translation type="unfinished">Error al iniciar sesión</translation>
     </message>
     <message>
         <source>Server URL
 (Leave empty to use the default server)</source>
-        <translation>URL del servidor
+        <translation type="unfinished">URL del servidor
 (Dejar en blanco para usar el servidor predeterminado)</translation>
     </message>
     <message>
         <source>Username or email</source>
-        <translation>Nombre de usuario o correo electrónico</translation>
+        <translation type="unfinished">Nombre de usuario o correo electrónico</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation>Contraseña</translation>
+        <translation type="unfinished">Contraseña</translation>
     </message>
     <message>
         <source>Sign out</source>
-        <translation>Cerrar sesión</translation>
+        <translation type="unfinished">Cerrar sesión</translation>
     </message>
     <message>
         <source>Signing in, please wait</source>
-        <translation>Iniciando sesión, por favor espere</translation>
+        <translation type="unfinished">Iniciando sesión, por favor espere</translation>
     </message>
     <message>
         <source>Sign in</source>
-        <translation>Iniciar sesión</translation>
+        <translation type="unfinished">Iniciar sesión</translation>
     </message>
     <message>
         <source>New user?</source>
-        <translation>¿Nuevo usuario?</translation>
+        <translation type="unfinished">¿Nuevo usuario?</translation>
     </message>
     <message>
         <source>Register an account</source>
-        <translation>Registrar una cuenta</translation>
-    </message>
-    <message>
-        <source>Logout</source>
-        <translation type="vanished">Cerrar sesión</translation>
-    </message>
-    <message>
-        <source>Logging in, please wait</source>
-        <translation type="vanished">Iniciando sesión, por favor espere</translation>
-    </message>
-    <message>
-        <source>Login</source>
-        <translation type="vanished">Iniciar sesión</translation>
+        <translation type="unfinished">Registrar una cuenta</translation>
     </message>
     <message>
         <source>The easiest way to transfer you project from QGIS to your devices!</source>
-        <translation>¡La forma más fácil de transferir su proyecto de QGIS a sus dispositivos!</translation>
+        <translation type="unfinished">¡La forma más fácil de transferir su proyecto de QGIS a sus dispositivos!</translation>
     </message>
     <message>
-        <source>Learn more about SIGPACGOCloud</source>
-        <translation>Aprender más sobre SIGPACGOCloud</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud</source>
-        <translation>SIGPACGOCloud</translation>
+        <source>Learn more about QFieldCloud</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudPackageLayersFeedback</name>
+    <name>QFieldCloudPackageLayersFeedback</name>
     <message>
-        <source>Problematic SIGPACGOCloud layer packaging</source>
-        <translation type="vanished">Empaquetado de capas en SIGPACGOCloud problemático</translation>
+        <source>QFieldCloud had troubles packaging your project</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</source>
-        <translation type="vanished">Algunas capas no se han empaquetado correctamente en SIGPACGOCloud. Estas capas pueden estar mal configurada o su fuente de datos no es accesible desde el servidor de SIGPACGOCloud.</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud had troubles packaging your project</source>
-        <translation>SIGPACGOCloud tuvo problemas para empaquetar su proyecto</translation>
-    </message>
-    <message>
-        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
-        <translation>Algunas capas no se han empaquetado correctamente en SIGPACGOCloud. Estas capas pueden estar mal configuradas o no se puede acceder a su fuente de datos desde el servidor SIGPACGOCloud. Consulte los registros del último trabajo de empaquetado en el sitio web qfield.cloud.</translation>
+        <source>Some layers have not been packaged correctly on QFieldCloud. These layers might be misconfigured or their data source is not accessible from the QFieldCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudPopup</name>
+    <name>QFieldCloudPopup</name>
     <message>
-        <source>SIGPACGOCloud</source>
-        <translation>SIGPACGOCloud</translation>
+        <source>QFieldCloud</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</source>
-        <translation>El proyecto actual no está guardado en SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</translation>
+        <source>The current project is not stored on QFieldCloud.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation type="vanished">Guardar proyectos en SIGPACGOCloud ofrece una sincronización automatizada, edición offline y gestión de equipos.&lt;br&gt;&lt;br&gt;</translation>
+        <source>Storing projects on QFieldCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Learn more about SIGPACGOCloud</source>
-        <translation>Aprender más sobre SIGPACGOCloud</translation>
+        <source>Learn more about QFieldCloud</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
-        <translation>Desconectado de la nube.</translation>
+        <translation type="unfinished">Desconectado de la nube.</translation>
     </message>
     <message>
         <source>Connecting to the cloud.</source>
-        <translation>Conectando con la nube.</translation>
+        <translation type="unfinished">Conectando con la nube.</translation>
     </message>
     <message>
         <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation>Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
+        <translation type="unfinished">Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-        <source>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</source>
-        <translation>Este proyecto de SIGPACGOCloud se descargó por primera vez con otra cuenta en la nube. Inicie sesión con la cuenta original de este proyecto para usar la funcionalidad SIGPACGOCloud.</translation>
+        <source>This QFieldCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the QFieldCloud functionality.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Downloading %1%…</source>
-        <translation type="vanished">Descargando %1%…</translation>
+        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">SIGPACGOCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
+        <source>Downloading, %1% of %2 fetched</source>
+        <translation type="unfinished">Descargando, %1% de %2 obtenido</translation>
+    </message>
+    <message>
+        <source>Downloading, %1% fetched</source>
+        <translation type="unfinished">Descargando, %1% obtenido</translation>
+    </message>
+    <message>
+        <source>Reaching out to QFieldCloud to download project</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Uploading %1%…</source>
-        <translation>Subiendo %1%…</translation>
+        <translation type="unfinished">Subiendo %1%…</translation>
     </message>
     <message>
-        <source>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
-        <translation>SIGPACGOCloud está aplicando los últimos cambios subidos. Esto puede llevar algo de tiempo, mantente atento…</translation>
-    </message>
-    <message>
-        <source>A server error has occured, please try again.</source>
-        <translation type="vanished">Ha ocurrido un error del servidor, por favor prueba otra vez.</translation>
-    </message>
-    <message>
-        <source>A network error has occured, please try again.</source>
-        <translation type="vanished">Ha ocurrido un error de red, por favor prueba otra vez.</translation>
+        <source>QFieldCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>There is/are %n local change(s)</source>
-        <translation><numerusform>Hay un cambio local</numerusform><numerusform>Hay %n cambios locales</numerusform><numerusform>Hay %n cambios locales</numerusform></translation>
+        <translation type="unfinished">
+            <numerusform>Hay un cambio local</numerusform>
+            <numerusform>Hay %n cambios locales</numerusform>
+        </translation>
     </message>
     <message>
         <source>There are no local changes</source>
-        <translation>No hay cambios locales</translation>
+        <translation type="unfinished">No hay cambios locales</translation>
     </message>
     <message>
         <source>The locally stored cloud project has been corrupted</source>
-        <translation>El proyecto de la nube guardado localmente se ha corrompido</translation>
+        <translation type="unfinished">El proyecto de la nube guardado localmente se ha corrompido</translation>
     </message>
     <message>
         <source>Synchronize</source>
-        <translation>Sincronizar</translation>
+        <translation type="unfinished">Sincronizar</translation>
     </message>
     <message>
-        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</source>
-        <translation>Sincronizar el proyecto completo con todos los objetos modificados y descargar el proyecto actualizado con todos los cambios aplicados desde SIGPACGOCloud.</translation>
+        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from QFieldCloud.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Push changes</source>
-        <translation>Subir cambios</translation>
+        <translation type="unfinished">Subir cambios</translation>
     </message>
     <message>
         <source>Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</source>
-        <translation>Ahorrar ancho de banda de internet subiendo solo los objetos y dibujos locales a la nube, sin actualizar todo el proyecto.</translation>
+        <translation type="unfinished">Ahorrar ancho de banda de internet subiendo solo los objetos y dibujos locales a la nube, sin actualizar todo el proyecto.</translation>
     </message>
     <message>
         <source>Revert local changes</source>
-        <translation>Revertir cambios locales</translation>
+        <translation type="unfinished">Revertir cambios locales</translation>
     </message>
     <message>
         <source>Reset project</source>
-        <translation>Restablecer proyecto</translation>
+        <translation type="unfinished">Restablecer proyecto</translation>
     </message>
     <message>
         <source>Revert all modified features in the local layers. You cannot restore those changes.</source>
-        <translation>Revertir todas las entidades modificadas en las capas locales. No puede restaurar esos cambios.</translation>
-    </message>
-    <message>
-        <source>Revert all modified features in the local cloud layers. You cannot restore those changes.</source>
-        <translation type="vanished">Revertir todos los objetos modificados en las capas de la nube locales. No se pueden restablecer estos cambios.</translation>
+        <translation type="unfinished">Revertir todas las entidades modificadas en las capas locales. No puede restaurar esos cambios.</translation>
     </message>
     <message>
         <source>The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
 
 While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</source>
-        <translation>La copia local de este proyecto en la nube se corrompió. Restablecer el proyecto volverá a descargar la versión de la nube y eliminará cualquier cambio local. Asegúrese de haber copiado antes cualquier cambio local en caso necesario.</translation>
-    </message>
-    <message>
-        <source>Last synchronized just now</source>
-        <translation>Sincronizado por última vez justo ahora</translation>
-    </message>
-    <message>
-        <source>Last synchronized %1 minutes ago</source>
-        <translation>Sincronizado por última vez hace %1 minutos</translation>
-    </message>
-    <message>
-        <source>Last synchronized at %1</source>
-        <translation>Sincronizado por última a las %1</translation>
-    </message>
-    <message>
-        <source>Last synchronized on %1</source>
-        <translation>Sincronizado por última el %1</translation>
-    </message>
-    <message>
-        <source>Last changes pushed just now</source>
-        <translation>Últimos cambios subidos ahora mismo</translation>
-    </message>
-    <message>
-        <source>Last changes pushed %1 minutes ago</source>
-        <translation>Últimos cambios subidos hace %1 minutos</translation>
-    </message>
-    <message>
-        <source>Last changes pushed at %1</source>
-        <translation>Últimos cambios subidos a las %1</translation>
-    </message>
-    <message>
-        <source>Last changes pushed on %1</source>
-        <translation>Últimos cambios subidos el %1</translation>
-    </message>
-    <message>
-        <source>No changes pushed yet</source>
-        <translation>Ningún cambio subido aún</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n attachment(s) are currently being uploaded in the background.</source>
-        <translation type="vanished"><numerusform>Actualmente se está subiendo un adjunto en segundo plano.</numerusform><numerusform>Actualmente se están subiendo %n adjuntos en segundo plano.</numerusform><numerusform>Actualmente se están subiendo %n adjuntos en segundo plano.</numerusform></translation>
-    </message>
-    <message>
-        <source>Should local changes be reverted?</source>
-        <translation>¿Se deben revertir los cambios locales?</translation>
-    </message>
-    <message>
-        <source>Reset cloud project</source>
-        <translation>Restablecer proyecto en la nube</translation>
-    </message>
-    <message>
-        <source>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</source>
-        <translation>Último aviso: restablecer el proyecto en la nube borrará cualquier cambio local. ¿Seguro que quiere continuar?</translation>
-    </message>
-    <message>
-        <source>Connecting cloud</source>
-        <translation>Conectando con la nube.</translation>
-    </message>
-    <message>
-        <source>Local changes reverted</source>
-        <translation>Cambios locales revertidos</translation>
-    </message>
-    <message>
-        <source>Failed to revert changes</source>
-        <translation>No se pudieron revertir los cambios</translation>
-    </message>
-    <message>
-        <source>No changes to revert</source>
-        <translation>Ningún cambio que revertir</translation>
-    </message>
-    <message>
-        <source>This project has an updated project file on the cloud, you are advised to synchronize.</source>
-        <translation>Este proyecto tiene un archivo de proyecto actualizado en la nube, se recomienda sincronizarlo.</translation>
-    </message>
-    <message>
-        <source>This project has updated data on the cloud, you should synchronize.</source>
-        <translation>Este proyecto tiene datos actualizados en la nube, deberías sincronizarlos.</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
-        <translation>SIGPACGOCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
-    </message>
-    <message>
-        <source>Downloading, %1% of %2 fetched</source>
-        <translation>Descargando, %1% de %2 obtenido</translation>
-    </message>
-    <message>
-        <source>Downloading, %1% fetched</source>
-        <translation>Descargando, %1% obtenido</translation>
-    </message>
-    <message>
-        <source>Reaching out to SIGPACGOCloud to download project</source>
-        <translation>Conectándose con SIGPACGOCloud para descargar el proyecto</translation>
+        <translation type="unfinished">La copia local de este proyecto en la nube se corrompió. Restablecer el proyecto volverá a descargar la versión de la nube y eliminará cualquier cambio local. Asegúrese de haber copiado antes cualquier cambio local en caso necesario.</translation>
     </message>
     <message numerus="yes">
         <source>Automatically push changes every %n minute(s)</source>
-        <translation><numerusform>Emviar cambios automáticamente cada %n minuto(s)</numerusform><numerusform>Enviar cambios automáticamente cada %n minuto(s)</numerusform><numerusform>Enviar automáticamente los cambios cada %n minuto(s)</numerusform></translation>
+        <translation type="unfinished">
+            <numerusform>Emviar cambios automáticamente cada %n minuto(s)</numerusform>
+            <numerusform>Enviar cambios automáticamente cada %n minuto(s)</numerusform>
+        </translation>
     </message>
     <message>
         <source>The current project does not allow for auto-push to be turned off</source>
-        <translation>El proyecto actual no permite desactivar la subida automática</translation>
+        <translation type="unfinished">El proyecto actual no permite desactivar la subida automática</translation>
     </message>
     <message>
-        <source>Storing projects on SIGPACGOCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
-        <translation>Almacenar los proyectos en SIGPACGOCloud ofrece una sincronización perfecta, edición fuera de línea y administración de equipos.&lt;br&gt;&lt;br&gt;</translation>
+        <source>Last synchronized just now</source>
+        <translation type="unfinished">Sincronizado por última vez justo ahora</translation>
+    </message>
+    <message>
+        <source>Last synchronized %1 minutes ago</source>
+        <translation type="unfinished">Sincronizado por última vez hace %1 minutos</translation>
+    </message>
+    <message>
+        <source>Last synchronized at %1</source>
+        <translation type="unfinished">Sincronizado por última a las %1</translation>
+    </message>
+    <message>
+        <source>Last synchronized on %1</source>
+        <translation type="unfinished">Sincronizado por última el %1</translation>
+    </message>
+    <message>
+        <source>Last changes pushed just now</source>
+        <translation type="unfinished">Últimos cambios subidos ahora mismo</translation>
+    </message>
+    <message>
+        <source>Last changes pushed %1 minutes ago</source>
+        <translation type="unfinished">Últimos cambios subidos hace %1 minutos</translation>
+    </message>
+    <message>
+        <source>Last changes pushed at %1</source>
+        <translation type="unfinished">Últimos cambios subidos a las %1</translation>
+    </message>
+    <message>
+        <source>Last changes pushed on %1</source>
+        <translation type="unfinished">Últimos cambios subidos el %1</translation>
+    </message>
+    <message>
+        <source>No changes pushed yet</source>
+        <translation type="unfinished">Ningún cambio subido aún</translation>
+    </message>
+    <message>
+        <source>Should local changes be reverted?</source>
+        <translation type="unfinished">¿Se deben revertir los cambios locales?</translation>
+    </message>
+    <message>
+        <source>Reset cloud project</source>
+        <translation type="unfinished">Restablecer proyecto en la nube</translation>
+    </message>
+    <message>
+        <source>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</source>
+        <translation type="unfinished">Último aviso: restablecer el proyecto en la nube borrará cualquier cambio local. ¿Seguro que quiere continuar?</translation>
+    </message>
+    <message>
+        <source>Connecting cloud</source>
+        <translation type="unfinished">Conectando con la nube.</translation>
+    </message>
+    <message>
+        <source>This project has an updated project file on the cloud, you are advised to synchronize.</source>
+        <translation type="unfinished">Este proyecto tiene un archivo de proyecto actualizado en la nube, se recomienda sincronizarlo.</translation>
+    </message>
+    <message>
+        <source>This project has updated data on the cloud, you should synchronize.</source>
+        <translation type="unfinished">Este proyecto tiene datos actualizados en la nube, deberías sincronizarlos.</translation>
+    </message>
+    <message>
+        <source>Local changes reverted</source>
+        <translation type="unfinished">Cambios locales revertidos</translation>
+    </message>
+    <message>
+        <source>Failed to revert changes</source>
+        <translation type="unfinished">No se pudieron revertir los cambios</translation>
+    </message>
+    <message>
+        <source>No changes to revert</source>
+        <translation type="unfinished">Ningún cambio que revertir</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudProjectsModel</name>
-    <message>
-        <source>Export failed</source>
-        <translation type="vanished">Falló la exportación</translation>
-    </message>
-    <message>
-        <source>Packaged layer &apos;%1&apos; is not valid: &apos;%2&apos;</source>
-        <translation type="vanished">La capa empaquetada &apos;%1&apos; no es válida: &apos;%2&apos;</translation>
-    </message>
-    <message>
-        <source>Failed to open temporary file for &quot;%1&quot;, reason:
-%2</source>
-        <translation type="vanished">No se pudo abrir el archivo temporal para &quot;%1&quot;, motivo:
-%2</translation>
-    </message>
-    <message>
-        <source>Failed to upload attachment stored at &quot;%1&quot;, reason:
-%2</source>
-        <translation type="vanished">No se pudo subir el adjunto guardado en &quot;%1&quot;, motivo:
-%2</translation>
-    </message>
-    <message>
-        <source>Failed to download file &quot;%1&quot;, reason:</source>
-        <translation type="vanished">No se pudo descargar el archivo &quot;%1&quot;, motivo:</translation>
-    </message>
-    <message>
-        <source>Failed to write downloaded file stored at &quot;%1&quot;, fs reason:</source>
-        <translation type="vanished">No se pudo escribir el archivo descargado guardado en &quot;%1&quot;, motivo:</translation>
-    </message>
+    <name>QFieldCloudProjectsModel</name>
     <message>
         <source>aborted</source>
-        <translation>abortado</translation>
+        <translation type="unfinished">abortado</translation>
     </message>
     <message>
         <source>project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</source>
-        <translation>La actualización de la respuesta del desencadenador del proyecto (%1) no contiene todas las claves esperadas: nombre (cadena), propietario (cadena), descripción (cadena), rol_usuario (cadena), is_public (bool), can_repackage (bool), need_repackaging (bool)</translation>
+        <translation type="unfinished">La actualización de la respuesta del desencadenador del proyecto (%1) no contiene todas las claves esperadas: nombre (cadena), propietario (cadena), descripción (cadena), rol_usuario (cadena), is_public (bool), can_repackage (bool), need_repackaging (bool)</translation>
     </message>
     <message>
         <source>Getting job status, but the project is deleted.</source>
-        <translation>Obteniendo el estado del trabajo, pero el proyecto se elimina.</translation>
+        <translation type="unfinished">Obteniendo el estado del trabajo, pero el proyecto se elimina.</translation>
     </message>
     <message>
         <source>Job creation finished, but the server response is missing required fields: id(string)</source>
-        <translation>La creación del trabajo finalizó, pero faltan campos obligatorios en la respuesta del servidor: id (string)</translation>
+        <translation type="unfinished">La creación del trabajo finalizó, pero faltan campos obligatorios en la respuesta del servidor: id (string)</translation>
     </message>
     <message>
         <source>Getting job status, but no `%2` job triggered yet.</source>
-        <translation>Obteniendo el estado del trabajo, pero aún no se ha activado ningún trabajo `%2`.</translation>
+        <translation type="unfinished">Obteniendo el estado del trabajo, pero aún no se ha activado ningún trabajo `%2`.</translation>
     </message>
     <message>
         <source>Getting job status finished, but the project is deleted.</source>
-        <translation>Obteniendo el estado del trabajo finalizado, pero el proyecto se elimina.</translation>
+        <translation type="unfinished">Obteniendo el estado del trabajo finalizado, pero el proyecto se elimina.</translation>
     </message>
     <message>
         <source>job(%1) status response does not contain all the expected keys: status(string)</source>
-        <translation>La respuesta de estado del trabajo (%1) no contiene todas las claves esperadas: estado (string)</translation>
+        <translation type="unfinished">La respuesta de estado del trabajo (%1) no contiene todas las claves esperadas: estado (string)</translation>
     </message>
     <message>
         <source>Job(%1) finished with a failed status.</source>
-        <translation>El trabajo (%1) finalizó con un estado fallido.</translation>
+        <translation type="unfinished">El trabajo (%1) finalizó con un estado fallido.</translation>
     </message>
     <message>
         <source>Project busy.</source>
-        <translation>Proyecto ocupado.</translation>
+        <translation type="unfinished">Proyecto ocupado.</translation>
     </message>
     <message>
         <source>Packaging job finished unsuccessfully for `%1`. %2</source>
-        <translation>El trabajo de empaquetado finalizó sin éxito para `%1`. %2</translation>
+        <translation type="unfinished">El trabajo de empaquetado finalizó sin éxito para `%1`. %2</translation>
     </message>
     <message>
         <source>Failed to refresh the latest info for `%1`: %2</source>
-        <translation>No se pudo actualizar la información más reciente para `%1`: %2</translation>
+        <translation type="unfinished">No se pudo actualizar la información más reciente para `%1`: %2</translation>
     </message>
     <message>
         <source>Failed to get latest package data.</source>
-        <translation>Error al obtener los últimos datos del paquete.</translation>
+        <translation type="unfinished">Error al obtener los últimos datos del paquete.</translation>
     </message>
     <message>
         <source>Latest package data response error.</source>
-        <translation>Último error de respuesta de datos del paquete.</translation>
+        <translation type="unfinished">Último error de respuesta de datos del paquete.</translation>
     </message>
     <message>
         <source>Latest package data structure error.</source>
-        <translation>Último error de estructura de datos del paquete.</translation>
+        <translation type="unfinished">Último error de estructura de datos del paquete.</translation>
     </message>
     <message>
         <source>Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</source>
-        <translation>Proyecto %1: la capa empaquetada `%2` no es válida. Código de error %3, mensaje de error: %4</translation>
+        <translation type="unfinished">Proyecto %1: la capa empaquetada `%2` no es válida. Código de error %3, mensaje de error: %4</translation>
     </message>
     <message>
         <source>Failed to open temporary file for `%1`, reason:
 %2</source>
-        <translation>No se pudo abrir el archivo temporal para `%1`, motivo:
+        <translation type="unfinished">No se pudo abrir el archivo temporal para `%1`, motivo:
 %2</translation>
-    </message>
-    <message>
-        <source>Failed to upload attachment stored at `%1`, reason:
-%2</source>
-        <translation type="vanished">No se pudo cargar el archivo adjunto almacenado en `%1`, motivo:
-%2</translation>
-    </message>
-    <message>
-        <source>Network error. Failed to download file `%1`.</source>
-        <translation>Error de red. Error al descargar el archivo `%1`.</translation>
     </message>
     <message>
         <source>File system error. Failed to write file to temporary location `%1`.</source>
-        <translation>Error del sistema de archivos. No se pudo escribir el archivo en la ubicación temporal `%1`.</translation>
+        <translation type="unfinished">Error del sistema de archivos. No se pudo escribir el archivo en la ubicación temporal `%1`.</translation>
     </message>
     <message>
         <source>File system error. Failed to open file for writing on temporary `%1`.</source>
-        <translation>Error del sistema de archivos. No se pudo abrir el archivo para escribir en `%1` temporal.</translation>
+        <translation type="unfinished">Error del sistema de archivos. No se pudo abrir el archivo para escribir en `%1` temporal.</translation>
     </message>
     <message>
-        <source>Project `%1`, file `%2`: %3</source>
-        <translation>Proyecto `%1`, archivo `%2`: %3</translation>
-    </message>
-    <message>
-        <source>System message: </source>
-        <translation>Mensaje del sistema:</translation>
-    </message>
-    <message>
-        <source> (see more in the SIGPACGO error log)…</source>
-        <translation>(ver más en el registro de errores de SIGPACGO)…</translation>
+        <source>Network error. Failed to download file `%1`.</source>
+        <translation type="unfinished">Error de red. Error al descargar el archivo `%1`.</translation>
     </message>
     <message>
         <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
-        <translation>Algunos de los archivos descargados no se pudieron copiar en su dispositivo. Compruebe el almacenamiento de su dispositivo.</translation>
+        <translation type="unfinished">Algunos de los archivos descargados no se pudieron copiar en su dispositivo. Compruebe el almacenamiento de su dispositivo.</translation>
+    </message>
+    <message>
+        <source>Project `%1`, file `%2`: %3</source>
+        <translation type="unfinished">Proyecto `%1`, archivo `%2`: %3</translation>
+    </message>
+    <message>
+        <source>System message: </source>
+        <translation type="unfinished">Mensaje del sistema:</translation>
+    </message>
+    <message>
+        <source> (see more in the QField error log)…</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOCloudScreen</name>
+    <name>QFieldCloudScreen</name>
     <message>
-        <source>SIGPACGOCloud Projects</source>
-        <translation>Proyectos de SIGPACGOCloud</translation>
+        <source>QFieldCloud Projects</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Disconnected from the cloud.</source>
-        <translation>Desconectado de la nube.</translation>
+        <translation type="unfinished">Desconectado de la nube.</translation>
     </message>
     <message>
         <source>Connecting to the cloud.</source>
-        <translation>Conectando con la nube.</translation>
+        <translation type="unfinished">Conectando con la nube.</translation>
     </message>
     <message>
         <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
-        <translation>Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
+        <translation type="unfinished">Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
         <source>My Projects</source>
-        <translation>Mis proyectos</translation>
+        <translation type="unfinished">Mis proyectos</translation>
     </message>
     <message>
         <source>Community</source>
-        <translation>Comunidad</translation>
-    </message>
-    <message>
-        <source>(Available locally)</source>
-        <translation>(Disponible localmente)</translation>
-    </message>
-    <message>
-        <source>Downloading, %1% fetched…</source>
-        <translation type="vanished">Descargando, %1% recuperado…</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
-        <translation type="vanished">SIGPACGOCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
-    </message>
-    <message>
-        <source>Uploading…</source>
-        <translation>Subiendo…</translation>
-    </message>
-    <message>
-        <source>Downloading error. </source>
-        <translation>Error de descarga.</translation>
-    </message>
-    <message>
-        <source>Uploading error. </source>
-        <translation>Error de subida.</translation>
-    </message>
-    <message>
-        <source>Available locally, missing on the cloud</source>
-        <translation>Disponible localmente, falta en la nube</translation>
-    </message>
-    <message>
-        <source>Available on the cloud, missing locally</source>
-        <translation>Disponible en la nube, falta localmente</translation>
-    </message>
-    <message>
-        <source>Available locally</source>
-        <translation>Disponible localmente</translation>
-    </message>
-    <message>
-        <source>Has changes. </source>
-        <translation>Tiene cambios.</translation>
-    </message>
-    <message>
-        <source>Downloading project %1</source>
-        <translation>Descargando proyecto %1</translation>
-    </message>
-    <message>
-        <source>Download Project</source>
-        <translation>Descargar proyecto</translation>
-    </message>
-    <message>
-        <source>Open Project</source>
-        <translation>Abrir proyecto</translation>
-    </message>
-    <message>
-        <source>Remove Stored Project</source>
-        <translation>Eliminar proyecto guardado</translation>
-    </message>
-    <message>
-        <source>Cancel Project Download</source>
-        <translation>Cancelar la descarga del proyecto</translation>
-    </message>
-    <message>
-        <source>Press and hold over a cloud project for a menu of additional actions.</source>
-        <translation>Pulsa sobre un proyecto en la nube y mantén para un menú de acciones adicionales.</translation>
-    </message>
-    <message>
-        <source>Refresh projects list</source>
-        <translation>Refrescar lista de proyectos</translation>
-    </message>
-    <message>
-        <source>Refreshing projects list</source>
-        <translation>Refrescando lista de proyectos</translation>
-    </message>
-    <message>
-        <source>No projects found</source>
-        <translation type="vanished">Proyecto no localizado</translation>
-    </message>
-    <message>
-        <source>Project Actions</source>
-        <translation>Acciones del proyecto</translation>
-    </message>
-    <message>
-        <source>, updated data available on the cloud</source>
-        <translation>, datos actualizados disponibles en la nube</translation>
-    </message>
-    <message>
-        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
-        <translation>SIGPACGOCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
-    </message>
-    <message>
-        <source>Downloading, %1% of %2 fetched</source>
-        <translation>Descargando, %1% de %2 obtenido</translation>
-    </message>
-    <message>
-        <source>Downloading, %1% fetched</source>
-        <translation>Descargando, %1% obtenido</translation>
-    </message>
-    <message>
-        <source>Reaching out to SIGPACGOCloud to download project</source>
-        <translation>Conectándose con SIGPACGOCloud para descargar el proyecto</translation>
-    </message>
-    <message>
-        <source>No cloud projects found. To get started, %1read the documentation%2.</source>
-        <translation>No se ha encontrado ningún proyecto en la nube. Para comenzar, %1lea la documentación%2.</translation>
+        <translation type="unfinished">Comunidad</translation>
     </message>
     <message>
         <source>Search for project</source>
-        <translation>Buscar proyecto</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOCloudUtils</name>
-    <message>
-        <source>A server error has occured, please try again.</source>
-        <translation>Ha ocurrido un error del servidor, por favor prueba otra vez.</translation>
+        <translation type="unfinished">Buscar proyecto</translation>
     </message>
     <message>
-        <source>A network error has occured, please try again.</source>
-        <translation>Ha ocurrido un error de red, por favor prueba otra vez.</translation>
+        <source>(Available locally)</source>
+        <translation type="unfinished">(Disponible localmente)</translation>
     </message>
     <message>
-        <source>Your account&apos;s available storage is full.</source>
-        <translation>El almacenamiento disponible de su cuenta está lleno.</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOGuide</name>
-    <message>
-        <source>Finish</source>
-        <translation>Terminar</translation>
+        <source>QFieldCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Next</source>
-        <translation>Siguiente</translation>
+        <source>Downloading, %1% of %2 fetched</source>
+        <translation type="unfinished">Descargando, %1% de %2 obtenido</translation>
     </message>
     <message>
-        <source>Previous</source>
-        <translation>Anterior</translation>
-    </message>
-</context>
-<context>
-    <name>SIGPACGOLocalDataPickerScreen</name>
-    <message>
-        <source>Project Folder</source>
-        <translation>Carpeta del proyecto</translation>
+        <source>Downloading, %1% fetched</source>
+        <translation type="unfinished">Descargando, %1% obtenido</translation>
     </message>
     <message>
-        <source>Local Projects &amp; Datasets</source>
-        <translation>Proyectos y conjuntos de datos locales</translation>
+        <source>Reaching out to QFieldCloud to download project</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Folders</source>
-        <translation>Carpetas</translation>
+        <source>Uploading…</source>
+        <translation type="unfinished">Subiendo…</translation>
     </message>
     <message>
-        <source>Projects</source>
-        <translation>Proyectos</translation>
+        <source>Downloading error. </source>
+        <translation type="unfinished">Error de descarga.</translation>
     </message>
     <message>
-        <source>Datasets</source>
-        <translation>Conjuntos de datos</translation>
+        <source>Uploading error. </source>
+        <translation type="unfinished">Error de subida.</translation>
     </message>
     <message>
-        <source>Favorites</source>
-        <translation>Favoritos</translation>
+        <source>Available locally, missing on the cloud</source>
+        <translation type="unfinished">Disponible localmente, falta en la nube</translation>
     </message>
     <message>
-        <source>Project file</source>
-        <translation>Archivo de proyecto</translation>
+        <source>Available on the cloud, missing locally</source>
+        <translation type="unfinished">Disponible en la nube, falta localmente</translation>
     </message>
     <message>
-        <source>Vector dataset</source>
-        <translation>Conjunto de datos vectoriales</translation>
+        <source>Available locally</source>
+        <translation type="unfinished">Disponible localmente</translation>
     </message>
     <message>
-        <source>Raster dataset</source>
-        <translation>Conjunto de datos ráster</translation>
+        <source>, updated data available on the cloud</source>
+        <translation type="unfinished">, datos actualizados disponibles en la nube</translation>
     </message>
     <message>
-        <source>Send to...</source>
-        <translation>Enviar a...</translation>
+        <source>Has changes. </source>
+        <translation type="unfinished">Tiene cambios.</translation>
     </message>
     <message>
-        <source>Export to folder...</source>
-        <translation>Exportar a carpeta...</translation>
+        <source>Refreshing projects list</source>
+        <translation type="unfinished">Refrescando lista de proyectos</translation>
     </message>
     <message>
-        <source>Remove dataset</source>
-        <translation>Eliminar conjunto de datos</translation>
+        <source>No cloud projects found. To get started, %1read the documentation%2.</source>
+        <translation type="unfinished">No se ha encontrado ningún proyecto en la nube. Para comenzar, %1lea la documentación%2.</translation>
     </message>
     <message>
-        <source>Send compressed folder to...</source>
-        <translation>Enviar carpeta comprimida a...</translation>
-    </message>
-    <message>
-        <source>Remove project folder</source>
-        <translation type="vanished">Eliminar carpeta de proyecto</translation>
-    </message>
-    <message>
-        <source>Import project from folder</source>
-        <translation>Importar proyecto desde carpeta</translation>
-    </message>
-    <message>
-        <source>Import project from ZIP</source>
-        <translation>Importar proyecto desde ZIP</translation>
-    </message>
-    <message>
-        <source>Import dataset(s)</source>
-        <translation>Importar conjunto(s) de datos</translation>
-    </message>
-    <message>
-        <source>Storage management help</source>
-        <translation>Ayuda sobre gestión de almacenamiento</translation>
-    </message>
-    <message>
-        <source>Import URL</source>
-        <translation>Importar URL</translation>
-    </message>
-    <message>
-        <source>Type a URL below to download and import the project or dataset:</source>
-        <translation>Escriba una URL a continuación para descargar e importar el proyecto o el conjunto de datos:</translation>
-    </message>
-    <message>
-        <source>Item Actions</source>
-        <translation>Acciones de elementos</translation>
-    </message>
-    <message>
-        <source>Import Actions</source>
-        <translation>Acciones de importación</translation>
+        <source>Downloading project %1</source>
+        <translation type="unfinished">Descargando proyecto %1</translation>
     </message>
     <message>
         <source>Project Actions</source>
-        <translation>Acciones del proyecto</translation>
+        <translation type="unfinished">Acciones del proyecto</translation>
     </message>
     <message>
-        <source>Update project from ZIP</source>
-        <translation>Actualizar proyecto desde ZIP</translation>
+        <source>Download Project</source>
+        <translation type="unfinished">Descargar proyecto</translation>
     </message>
     <message>
-        <source>‘%1’ is being uploaded to SIGPACGOCloud</source>
-        <translation>‘%1’ se está subiendo a SIGPACGOCloud</translation>
+        <source>Open Project</source>
+        <translation type="unfinished">Abrir proyecto</translation>
     </message>
     <message>
-        <source>Add to favorites</source>
-        <translation>Añadir a favoritos</translation>
+        <source>Remove Stored Project</source>
+        <translation type="unfinished">Eliminar proyecto guardado</translation>
     </message>
     <message>
-        <source>Remove from favorites</source>
-        <translation>Eliminar de favoritos</translation>
+        <source>Cancel Project Download</source>
+        <translation type="unfinished">Cancelar la descarga del proyecto</translation>
+    </message>
+    <message>
+        <source>Press and hold over a cloud project for a menu of additional actions.</source>
+        <translation type="unfinished">Pulsa sobre un proyecto en la nube y mantén para un menú de acciones adicionales.</translation>
+    </message>
+    <message>
+        <source>Refresh projects list</source>
+        <translation type="unfinished">Refrescar lista de proyectos</translation>
+    </message>
+</context>
+<context>
+    <name>QFieldCloudUtils</name>
+    <message>
+        <source>A server error has occured, please try again.</source>
+        <translation type="unfinished">Ha ocurrido un error del servidor, por favor prueba otra vez.</translation>
+    </message>
+    <message>
+        <source>A network error has occured, please try again.</source>
+        <translation type="unfinished">Ha ocurrido un error de red, por favor prueba otra vez.</translation>
+    </message>
+    <message>
+        <source>Your account&apos;s available storage is full.</source>
+        <translation type="unfinished">El almacenamiento disponible de su cuenta está lleno.</translation>
+    </message>
+</context>
+<context>
+    <name>QFieldGuide</name>
+    <message>
+        <source>Finish</source>
+        <translation type="unfinished">Terminar</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="unfinished">Siguiente</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation type="unfinished">Anterior</translation>
+    </message>
+</context>
+<context>
+    <name>QFieldLocalDataPickerScreen</name>
+    <message>
+        <source>Project Folder</source>
+        <translation type="unfinished">Carpeta del proyecto</translation>
+    </message>
+    <message>
+        <source>Local Projects &amp; Datasets</source>
+        <translation type="unfinished">Proyectos y conjuntos de datos locales</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation type="unfinished">Carpetas</translation>
+    </message>
+    <message>
+        <source>Projects</source>
+        <translation type="unfinished">Proyectos</translation>
+    </message>
+    <message>
+        <source>Datasets</source>
+        <translation type="unfinished">Conjuntos de datos</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation>Archivos</translation>
+        <translation type="unfinished">Archivos</translation>
     </message>
     <message>
-        <source>Push to SIGPACGOCloud</source>
-        <translation>Enviar a SIGPACGOCloud</translation>
+        <source>Favorites</source>
+        <translation type="unfinished">Favoritos</translation>
+    </message>
+    <message>
+        <source>Project file</source>
+        <translation type="unfinished">Archivo de proyecto</translation>
+    </message>
+    <message>
+        <source>Vector dataset</source>
+        <translation type="unfinished">Conjunto de datos vectoriales</translation>
+    </message>
+    <message>
+        <source>Raster dataset</source>
+        <translation type="unfinished">Conjunto de datos ráster</translation>
+    </message>
+    <message>
+        <source>Item Actions</source>
+        <translation type="unfinished">Acciones de elementos</translation>
+    </message>
+    <message>
+        <source>Send to...</source>
+        <translation type="unfinished">Enviar a...</translation>
+    </message>
+    <message>
+        <source>Push to QFieldCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>‘%1’ is being uploaded to QFieldCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export to folder...</source>
+        <translation type="unfinished">Exportar a carpeta...</translation>
+    </message>
+    <message>
+        <source>Add to favorites</source>
+        <translation type="unfinished">Añadir a favoritos</translation>
+    </message>
+    <message>
+        <source>Remove from favorites</source>
+        <translation type="unfinished">Eliminar de favoritos</translation>
+    </message>
+    <message>
+        <source>Send compressed folder to...</source>
+        <translation type="unfinished">Enviar carpeta comprimida a...</translation>
     </message>
     <message>
         <source>Upload folder to WebDAV server</source>
-        <translation>Subir carpeta al servidor WebDAV</translation>
+        <translation type="unfinished">Subir carpeta al servidor WebDAV</translation>
     </message>
     <message>
         <source>Download folder from WebDAV server</source>
-        <translation>Descargar carpeta del servidor WebDAV</translation>
+        <translation type="unfinished">Descargar carpeta del servidor WebDAV</translation>
+    </message>
+    <message>
+        <source>Remove dataset</source>
+        <translation type="unfinished">Eliminar conjunto de datos</translation>
     </message>
     <message>
         <source>Remove folder</source>
-        <translation>Eliminar carpeta</translation>
+        <translation type="unfinished">Eliminar carpeta</translation>
+    </message>
+    <message>
+        <source>Import Actions</source>
+        <translation type="unfinished">Acciones de importación</translation>
+    </message>
+    <message>
+        <source>Import project from folder</source>
+        <translation type="unfinished">Importar proyecto desde carpeta</translation>
+    </message>
+    <message>
+        <source>Import project from ZIP</source>
+        <translation type="unfinished">Importar proyecto desde ZIP</translation>
+    </message>
+    <message>
+        <source>Import dataset(s)</source>
+        <translation type="unfinished">Importar conjunto(s) de datos</translation>
+    </message>
+    <message>
+        <source>Import URL</source>
+        <translation type="unfinished">Importar URL</translation>
     </message>
     <message>
         <source>Import WebDAV folder</source>
-        <translation>Importar carpeta WebDAV</translation>
+        <translation type="unfinished">Importar carpeta WebDAV</translation>
+    </message>
+    <message>
+        <source>Storage management help</source>
+        <translation type="unfinished">Ayuda sobre gestión de almacenamiento</translation>
+    </message>
+    <message>
+        <source>Project Actions</source>
+        <translation type="unfinished">Acciones del proyecto</translation>
+    </message>
+    <message>
+        <source>Update project from ZIP</source>
+        <translation type="unfinished">Actualizar proyecto desde ZIP</translation>
     </message>
     <message>
         <source>Upload project to WebDAV</source>
-        <translation>Subir proyecto a WebDAV</translation>
+        <translation type="unfinished">Subir proyecto a WebDAV</translation>
     </message>
     <message>
         <source>Download project from WebDAV</source>
-        <translation>Descargar proyecto desde WebDAV</translation>
+        <translation type="unfinished">Descargar proyecto desde WebDAV</translation>
+    </message>
+    <message>
+        <source>Type a URL below to download and import the project or dataset:</source>
+        <translation type="unfinished">Escriba una URL a continuación para descargar e importar el proyecto o el conjunto de datos:</translation>
     </message>
     <message>
         <source>Importing WebDAV folder</source>
-        <translation>Importación de carpeta WebDAV</translation>
+        <translation type="unfinished">Importación de carpeta WebDAV</translation>
     </message>
     <message>
         <source>Downloading WebDAV folder</source>
-        <translation>Descargando la carpeta WebDAV</translation>
+        <translation type="unfinished">Descargando la carpeta WebDAV</translation>
     </message>
     <message>
         <source>Uploading WebDAV folder</source>
-        <translation>Subir carpeta WebDAV</translation>
+        <translation type="unfinished">Subir carpeta WebDAV</translation>
     </message>
     <message>
         <source>WebDAV error: </source>
-        <translation>Error de WebDAV:</translation>
+        <translation type="unfinished">Error de WebDAV:</translation>
     </message>
     <message>
         <source>WebDAV upload</source>
-        <translation>Subir WebDAV</translation>
+        <translation type="unfinished">Subir WebDAV</translation>
     </message>
     <message>
         <source>WebDAV download</source>
-        <translation>Descargar WebDAV</translation>
+        <translation type="unfinished">Descargar WebDAV</translation>
     </message>
     <message>
         <source>You are about to upload modified content into &lt;b&gt;%1&lt;/b&gt; using user &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;This operation will overwrite data stored remotely, make sure this is what you want to do.</source>
-        <translation>Está a punto de cargar contenido modificado en &lt;b&gt;%1&lt;/b&gt; usando el usuario &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Esta operación sobrescribirá los datos almacenados de forma remota, asegúrese de que esto es lo que desea hacer.</translation>
+        <translation type="unfinished">Está a punto de cargar contenido modificado en &lt;b&gt;%1&lt;/b&gt; usando el usuario &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Esta operación sobrescribirá los datos almacenados de forma remota, asegúrese de que esto es lo que desea hacer.</translation>
     </message>
     <message>
         <source>You are about to download modified content from &lt;b&gt;%1&lt;/b&gt; using user &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;This operation will overwrite data stored locally, make sure this is what you want to do.</source>
-        <translation>Está a punto de descargar contenido modificado de &lt;b&gt;%1&lt;/b&gt; usando el usuario &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Esta operación sobrescribirá los datos almacenados localmente, asegúrese de que esto es lo que desea hacer.</translation>
+        <translation type="unfinished">Está a punto de descargar contenido modificado de &lt;b&gt;%1&lt;/b&gt; usando el usuario &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Esta operación sobrescribirá los datos almacenados localmente, asegúrese de que esto es lo que desea hacer.</translation>
     </message>
     <message>
         <source>Password (leave empty to use remembered)</source>
-        <translation>Contraseña (dejar vacío para usar la guardada)</translation>
+        <translation type="unfinished">Contraseña (dejar vacío para usar la guardada)</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation>Contraseña</translation>
+        <translation type="unfinished">Contraseña</translation>
     </message>
     <message>
         <source>Remember password</source>
-        <translation>Recordar contraseña</translation>
+        <translation type="unfinished">Recordar contraseña</translation>
     </message>
     <message>
         <source>Type the WebDAV details below to import a remote folder:</source>
-        <translation>Escriba los detalles de WebDAV a continuación para importar una carpeta remota:</translation>
+        <translation type="unfinished">Escriba los detalles de WebDAV a continuación para importar una carpeta remota:</translation>
     </message>
     <message>
         <source>WebDAV server URL</source>
-        <translation>URL del servidor WebDAV</translation>
-    </message>
-    <message>
-        <source>Select the remote folder to import:</source>
-        <translation>Seleccione la carpeta remota a importar:</translation>
-    </message>
-    <message>
-        <source>Fetching remote folders</source>
-        <translation>Obteniendo carpetas remotas</translation>
-    </message>
-    <message>
-        <source>Fetch remote folders</source>
-        <translation>Obtener carpetas remotas</translation>
+        <translation type="unfinished">URL del servidor WebDAV</translation>
     </message>
     <message>
         <source>User and password</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>leave empty to use remembered</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fetching remote folders</source>
+        <translation type="unfinished">Obteniendo carpetas remotas</translation>
+    </message>
+    <message>
+        <source>Fetch remote folders</source>
+        <translation type="unfinished">Obtener carpetas remotas</translation>
+    </message>
+    <message>
+        <source>Select the remote folder to import:</source>
+        <translation type="unfinished">Seleccione la carpeta remota a importar:</translation>
     </message>
     <message>
         <source>(root folder)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Refreshing remote folders</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Refresh remote folders</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Imported and available locally</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refreshing remote folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh remote folders</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOPositioningService</name>
-    <message>
-        <source>Positioning service running</source>
-        <translation>Servicio de posicionamiento en ejecución</translation>
-    </message>
+    <name>QFieldPositioningService</name>
     <message>
         <source>Latitude %1 | Longitude %2 | Altitude %3 m | Speed %4 m/s | Direction %5°</source>
-        <translation>Latitud %1 | Longitud %2 | Altitud %3 m | Velocidad %4 m/s | Dirección %5°</translation>
+        <translation type="unfinished">Latitud %1 | Longitud %2 | Altitud %3 m | Velocidad %4 m/s | Dirección %5°</translation>
+    </message>
+    <message>
+        <source>Positioning service running</source>
+        <translation type="unfinished">Servicio de posicionamiento en ejecución</translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOSettings</name>
+    <name>QFieldSettings</name>
     <message>
         <source>Show scale bar</source>
-        <translation>Mostrar barra de escala</translation>
-    </message>
-    <message>
-        <source>Maximized attribute form</source>
-        <translation>Formulario de atributos maximizado</translation>
-    </message>
-    <message>
-        <source>Fixed scale navigation</source>
-        <translation>Navegación a escala fija</translation>
-    </message>
-    <message>
-        <source>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</source>
-        <translation>Los resultados de búsqueda solo se desplazan al objeto sin hacer zoom.</translation>
-    </message>
-    <message>
-        <source>Show digitizing information</source>
-        <translation>Mostrar información de digitalización</translation>
-    </message>
-    <message>
-        <source>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</source>
-        <translation>Muestra coordenadas en el mapa durante la digitalización o medición.</translation>
+        <translation type="unfinished">Mostrar barra de escala</translation>
     </message>
     <message>
         <source>Show bookmarks</source>
-        <translation>Mostrar marcadores</translation>
+        <translation type="unfinished">Mostrar marcadores</translation>
     </message>
     <message>
-        <source>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</source>
-        <translation>Muestra los marcadores guardados y del proyecto en el mapa.</translation>
-    </message>
-    <message>
-        <source>Use native camera</source>
-        <translation>Usar cámara nativa</translation>
-    </message>
-    <message>
-        <source>If disabled, SIGPACGO will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
-        <translation>Usa la cámara del dispositivo en lugar de la cámara integrada. Ideal para fotos geoetiquetadas.</translation>
-    </message>
-    <message>
-        <source>Fast editing mode</source>
-        <translation>Modo de edición rápida</translation>
-    </message>
-    <message>
-        <source>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</source>
-        <translation>Guarda automáticamente los objetos cuando la geometría es válida y se cumplen las restricciones.</translation>
-    </message>
-    <message>
-        <source>Dim screen when idling</source>
-        <translation>Atenuar pantalla si no hay actividad</translation>
-    </message>
-    <message>
-        <source>If enabled, the screen brightness will be dimmed after 20 seconds of inactivity to preserve battery.</source>
-        <translation type="vanished">Si se habilita, el brillo de la pantalla se atenuará después de 20 segundos de inactividad para ahorrar batería.</translation>
-    </message>
-    <message>
-        <source>Consider mouse as a touchscreen device</source>
-        <translation>Considerar el ratón como un dispositivo de pantalla táctil</translation>
-    </message>
-    <message>
-        <source>If disabled, the mouse will act as a stylus pen.</source>
-        <translation type="vanished">Si está deshabilitado, el ratón actuará como un lápiz óptico.</translation>
-    </message>
-    <message>
-        <source>Send anonymized metrics</source>
-        <translation>Enviar métricas anonimizadas</translation>
-    </message>
-    <message>
-        <source>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</source>
-        <translation>Si se activa, se recopilarán métricas anonimizadas y se enviarán para ayudar a mejorar SIGPACGO para todo el mundo.</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Positioning</source>
-        <translation>Posicionamiento</translation>
-    </message>
-    <message>
-        <source>Variables</source>
-        <translation>Variables</translation>
-    </message>
-    <message>
-        <source>Customize search bar</source>
-        <translation>Personalizar barra de búsqueda</translation>
-    </message>
-    <message>
-        <source>User interface language:</source>
-        <translation type="vanished">Idioma de la interfaz de usuario:</translation>
-    </message>
-    <message>
-        <source>To apply the selected user interface language, SIGPACGO needs to completely shutdown and restart.</source>
-        <translation>Reinicia SIGPAC-Go para aplicar el cambio de idioma.</translation>
-    </message>
-    <message>
-        <source>system</source>
-        <translation>sistema</translation>
-    </message>
-    <message>
-        <source>Found a missing or incomplete language? %1Join the translator community.%2</source>
-        <translation>¿Falta un idioma o está incompleto? %1Únase a la comunidad de traductores.%2</translation>
-    </message>
-    <message>
-        <source>Positioning device in use:</source>
-        <translation>Dispositivo de posicionamiento en uso:</translation>
-    </message>
-    <message>
-        <source>Scanning for paired devices</source>
-        <translation type="vanished">Buscando dispositivos emparejados</translation>
-    </message>
-    <message>
-        <source>Scanning failed: %1</source>
-        <translation type="vanished">Falló la búsqueda: %1</translation>
-    </message>
-    <message>
-        <source>Scanning done</source>
-        <translation type="vanished">Búsqueda completada</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n device(s) found</source>
-        <translation type="vanished"><numerusform>Un dispositivo encontrado</numerusform><numerusform>%n dispositivos encontrados</numerusform><numerusform>%n dispositivos encontrados</numerusform></translation>
-    </message>
-    <message>
-        <source>Scanning canceled</source>
-        <translation type="vanished">Búsqueda cancelada</translation>
-    </message>
-    <message>
-        <source>Scan</source>
-        <translation type="vanished">Buscar</translation>
-    </message>
-    <message>
-        <source>Make a full service discovery</source>
-        <translation type="vanished">Hacer un descubrimiento de servicio completo</translation>
-    </message>
-    <message>
-        <source>A full device scan can take longer. You really want to do it?
-Cancel to make a minimal device scan instead.</source>
-        <translation type="vanished">Una búsqueda completa de dispositivos puede llevar más tiempo. ¿Realmente quiere hacerla?
-Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translation>
-    </message>
-    <message>
-        <source>Connected to %1</source>
-        <translation>Conectado a %1</translation>
-    </message>
-    <message>
-        <source>Connect  to %1</source>
-        <translation type="vanished">Conectar a %1</translation>
-    </message>
-    <message>
-        <source>Connecting to %1</source>
-        <translation>Conectando a %1</translation>
-    </message>
-    <message>
-        <source>Use orthometric altitude from device</source>
-        <translation type="vanished">Usar altitud ortométrica del dispositivo</translation>
-    </message>
-    <message>
-        <source>Show position information</source>
-        <translation>Mostrar información de la posición</translation>
-    </message>
-    <message>
-        <source>Activate accuracy indicator</source>
-        <translation>Activar indicador de precisión</translation>
-    </message>
-    <message>
-        <source>Bad accuracy below [m]</source>
-        <translation type="vanished">Mala precisión por debajo [m]</translation>
-    </message>
-    <message>
-        <source>Excellent accuracy above [m]</source>
-        <translation type="vanished">Precisión excelente por encima [m]</translation>
-    </message>
-    <message>
-        <source>Enable accuracy requirement</source>
-        <translation type="vanished">Activar requerimiento de precisión</translation>
-    </message>
-    <message>
-        <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is below bad, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of excellent, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value above the bad threshold.</source>
-        <translation type="vanished">Cuando el indicador de precisión está activado, se adjunta una marca al botón de localización y se colorea en &lt;span %1&gt;rojo&lt;/span&gt; si la precisión es baja, &lt;span %2&gt;amarillo&lt;/span&gt; si es intermedia o &lt;span %3&gt;verde&lt;/span&gt;.&lt;br&gt;&lt;br&gt;Además, se puede activar un modo de restricción de precisión, que restringe la adición de vértices cuando está bloqueado al cursor de coordenadas a las posiciones con una precisión por encima del umbral malo.</translation>
-    </message>
-    <message>
-        <source>Enable averaged positioning requirement</source>
-        <translation>Habilitar requerimiento de posicionamiento promediado</translation>
-    </message>
-    <message>
-        <source>Minimum number of positions collected</source>
-        <translation>Número mínimo de posiciones tomadas</translation>
-    </message>
-    <message>
-        <source>Automatically end collection when minimum number is met</source>
-        <translation>Terminar automáticamente la colección cuando se alcanza el número mínimo</translation>
-    </message>
-    <message>
-        <source>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</source>
-        <translation>Cuando se habilita, la digitalización de vértices con un cursor bloqueado a la posición solo aceptará una posición promediada a partir de un número mínimo de posiciones recopiladas. La digitalización usando posiciones promediadas se hace presionando y manteniendo el botón añadir vértice, que tomará posiciones hasta que se deje de pulsar. La configuración de los requerimientos de precisión se respeta cuando está habilitada.</translation>
-    </message>
-    <message>
-        <source>Antenna height compensation</source>
-        <translation>Compensación de altura de antena</translation>
-    </message>
-    <message>
-        <source>Antenna height [m]</source>
-        <translation>Altura de antena [m]</translation>
-    </message>
-    <message>
-        <source>Z values which are recorded from the positioning device will be corrected by this value. If a value of 1.6 is entered, this will result in a correction of -1.6 for each recorded value.</source>
-        <translation type="vanished">Los valores Z tomados por un dispositivo de posicionamiento se corregirán con este valor. Si se introduce un valor de 1,6 el resultado será una corrección de -1,6 para cada valor registrado. </translation>
-    </message>
-    <message>
-        <source>Skip altitude correction</source>
-        <translation>Omitir corrección de la altitud</translation>
-    </message>
-    <message>
-        <source>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</source>
-        <translation>Utilizar la altitud según lo informado por el dispositivo de posicionamiento. Omitir cualquier corrección de altitud que pueda estar implicada por la transformación del sistema de coordenadas.</translation>
-    </message>
-    <message>
-        <source>Vertical grid shift in use:</source>
-        <translation>Cambio de cuadrícula vertical en uso:</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>Ninguna</translation>
-    </message>
-    <message>
-        <source>Vertical grid shift is used to increase the altitude accuracy.</source>
-        <translation>El cambio de cuadrícula vertical se utiliza para aumentar la precisión de la altitud.</translation>
-    </message>
-    <message>
-        <source>SIGPACGO Settings</source>
-        <translation>Configuración de SIGPACGO</translation>
-    </message>
-    <message>
-        <source>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</source>
-        <translation>Segundos de inactividad antes de atenuar la pantalla para ahorrar batería.</translation>
-    </message>
-    <message>
-        <source>Measure (M) value attached to vertices:</source>
-        <translation>Valor de medida (M) adjunto a los vértices:</translation>
-    </message>
-    <message>
-        <source>Timestamp (milliseconds since epoch)</source>
-        <translation>Marca de tiempo (milisegundos desde la época)</translation>
-    </message>
-    <message>
-        <source>Ground speed</source>
-        <translation>Velocidad sobre el terreno</translation>
-    </message>
-    <message>
-        <source>Bearing</source>
-        <translation>Rumbo</translation>
-    </message>
-    <message>
-        <source>Horizontal accuracy</source>
-        <translation>Precisión horizontal</translation>
-    </message>
-    <message>
-        <source>Vertical accuracy</source>
-        <translation>Precisión vertical</translation>
-    </message>
-    <message>
-        <source>PDOP</source>
-        <translation>PDOP</translation>
-    </message>
-    <message>
-        <source>HDOP</source>
-        <translation>HDOP</translation>
-    </message>
-    <message>
-        <source>VDOP</source>
-        <translation>VDOP</translation>
-    </message>
-    <message>
-        <source>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</source>
-        <translation>Al digitalizar las entidades con el cursor de coordenadas bloqueado en la posición actual, el tipo de medición seleccionado arriba se agregará a la geometría siempre que tenga una dimensión M.</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Agregar</translation>
-    </message>
-    <message>
-        <source>Edit</source>
-        <translation>Editar</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation>Eliminar</translation>
-    </message>
-    <message>
-        <source>Connect to %1</source>
-        <translation>Conectar con %1</translation>
-    </message>
-    <message>
-        <source>Follow system appearance</source>
-        <translation>Seguir la apariencia del sistema</translation>
-    </message>
-    <message>
-        <source>Light theme</source>
-        <translation>Claro</translation>
-    </message>
-    <message>
-        <source>Dark theme</source>
-        <translation>Oscuro</translation>
-    </message>
-    <message>
-        <source>Tiny</source>
-        <translation>Pequeño</translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation>Normal</translation>
-    </message>
-    <message>
-        <source>Large</source>
-        <translation>Grande</translation>
-    </message>
-    <message>
-        <source>Extra-large</source>
-        <translation>Enorme</translation>
-    </message>
-    <message>
-        <source>Log NMEA sentences from device to file</source>
-        <translation>Registre sentencias NMEA del dispositivo al archivo</translation>
-    </message>
-    <message>
-        <source>Map canvas rendering quality:</source>
-        <translation>Calidad de renderizado del lienzo del mapa:</translation>
-    </message>
-    <message>
-        <source>Best quality</source>
-        <translation>La mejor calidad</translation>
-    </message>
-    <message>
-        <source>Lower quality</source>
-        <translation>Calidad más baja</translation>
-    </message>
-    <message>
-        <source>Lowest quality</source>
-        <translation>La calidad más baja</translation>
-    </message>
-    <message>
-        <source>A lower quality trades rendering precision in favor of lower memory usage and rendering time.</source>
-        <translation>Menor calidad reduce el uso de memoria y mejora el rendimiento.</translation>
-    </message>
-    <message>
-        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
-        <translation>Este valor corregirá los valores Z registrados por el dispositivo de posicionamiento. Si se introduce un valor de 1,6, SIGPACGO restará automáticamente 1,6 a cada valor registrado. Asegúrese de insertar la altura efectiva de la antena, esto es, longitud de mástil + desplazamiento del centro de fase de la antena.</translation>
-    </message>
-    <message>
-        <source>Orthometric from device</source>
-        <translation>Ortométrica desde el dispositivo</translation>
-    </message>
-    <message>
-        <source>Use volume keys to digitize</source>
-        <translation>Utilizar teclas de volumen para digitalizar</translation>
-    </message>
-    <message>
-        <source>If enabled, pressing the device&apos;s volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.</source>
-        <translation>Subir volumen añade vértice, bajar volumen elimina el último vértice.</translation>
-    </message>
-    <message>
-        <source>Allow finger tap on canvas to add vertices</source>
-        <translation>Permitir toques con los dedos en el lienzo para añadir vértices</translation>
-    </message>
-    <message>
-        <source>When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.</source>
-        <translation>Toca el mapa para añadir un vértice.</translation>
-    </message>
-    <message>
-        <source>When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.</source>
-        <translation>El ratón actúa como un dedo. Cuando está desactivado, actúa como un lápiz.</translation>
-    </message>
-    <message>
-        <source>Map Canvas</source>
-        <translation>Lienzo del mapa</translation>
-    </message>
-    <message>
-        <source>Digitizing &amp; Editing</source>
-        <translation>Digitalización y edición</translation>
-    </message>
-    <message>
-        <source>User Interface</source>
-        <translation>Interfaz de usuario</translation>
-    </message>
-    <message>
-        <source>Appearance:</source>
-        <translation>Apariencia:</translation>
-    </message>
-    <message>
-        <source>Font size:</source>
-        <translation>Tamaño de letra:</translation>
-    </message>
-    <message>
-        <source>Language:</source>
-        <translation>Idioma:</translation>
-    </message>
-    <message>
-        <source>Advanced</source>
-        <translation>Avanzado</translation>
-    </message>
-    <message>
-        <source>Manage plugins</source>
-        <translation>Administrar complementos</translation>
+        <source>Shows saved and project bookmarks on the map.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enable map rotation</source>
-        <translation>Habilitar rotación del mapa</translation>
+        <translation type="unfinished">Habilitar rotación del mapa</translation>
     </message>
     <message>
-        <source>When switched on, the map can be rotated by the user.</source>
-        <translation>Permite rotar el mapa.</translation>
+        <source>Allows rotating the map.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show digitizing information</source>
+        <translation type="unfinished">Mostrar información de digitalización</translation>
+    </message>
+    <message>
+        <source>Shows coordinates on the map while digitizing or measuring.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fast editing mode</source>
+        <translation type="unfinished">Modo de edición rápida</translation>
+    </message>
+    <message>
+        <source>Auto-saves features when geometry is valid and constraints are met.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use volume keys to digitize</source>
+        <translation type="unfinished">Utilizar teclas de volumen para digitalizar</translation>
+    </message>
+    <message>
+        <source>Volume up adds vertex, volume down removes last vertex.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Allow finger tap on canvas to add vertices</source>
+        <translation type="unfinished">Permitir toques con los dedos en el lienzo para añadir vértices</translation>
+    </message>
+    <message>
+        <source>Tap on map to add vertex.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Consider mouse as a touchscreen device</source>
+        <translation type="unfinished">Considerar el ratón como un dispositivo de pantalla táctil</translation>
+    </message>
+    <message>
+        <source>Mouse acts like finger. When off, mouse acts like stylus.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximized attribute form</source>
+        <translation type="unfinished">Formulario de atributos maximizado</translation>
+    </message>
+    <message>
+        <source>Fixed scale navigation</source>
+        <translation type="unfinished">Navegación a escala fija</translation>
+    </message>
+    <message>
+        <source>Search results only pan to feature without zooming.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use native camera</source>
+        <translation type="unfinished">Usar cámara nativa</translation>
+    </message>
+    <message>
+        <source>Uses device camera app instead of built-in camera. Good for geo-tagged photos.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="unfinished">General</translation>
+    </message>
+    <message>
+        <source>Positioning</source>
+        <translation type="unfinished">Posicionamiento</translation>
+    </message>
+    <message>
+        <source>Variables</source>
+        <translation type="unfinished">Variables</translation>
+    </message>
+    <message>
+        <source>Map Canvas</source>
+        <translation type="unfinished">Lienzo del mapa</translation>
+    </message>
+    <message>
+        <source>Map canvas rendering quality:</source>
+        <translation type="unfinished">Calidad de renderizado del lienzo del mapa:</translation>
+    </message>
+    <message>
+        <source>Best quality</source>
+        <translation type="unfinished">La mejor calidad</translation>
+    </message>
+    <message>
+        <source>Lower quality</source>
+        <translation type="unfinished">Calidad más baja</translation>
+    </message>
+    <message>
+        <source>Lowest quality</source>
+        <translation type="unfinished">La calidad más baja</translation>
+    </message>
+    <message>
+        <source>Lower quality reduces memory usage and improves performance.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Digitizing &amp; Editing</source>
+        <translation type="unfinished">Digitalización y edición</translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation type="unfinished">Interfaz de usuario</translation>
+    </message>
+    <message>
+        <source>Customize search bar</source>
+        <translation type="unfinished">Personalizar barra de búsqueda</translation>
+    </message>
+    <message>
+        <source>Manage plugins</source>
+        <translation type="unfinished">Administrar complementos</translation>
+    </message>
+    <message>
+        <source>Dim screen when idle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Seconds of inactivity before dimming screen to save battery.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Appearance:</source>
+        <translation type="unfinished">Apariencia:</translation>
+    </message>
+    <message>
+        <source>Follow system appearance</source>
+        <translation type="unfinished">Seguir la apariencia del sistema</translation>
+    </message>
+    <message>
+        <source>Light theme</source>
+        <translation type="unfinished">Claro</translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <translation type="unfinished">Oscuro</translation>
+    </message>
+    <message>
+        <source>Font size:</source>
+        <translation type="unfinished">Tamaño de letra:</translation>
+    </message>
+    <message>
+        <source>Tiny</source>
+        <translation type="unfinished">Pequeño</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished">Normal</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished">Grande</translation>
+    </message>
+    <message>
+        <source>Extra-large</source>
+        <translation type="unfinished">Enorme</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation type="unfinished">Idioma:</translation>
+    </message>
+    <message>
+        <source>Restart SIGPAC-Go to apply language change.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>system</source>
+        <translation type="unfinished">sistema</translation>
+    </message>
+    <message>
+        <source>Spanish and English available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation type="unfinished">Avanzado</translation>
+    </message>
+    <message>
+        <source>Positioning device in use:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished">Agregar</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">Editar</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished">Eliminar</translation>
+    </message>
+    <message>
+        <source>Connected to %1</source>
+        <translation type="unfinished">Conectado a %1</translation>
+    </message>
+    <message>
+        <source>Connect to %1</source>
+        <translation type="unfinished">Conectar con %1</translation>
+    </message>
+    <message>
+        <source>Connecting to %1</source>
+        <translation type="unfinished">Conectando a %1</translation>
+    </message>
+    <message>
+        <source>Show position information</source>
+        <translation type="unfinished">Mostrar información de la posición</translation>
+    </message>
+    <message>
+        <source>Measure (M) value attached to vertices:</source>
+        <translation type="unfinished">Valor de medida (M) adjunto a los vértices:</translation>
+    </message>
+    <message>
+        <source>Timestamp (milliseconds since epoch)</source>
+        <translation type="unfinished">Marca de tiempo (milisegundos desde la época)</translation>
+    </message>
+    <message>
+        <source>Ground speed</source>
+        <translation type="unfinished">Velocidad sobre el terreno</translation>
+    </message>
+    <message>
+        <source>Bearing</source>
+        <translation type="unfinished">Rumbo</translation>
+    </message>
+    <message>
+        <source>Horizontal accuracy</source>
+        <translation type="unfinished">Precisión horizontal</translation>
+    </message>
+    <message>
+        <source>Vertical accuracy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PDOP</source>
+        <translation type="unfinished">PDOP</translation>
+    </message>
+    <message>
+        <source>HDOP</source>
+        <translation type="unfinished">HDOP</translation>
+    </message>
+    <message>
+        <source>VDOP</source>
+        <translation type="unfinished">VDOP</translation>
+    </message>
+    <message>
+        <source>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</source>
+        <translation type="unfinished">Al digitalizar las entidades con el cursor de coordenadas bloqueado en la posición actual, el tipo de medición seleccionado arriba se agregará a la geometría siempre que tenga una dimensión M.</translation>
+    </message>
+    <message>
+        <source>Activate accuracy indicator</source>
+        <translation type="unfinished">Activar indicador de precisión</translation>
     </message>
     <message>
         <source>Bad accuracy threshold [m]</source>
-        <translation>Umbral de precisión malo [m]</translation>
+        <translation type="unfinished">Umbral de precisión malo [m]</translation>
     </message>
     <message>
         <source>Excellent accuracy threshold [m]</source>
-        <translation>Umbral de precisión excelente [m]</translation>
+        <translation type="unfinished">Umbral de precisión excelente [m]</translation>
     </message>
     <message>
         <source>Enforce accuracy requirement</source>
-        <translation>Forzar requerimiento de precisión</translation>
+        <translation type="unfinished">Forzar requerimiento de precisión</translation>
     </message>
     <message>
         <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is worse than &lt;i&gt;bad&lt;/i&gt;, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of &lt;i&gt;excellent&lt;/i&gt;, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value worse than the bad threshold.</source>
-        <translation>Cuando el indicador de precisión está activado, se adjunta una marca al botón de localización y se colorea en &lt;span %1&gt;rojo&lt;/span&gt;  si el valor de precisión es peor que &lt;i&gt;malo&lt;/i&gt;, &lt;span %2&gt;amarillo&lt;/span&gt;si no llega a &lt;i&gt;excelente&lt;/i&gt;, o &lt;span %3&gt;verde&lt;/span&gt;.&lt;br&gt;&lt;br&gt;Además, se puede activar un modo de restricción de precisión, que restringe la adición de vértices cuando está bloqueado a las coordenadas del cursor a posiciones con una precisión por encima del umbral malo.</translation>
+        <translation type="unfinished">Cuando el indicador de precisión está activado, se adjunta una marca al botón de localización y se colorea en &lt;span %1&gt;rojo&lt;/span&gt;  si el valor de precisión es peor que &lt;i&gt;malo&lt;/i&gt;, &lt;span %2&gt;amarillo&lt;/span&gt;si no llega a &lt;i&gt;excelente&lt;/i&gt;, o &lt;span %3&gt;verde&lt;/span&gt;.&lt;br&gt;&lt;br&gt;Además, se puede activar un modo de restricción de precisión, que restringe la adición de vértices cuando está bloqueado a las coordenadas del cursor a posiciones con una precisión por encima del umbral malo.</translation>
+    </message>
+    <message>
+        <source>Enable averaged positioning requirement</source>
+        <translation type="unfinished">Habilitar requerimiento de posicionamiento promediado</translation>
+    </message>
+    <message>
+        <source>Minimum number of positions collected</source>
+        <translation type="unfinished">Número mínimo de posiciones tomadas</translation>
+    </message>
+    <message>
+        <source>Automatically end collection when minimum number is met</source>
+        <translation type="unfinished">Terminar automáticamente la colección cuando se alcanza el número mínimo</translation>
+    </message>
+    <message>
+        <source>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</source>
+        <translation type="unfinished">Cuando se habilita, la digitalización de vértices con un cursor bloqueado a la posición solo aceptará una posición promediada a partir de un número mínimo de posiciones recopiladas. La digitalización usando posiciones promediadas se hace presionando y manteniendo el botón añadir vértice, que tomará posiciones hasta que se deje de pulsar. La configuración de los requerimientos de precisión se respeta cuando está habilitada.</translation>
+    </message>
+    <message>
+        <source>Antenna height compensation</source>
+        <translation type="unfinished">Compensación de altura de antena</translation>
+    </message>
+    <message>
+        <source>Antenna height [m]</source>
+        <translation type="unfinished">Altura de antena [m]</translation>
+    </message>
+    <message>
+        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
+        <translation type="unfinished">Este valor corregirá los valores Z registrados por el dispositivo de posicionamiento. Si se introduce un valor de 1,6, SIGPACGO restará automáticamente 1,6 a cada valor registrado. Asegúrese de insertar la altura efectiva de la antena, esto es, longitud de mástil + desplazamiento del centro de fase de la antena.</translation>
+    </message>
+    <message>
+        <source>Skip altitude correction</source>
+        <translation type="unfinished">Omitir corrección de la altitud</translation>
+    </message>
+    <message>
+        <source>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</source>
+        <translation type="unfinished">Utilizar la altitud según lo informado por el dispositivo de posicionamiento. Omitir cualquier corrección de altitud que pueda estar implicada por la transformación del sistema de coordenadas.</translation>
+    </message>
+    <message>
+        <source>Vertical grid shift in use:</source>
+        <translation type="unfinished">Cambio de cuadrícula vertical en uso:</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Ninguna</translation>
+    </message>
+    <message>
+        <source>Orthometric from device</source>
+        <translation type="unfinished">Ortométrica desde el dispositivo</translation>
+    </message>
+    <message>
+        <source>Vertical grid shift is used to increase the altitude accuracy.</source>
+        <translation type="unfinished">El cambio de cuadrícula vertical se utiliza para aumentar la precisión de la altitud.</translation>
+    </message>
+    <message>
+        <source>Log NMEA sentences from device to file</source>
+        <translation type="unfinished">Registre sentencias NMEA del dispositivo al archivo</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished">Configuración</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>SIGPACGOSketcher</name>
+    <name>QFieldSketcher</name>
     <message>
         <source>Select drawing template</source>
-        <translation>Seleccionar plantilla de dibujo</translation>
+        <translation type="unfinished">Seleccionar plantilla de dibujo</translation>
     </message>
 </context>
 <context>
@@ -3668,7 +3663,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>SIGPACGOCloud Unknown Error</source>
-        <translation>Error desconocido de SIGPACGOCloud</translation>
+        <translation type="vanished">Error desconocido de SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Status not ok</source>
@@ -3736,7 +3731,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Please wait while SIGPACGO installation finalizes.</source>
-        <translation>Espere mientras finaliza la instalación de SIGPACGO.</translation>
+        <translation type="vanished">Espere mientras finaliza la instalación de SIGPACGO.</translation>
     </message>
     <message>
         <source>averaged</source>
@@ -3745,6 +3740,10 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     <message>
         <source>centroid</source>
         <translation>centroide</translation>
+    </message>
+    <message>
+        <source>QFieldCloud Unknown Error</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3771,13 +3770,6 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     <message>
         <source>OK</source>
         <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>QfCloseButton</name>
-    <message>
-        <source>close</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3822,8 +3814,8 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>No se puede leer el proyecto, el archivo &quot;%1&quot; no existe</translation>
     </message>
     <message>
-        <source>Map printed on %1 using SIGPACGO</source>
-        <translation type="unfinished"/>
+        <source>Map printed on %1 using QField</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3936,6 +3928,1418 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
 </context>
 <context>
+    <name>SIGPACGOAppAuthRequestHandler</name>
+    <message>
+        <source>Please enter credentials for database</source>
+        <translation type="vanished">Por favor, introduzca las credenciales para la base de datos</translation>
+    </message>
+    <message>
+        <source>at host</source>
+        <translation type="vanished">en el servidor</translation>
+    </message>
+    <message>
+        <source>at service</source>
+        <translation type="vanished">en el servicio</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOAudioRecorder</name>
+    <message>
+        <source>Audio Recorder</source>
+        <translation type="vanished">Grabador de audio</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCamera</name>
+    <message>
+        <source>Geotagging enabled</source>
+        <translation type="vanished">Geoetiquetado habilitado</translation>
+    </message>
+    <message>
+        <source>Geotagging disabled</source>
+        <translation type="vanished">Geoetiquetado deshabilitado</translation>
+    </message>
+    <message>
+        <source>Grid enabled</source>
+        <translation type="vanished">Grid habilitado</translation>
+    </message>
+    <message>
+        <source>Grid disabled</source>
+        <translation type="vanished">Grid deshabilitado</translation>
+    </message>
+    <message>
+        <source>front</source>
+        <translation type="vanished">delantera</translation>
+    </message>
+    <message>
+        <source>back</source>
+        <translation type="vanished">trasera</translation>
+    </message>
+    <message>
+        <source>Image geotagging requires positioning to be turned on</source>
+        <translation type="vanished">El geoetiquetado de imágenes requiere que el posicionamiento está activado</translation>
+    </message>
+    <message>
+        <source>Details stamping enabled</source>
+        <translation type="vanished">Marcado de detalles habilitado</translation>
+    </message>
+    <message>
+        <source>Latitude</source>
+        <translation type="vanished">Latitud</translation>
+    </message>
+    <message>
+        <source>Longitude</source>
+        <translation type="vanished">Longitud</translation>
+    </message>
+    <message>
+        <source>Altitude</source>
+        <translation type="vanished">Altitud</translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation type="vanished">Velocidad</translation>
+    </message>
+    <message>
+        <source>Orientation</source>
+        <translation type="vanished">Orientación</translation>
+    </message>
+    <message>
+        <source>Details stamping disabled</source>
+        <translation type="vanished">Marcado de detalles deshabilitado</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudConnection</name>
+    <message>
+        <source>[timeout] The request took too long to finish, please retry.</source>
+        <translation type="vanished">[expiró] La solicitud llevó demasiado tiempo para terminar, pruebe otra vez.</translation>
+    </message>
+    <message>
+        <source>[aborted] The request has been aborted.</source>
+        <translation type="vanished">[abortado] La solicitud se ha cancelado.</translation>
+    </message>
+    <message>
+        <source>Server Error.</source>
+        <translation type="vanished">Error de servidor.</translation>
+    </message>
+    <message>
+        <source>Network Error.</source>
+        <translation type="vanished">Error de red.</translation>
+    </message>
+    <message>
+        <source>Server not found, please check the server URL</source>
+        <translation type="vanished">Servidor no encontrado, por favor compruebe la URL del servidor</translation>
+    </message>
+    <message>
+        <source>Timeout error, please retry</source>
+        <translation type="vanished">Expiró el tiempo, por favor vuelva a intentarlo</translation>
+    </message>
+    <message>
+        <source>Wrong username or password</source>
+        <translation type="vanished">Nombre de usuario o contraseña incorrectos</translation>
+    </message>
+    <message>
+        <source>Session expired</source>
+        <translation type="vanished">Expiró la sesión</translation>
+    </message>
+    <message>
+        <source>Login temporary unavailable</source>
+        <translation type="vanished">Inicio de sesión no disponible temporalmente</translation>
+    </message>
+    <message>
+        <source>Failed to upload attachment stored at `%1`, reason:
+%2</source>
+        <translation type="vanished">No se pudo cargar el archivo adjunto almacenado en `%1`, motivo:
+%2</translation>
+    </message>
+    <message>
+        <source>Login error due to unexpected redirect, please retry later</source>
+        <translation type="vanished">Error de inicio de sesión debido a una redirección inesperada, vuelva a intentarlo más tarde</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudDeltaHistory</name>
+    <message>
+        <source>Push History</source>
+        <translation type="vanished">Subir historial</translation>
+    </message>
+    <message>
+        <source>Loading…</source>
+        <translation type="vanished">Cargando</translation>
+    </message>
+    <message>
+        <source>No changes have been pushed yet!</source>
+        <translation type="vanished">¡Aún no se han subido cambios!</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudLogin</name>
+    <message>
+        <source>Failed to login</source>
+        <translation type="vanished">No se pudo iniciar la sesión</translation>
+    </message>
+    <message>
+        <source>Failed to sign in</source>
+        <translation type="vanished">Error al iniciar sesión</translation>
+    </message>
+    <message>
+        <source>Server URL
+(Leave empty to use the default server)</source>
+        <translation type="vanished">URL del servidor
+(Dejar en blanco para usar el servidor predeterminado)</translation>
+    </message>
+    <message>
+        <source>Username or email</source>
+        <translation type="vanished">Nombre de usuario o correo electrónico</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation type="vanished">Contraseña</translation>
+    </message>
+    <message>
+        <source>Sign out</source>
+        <translation type="vanished">Cerrar sesión</translation>
+    </message>
+    <message>
+        <source>Signing in, please wait</source>
+        <translation type="vanished">Iniciando sesión, por favor espere</translation>
+    </message>
+    <message>
+        <source>Sign in</source>
+        <translation type="vanished">Iniciar sesión</translation>
+    </message>
+    <message>
+        <source>New user?</source>
+        <translation type="vanished">¿Nuevo usuario?</translation>
+    </message>
+    <message>
+        <source>Register an account</source>
+        <translation type="vanished">Registrar una cuenta</translation>
+    </message>
+    <message>
+        <source>Logout</source>
+        <translation type="vanished">Cerrar sesión</translation>
+    </message>
+    <message>
+        <source>Logging in, please wait</source>
+        <translation type="vanished">Iniciando sesión, por favor espere</translation>
+    </message>
+    <message>
+        <source>Login</source>
+        <translation type="vanished">Iniciar sesión</translation>
+    </message>
+    <message>
+        <source>The easiest way to transfer you project from QGIS to your devices!</source>
+        <translation type="vanished">¡La forma más fácil de transferir su proyecto de QGIS a sus dispositivos!</translation>
+    </message>
+    <message>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation type="vanished">Aprender más sobre SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud</source>
+        <translation type="vanished">SIGPACGOCloud</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudPackageLayersFeedback</name>
+    <message>
+        <source>Problematic SIGPACGOCloud layer packaging</source>
+        <translation type="vanished">Empaquetado de capas en SIGPACGOCloud problemático</translation>
+    </message>
+    <message>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server.</source>
+        <translation type="vanished">Algunas capas no se han empaquetado correctamente en SIGPACGOCloud. Estas capas pueden estar mal configurada o su fuente de datos no es accesible desde el servidor de SIGPACGOCloud.</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud had troubles packaging your project</source>
+        <translation type="vanished">SIGPACGOCloud tuvo problemas para empaquetar su proyecto</translation>
+    </message>
+    <message>
+        <source>Some layers have not been packaged correctly on SIGPACGOCloud. These layers might be misconfigured or their data source is not accessible from the SIGPACGOCloud server. Please check the logs of the latest packaging job on the qfield.cloud website.</source>
+        <translation type="vanished">Algunas capas no se han empaquetado correctamente en SIGPACGOCloud. Estas capas pueden estar mal configuradas o no se puede acceder a su fuente de datos desde el servidor SIGPACGOCloud. Consulte los registros del último trabajo de empaquetado en el sitio web qfield.cloud.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudPopup</name>
+    <message>
+        <source>SIGPACGOCloud</source>
+        <translation type="vanished">SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>The current project is not stored on SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="vanished">El proyecto actual no está guardado en SIGPACGOCloud.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchornization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="vanished">Guardar proyectos en SIGPACGOCloud ofrece una sincronización automatizada, edición offline y gestión de equipos.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>Learn more about SIGPACGOCloud</source>
+        <translation type="vanished">Aprender más sobre SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>Disconnected from the cloud.</source>
+        <translation type="vanished">Desconectado de la nube.</translation>
+    </message>
+    <message>
+        <source>Connecting to the cloud.</source>
+        <translation type="vanished">Conectando con la nube.</translation>
+    </message>
+    <message>
+        <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
+        <translation type="vanished">Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
+    </message>
+    <message>
+        <source>This SIGPACGOCloud project was first downloaded with another cloud account. Please sign in with the original account for this project to use the SIGPACGOCloud functionality.</source>
+        <translation type="vanished">Este proyecto de SIGPACGOCloud se descargó por primera vez con otra cuenta en la nube. Inicie sesión con la cuenta original de este proyecto para usar la funcionalidad SIGPACGOCloud.</translation>
+    </message>
+    <message>
+        <source>Downloading %1%…</source>
+        <translation type="vanished">Descargando %1%…</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
+    </message>
+    <message>
+        <source>Uploading %1%…</source>
+        <translation type="vanished">Subiendo %1%…</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is applying the latest uploaded changes. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud está aplicando los últimos cambios subidos. Esto puede llevar algo de tiempo, mantente atento…</translation>
+    </message>
+    <message>
+        <source>A server error has occured, please try again.</source>
+        <translation type="vanished">Ha ocurrido un error del servidor, por favor prueba otra vez.</translation>
+    </message>
+    <message>
+        <source>A network error has occured, please try again.</source>
+        <translation type="vanished">Ha ocurrido un error de red, por favor prueba otra vez.</translation>
+    </message>
+    <message numerus="yes">
+        <source>There is/are %n local change(s)</source>
+        <translation type="vanished">
+            <numerusform>Hay un cambio local</numerusform>
+            <numerusform>Hay %n cambios locales</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>There are no local changes</source>
+        <translation type="vanished">No hay cambios locales</translation>
+    </message>
+    <message>
+        <source>The locally stored cloud project has been corrupted</source>
+        <translation type="vanished">El proyecto de la nube guardado localmente se ha corrompido</translation>
+    </message>
+    <message>
+        <source>Synchronize</source>
+        <translation type="vanished">Sincronizar</translation>
+    </message>
+    <message>
+        <source>Synchronize the whole project with all modified features and download the freshly updated project with all the applied changes from SIGPACGOCloud.</source>
+        <translation type="vanished">Sincronizar el proyecto completo con todos los objetos modificados y descargar el proyecto actualizado con todos los cambios aplicados desde SIGPACGOCloud.</translation>
+    </message>
+    <message>
+        <source>Push changes</source>
+        <translation type="vanished">Subir cambios</translation>
+    </message>
+    <message>
+        <source>Save internet bandwidth by only pushing the local features and pictures to the cloud, without updating the whole project.</source>
+        <translation type="vanished">Ahorrar ancho de banda de internet subiendo solo los objetos y dibujos locales a la nube, sin actualizar todo el proyecto.</translation>
+    </message>
+    <message>
+        <source>Revert local changes</source>
+        <translation type="vanished">Revertir cambios locales</translation>
+    </message>
+    <message>
+        <source>Reset project</source>
+        <translation type="vanished">Restablecer proyecto</translation>
+    </message>
+    <message>
+        <source>Revert all modified features in the local layers. You cannot restore those changes.</source>
+        <translation type="vanished">Revertir todas las entidades modificadas en las capas locales. No puede restaurar esos cambios.</translation>
+    </message>
+    <message>
+        <source>Revert all modified features in the local cloud layers. You cannot restore those changes.</source>
+        <translation type="vanished">Revertir todos los objetos modificados en las capas de la nube locales. No se pueden restablecer estos cambios.</translation>
+    </message>
+    <message>
+        <source>The local copy of this cloud project has been corrupted. Resetting the project will re-download the cloud version and will remove any local changes, make sure those were copied first if needed.
+
+While you can still view and use the project, it is strongly recommended to reset to avoid any accidental data loss as none of the changes made will be pushed back to the cloud.</source>
+        <translation type="vanished">La copia local de este proyecto en la nube se corrompió. Restablecer el proyecto volverá a descargar la versión de la nube y eliminará cualquier cambio local. Asegúrese de haber copiado antes cualquier cambio local en caso necesario.</translation>
+    </message>
+    <message>
+        <source>Last synchronized just now</source>
+        <translation type="vanished">Sincronizado por última vez justo ahora</translation>
+    </message>
+    <message>
+        <source>Last synchronized %1 minutes ago</source>
+        <translation type="vanished">Sincronizado por última vez hace %1 minutos</translation>
+    </message>
+    <message>
+        <source>Last synchronized at %1</source>
+        <translation type="vanished">Sincronizado por última a las %1</translation>
+    </message>
+    <message>
+        <source>Last synchronized on %1</source>
+        <translation type="vanished">Sincronizado por última el %1</translation>
+    </message>
+    <message>
+        <source>Last changes pushed just now</source>
+        <translation type="vanished">Últimos cambios subidos ahora mismo</translation>
+    </message>
+    <message>
+        <source>Last changes pushed %1 minutes ago</source>
+        <translation type="vanished">Últimos cambios subidos hace %1 minutos</translation>
+    </message>
+    <message>
+        <source>Last changes pushed at %1</source>
+        <translation type="vanished">Últimos cambios subidos a las %1</translation>
+    </message>
+    <message>
+        <source>Last changes pushed on %1</source>
+        <translation type="vanished">Últimos cambios subidos el %1</translation>
+    </message>
+    <message>
+        <source>No changes pushed yet</source>
+        <translation type="vanished">Ningún cambio subido aún</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n attachment(s) are currently being uploaded in the background.</source>
+        <translation type="vanished">
+            <numerusform>Actualmente se está subiendo un adjunto en segundo plano.</numerusform>
+            <numerusform>Actualmente se están subiendo %n adjuntos en segundo plano.</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Should local changes be reverted?</source>
+        <translation type="vanished">¿Se deben revertir los cambios locales?</translation>
+    </message>
+    <message>
+        <source>Reset cloud project</source>
+        <translation type="vanished">Restablecer proyecto en la nube</translation>
+    </message>
+    <message>
+        <source>Last warning, resetting the cloud project will erase any local changes, are you sure you want to go ahead?</source>
+        <translation type="vanished">Último aviso: restablecer el proyecto en la nube borrará cualquier cambio local. ¿Seguro que quiere continuar?</translation>
+    </message>
+    <message>
+        <source>Connecting cloud</source>
+        <translation type="vanished">Conectando con la nube.</translation>
+    </message>
+    <message>
+        <source>Local changes reverted</source>
+        <translation type="vanished">Cambios locales revertidos</translation>
+    </message>
+    <message>
+        <source>Failed to revert changes</source>
+        <translation type="vanished">No se pudieron revertir los cambios</translation>
+    </message>
+    <message>
+        <source>No changes to revert</source>
+        <translation type="vanished">Ningún cambio que revertir</translation>
+    </message>
+    <message>
+        <source>This project has an updated project file on the cloud, you are advised to synchronize.</source>
+        <translation type="vanished">Este proyecto tiene un archivo de proyecto actualizado en la nube, se recomienda sincronizarlo.</translation>
+    </message>
+    <message>
+        <source>This project has updated data on the cloud, you should synchronize.</source>
+        <translation type="vanished">Este proyecto tiene datos actualizados en la nube, deberías sincronizarlos.</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <translation type="vanished">SIGPACGOCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
+    </message>
+    <message>
+        <source>Downloading, %1% of %2 fetched</source>
+        <translation type="vanished">Descargando, %1% de %2 obtenido</translation>
+    </message>
+    <message>
+        <source>Downloading, %1% fetched</source>
+        <translation type="vanished">Descargando, %1% obtenido</translation>
+    </message>
+    <message>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
+        <translation type="vanished">Conectándose con SIGPACGOCloud para descargar el proyecto</translation>
+    </message>
+    <message numerus="yes">
+        <source>Automatically push changes every %n minute(s)</source>
+        <translation type="vanished">
+            <numerusform>Emviar cambios automáticamente cada %n minuto(s)</numerusform>
+            <numerusform>Enviar cambios automáticamente cada %n minuto(s)</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>The current project does not allow for auto-push to be turned off</source>
+        <translation type="vanished">El proyecto actual no permite desactivar la subida automática</translation>
+    </message>
+    <message>
+        <source>Storing projects on SIGPACGOCloud offers seamless synchronization, offline editing, and team management.&lt;br&gt;&lt;br&gt;</source>
+        <translation type="vanished">Almacenar los proyectos en SIGPACGOCloud ofrece una sincronización perfecta, edición fuera de línea y administración de equipos.&lt;br&gt;&lt;br&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudProjectsModel</name>
+    <message>
+        <source>Export failed</source>
+        <translation type="vanished">Falló la exportación</translation>
+    </message>
+    <message>
+        <source>Packaged layer &apos;%1&apos; is not valid: &apos;%2&apos;</source>
+        <translation type="vanished">La capa empaquetada &apos;%1&apos; no es válida: &apos;%2&apos;</translation>
+    </message>
+    <message>
+        <source>Failed to open temporary file for &quot;%1&quot;, reason:
+%2</source>
+        <translation type="vanished">No se pudo abrir el archivo temporal para &quot;%1&quot;, motivo:
+%2</translation>
+    </message>
+    <message>
+        <source>Failed to upload attachment stored at &quot;%1&quot;, reason:
+%2</source>
+        <translation type="vanished">No se pudo subir el adjunto guardado en &quot;%1&quot;, motivo:
+%2</translation>
+    </message>
+    <message>
+        <source>Failed to download file &quot;%1&quot;, reason:</source>
+        <translation type="vanished">No se pudo descargar el archivo &quot;%1&quot;, motivo:</translation>
+    </message>
+    <message>
+        <source>Failed to write downloaded file stored at &quot;%1&quot;, fs reason:</source>
+        <translation type="vanished">No se pudo escribir el archivo descargado guardado en &quot;%1&quot;, motivo:</translation>
+    </message>
+    <message>
+        <source>aborted</source>
+        <translation type="vanished">abortado</translation>
+    </message>
+    <message>
+        <source>project(%1) trigger response refresh not contain all the expected keys: name(string), owner(string), description(string), user_role(string), is_public(bool), can_repackage(bool), needs_repackaging(bool)</source>
+        <translation type="vanished">La actualización de la respuesta del desencadenador del proyecto (%1) no contiene todas las claves esperadas: nombre (cadena), propietario (cadena), descripción (cadena), rol_usuario (cadena), is_public (bool), can_repackage (bool), need_repackaging (bool)</translation>
+    </message>
+    <message>
+        <source>Getting job status, but the project is deleted.</source>
+        <translation type="vanished">Obteniendo el estado del trabajo, pero el proyecto se elimina.</translation>
+    </message>
+    <message>
+        <source>Job creation finished, but the server response is missing required fields: id(string)</source>
+        <translation type="vanished">La creación del trabajo finalizó, pero faltan campos obligatorios en la respuesta del servidor: id (string)</translation>
+    </message>
+    <message>
+        <source>Getting job status, but no `%2` job triggered yet.</source>
+        <translation type="vanished">Obteniendo el estado del trabajo, pero aún no se ha activado ningún trabajo `%2`.</translation>
+    </message>
+    <message>
+        <source>Getting job status finished, but the project is deleted.</source>
+        <translation type="vanished">Obteniendo el estado del trabajo finalizado, pero el proyecto se elimina.</translation>
+    </message>
+    <message>
+        <source>job(%1) status response does not contain all the expected keys: status(string)</source>
+        <translation type="vanished">La respuesta de estado del trabajo (%1) no contiene todas las claves esperadas: estado (string)</translation>
+    </message>
+    <message>
+        <source>Job(%1) finished with a failed status.</source>
+        <translation type="vanished">El trabajo (%1) finalizó con un estado fallido.</translation>
+    </message>
+    <message>
+        <source>Project busy.</source>
+        <translation type="vanished">Proyecto ocupado.</translation>
+    </message>
+    <message>
+        <source>Packaging job finished unsuccessfully for `%1`. %2</source>
+        <translation type="vanished">El trabajo de empaquetado finalizó sin éxito para `%1`. %2</translation>
+    </message>
+    <message>
+        <source>Failed to refresh the latest info for `%1`: %2</source>
+        <translation type="vanished">No se pudo actualizar la información más reciente para `%1`: %2</translation>
+    </message>
+    <message>
+        <source>Failed to get latest package data.</source>
+        <translation type="vanished">Error al obtener los últimos datos del paquete.</translation>
+    </message>
+    <message>
+        <source>Latest package data response error.</source>
+        <translation type="vanished">Último error de respuesta de datos del paquete.</translation>
+    </message>
+    <message>
+        <source>Latest package data structure error.</source>
+        <translation type="vanished">Último error de estructura de datos del paquete.</translation>
+    </message>
+    <message>
+        <source>Project %1: Packaged layer `%2` is not valid. Error code %3, error message: %4</source>
+        <translation type="vanished">Proyecto %1: la capa empaquetada `%2` no es válida. Código de error %3, mensaje de error: %4</translation>
+    </message>
+    <message>
+        <source>Failed to open temporary file for `%1`, reason:
+%2</source>
+        <translation type="vanished">No se pudo abrir el archivo temporal para `%1`, motivo:
+%2</translation>
+    </message>
+    <message>
+        <source>Failed to upload attachment stored at `%1`, reason:
+%2</source>
+        <translation type="vanished">No se pudo cargar el archivo adjunto almacenado en `%1`, motivo:
+%2</translation>
+    </message>
+    <message>
+        <source>Network error. Failed to download file `%1`.</source>
+        <translation type="vanished">Error de red. Error al descargar el archivo `%1`.</translation>
+    </message>
+    <message>
+        <source>File system error. Failed to write file to temporary location `%1`.</source>
+        <translation type="vanished">Error del sistema de archivos. No se pudo escribir el archivo en la ubicación temporal `%1`.</translation>
+    </message>
+    <message>
+        <source>File system error. Failed to open file for writing on temporary `%1`.</source>
+        <translation type="vanished">Error del sistema de archivos. No se pudo abrir el archivo para escribir en `%1` temporal.</translation>
+    </message>
+    <message>
+        <source>Project `%1`, file `%2`: %3</source>
+        <translation type="vanished">Proyecto `%1`, archivo `%2`: %3</translation>
+    </message>
+    <message>
+        <source>System message: </source>
+        <translation type="vanished">Mensaje del sistema:</translation>
+    </message>
+    <message>
+        <source> (see more in the SIGPACGO error log)…</source>
+        <translation type="vanished">(ver más en el registro de errores de SIGPACGO)…</translation>
+    </message>
+    <message>
+        <source>Failed to copy some of the downloaded files on your device. Check your device storage.</source>
+        <translation type="vanished">Algunos de los archivos descargados no se pudieron copiar en su dispositivo. Compruebe el almacenamiento de su dispositivo.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudScreen</name>
+    <message>
+        <source>SIGPACGOCloud Projects</source>
+        <translation type="vanished">Proyectos de SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>Disconnected from the cloud.</source>
+        <translation type="vanished">Desconectado de la nube.</translation>
+    </message>
+    <message>
+        <source>Connecting to the cloud.</source>
+        <translation type="vanished">Conectando con la nube.</translation>
+    </message>
+    <message>
+        <source>Greetings &lt;strong&gt;%1&lt;/strong&gt;.</source>
+        <translation type="vanished">Saludos &lt;strong&gt;%1&lt;/strong&gt;.</translation>
+    </message>
+    <message>
+        <source>My Projects</source>
+        <translation type="vanished">Mis proyectos</translation>
+    </message>
+    <message>
+        <source>Community</source>
+        <translation type="vanished">Comunidad</translation>
+    </message>
+    <message>
+        <source>(Available locally)</source>
+        <translation type="vanished">(Disponible localmente)</translation>
+    </message>
+    <message>
+        <source>Downloading, %1% fetched…</source>
+        <translation type="vanished">Descargando, %1% recuperado…</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is preparing the latest data just for you. This might take some time, please hold tight…</source>
+        <translation type="vanished">SIGPACGOCloud está preparando los últimos datos para ti. Esto puede llevar algo de tiempo, mantente atento…</translation>
+    </message>
+    <message>
+        <source>Uploading…</source>
+        <translation type="vanished">Subiendo…</translation>
+    </message>
+    <message>
+        <source>Downloading error. </source>
+        <translation type="vanished">Error de descarga.</translation>
+    </message>
+    <message>
+        <source>Uploading error. </source>
+        <translation type="vanished">Error de subida.</translation>
+    </message>
+    <message>
+        <source>Available locally, missing on the cloud</source>
+        <translation type="vanished">Disponible localmente, falta en la nube</translation>
+    </message>
+    <message>
+        <source>Available on the cloud, missing locally</source>
+        <translation type="vanished">Disponible en la nube, falta localmente</translation>
+    </message>
+    <message>
+        <source>Available locally</source>
+        <translation type="vanished">Disponible localmente</translation>
+    </message>
+    <message>
+        <source>Has changes. </source>
+        <translation type="vanished">Tiene cambios.</translation>
+    </message>
+    <message>
+        <source>Downloading project %1</source>
+        <translation type="vanished">Descargando proyecto %1</translation>
+    </message>
+    <message>
+        <source>Download Project</source>
+        <translation type="vanished">Descargar proyecto</translation>
+    </message>
+    <message>
+        <source>Open Project</source>
+        <translation type="vanished">Abrir proyecto</translation>
+    </message>
+    <message>
+        <source>Remove Stored Project</source>
+        <translation type="vanished">Eliminar proyecto guardado</translation>
+    </message>
+    <message>
+        <source>Cancel Project Download</source>
+        <translation type="vanished">Cancelar la descarga del proyecto</translation>
+    </message>
+    <message>
+        <source>Press and hold over a cloud project for a menu of additional actions.</source>
+        <translation type="vanished">Pulsa sobre un proyecto en la nube y mantén para un menú de acciones adicionales.</translation>
+    </message>
+    <message>
+        <source>Refresh projects list</source>
+        <translation type="vanished">Refrescar lista de proyectos</translation>
+    </message>
+    <message>
+        <source>Refreshing projects list</source>
+        <translation type="vanished">Refrescando lista de proyectos</translation>
+    </message>
+    <message>
+        <source>No projects found</source>
+        <translation type="vanished">Proyecto no localizado</translation>
+    </message>
+    <message>
+        <source>Project Actions</source>
+        <translation type="vanished">Acciones del proyecto</translation>
+    </message>
+    <message>
+        <source>, updated data available on the cloud</source>
+        <translation type="vanished">, datos actualizados disponibles en la nube</translation>
+    </message>
+    <message>
+        <source>SIGPACGOCloud is packaging the latest data just for you; this might take some time, please hold tight</source>
+        <translation type="vanished">SIGPACGOCloud está empaquetando los datos más recientes para usted; esto puede llevar algún tiempo, por favor espere.</translation>
+    </message>
+    <message>
+        <source>Downloading, %1% of %2 fetched</source>
+        <translation type="vanished">Descargando, %1% de %2 obtenido</translation>
+    </message>
+    <message>
+        <source>Downloading, %1% fetched</source>
+        <translation type="vanished">Descargando, %1% obtenido</translation>
+    </message>
+    <message>
+        <source>Reaching out to SIGPACGOCloud to download project</source>
+        <translation type="vanished">Conectándose con SIGPACGOCloud para descargar el proyecto</translation>
+    </message>
+    <message>
+        <source>No cloud projects found. To get started, %1read the documentation%2.</source>
+        <translation type="vanished">No se ha encontrado ningún proyecto en la nube. Para comenzar, %1lea la documentación%2.</translation>
+    </message>
+    <message>
+        <source>Search for project</source>
+        <translation type="vanished">Buscar proyecto</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOCloudUtils</name>
+    <message>
+        <source>A server error has occured, please try again.</source>
+        <translation type="vanished">Ha ocurrido un error del servidor, por favor prueba otra vez.</translation>
+    </message>
+    <message>
+        <source>A network error has occured, please try again.</source>
+        <translation type="vanished">Ha ocurrido un error de red, por favor prueba otra vez.</translation>
+    </message>
+    <message>
+        <source>Your account&apos;s available storage is full.</source>
+        <translation type="vanished">El almacenamiento disponible de su cuenta está lleno.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOGuide</name>
+    <message>
+        <source>Finish</source>
+        <translation type="vanished">Terminar</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="vanished">Siguiente</translation>
+    </message>
+    <message>
+        <source>Previous</source>
+        <translation type="vanished">Anterior</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOLocalDataPickerScreen</name>
+    <message>
+        <source>Project Folder</source>
+        <translation type="vanished">Carpeta del proyecto</translation>
+    </message>
+    <message>
+        <source>Local Projects &amp; Datasets</source>
+        <translation type="vanished">Proyectos y conjuntos de datos locales</translation>
+    </message>
+    <message>
+        <source>Folders</source>
+        <translation type="vanished">Carpetas</translation>
+    </message>
+    <message>
+        <source>Projects</source>
+        <translation type="vanished">Proyectos</translation>
+    </message>
+    <message>
+        <source>Datasets</source>
+        <translation type="vanished">Conjuntos de datos</translation>
+    </message>
+    <message>
+        <source>Favorites</source>
+        <translation type="vanished">Favoritos</translation>
+    </message>
+    <message>
+        <source>Project file</source>
+        <translation type="vanished">Archivo de proyecto</translation>
+    </message>
+    <message>
+        <source>Vector dataset</source>
+        <translation type="vanished">Conjunto de datos vectoriales</translation>
+    </message>
+    <message>
+        <source>Raster dataset</source>
+        <translation type="vanished">Conjunto de datos ráster</translation>
+    </message>
+    <message>
+        <source>Send to...</source>
+        <translation type="vanished">Enviar a...</translation>
+    </message>
+    <message>
+        <source>Export to folder...</source>
+        <translation type="vanished">Exportar a carpeta...</translation>
+    </message>
+    <message>
+        <source>Remove dataset</source>
+        <translation type="vanished">Eliminar conjunto de datos</translation>
+    </message>
+    <message>
+        <source>Send compressed folder to...</source>
+        <translation type="vanished">Enviar carpeta comprimida a...</translation>
+    </message>
+    <message>
+        <source>Remove project folder</source>
+        <translation type="vanished">Eliminar carpeta de proyecto</translation>
+    </message>
+    <message>
+        <source>Import project from folder</source>
+        <translation type="vanished">Importar proyecto desde carpeta</translation>
+    </message>
+    <message>
+        <source>Import project from ZIP</source>
+        <translation type="vanished">Importar proyecto desde ZIP</translation>
+    </message>
+    <message>
+        <source>Import dataset(s)</source>
+        <translation type="vanished">Importar conjunto(s) de datos</translation>
+    </message>
+    <message>
+        <source>Storage management help</source>
+        <translation type="vanished">Ayuda sobre gestión de almacenamiento</translation>
+    </message>
+    <message>
+        <source>Import URL</source>
+        <translation type="vanished">Importar URL</translation>
+    </message>
+    <message>
+        <source>Type a URL below to download and import the project or dataset:</source>
+        <translation type="vanished">Escriba una URL a continuación para descargar e importar el proyecto o el conjunto de datos:</translation>
+    </message>
+    <message>
+        <source>Item Actions</source>
+        <translation type="vanished">Acciones de elementos</translation>
+    </message>
+    <message>
+        <source>Import Actions</source>
+        <translation type="vanished">Acciones de importación</translation>
+    </message>
+    <message>
+        <source>Project Actions</source>
+        <translation type="vanished">Acciones del proyecto</translation>
+    </message>
+    <message>
+        <source>Update project from ZIP</source>
+        <translation type="vanished">Actualizar proyecto desde ZIP</translation>
+    </message>
+    <message>
+        <source>‘%1’ is being uploaded to SIGPACGOCloud</source>
+        <translation type="vanished">‘%1’ se está subiendo a SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>Add to favorites</source>
+        <translation type="vanished">Añadir a favoritos</translation>
+    </message>
+    <message>
+        <source>Remove from favorites</source>
+        <translation type="vanished">Eliminar de favoritos</translation>
+    </message>
+    <message>
+        <source>Files</source>
+        <translation type="vanished">Archivos</translation>
+    </message>
+    <message>
+        <source>Push to SIGPACGOCloud</source>
+        <translation type="vanished">Enviar a SIGPACGOCloud</translation>
+    </message>
+    <message>
+        <source>Upload folder to WebDAV server</source>
+        <translation type="vanished">Subir carpeta al servidor WebDAV</translation>
+    </message>
+    <message>
+        <source>Download folder from WebDAV server</source>
+        <translation type="vanished">Descargar carpeta del servidor WebDAV</translation>
+    </message>
+    <message>
+        <source>Remove folder</source>
+        <translation type="vanished">Eliminar carpeta</translation>
+    </message>
+    <message>
+        <source>Import WebDAV folder</source>
+        <translation type="vanished">Importar carpeta WebDAV</translation>
+    </message>
+    <message>
+        <source>Upload project to WebDAV</source>
+        <translation type="vanished">Subir proyecto a WebDAV</translation>
+    </message>
+    <message>
+        <source>Download project from WebDAV</source>
+        <translation type="vanished">Descargar proyecto desde WebDAV</translation>
+    </message>
+    <message>
+        <source>Importing WebDAV folder</source>
+        <translation type="vanished">Importación de carpeta WebDAV</translation>
+    </message>
+    <message>
+        <source>Downloading WebDAV folder</source>
+        <translation type="vanished">Descargando la carpeta WebDAV</translation>
+    </message>
+    <message>
+        <source>Uploading WebDAV folder</source>
+        <translation type="vanished">Subir carpeta WebDAV</translation>
+    </message>
+    <message>
+        <source>WebDAV error: </source>
+        <translation type="vanished">Error de WebDAV:</translation>
+    </message>
+    <message>
+        <source>WebDAV upload</source>
+        <translation type="vanished">Subir WebDAV</translation>
+    </message>
+    <message>
+        <source>WebDAV download</source>
+        <translation type="vanished">Descargar WebDAV</translation>
+    </message>
+    <message>
+        <source>You are about to upload modified content into &lt;b&gt;%1&lt;/b&gt; using user &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;This operation will overwrite data stored remotely, make sure this is what you want to do.</source>
+        <translation type="vanished">Está a punto de cargar contenido modificado en &lt;b&gt;%1&lt;/b&gt; usando el usuario &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Esta operación sobrescribirá los datos almacenados de forma remota, asegúrese de que esto es lo que desea hacer.</translation>
+    </message>
+    <message>
+        <source>You are about to download modified content from &lt;b&gt;%1&lt;/b&gt; using user &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;This operation will overwrite data stored locally, make sure this is what you want to do.</source>
+        <translation type="vanished">Está a punto de descargar contenido modificado de &lt;b&gt;%1&lt;/b&gt; usando el usuario &lt;b&gt;%2&lt;/b&gt;.&lt;br&gt;&lt;br&gt;Esta operación sobrescribirá los datos almacenados localmente, asegúrese de que esto es lo que desea hacer.</translation>
+    </message>
+    <message>
+        <source>Password (leave empty to use remembered)</source>
+        <translation type="vanished">Contraseña (dejar vacío para usar la guardada)</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation type="vanished">Contraseña</translation>
+    </message>
+    <message>
+        <source>Remember password</source>
+        <translation type="vanished">Recordar contraseña</translation>
+    </message>
+    <message>
+        <source>Type the WebDAV details below to import a remote folder:</source>
+        <translation type="vanished">Escriba los detalles de WebDAV a continuación para importar una carpeta remota:</translation>
+    </message>
+    <message>
+        <source>WebDAV server URL</source>
+        <translation type="vanished">URL del servidor WebDAV</translation>
+    </message>
+    <message>
+        <source>Select the remote folder to import:</source>
+        <translation type="vanished">Seleccione la carpeta remota a importar:</translation>
+    </message>
+    <message>
+        <source>Fetching remote folders</source>
+        <translation type="vanished">Obteniendo carpetas remotas</translation>
+    </message>
+    <message>
+        <source>Fetch remote folders</source>
+        <translation type="vanished">Obtener carpetas remotas</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOPositioningService</name>
+    <message>
+        <source>Positioning service running</source>
+        <translation type="vanished">Servicio de posicionamiento en ejecución</translation>
+    </message>
+    <message>
+        <source>Latitude %1 | Longitude %2 | Altitude %3 m | Speed %4 m/s | Direction %5°</source>
+        <translation type="vanished">Latitud %1 | Longitud %2 | Altitud %3 m | Velocidad %4 m/s | Dirección %5°</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOSettings</name>
+    <message>
+        <source>Show scale bar</source>
+        <translation type="vanished">Mostrar barra de escala</translation>
+    </message>
+    <message>
+        <source>Maximized attribute form</source>
+        <translation type="vanished">Formulario de atributos maximizado</translation>
+    </message>
+    <message>
+        <source>Fixed scale navigation</source>
+        <translation type="vanished">Navegación a escala fija</translation>
+    </message>
+    <message>
+        <source>When fixed scale navigation is active, focusing on a search result will pan to the feature. With fixed scale navigation disabled it will pan and zoom to the feature.</source>
+        <translation type="vanished">Los resultados de búsqueda solo se desplazan al objeto sin hacer zoom.</translation>
+    </message>
+    <message>
+        <source>Show digitizing information</source>
+        <translation type="vanished">Mostrar información de digitalización</translation>
+    </message>
+    <message>
+        <source>When switched on, coordinate information, such as latitude and longitude, is overlayed onto the map while digitizing new features or using the measure tool.</source>
+        <translation type="vanished">Muestra coordenadas en el mapa durante la digitalización o medición.</translation>
+    </message>
+    <message>
+        <source>Show bookmarks</source>
+        <translation type="vanished">Mostrar marcadores</translation>
+    </message>
+    <message>
+        <source>When switched on, user&apos;s saved and currently opened project bookmarks will be displayed on the map.</source>
+        <translation type="vanished">Muestra los marcadores guardados y del proyecto en el mapa.</translation>
+    </message>
+    <message>
+        <source>Use native camera</source>
+        <translation type="vanished">Usar cámara nativa</translation>
+    </message>
+    <message>
+        <source>If disabled, SIGPACGO will use a minimalist internal camera instead of the camera app on the device.&lt;br&gt;Tip: Enable this option and install the open camera app to create geo tagged photos.</source>
+        <translation type="vanished">Usa la cámara del dispositivo en lugar de la cámara integrada. Ideal para fotos geoetiquetadas.</translation>
+    </message>
+    <message>
+        <source>Fast editing mode</source>
+        <translation type="vanished">Modo de edición rápida</translation>
+    </message>
+    <message>
+        <source>If enabled, the feature is stored after having a valid geometry and the constraints are fulfilled and atributes are commited immediately.</source>
+        <translation type="vanished">Guarda automáticamente los objetos cuando la geometría es válida y se cumplen las restricciones.</translation>
+    </message>
+    <message>
+        <source>Dim screen when idling</source>
+        <translation type="vanished">Atenuar pantalla si no hay actividad</translation>
+    </message>
+    <message>
+        <source>If enabled, the screen brightness will be dimmed after 20 seconds of inactivity to preserve battery.</source>
+        <translation type="vanished">Si se habilita, el brillo de la pantalla se atenuará después de 20 segundos de inactividad para ahorrar batería.</translation>
+    </message>
+    <message>
+        <source>Consider mouse as a touchscreen device</source>
+        <translation type="vanished">Considerar el ratón como un dispositivo de pantalla táctil</translation>
+    </message>
+    <message>
+        <source>If disabled, the mouse will act as a stylus pen.</source>
+        <translation type="vanished">Si está deshabilitado, el ratón actuará como un lápiz óptico.</translation>
+    </message>
+    <message>
+        <source>Send anonymized metrics</source>
+        <translation type="vanished">Enviar métricas anonimizadas</translation>
+    </message>
+    <message>
+        <source>If enabled, anonymized metrics will be collected and sent to help improve SIGPACGO for everyone.</source>
+        <translation type="vanished">Si se activa, se recopilarán métricas anonimizadas y se enviarán para ayudar a mejorar SIGPACGO para todo el mundo.</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation type="vanished">General</translation>
+    </message>
+    <message>
+        <source>Positioning</source>
+        <translation type="vanished">Posicionamiento</translation>
+    </message>
+    <message>
+        <source>Variables</source>
+        <translation type="vanished">Variables</translation>
+    </message>
+    <message>
+        <source>Customize search bar</source>
+        <translation type="vanished">Personalizar barra de búsqueda</translation>
+    </message>
+    <message>
+        <source>User interface language:</source>
+        <translation type="vanished">Idioma de la interfaz de usuario:</translation>
+    </message>
+    <message>
+        <source>To apply the selected user interface language, SIGPACGO needs to completely shutdown and restart.</source>
+        <translation type="vanished">Reinicia SIGPAC-Go para aplicar el cambio de idioma.</translation>
+    </message>
+    <message>
+        <source>system</source>
+        <translation type="vanished">sistema</translation>
+    </message>
+    <message>
+        <source>Found a missing or incomplete language? %1Join the translator community.%2</source>
+        <translation type="vanished">¿Falta un idioma o está incompleto? %1Únase a la comunidad de traductores.%2</translation>
+    </message>
+    <message>
+        <source>Positioning device in use:</source>
+        <translation type="vanished">Dispositivo de posicionamiento en uso:</translation>
+    </message>
+    <message>
+        <source>Scanning for paired devices</source>
+        <translation type="vanished">Buscando dispositivos emparejados</translation>
+    </message>
+    <message>
+        <source>Scanning failed: %1</source>
+        <translation type="vanished">Falló la búsqueda: %1</translation>
+    </message>
+    <message>
+        <source>Scanning done</source>
+        <translation type="vanished">Búsqueda completada</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n device(s) found</source>
+        <translation type="vanished">
+            <numerusform>Un dispositivo encontrado</numerusform>
+            <numerusform>%n dispositivos encontrados</numerusform>
+        </translation>
+    </message>
+    <message>
+        <source>Scanning canceled</source>
+        <translation type="vanished">Búsqueda cancelada</translation>
+    </message>
+    <message>
+        <source>Scan</source>
+        <translation type="vanished">Buscar</translation>
+    </message>
+    <message>
+        <source>Make a full service discovery</source>
+        <translation type="vanished">Hacer un descubrimiento de servicio completo</translation>
+    </message>
+    <message>
+        <source>A full device scan can take longer. You really want to do it?
+Cancel to make a minimal device scan instead.</source>
+        <translation type="vanished">Una búsqueda completa de dispositivos puede llevar más tiempo. ¿Realmente quiere hacerla?
+Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translation>
+    </message>
+    <message>
+        <source>Connected to %1</source>
+        <translation type="vanished">Conectado a %1</translation>
+    </message>
+    <message>
+        <source>Connect  to %1</source>
+        <translation type="vanished">Conectar a %1</translation>
+    </message>
+    <message>
+        <source>Connecting to %1</source>
+        <translation type="vanished">Conectando a %1</translation>
+    </message>
+    <message>
+        <source>Use orthometric altitude from device</source>
+        <translation type="vanished">Usar altitud ortométrica del dispositivo</translation>
+    </message>
+    <message>
+        <source>Show position information</source>
+        <translation type="vanished">Mostrar información de la posición</translation>
+    </message>
+    <message>
+        <source>Activate accuracy indicator</source>
+        <translation type="vanished">Activar indicador de precisión</translation>
+    </message>
+    <message>
+        <source>Bad accuracy below [m]</source>
+        <translation type="vanished">Mala precisión por debajo [m]</translation>
+    </message>
+    <message>
+        <source>Excellent accuracy above [m]</source>
+        <translation type="vanished">Precisión excelente por encima [m]</translation>
+    </message>
+    <message>
+        <source>Enable accuracy requirement</source>
+        <translation type="vanished">Activar requerimiento de precisión</translation>
+    </message>
+    <message>
+        <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is below bad, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of excellent, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value above the bad threshold.</source>
+        <translation type="vanished">Cuando el indicador de precisión está activado, se adjunta una marca al botón de localización y se colorea en &lt;span %1&gt;rojo&lt;/span&gt; si la precisión es baja, &lt;span %2&gt;amarillo&lt;/span&gt; si es intermedia o &lt;span %3&gt;verde&lt;/span&gt;.&lt;br&gt;&lt;br&gt;Además, se puede activar un modo de restricción de precisión, que restringe la adición de vértices cuando está bloqueado al cursor de coordenadas a las posiciones con una precisión por encima del umbral malo.</translation>
+    </message>
+    <message>
+        <source>Enable averaged positioning requirement</source>
+        <translation type="vanished">Habilitar requerimiento de posicionamiento promediado</translation>
+    </message>
+    <message>
+        <source>Minimum number of positions collected</source>
+        <translation type="vanished">Número mínimo de posiciones tomadas</translation>
+    </message>
+    <message>
+        <source>Automatically end collection when minimum number is met</source>
+        <translation type="vanished">Terminar automáticamente la colección cuando se alcanza el número mínimo</translation>
+    </message>
+    <message>
+        <source>When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.</source>
+        <translation type="vanished">Cuando se habilita, la digitalización de vértices con un cursor bloqueado a la posición solo aceptará una posición promediada a partir de un número mínimo de posiciones recopiladas. La digitalización usando posiciones promediadas se hace presionando y manteniendo el botón añadir vértice, que tomará posiciones hasta que se deje de pulsar. La configuración de los requerimientos de precisión se respeta cuando está habilitada.</translation>
+    </message>
+    <message>
+        <source>Antenna height compensation</source>
+        <translation type="vanished">Compensación de altura de antena</translation>
+    </message>
+    <message>
+        <source>Antenna height [m]</source>
+        <translation type="vanished">Altura de antena [m]</translation>
+    </message>
+    <message>
+        <source>Z values which are recorded from the positioning device will be corrected by this value. If a value of 1.6 is entered, this will result in a correction of -1.6 for each recorded value.</source>
+        <translation type="vanished">Los valores Z tomados por un dispositivo de posicionamiento se corregirán con este valor. Si se introduce un valor de 1,6 el resultado será una corrección de -1,6 para cada valor registrado. </translation>
+    </message>
+    <message>
+        <source>Skip altitude correction</source>
+        <translation type="vanished">Omitir corrección de la altitud</translation>
+    </message>
+    <message>
+        <source>Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.</source>
+        <translation type="vanished">Utilizar la altitud según lo informado por el dispositivo de posicionamiento. Omitir cualquier corrección de altitud que pueda estar implicada por la transformación del sistema de coordenadas.</translation>
+    </message>
+    <message>
+        <source>Vertical grid shift in use:</source>
+        <translation type="vanished">Cambio de cuadrícula vertical en uso:</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="vanished">Ninguna</translation>
+    </message>
+    <message>
+        <source>Vertical grid shift is used to increase the altitude accuracy.</source>
+        <translation type="vanished">El cambio de cuadrícula vertical se utiliza para aumentar la precisión de la altitud.</translation>
+    </message>
+    <message>
+        <source>SIGPACGO Settings</source>
+        <translation type="vanished">Configuración de SIGPACGO</translation>
+    </message>
+    <message>
+        <source>Time of inactivity in seconds before the screen brightness get be dimmed to preserve battery.</source>
+        <translation type="vanished">Segundos de inactividad antes de atenuar la pantalla para ahorrar batería.</translation>
+    </message>
+    <message>
+        <source>Measure (M) value attached to vertices:</source>
+        <translation type="vanished">Valor de medida (M) adjunto a los vértices:</translation>
+    </message>
+    <message>
+        <source>Timestamp (milliseconds since epoch)</source>
+        <translation type="vanished">Marca de tiempo (milisegundos desde la época)</translation>
+    </message>
+    <message>
+        <source>Ground speed</source>
+        <translation type="vanished">Velocidad sobre el terreno</translation>
+    </message>
+    <message>
+        <source>Bearing</source>
+        <translation type="vanished">Rumbo</translation>
+    </message>
+    <message>
+        <source>Horizontal accuracy</source>
+        <translation type="vanished">Precisión horizontal</translation>
+    </message>
+    <message>
+        <source>Vertical accuracy</source>
+        <translation type="vanished">Precisión vertical</translation>
+    </message>
+    <message>
+        <source>PDOP</source>
+        <translation type="vanished">PDOP</translation>
+    </message>
+    <message>
+        <source>HDOP</source>
+        <translation type="vanished">HDOP</translation>
+    </message>
+    <message>
+        <source>VDOP</source>
+        <translation type="vanished">VDOP</translation>
+    </message>
+    <message>
+        <source>When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.</source>
+        <translation type="vanished">Al digitalizar las entidades con el cursor de coordenadas bloqueado en la posición actual, el tipo de medición seleccionado arriba se agregará a la geometría siempre que tenga una dimensión M.</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="vanished">Agregar</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="vanished">Editar</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="vanished">Eliminar</translation>
+    </message>
+    <message>
+        <source>Connect to %1</source>
+        <translation type="vanished">Conectar con %1</translation>
+    </message>
+    <message>
+        <source>Follow system appearance</source>
+        <translation type="vanished">Seguir la apariencia del sistema</translation>
+    </message>
+    <message>
+        <source>Light theme</source>
+        <translation type="vanished">Claro</translation>
+    </message>
+    <message>
+        <source>Dark theme</source>
+        <translation type="vanished">Oscuro</translation>
+    </message>
+    <message>
+        <source>Tiny</source>
+        <translation type="vanished">Pequeño</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="vanished">Normal</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="vanished">Grande</translation>
+    </message>
+    <message>
+        <source>Extra-large</source>
+        <translation type="vanished">Enorme</translation>
+    </message>
+    <message>
+        <source>Log NMEA sentences from device to file</source>
+        <translation type="vanished">Registre sentencias NMEA del dispositivo al archivo</translation>
+    </message>
+    <message>
+        <source>Map canvas rendering quality:</source>
+        <translation type="vanished">Calidad de renderizado del lienzo del mapa:</translation>
+    </message>
+    <message>
+        <source>Best quality</source>
+        <translation type="vanished">La mejor calidad</translation>
+    </message>
+    <message>
+        <source>Lower quality</source>
+        <translation type="vanished">Calidad más baja</translation>
+    </message>
+    <message>
+        <source>Lowest quality</source>
+        <translation type="vanished">La calidad más baja</translation>
+    </message>
+    <message>
+        <source>A lower quality trades rendering precision in favor of lower memory usage and rendering time.</source>
+        <translation type="vanished">Menor calidad reduce el uso de memoria y mejora el rendimiento.</translation>
+    </message>
+    <message>
+        <source>This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.</source>
+        <translation type="vanished">Este valor corregirá los valores Z registrados por el dispositivo de posicionamiento. Si se introduce un valor de 1,6, SIGPACGO restará automáticamente 1,6 a cada valor registrado. Asegúrese de insertar la altura efectiva de la antena, esto es, longitud de mástil + desplazamiento del centro de fase de la antena.</translation>
+    </message>
+    <message>
+        <source>Orthometric from device</source>
+        <translation type="vanished">Ortométrica desde el dispositivo</translation>
+    </message>
+    <message>
+        <source>Use volume keys to digitize</source>
+        <translation type="vanished">Utilizar teclas de volumen para digitalizar</translation>
+    </message>
+    <message>
+        <source>If enabled, pressing the device&apos;s volume up key will add a vertex while pressing volume down key will remove the last entered vertex during digitizing sessions.</source>
+        <translation type="vanished">Subir volumen añade vértice, bajar volumen elimina el último vértice.</translation>
+    </message>
+    <message>
+        <source>Allow finger tap on canvas to add vertices</source>
+        <translation type="vanished">Permitir toques con los dedos en el lienzo para añadir vértices</translation>
+    </message>
+    <message>
+        <source>When enabled, tapping on the map canvas with a finger will add a vertex at the tapped location.</source>
+        <translation type="vanished">Toca el mapa para añadir un vértice.</translation>
+    </message>
+    <message>
+        <source>When enabled, the mouse will act as if it was a finger. When disabled, the mouse will match the stylus behavior.</source>
+        <translation type="vanished">El ratón actúa como un dedo. Cuando está desactivado, actúa como un lápiz.</translation>
+    </message>
+    <message>
+        <source>Map Canvas</source>
+        <translation type="vanished">Lienzo del mapa</translation>
+    </message>
+    <message>
+        <source>Digitizing &amp; Editing</source>
+        <translation type="vanished">Digitalización y edición</translation>
+    </message>
+    <message>
+        <source>User Interface</source>
+        <translation type="vanished">Interfaz de usuario</translation>
+    </message>
+    <message>
+        <source>Appearance:</source>
+        <translation type="vanished">Apariencia:</translation>
+    </message>
+    <message>
+        <source>Font size:</source>
+        <translation type="vanished">Tamaño de letra:</translation>
+    </message>
+    <message>
+        <source>Language:</source>
+        <translation type="vanished">Idioma:</translation>
+    </message>
+    <message>
+        <source>Advanced</source>
+        <translation type="vanished">Avanzado</translation>
+    </message>
+    <message>
+        <source>Manage plugins</source>
+        <translation type="vanished">Administrar complementos</translation>
+    </message>
+    <message>
+        <source>Enable map rotation</source>
+        <translation type="vanished">Habilitar rotación del mapa</translation>
+    </message>
+    <message>
+        <source>When switched on, the map can be rotated by the user.</source>
+        <translation type="vanished">Permite rotar el mapa.</translation>
+    </message>
+    <message>
+        <source>Bad accuracy threshold [m]</source>
+        <translation type="vanished">Umbral de precisión malo [m]</translation>
+    </message>
+    <message>
+        <source>Excellent accuracy threshold [m]</source>
+        <translation type="vanished">Umbral de precisión excelente [m]</translation>
+    </message>
+    <message>
+        <source>Enforce accuracy requirement</source>
+        <translation type="vanished">Forzar requerimiento de precisión</translation>
+    </message>
+    <message>
+        <source>When the accuracy indicator is enabled, a badge is attached to the location button and colored &lt;span %1&gt;red&lt;/span&gt; if the accuracy value is worse than &lt;i&gt;bad&lt;/i&gt;, &lt;span %2&gt;yellow&lt;/span&gt; if it falls short of &lt;i&gt;excellent&lt;/i&gt;, or &lt;span %3&gt;green&lt;/span&gt;.&lt;br&gt;&lt;br&gt;In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value worse than the bad threshold.</source>
+        <translation type="vanished">Cuando el indicador de precisión está activado, se adjunta una marca al botón de localización y se colorea en &lt;span %1&gt;rojo&lt;/span&gt;  si el valor de precisión es peor que &lt;i&gt;malo&lt;/i&gt;, &lt;span %2&gt;amarillo&lt;/span&gt;si no llega a &lt;i&gt;excelente&lt;/i&gt;, o &lt;span %3&gt;verde&lt;/span&gt;.&lt;br&gt;&lt;br&gt;Además, se puede activar un modo de restricción de precisión, que restringe la adición de vértices cuando está bloqueado a las coordenadas del cursor a posiciones con una precisión por encima del umbral malo.</translation>
+    </message>
+</context>
+<context>
+    <name>SIGPACGOSketcher</name>
+    <message>
+        <source>Select drawing template</source>
+        <translation type="vanished">Seleccionar plantilla de dibujo</translation>
+    </message>
+</context>
+<context>
     <name>ScaleBarMeasurement</name>
     <message>
         <source>Unknown</source>
@@ -4024,11 +5428,11 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>IP address</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4319,81 +5723,6 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
 </context>
 <context>
-    <name>TrackingSession</name>
-    <message>
-        <source>Track on layer %1 started</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Tracker Settings</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Activate time constraint</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Minimum time [sec]</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Activate distance constraint</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Minimum distance [%1]</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Measure (M) value attached to vertices:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Elapsed time (seconds since start of tracking)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Timestamp (milliseconds since epoch)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Ground speed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Bearing</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Horizontal accuracy</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Vertical accuracy</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>PDOP</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>HDOP</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>VDOP</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>To active the measurement functionality, make sure the vector layer&apos;s geometry type used for the tracking session has an M dimension.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Start tracking</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>UdpDeviceChooser</name>
     <message>
         <source>Address:</source>
@@ -4405,11 +5734,11 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Address</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4449,13 +5778,6 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     <message>
         <source>The connection was refused by the remote host</source>
         <translation>La conexión fue rechazada por el host remoto</translation>
-    </message>
-</context>
-<context>
-    <name>ValueMap</name>
-    <message>
-        <source>Search…</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4510,15 +5832,15 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     <name>WelcomeScreen</name>
     <message>
         <source>We&apos;re sorry to hear that. Click on the button below to comment or seek support.</source>
-        <translation>Sentimos oír eso. Pulse el botón de abajo para comentar o buscar ayuda.</translation>
+        <translation type="vanished">Sentimos oír eso. Pulse el botón de abajo para comentar o buscar ayuda.</translation>
     </message>
     <message>
         <source>Reach out</source>
-        <translation>LLegar</translation>
+        <translation type="vanished">LLegar</translation>
     </message>
     <message>
         <source>Hey there, how do you like your experience with SIGPACGO so far?</source>
-        <translation>¿Qué tal su experiencia con SIGPACGO hasta ahora?</translation>
+        <translation type="vanished">¿Qué tal su experiencia con SIGPACGO hasta ahora?</translation>
     </message>
     <message>
         <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a comment on the store.</source>
@@ -4526,27 +5848,27 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Rate us</source>
-        <translation>Valórenos</translation>
+        <translation type="vanished">Valórenos</translation>
     </message>
     <message>
         <source>Anonymized metrics collection has been disabled. You can re-enable through the settings panel.</source>
-        <translation>Se ha deshabilitado la recopilación de métricas anonimizadas. Puede rehabilitarlas en el panel de configuración.</translation>
+        <translation type="vanished">Se ha deshabilitado la recopilación de métricas anonimizadas. Puede rehabilitarlas en el panel de configuración.</translation>
     </message>
     <message>
         <source>To improve stability for everyone, SIGPACGO collects and sends anonymized metrics.</source>
-        <translation>Para mejorar la estabilidad para todo el mundo, SIGPACGO recopila y envía métricas anonimizadas.</translation>
+        <translation type="vanished">Para mejorar la estabilidad para todo el mundo, SIGPACGO recopila y envía métricas anonimizadas.</translation>
     </message>
     <message>
         <source>I agree</source>
-        <translation>De acuerdo</translation>
+        <translation type="vanished">De acuerdo</translation>
     </message>
     <message>
         <source>I prefer not</source>
-        <translation>Prefiero que no</translation>
+        <translation type="vanished">Prefiero que no</translation>
     </message>
     <message>
         <source>SIGPACGOCloud projects</source>
-        <translation>Proyectos de SIGPACGOCloud</translation>
+        <translation type="vanished">Proyectos de SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Open local file</source>
@@ -4578,7 +5900,7 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Welcome back to SIGPACGO.</source>
-        <translation>Bienvenido de nuevo a SIGPACGO.</translation>
+        <translation type="vanished">Bienvenido de nuevo a SIGPACGO.</translation>
     </message>
     <message>
         <source>Default project</source>
@@ -4610,15 +5932,39 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Welcome to SIGPACGO. First time using this application? Try the sample projects listed below.</source>
-        <translation>Bienvenido a SIGPACGO. ¿Primera vez que usa la aplicación? Pruebe los proyectos de muestra listados debajo.</translation>
+        <translation type="vanished">Bienvenido a SIGPACGO. ¿Primera vez que usa la aplicación? Pruebe los proyectos de muestra listados debajo.</translation>
     </message>
     <message>
         <source>That&apos;s great! We&apos;d love for you to click on the button below and leave a review.</source>
-        <translation>¡Eso es genial! Nos encantaría que pulsara el botón de abajo y dejara un comentario.</translation>
+        <translation type="vanished">¡Eso es genial! Nos encantaría que pulsara el botón de abajo y dejara un comentario.</translation>
     </message>
     <message>
         <source>Return to map</source>
         <translation>Regresar al mapa</translation>
+    </message>
+    <message>
+        <source>SIGPAC-Go Base Map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Official base map for field work</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No recent projects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Welcome to SIGOPAC-Go</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SIGPAC-Go SIG para el campo</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5086,11 +6432,11 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Changes failed to reach SIGPACGOCloud: %1</source>
-        <translation>Los cambios no se pudieron subir a SIGPACGOCloud: %1</translation>
+        <translation type="vanished">Los cambios no se pudieron subir a SIGPACGOCloud: %1</translation>
     </message>
     <message>
         <source>Changes successfully pushed to SIGPACGOCloud</source>
-        <translation>Cambios subidos correctamente a SIGPACGOCloud</translation>
+        <translation type="vanished">Cambios subidos correctamente a SIGPACGOCloud</translation>
     </message>
     <message>
         <source>Press back again to close project and app</source>
@@ -5169,10 +6515,6 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Ningún sensor disponible</translation>
     </message>
     <message>
-        <source>Project Folder</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Select sensor below</source>
         <translation>Seleccione el sensor a continuación</translation>
     </message>
@@ -5230,19 +6572,19 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
     </message>
     <message>
         <source>Position has trespassed into ‘%1’</source>
-        <translation>La posición ha traspasado a &apos;%1&apos;</translation>
+        <translation type="vanished">La posición ha traspasado a &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Position outside areas after leaving ‘%1’</source>
-        <translation>Posición fuera de áreas después de dejar &apos;%1&apos;</translation>
+        <translation type="vanished">Posición fuera de áreas después de dejar &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Position entered into ‘%1’</source>
-        <translation>La posición entró en &apos;%1&apos;</translation>
+        <translation type="vanished">La posición entró en &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Position left from ‘%1’</source>
-        <translation>Posición abandonada desde &apos;%1&apos;</translation>
+        <translation type="vanished">Posición abandonada desde &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Enable Map Rotation</source>
@@ -5301,36 +6643,12 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Finalizar o descartar el objeto digitalizado antes de cambiar al modo exploración</translation>
     </message>
     <message>
-        <source>Variables</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Undo</source>
         <translation>Deshacer</translation>
     </message>
     <message>
         <source>Redo</source>
         <translation>Rehacer</translation>
-    </message>
-    <message>
-        <source>Replaying collected positions, hold on</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Snapping to every</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>%1°</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Snapping tolerance</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Narrow</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Normal</source>
@@ -5341,8 +6659,152 @@ Cancelar para hacer una búsqueda mínima de dispositivos en su lugar.</translat
         <translation>Grande</translation>
     </message>
     <message>
+        <source>Replaying collected positions, hold on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position has trespassed into &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position outside areas after leaving &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position entered into &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position left from &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapping to every</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snapping tolerance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Narrow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Snapping tolerance set to %1</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snap requires positioning to be active and returning a valid position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snap requires the active vector layer to be a point geometry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Snap requires the active vector layer to contain a field named &apos;photo&apos; or &apos;picture&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera for attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Take photos</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter Coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Supported formats:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not parse coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Marked Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening location at </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening maps at current position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening maps at last used coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual coordinate input mode enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatic position mode enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual mode: Click to enter coordinates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto mode: Uses current position. Long press to switch to manual input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photo Gallery</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Sample Projects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changes failed to reach QFieldCloud: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Changes successfully pushed to QFieldCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photo saved to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening photo gallery</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sample projects folder created</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

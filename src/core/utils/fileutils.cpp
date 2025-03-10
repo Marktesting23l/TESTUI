@@ -266,13 +266,20 @@ void FileUtils::addImageMetadata( const QString &imagePath, const GnssPositionIn
     metadata["Exif.GPSInfo.GPSSpeedRef"] = "K";
   }
 
-  metadata["Exif.GPSInfo.GPSDateStamp"] = positionInformation.utcDateTime().date();
+  // Format date as dd-MM-yyyy for better readability
+  QDate date = positionInformation.utcDateTime().date();
+  QString formattedDate = QString("%1-%2-%3")
+                          .arg(date.day(), 2, 10, QChar('0'))
+                          .arg(date.month(), 2, 10, QChar('0'))
+                          .arg(date.year());
+  
+  metadata["Exif.GPSInfo.GPSDateStamp"] = formattedDate;
   metadata["Exif.GPSInfo.GPSTimeStamp"] = positionInformation.utcDateTime().time();
 
   metadata["Exif.GPSInfo.GPSSatellites"] = QString::number( positionInformation.satellitesUsed() ).rightJustified( 2, '0' );
 
-  metadata["Exif.Image.Make"] = QStringLiteral( "QField" );
-  metadata["Xmp.tiff.Make"] = QStringLiteral( "QField" );
+  metadata["Exif.Image.Make"] = QStringLiteral( "SIGPACGO" );
+  metadata["Xmp.tiff.Make"] = QStringLiteral( "SIGPACGO" );
 
   for ( const QString key : metadata.keys() )
   {
@@ -327,29 +334,29 @@ void FileUtils::addImageStamp( const QString &imagePath, const QString &text )
     
     // Add padding
     textWidth += 40;  // 20px padding on each side
-    textHeight += 30; // 15px padding on top and bottom
+    textHeight += 40; // 20px padding on top and bottom
     
     // Create background rectangle
     int rectX = 20;
     int rectY = img.height() - textHeight - 20;
     
-    // Draw semi-transparent background
-    painter.setBrush(QColor(0, 0, 0, 180));
+    // Draw semi-transparent background with rounded corners
+    painter.setBrush(QColor(0, 0, 0, 200));
     painter.setPen(Qt::NoPen);
-    painter.drawRoundedRect(rectX, rectY, textWidth, textHeight, 10, 10);
+    painter.drawRoundedRect(rectX, rectY, textWidth, textHeight, 15, 15);
     
     // Add accent bar on the left
-    painter.setBrush(QColor(0, 120, 215)); // Blue accent color
-    painter.drawRoundedRect(rectX, rectY, 6, textHeight, 3, 3);
+    painter.setBrush(QColor(0, 150, 255)); // Brighter blue accent color
+    painter.drawRoundedRect(rectX, rectY, 8, textHeight, 4, 4);
     
     // Draw text
-    int currentY = rectY + 15; // Start with padding from top
+    int currentY = rectY + 20; // Start with padding from top
     
     for (int i = 0; i < lines.size(); ++i) {
       // Use title font for first and last line (date and SIGPACGO line)
       if (i == 0 || i == lines.size() - 1) {
         painter.setFont(titleFont);
-        painter.setPen(i == lines.size() - 1 ? QColor(0, 180, 255) : Qt::white); // Blue for SIGPACGO line
+        painter.setPen(i == lines.size() - 1 ? QColor(0, 200, 255) : Qt::white); // Brighter blue for SIGPACGO line
       } else {
         painter.setFont(regularFont);
         painter.setPen(Qt::white);
@@ -360,15 +367,15 @@ void FileUtils::addImageStamp( const QString &imagePath, const QString &text )
       painter.drawText(rectX + 20 + 1, currentY + 1, lines[i]);
       
       // Draw actual text
-      painter.setPen(i == lines.size() - 1 ? QColor(0, 180, 255) : Qt::white);
+      painter.setPen(i == lines.size() - 1 ? QColor(0, 200, 255) : Qt::white);
       painter.drawText(rectX + 20, currentY, lines[i]);
       
-      // Move to next line
+      // Move to next line with additional spacing
       currentY += (i == 0 || i == lines.size() - 1) ? 
-                  titleMetrics.height() : regularMetrics.height();
+                  titleMetrics.height() + 2 : regularMetrics.height() + 2;
     }
 
-    img.save( imagePath, nullptr, 90 );
+    img.save( imagePath, nullptr, 95 ); // Higher quality
 
     // Restore metadata
     for ( const QString &key : metadata.keys() )
