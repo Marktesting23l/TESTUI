@@ -658,6 +658,12 @@ EditorWidgetBase {
       var filepath = getResourceFilePath();
       // Pictures taken by cameras will always be JPG
       filepath = filepath.replace('{extension}', 'JPG');
+      
+      // Create DCIM directory if it doesn't exist
+      platformUtilities.createDir(qgisProject.homePath, 'DCIM');
+      
+      // For snap camera, we don't need to save to SIGPACGO_Photos folder
+      // Just use the DCIM folder directly for temporary storage
       __resourceSource = platformUtilities.getCameraPicture(qgisProject.homePath + '/', filepath, FileUtils.fileSuffix(filepath), this);
     } else {
       platformUtilities.createDir(qgisProject.homePath, 'DCIM');

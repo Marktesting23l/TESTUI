@@ -90,12 +90,12 @@ QtObject {
 
   // GPS position colors with better state differentiation
   property color positionColor: "#FF8C00" // Dark Orange to match theme
-  property color positionColorActive: "#FFA500" // Brighter orange for active state
-  property color positionColorInactive: "#8D6E63" // Brown-gray for inactive state
+  property color positionColorActive: "#8020db" // Brighter orange for active state
+  property color positionColorInactive: "#b88d7d" // Brown-gray for inactive state
   property color positionColorSemiOpaque: "#99FF8C00"
   property color positionBackgroundColor: "#33FF8C00"
   property color positionBackgroundActiveColor: "#66FFA500" // More opaque for active state
-  property color darkPositionColor: "#E65100" // Darker orange
+  property color darkPositionColor: "#8e5d05bc" // Darker orange
   property color darkPositionColorSemiOpaque: "#88E65100"
 
   property color accuracyBad: "#c0392b"

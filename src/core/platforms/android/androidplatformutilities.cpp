@@ -99,23 +99,31 @@ void AndroidPlatformUtilities::afterUpdate()
       auto activity = qtAndroidContext();
       if ( activity.isValid() )
       {
-        QJniObject messageJni = QJniObject::fromString( QObject::tr( "Please wait while SIGPACGO installation finalizes." ) );
-        activity.callMethod<void>( "showBlockingProgressDialog", "(Ljava/lang/String;)V", messageJni.object<jstring>() );
+        activity.callMethod<void>( "copyAssets" );
       }
     } );
   }
 
-  FileUtils::copyRecursively( QStringLiteral( "assets:/" ), mSystemGenericDataLocation );
-
-  if ( mActivity.isValid() )
-  {
-    runOnAndroidMainThread( [] {
-      auto activity = qtAndroidContext();
-      if ( activity.isValid() )
-      {
-        activity.callMethod<void>( "dismissBlockingProgressDialog" );
-      }
-    } );
+  // Create necessary directories
+  PlatformUtilities::afterUpdate();
+  
+  // Ensure sample_projects directory exists and is populated
+  const QString sampleProjectsDir = systemLocalDataLocation("sample_projects");
+  QDir sampleDir(sampleProjectsDir);
+  if (!sampleDir.exists()) {
+    sampleDir.mkpath(".");
+    
+    // Force copy sample projects even if not after an update
+    const bool success = FileUtils::copyRecursively(
+      systemSharedDataLocation() + QLatin1String("/sigpacgo/sample_projects"), 
+      sampleProjectsDir
+    );
+    
+    if (!success) {
+      qWarning() << "Failed to copy sample projects to" << sampleProjectsDir;
+    } else {
+      qDebug() << "Successfully copied sample projects to" << sampleProjectsDir;
+    }
   }
 }
 

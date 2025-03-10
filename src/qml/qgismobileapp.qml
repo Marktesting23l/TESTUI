@@ -2123,7 +2123,7 @@ ApplicationWindow {
         id: gnssLockButtonToolbar
         width: 40
         height: 40
-        visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
+        visible: true // Always visible regardless of GPS status
         round: true
         checkable: true
         checked: positioningSettings.positioningCoordinateLock
@@ -2443,15 +2443,15 @@ ApplicationWindow {
             
             if (Qt.platform.os === "android") {
               // Use geo: URI scheme for Android which is more reliable
-              // Format: geo:latitude,longitude?q=latitude,longitude(Label)
-              // The q parameter forces a search for the exact coordinates
-              mapsUrl = "geo:" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
-                        "?q=" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
-                        "(" + qsTr("Marked Location") + ")";
+              // Format: geo:0,0?q=latitude,longitude(Label)
+              // Starting with geo:0,0 and using only the q parameter forces Google Maps to search for the coordinates
+              // rather than trying to use current location as a starting point
+              mapsUrl = "geo:0,0?q=" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
+                        "(" + qsTr("Marked Location") + ")&z=15";
             } else {
               // For other platforms, use Google Maps URL with additional parameters
-              // Adding z (zoom level) and t (timestamp) to prevent caching
-              mapsUrl = "https://www.google.com/maps?q=" + 
+              // Adding z (zoom level), t (timestamp) and forcing search mode
+              mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + 
                         coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
                         "&z=15&t=" + timestamp;
             }
@@ -2551,7 +2551,7 @@ ApplicationWindow {
     
           QfToolButton {
             id: gnssLockButton
-            visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
+            visible: true // Always visible regardless of GPS status
             round: true
             checkable: true
             checked: positioningSettings.positioningCoordinateLock
@@ -3305,6 +3305,21 @@ ApplicationWindow {
       onTriggered: {
         dashBoard.close();
         openPhotoGallery();
+        highlighted = false;
+      }
+    }
+
+    MenuItem {
+      text: qsTr("Create Sample Projects")
+
+      font: Theme.defaultFont
+      icon.source: Theme.getThemeVectorIcon("ic_folder_white_24dp")
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+
+      onTriggered: {
+        dashBoard.close();
+        ensureSampleProjects();
         highlighted = false;
       }
     }
@@ -5038,7 +5053,7 @@ ApplicationWindow {
     
         onFinished: (path) => {
           close()
-          saveStandalonePhoto(path)
+          savePhoto(path)
         }
     
         onCanceled: {
@@ -5052,11 +5067,11 @@ ApplicationWindow {
     }
   }
 
-  function saveStandalonePhoto(path) {
-    // Create folder path based on settings
+  function savePhoto(path) {
+    // Get current date for folder structure
     let today = new Date()
-    let dateFolder = today.getFullYear().toString() + 
-                    (today.getMonth() + 1).toString().padStart(2, '0') + 
+    let dateFolder = today.getFullYear().toString() +
+                    (today.getMonth() + 1).toString().padStart(2, '0') +
                     today.getDate().toString().padStart(2, '0')
     
     // Use custom folder name if set in camera settings, otherwise use date
@@ -5070,7 +5085,12 @@ ApplicationWindow {
                     'SIGPACGO_Photos/' + dateFolder
     
     // Create the folder if it doesn't exist
-    platformUtilities.createDir(qgisProject.homePath, folderPath)
+    platformUtilities.createDir(qgisProject.homePath, 'SIGPACGO_Photos')
+    if (folderName) {
+      platformUtilities.createDir(qgisProject.homePath + '/SIGPACGO_Photos', folderName)
+    } else {
+      platformUtilities.createDir(qgisProject.homePath + '/SIGPACGO_Photos', dateFolder)
+    }
     
     // Generate a unique filename with timestamp
     let timestamp = today.getHours().toString().padStart(2, '0') +
@@ -5114,6 +5134,15 @@ ApplicationWindow {
     
     // Display a toast
     displayToast(qsTr("Opening photo gallery"))
+  }
+  
+  // Function to ensure sample projects are available
+  function ensureSampleProjects() {
+    // Force copy sample projects
+    platformUtilities.copySampleProjects()
+    
+    // Display a toast
+    displayToast(qsTr("Sample projects folder created"))
   }
 }
 
