@@ -212,47 +212,91 @@ public class QFieldActivity extends QtActivity {
         Log.i("SIGPACGO", "Copying assets to application directory");
         try {
             AssetManager assetManager = getAssets();
-            String[] files = assetManager.list("sigpacgo");
-            if (files != null && files.length > 0) {
-                String appDir = getFilesDir().getAbsolutePath();
-                File shareDir = new File(appDir + "/share");
-                if (!shareDir.exists()) {
-                    shareDir.mkdirs();
+            
+            // Get the internal app storage path
+            String internalAppDir = getFilesDir().getAbsolutePath();
+            Log.i("SIGPACGO", "Internal app directory: " + internalAppDir);
+            
+            // Create sample_projects directory in internal storage
+            File sampleProjectsDir = new File(internalAppDir, "sample_projects");
+            if (!sampleProjectsDir.exists()) {
+                sampleProjectsDir.mkdirs();
+                Log.i("SIGPACGO", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
+            }
+            
+            // Copy sample projects if they exist
+            try {
+                String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
+                if (sampleProjects != null && sampleProjects.length > 0) {
+                    Log.i("SIGPACGO", "Found " + sampleProjects.length + " sample projects to copy");
+                    for (String project : sampleProjects) {
+                        Log.i("SIGPACGO", "Copying sample project: " + project);
+                        copyAssetFolder("sigpacgo/sample_projects/" + project, 
+                                       sampleProjectsDir.getAbsolutePath() + "/" + project);
+                    }
+                    Log.i("SIGPACGO", "Sample projects copied successfully");
+                } else {
+                    Log.w("SIGPACGO", "No sample projects found in assets");
                 }
-                
-                File sigpacgoDir = new File(shareDir, "sigpacgo");
-                if (!sigpacgoDir.exists()) {
-                    sigpacgoDir.mkdirs();
-                }
-                
-                // Create sample_projects directory
-                File sampleProjectsDir = new File(sigpacgoDir, "sample_projects");
-                if (!sampleProjectsDir.exists()) {
-                    sampleProjectsDir.mkdirs();
-                }
-                
-                // Copy all files from assets/sigpacgo to the app's data directory
-                for (String filename : files) {
-                    copyAssetFile("sigpacgo/" + filename, shareDir.getAbsolutePath() + "/sigpacgo/" + filename);
-                }
-                
-                // Copy sample projects if they exist
-                try {
-                    String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
-                    if (sampleProjects != null) {
-                        for (String project : sampleProjects) {
-                            copyAssetFolder("sigpacgo/sample_projects/" + project, 
-                                           sampleProjectsDir.getAbsolutePath() + "/" + project);
+            } catch (IOException e) {
+                Log.e("SIGPACGO", "Error copying sample projects: " + e.getMessage());
+            }
+            
+            // Also copy to external storage for compatibility
+            File externalFilesDir = getExternalFilesDir(null);
+            if (externalFilesDir != null) {
+                File externalSampleProjectsDir = new File(externalFilesDir, "sample_projects");
+                if (!externalSampleProjectsDir.exists()) {
+                    externalSampleProjectsDir.mkdirs();
+                    Log.i("SIGPACGO", "Created external sample_projects directory: " + externalSampleProjectsDir.getAbsolutePath());
+                    
+                    // Copy from internal to external
+                    if (sampleProjectsDir.exists() && sampleProjectsDir.isDirectory()) {
+                        File[] projects = sampleProjectsDir.listFiles();
+                        if (projects != null) {
+                            for (File project : projects) {
+                                if (project.isDirectory()) {
+                                    File destDir = new File(externalSampleProjectsDir, project.getName());
+                                    copyDirectory(project, destDir);
+                                    Log.i("SIGPACGO", "Copied project to external storage: " + project.getName());
+                                }
+                            }
                         }
                     }
-                } catch (IOException e) {
-                    Log.e("SIGPACGO", "Error copying sample projects: " + e.getMessage());
                 }
-                
-                Log.i("SIGPACGO", "Assets copied successfully");
             }
+            
+            Log.i("SIGPACGO", "Assets copied successfully");
         } catch (IOException e) {
             Log.e("SIGPACGO", "Error copying assets: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Copies a directory and its contents recursively
+     */
+    private void copyDirectory(File sourceLocation, File targetLocation) throws IOException {
+        if (sourceLocation.isDirectory()) {
+            if (!targetLocation.exists()) {
+                targetLocation.mkdirs();
+            }
+            
+            String[] children = sourceLocation.list();
+            if (children != null) {
+                for (String child : children) {
+                    copyDirectory(new File(sourceLocation, child), new File(targetLocation, child));
+                }
+            }
+        } else {
+            // Copy the file
+            try (FileInputStream in = new FileInputStream(sourceLocation);
+                 FileOutputStream out = new FileOutputStream(targetLocation)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
         }
     }
     
@@ -277,6 +321,8 @@ public class QFieldActivity extends QtActivity {
         in.close();
         out.flush();
         out.close();
+        
+        Log.d("SIGPACGO", "Copied asset file: " + assetPath + " to " + destPath);
     }
     
     /**
@@ -1120,7 +1166,6 @@ public class QFieldActivity extends QtActivity {
                     }
                     if (!imported) {
                         break;
-                    }
                 }
 
                 progressDialog.dismiss();
