@@ -1120,6 +1120,7 @@ public class QFieldActivity extends QtActivity {
                     }
                     if (!imported) {
                         break;
+                    }
                 }
 
                 progressDialog.dismiss();
