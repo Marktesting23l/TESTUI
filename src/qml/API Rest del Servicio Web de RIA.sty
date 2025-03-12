@@ -1,0 +1,110 @@
+API Rest del Servicio Web de RIA
+dato-diario-controller
+
+Controlador para la consulta de los datos diarios.
+GET
+/datosdiarios/{codigoProvincia}/{codigoEstacion}/{fecha}/{lgEt0}
+Devuelve los datos diarios de una estación para un día concreto
+GET
+/datosdiarios/{codigoProvincia}/{codigoEstacion}/{fhInicio}/{fhFin}/{lgEt0}
+Devuelve los datos diarios de una estación para un intervalo concreto
+GET
+/datosdiarios/forceEt0/{codigoProvincia}/{codigoEstacion}/{fhInicio}/{fhFin}
+Devuelve los datos diarios de una estación para un intervalo concreto con la Et0 calculada o nula en caso de no poder calcularla por falta de datos
+dato-mensual-controller
+
+Controlador para la consulta de los datos mensuales.
+GET
+/datosmensuales/{codigoProvincia}/{codigoEstacion}/{anyo}/{mes}
+Devuelve los datos mensuales de una estación para un mes concreto
+GET
+/datosmensuales/{codigoProvincia}/{codigoEstacion}/{anyo}/{mesInicio}/{mesFin}
+Devuelve los datos mensuales de una estación para un intervalo concreto
+estacion-controller
+
+Controlador para la consulta de las Estaciones.
+GET
+/estaciones
+Devuelve el listado de estaciones completo
+GET
+/estaciones/{codigoProvincia}
+Devuelve el listado de estaciones para una provincia en concreto
+GET
+/estaciones/{codigoProvincia}/{codigoEstacion}
+Devuelve la estación solicitada
+provincia-controller
+
+Controlador para la consulta de las Provincias.
+GET
+/provincias
+Devuelve el listado de provincias
+GET
+/provincias/{id}
+Devuelve una provincia en concreto
+Models
+DatoDiario{
+bateria	number($double)
+dia	integer($int32)
+dirViento	number($double)
+dirVientoVelMax	number($double)
+et0	number($double)
+fecha	string($date-time)
+fechaUtlMod	string($date-time)
+horMinHumMax	string
+horMinHumMin	string
+horMinTempMax	string
+horMinTempMin	string
+horMinVelMax	string
+humedadMax	number($double)
+humedadMedia	number($double)
+humedadMin	number($double)
+precipitacion	number($double)
+radiacion	number($double)
+tempMax	number($double)
+tempMedia	number($double)
+tempMin	number($double)
+velViento	number($double)
+velVientoMax	number($double)
+}
+DatoMensual{
+anyo	integer($int32)
+bateria	number($double)
+diaHorMinTempMax	string($date-time)
+diaHorMinTempMin	string($date-time)
+diahorMinHumMax	string($date-time)
+diahorMinHumMin	string($date-time)
+diahorMinVelMax	string($date-time)
+dirViento	number($double)
+dirVientoVelMax	number($double)
+fechaUtlMod	string($date-time)
+humedadMax	number($double)
+humedadMedia	number($double)
+humedadMin	number($double)
+mes	integer($int32)
+numDias	integer($int32)
+precipitacion	number($double)
+radiacion	number($double)
+tempMax	number($double)
+tempMedia	number($double)
+tempMin	number($double)
+velViento	number($double)
+velVientoMax	number($double)
+}
+Estacion{
+activa	boolean
+altitud	integer($int64)
+bajoplastico	boolean
+codigoEstacion	string
+huso	integer($int64)
+latitud	string
+longitud	string
+nombre	string
+provincia	Provincia{...}
+visible	boolean
+xutm	number($float)
+yutm	number($float)
+}
+Provincia{
+id	integer($int64)
+nombre	string
+}

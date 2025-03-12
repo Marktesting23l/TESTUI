@@ -1276,7 +1276,7 @@ bool QgisMobileapp::print( const QString &layoutName )
   if ( !layoutToPrint || layoutToPrint->pageCollection()->pageCount() == 0 )
     return false;
 
-  const QString destination = QStringLiteral( "%1/layouts/%2-%3.pdf" ).arg( mProject->homePath(), layoutToPrint->name(), QDateTime::currentDateTime().toString( QStringLiteral( "yyyyMMdd_hhmmss" ) ) );
+  const QString destination = QStringLiteral( "%1/layouts/%2-%3.pdf" ).arg( mProject->homePath(), layoutToPrint->name(), QDateTime::currentDateTime().toString( QStringLiteral( "ddMMyyyy_HHmmss" ) ) );
 
   if ( !layoutToPrint->atlas() || !layoutToPrint->atlas()->enabled() )
   {

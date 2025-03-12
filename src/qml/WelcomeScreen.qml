@@ -866,7 +866,7 @@ Page {
       rightMargin: 4
     }
     iconSource: Theme.getThemeVectorIcon('ic_shutdown_24dp')
-    iconColor: Theme.toolButtonColor
+    iconColor: Theme.darkRed
     bgcolor: Theme.toolButtonBackgroundColor
     round: true
 

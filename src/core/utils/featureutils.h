@@ -65,6 +65,48 @@ class QFIELD_CORE_EXPORT FeatureUtils : public QObject
      * be parsed, an enmpty list will be returned.
      */
     static Q_INVOKABLE QList<QgsFeature> featuresFromJsonString( const QString &string );
+    
+    /**
+     * Returns a list of unique values for a given field in a vector layer.
+     * \param layer the vector layer
+     * \param fieldName the name of the field
+     * \returns a list of unique values
+     */
+    static Q_INVOKABLE QVariantList getUniqueValues( QgsVectorLayer *layer, const QString &fieldName );
+    
+    /**
+     * Returns a list of unique values for a given field in a vector layer, filtered by an expression.
+     * \param layer the vector layer
+     * \param fieldName the name of the field
+     * \param filterExpression the filter expression
+     * \returns a list of unique values
+     */
+    static Q_INVOKABLE QVariantList getUniqueValuesFiltered( QgsVectorLayer *layer, const QString &fieldName, const QString &filterExpression );
+    
+    /**
+     * Returns a list of features filtered by an expression.
+     * \param layer the vector layer
+     * \param filterExpression the filter expression
+     * \returns a list of features
+     */
+    static Q_INVOKABLE QList<QgsFeature> getFilteredFeatures( QgsVectorLayer *layer, const QString &filterExpression );
+    
+    /**
+     * Returns a feature by its ID.
+     * \param layer the vector layer
+     * \param featureId the feature ID
+     * \returns the feature
+     */
+    static Q_INVOKABLE QgsFeature getFeatureById( QgsVectorLayer *layer, int featureId );
+    
+    /**
+     * Returns the map extent encompassing a list of features.
+     * \param mapSettings the map settings used to determine the CRS
+     * \param layer the vector layer containing the features
+     * \param features the list of features
+     * \returns a QgsRectangle extent
+     */
+    static Q_INVOKABLE QgsRectangle extentOfFeatures( QgsQuickMapSettings *mapSettings, QgsVectorLayer *layer, const QList<QgsFeature> &features );
 };
 
 #endif // FEATUREUTILS_H

@@ -100,6 +100,13 @@ Popup {
     property string folderName: "DCIM" // Default folder name is DCIM
     property size resolution: Qt.size(0, 0)
     property int pixelFormat: 0
+    property string stampTextColor: "#FFFF00" // Yellow text for timestamp
+    property string stampBackgroundColor: "#80000000" // Semi-transparent black background
+    property int stampFontSize: 24 // Font size for timestamp
+    
+    // GPS accuracy thresholds (in meters)
+    property real accuracyThresholdGood: 5.0
+    property real accuracyThresholdModerate: 20.0
   }
 
   // Dialog for setting folder name
@@ -167,8 +174,11 @@ Popup {
     id: stampExpressionEvaluator
 
     mode: ExpressionEvaluator.ExpressionMode
-    expressionText: "format_date(now(), 'yyyy-MM-dd @ HH:mm') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
-    " || '\nSIGPACGO - Agricultural Field Survey'"
+    expressionText: "format_date(now(), 'dd-MM-yyyy HH:mm:ss') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
+        " || if(@horizontal_accuracy != 'nan', '\n" + qsTr("Accuracy") + ": ' || format_number(@horizontal_accuracy, 1) || ' m', '')" +
+        " || '\n" + qsTr("Project") + ": ' || @project_title" +
+        " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
+        " || '\nSIGPACGO - Agricultural Field Survey'"
 
     project: qgisProject
     positionInformation: currentPosition
@@ -276,6 +286,13 @@ Popup {
         color: "#80000000"
         visible: cameraItem.state == "PhotoCapture" && cameraSettings.showOverlay
         
+        // Add a gradient background for better visibility
+        gradient: Gradient {
+          GradientStop { position: 0.0; color: "#00000000" }
+          GradientStop { position: 0.3; color: "#A0000000" }
+          GradientStop { position: 1.0; color: "#D0000000" }
+        }
+        
         Rectangle {
           width: 4
           anchors.top: parent.top
@@ -312,12 +329,12 @@ Popup {
               Text {
                 id: dateTimeText
                 width: parent.width - 28
-                color: "white"
-                font.pixelSize: 16
+                color: "yellow"
+                font.pixelSize: 20
                 font.bold: true
                 text: {
                   let dateTime = new Date()
-                  return Qt.formatDateTime(dateTime, "yyyy-MM-dd @ HH:mm:ss")
+                  return Qt.formatDateTime(dateTime, "dd-MM-yyyy | HH:mm:ss")
                 }
                 
                 layer.enabled: true
@@ -345,54 +362,161 @@ Popup {
                 anchors.verticalCenter: parent.verticalCenter
               }
               
-              Text {
-                id: infoText
+              Item {
                 width: parent.width - 28
-                color: "white"
-                font.pixelSize: 14
-                wrapMode: Text.WordWrap
-                text: {
-                  let coordsStr = ""
+                height: infoText.contentHeight
+                
+                // GPS accuracy indicator
+                Rectangle {
+                  id: accuracyIndicator
+                  width: 12
+                  height: 12
+                  radius: width / 2
+                  anchors.right: parent.right
+                  anchors.top: parent.top
+                  anchors.topMargin: 4
                   
-                  if (positionSource.active && positionSource.positionInformation.latitudeValid && positionSource.positionInformation.longitudeValid) {
-                    let lat = positionSource.positionInformation.latitude.toFixed(7)
-                    let lon = positionSource.positionInformation.longitude.toFixed(7)
-                    let alt = positionSource.positionInformation.elevationValid ? positionSource.positionInformation.elevation.toFixed(2) + " m" : "N/A"
-                    coordsStr = qsTr("Lat") + ": " + lat + " | " + qsTr("Lon") + ": " + lon
+                  visible: positionSource.active && positionSource.positionInformation.latitudeValid
+                  
+                  // Border for the indicator
+                  border.width: 1.5
+                  border.color: "white"
+                  
+                  // Color based on accuracy
+                  color: !positionSource.positionInformation || 
+                         !positionSource.positionInformation.haccValid || 
+                         positionSource.positionInformation.hacc > cameraSettings.accuracyThresholdModerate ? 
+                         "#FF4444" : // Bad accuracy (red)
+                         positionSource.positionInformation.hacc > cameraSettings.accuracyThresholdGood ? 
+                         "#FFBB33" : // Medium accuracy (orange)
+                         "#99CC00"   // Good accuracy (green)
+                  
+                  // Pulsing animation for the indicator
+                  SequentialAnimation {
+                    id: pulseAnimation
+                    running: accuracyIndicator.visible
+                    loops: Animation.Infinite
                     
-                    if (positionSource.positionInformation.elevationValid) {
-                      coordsStr += " | " + qsTr("Alt") + ": " + alt
+                    PropertyAnimation {
+                      target: accuracyIndicator
+                      property: "opacity"
+                      from: 1.0
+                      to: 0.5
+                      duration: 1000
+                      easing.type: Easing.InOutQuad
                     }
                     
-                    if (positionSource.positionInformation.speedValid) {
-                      coordsStr += "\n" + qsTr("Speed") + ": " + positionSource.positionInformation.speed.toFixed(1) + " m/s"
+                    PropertyAnimation {
+                      target: accuracyIndicator
+                      property: "opacity"
+                      from: 0.5
+                      to: 1.0
+                      duration: 1000
+                      easing.type: Easing.InOutQuad
+                    }
+                  }
+                  
+                  // Tooltip for the indicator
+                  ToolTip.visible: accuracyMouseArea.containsMouse
+                  ToolTip.text: {
+                    if (!positionSource.positionInformation || !positionSource.positionInformation.haccValid) {
+                      return qsTr("Accuracy: Unknown")
+                    }
+                    let accuracy = positionSource.positionInformation.hacc.toFixed(1)
+                    let accuracyText = ""
+                    
+                    if (accuracy > cameraSettings.accuracyThresholdModerate) {
+                      accuracyText = qsTr("Poor")
+                    } else if (accuracy > cameraSettings.accuracyThresholdGood) {
+                      accuracyText = qsTr("Moderate")
+                    } else {
+                      accuracyText = qsTr("Good")
                     }
                     
-                    // Add agricultural field info if available
-                    if (typeof fieldInfo !== 'undefined' && fieldInfo && fieldInfo.fieldName) {
-                      coordsStr += "\n" + qsTr("Field") + ": " + fieldInfo.fieldName
-                      if (fieldInfo.cropType) {
-                        coordsStr += " | " + qsTr("Crop") + ": " + fieldInfo.cropType
-                      }
-                    }
-                    // Add folder info
-                    else {
-                      coordsStr += "\n" + qsTr("Saving to") + ": " + cameraSettings.folderName
-                    }
-                    
-                    return coordsStr
-                  } else {
-                    return qsTr("GPS coordinates not available")
+                    return qsTr("Accuracy") + ": " + accuracyText + " (" + accuracy + " m)"
+                  }
+                  
+                  MouseArea {
+                    id: accuracyMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
                   }
                 }
                 
-                layer.enabled: true
-                layer.effect: QfDropShadow {
-                  horizontalOffset: 1
-                  verticalOffset: 1
-                  radius: 3.0
-                  color: "#80000000"
-                  source: infoText
+                Text {
+                  id: infoText
+                  width: parent.width - (accuracyIndicator.visible ? 20 : 0)
+                  color: "yellow"
+                  font.pixelSize: 16
+                  wrapMode: Text.WordWrap
+                  text: {
+                    let coordsStr = ""
+                    
+                    if (positionSource.active && positionSource.positionInformation.latitudeValid && positionSource.positionInformation.longitudeValid) {
+                      let lat = positionSource.positionInformation.latitude.toFixed(7)
+                      let lon = positionSource.positionInformation.longitude.toFixed(7)
+                      let alt = positionSource.positionInformation.elevationValid ? positionSource.positionInformation.elevation.toFixed(2) + " m" : "N/A"
+                      
+                      // Add accuracy information if available
+                      let accuracy = ""
+                      if (positionSource.positionInformation.haccValid) {
+                        accuracy = " ±" + positionSource.positionInformation.hacc.toFixed(1) + "m"
+                      }
+                      
+                      coordsStr = qsTr("Lat") + ": " + lat + " | " + qsTr("Lon") + ": " + lon + accuracy
+                      
+                      if (positionSource.positionInformation.elevationValid) {
+                        coordsStr += " | " + qsTr("Alt") + ": " + alt
+                      }
+                      
+                      if (positionSource.positionInformation.speedValid) {
+                        coordsStr += "\n" + qsTr("Speed") + ": " + positionSource.positionInformation.speed.toFixed(1) + " m/s"
+                      }
+                      
+                      if (positionSource.positionInformation.orientationValid) {
+                        coordsStr += " | " + qsTr("Direction") + ": " + positionSource.positionInformation.orientation.toFixed(1) + "°"
+                      }
+                      
+                      // Add project name
+                      coordsStr += "\n" + qsTr("Project") + ": " + qgisProject.title
+                      
+                      // Add agricultural field info if available
+                      if (typeof fieldInfo !== 'undefined' && fieldInfo && fieldInfo.fieldName) {
+                        coordsStr += "\n" + qsTr("Field") + ": " + fieldInfo.fieldName
+                        if (fieldInfo.cropType) {
+                          coordsStr += " | " + qsTr("Crop") + ": " + fieldInfo.cropType
+                        }
+                      }
+                      
+                      // Add folder info
+                      coordsStr += "\n" + qsTr("Saving to") + ": " + cameraSettings.folderName
+                      
+                      // Add photo count if available
+                      if (typeof platformUtilities.countFilesInDir === 'function') {
+                        try {
+                          let count = platformUtilities.countFilesInDir(qgisProject.homePath + '/' + cameraSettings.folderName, "*.jpg")
+                          coordsStr += " | " + qsTr("Photos") + ": " + count
+                        } catch (e) {
+                          // Ignore errors if function not available
+                        }
+                      }
+                      
+                      return coordsStr
+                    } else {
+                      return qsTr("GPS coordinates not available") + 
+                             "\n" + qsTr("Project") + ": " + qgisProject.title +
+                             "\n" + qsTr("Saving to") + ": " + cameraSettings.folderName
+                    }
+                  }
+                  
+                  layer.enabled: true
+                  layer.effect: QfDropShadow {
+                    horizontalOffset: 1
+                    verticalOffset: 1
+                    radius: 3.0
+                    color: "#80000000"
+                    source: infoText
+                  }
                 }
               }
             }
@@ -425,6 +549,64 @@ Popup {
                   radius: 3.0
                   color: "#80000000"
                   source: weatherText
+                }
+              }
+            }
+            
+            // Battery level row
+            Row {
+              width: parent.width
+              spacing: 8
+              visible: typeof platformUtilities.batteryLevel === 'function'
+              
+              Image {
+                width: 20
+                height: 20
+                source: {
+                  try {
+                    let level = platformUtilities.batteryLevel()
+                    if (level > 75) return Theme.getThemeVectorIcon("ic_battery_full_white_24dp")
+                    if (level > 50) return Theme.getThemeVectorIcon("ic_battery_3_bar_white_24dp")
+                    if (level > 25) return Theme.getThemeVectorIcon("ic_battery_2_bar_white_24dp")
+                    return Theme.getThemeVectorIcon("ic_battery_1_bar_white_24dp")
+                  } catch (e) {
+                    return Theme.getThemeVectorIcon("ic_battery_unknown_white_24dp")
+                  }
+                }
+                sourceSize.width: 20
+                sourceSize.height: 20
+              }
+              
+              Text {
+                id: batteryText
+                width: parent.width - 28
+                color: {
+                  try {
+                    let level = platformUtilities.batteryLevel()
+                    if (level <= 15) return "red"
+                    if (level <= 30) return "#FFCC00" // Yellow
+                    return "white"
+                  } catch (e) {
+                    return "white"
+                  }
+                }
+                font.pixelSize: 14
+                text: {
+                  try {
+                    let level = platformUtilities.batteryLevel()
+                    return qsTr("Battery") + ": " + level + "%"
+                  } catch (e) {
+                    return qsTr("Battery level unknown")
+                  }
+                }
+                
+                layer.enabled: true
+                layer.effect: QfDropShadow {
+                  horizontalOffset: 1
+                  verticalOffset: 1
+                  radius: 3.0
+                  color: "#80000000"
+                  source: batteryText
                 }
               }
             }
@@ -713,7 +895,17 @@ Popup {
                       platformUtilities.setExifTag(currentPath, "Xmp.tiff.Make", "SIGPACGO");
                     }
                     if (cameraSettings.stamping) {
-                      FileUtils.addImageStamp(currentPath, stampExpressionEvaluator.evaluate());
+                      // Apply custom styling to the timestamp
+                      let stampText = stampExpressionEvaluator.evaluate();
+                      let styledStamp = {
+                        "text": stampText,
+                        "color": cameraSettings.stampTextColor,
+                        "backgroundColor": cameraSettings.stampBackgroundColor,
+                        "fontSize": cameraSettings.stampFontSize,
+                        "padding": 10,
+                        "position": "bottomLeft" // Position in the image
+                      };
+                      FileUtils.addImageStamp(currentPath, stampText, styledStamp);
                     }
                   }
                   cameraItem.finished(currentPath);
@@ -992,38 +1184,168 @@ Popup {
             
             Dialog {
               id: folderDialog
-              title: qsTr("Set Photo Folder")
-              standardButtons: Dialog.Ok | Dialog.Cancel
               modal: true
               
-              x: (parent.width - width) / 2
-              y: (parent.height - height) / 2
-              width: Math.min(parent.width * 0.8, 400)
+              // Set explicit dimensions to avoid binding loops
+              x: (parent.width - 380) / 2
+              y: (parent.height - 300) / 2
+              width: 380
+              height: 300
               
-              ColumnLayout {
+              // Remove standardButtons to avoid binding loops
+              standardButtons: Dialog.NoButton
+              
+              // Make the dialog more visible with a distinct background
+              background: Rectangle {
+                // Use theme-aware colors
+                color: Theme.darkTheme ? "#303030" : "#f0f0f0"
+                border.color: Theme.mainColor
+                border.width: 2
+                radius: 8
+              }
+              
+              // Add a header with a title
+              header: Rectangle {
+                color: Theme.mainColor
+                height: 50
                 width: parent.width
                 
                 Label {
-                  text: qsTr("Enter folder name:")
-                  Layout.fillWidth: true
+                  anchors.centerIn: parent
+                  text: qsTr("Set Photo Folder")
+                  font.bold: true
+                  font.pixelSize: 18
+                  color: "white"
                 }
+              }
+              
+              contentItem: Item {
+                width: parent.width
+                height: 180
                 
-                TextField {
-                  id: folderNameField
-                  text: cameraSettings.folderName
-                  placeholderText: "DCIM"
-                  Layout.fillWidth: true
+                Column {
+                  anchors.fill: parent
+                  anchors.margins: 16
+                  spacing: 16
                   
-                  onAccepted: {
-                    folderDialog.accept()
+                  Label {
+                    width: parent.width
+                    text: qsTr("Enter folder name:")
+                    font.pixelSize: 16
+                    font.bold: true
+                    // Use theme-aware text color
+                    color: Theme.darkTheme ? "white" : "#333333"
+                  }
+                  
+                  TextField {
+                    id: folderNameField
+                    width: parent.width
+                    height: 50
+                    text: cameraSettings.folderName
+                    placeholderText: "DCIM"
+                    font.pixelSize: 18
+                    
+                    // Use theme-aware colors for text
+                    color: Theme.darkTheme ? "white" : "black"
+                    placeholderTextColor: Theme.darkTheme ? "#aaaaaa" : "#888888"
+                    
+                    // Ensure the field gets focus and shows keyboard on Android
+                    Component.onCompleted: {
+                      forceActiveFocus()
+                      if (Qt.platform.os === "android") {
+                        Qt.inputMethod.show()
+                      }
+                    }
+                    
+                    // Style the text field to be more visible
+                    background: Rectangle {
+                      // Use theme-aware colors
+                      color: Theme.darkTheme ? "#505050" : "white"
+                      border.color: folderNameField.activeFocus ? Theme.mainColor : (Theme.darkTheme ? "#aaaaaa" : "#888888")
+                      border.width: folderNameField.activeFocus ? 2 : 1
+                      radius: 4
+                    }
+                    
+                    onAccepted: {
+                      folderDialog.accept()
+                    }
+                  }
+                  
+                  Label {
+                    width: parent.width
+                    text: qsTr("Default is DCIM. This folder will be created in the project directory.")
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 14
+                    // Use theme-aware text color
+                    color: Theme.darkTheme ? "#cccccc" : "#555555"
                   }
                 }
+              }
+              
+              // Custom footer with buttons
+              footer: Rectangle {
+                width: parent.width
+                height: 70
+                // Use theme-aware background
+                color: "transparent"
                 
-                Label {
-                  text: qsTr("Default is DCIM. This folder will be created in the project directory.")
-                  wrapMode: Text.WordWrap
-                  Layout.fillWidth: true
-                  font.pixelSize: 12
+                Row {
+                  anchors.centerIn: parent
+                  spacing: 20
+                  
+                  Button {
+                    width: 150
+                    height: 50
+                    text: qsTr("Cancel")
+                    
+                    background: Rectangle {
+                      // Use theme-aware colors
+                      color: Theme.darkTheme ? "#404040" : "#dddddd"
+                      radius: 4
+                      border.color: Theme.darkTheme ? "#aaaaaa" : "#888888"
+                      border.width: 1
+                    }
+                    
+                    contentItem: Text {
+                      text: qsTr("Cancel")
+                      font.pixelSize: 16
+                      font.bold: true
+                      // Use theme-aware text color
+                      color: Theme.darkTheme ? "white" : "#333333"
+                      horizontalAlignment: Text.AlignHCenter
+                      verticalAlignment: Text.AlignVCenter
+                    }
+                    
+                    onClicked: {
+                      folderDialog.reject()
+                    }
+                  }
+                  
+                  Button {
+                    width: 150
+                    height: 50
+                    text: qsTr("Save")
+                    
+                    background: Rectangle {
+                      color: Theme.mainColor
+                      radius: 4
+                      border.color: Qt.darker(Theme.mainColor, 1.3)
+                      border.width: 1
+                    }
+                    
+                    contentItem: Text {
+                      text: qsTr("Save")
+                      font.pixelSize: 16
+                      font.bold: true
+                      color: "white"
+                      horizontalAlignment: Text.AlignHCenter
+                      verticalAlignment: Text.AlignVCenter
+                    }
+                    
+                    onClicked: {
+                      folderDialog.accept()
+                    }
+                  }
                 }
               }
               
@@ -1035,6 +1357,13 @@ Popup {
                   
                   // Create the folder if it doesn't exist
                   platformUtilities.createDir(qgisProject.homePath, cameraSettings.folderName)
+                }
+              }
+              
+              // Hide keyboard when dialog is closed
+              onClosed: {
+                if (Qt.platform.os === "android") {
+                  Qt.inputMethod.hide()
                 }
               }
             }

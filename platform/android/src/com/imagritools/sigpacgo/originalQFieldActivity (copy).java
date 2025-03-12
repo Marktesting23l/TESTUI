@@ -31,7 +31,7 @@
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.imagritools.sigpacgo;
+package ch.opengis.qfield;
 
 import android.Manifest;
 import android.app.Activity;
@@ -50,7 +50,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -81,8 +80,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
-import com.imagritools.sigpacgo.QFieldUtils;
-import com.imagritools.sigpacgo.R;
+import ch.opengis.qfield.QFieldUtils;
+import ch.opengis.qfield.R;
 import io.sentry.android.core.SentryAndroid;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -199,154 +198,8 @@ public class QFieldActivity extends QtActivity {
 
     private void vibrate(int milliseconds) {
         Vibrator v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-        if (v != null) {
-            v.vibrate(VibrationEffect.createOneShot(milliseconds,
-                                                    VibrationEffect.DEFAULT_AMPLITUDE));
-        }
-    }
-
-    /**
-     * Copies the assets from the APK to the application's data directory
-     */
-    public void copyAssets() {
-        Log.i("QField", "Copying assets to application directory");
-        
-        AssetManager assetManager = getAssets();
-        
-        // Get the internal app storage path
-        String internalAppDir = getFilesDir().getAbsolutePath();
-        Log.i("QField", "Internal app directory: " + internalAppDir);
-        
-        // Create sample_projects directory in internal storage
-        File sampleProjectsDir = new File(internalAppDir, "sample_projects");
-        if (!sampleProjectsDir.exists()) {
-            sampleProjectsDir.mkdirs();
-            Log.i("QField", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
-        }
-        
-        // Copy sample projects if they exist
-        try {
-            String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
-            if (sampleProjects != null && sampleProjects.length > 0) {
-                Log.i("QField", "Found " + sampleProjects.length + " sample projects to copy");
-                for (String project : sampleProjects) {
-                    Log.i("QField", "Copying sample project: " + project);
-                    copyAssetFolder("sigpacgo/sample_projects/" + project, 
-                                   sampleProjectsDir.getAbsolutePath() + "/" + project);
-                }
-                Log.i("QField", "Sample projects copied successfully");
-            } else {
-                Log.w("QField", "No sample projects found in assets");
-            }
-        } catch (IOException e) {
-            Log.e("QField", "Error copying sample projects: " + e.getMessage());
-        }
-        
-        // Also copy to external storage for compatibility
-        File externalFilesDir = getExternalFilesDir(null);
-        if (externalFilesDir != null) {
-            File externalSampleProjectsDir = new File(externalFilesDir, "sample_projects");
-            if (!externalSampleProjectsDir.exists()) {
-                externalSampleProjectsDir.mkdirs();
-                Log.i("QField", "Created external sample_projects directory: " + externalSampleProjectsDir.getAbsolutePath());
-                
-                // Copy from internal to external
-                if (sampleProjectsDir.exists() && sampleProjectsDir.isDirectory()) {
-                    File[] projects = sampleProjectsDir.listFiles();
-                    if (projects != null) {
-                        for (File project : projects) {
-                            if (project.isDirectory()) {
-                                File destDir = new File(externalSampleProjectsDir, project.getName());
-                                try {
-                                    copyDirectory(project, destDir);
-                                    Log.i("QField", "Copied project to external storage: " + project.getName());
-                                } catch (IOException e) {
-                                    Log.e("QField", "Error copying project to external storage: " + e.getMessage());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        Log.i("QField", "Assets copied successfully");
-    }
-    
-    /**
-     * Copies a directory and its contents recursively
-     */
-    private void copyDirectory(File sourceLocation, File targetLocation) throws IOException {
-        if (sourceLocation.isDirectory()) {
-            if (!targetLocation.exists()) {
-                targetLocation.mkdirs();
-            }
-            
-            String[] children = sourceLocation.list();
-            if (children != null) {
-                for (String child : children) {
-                    copyDirectory(new File(sourceLocation, child), new File(targetLocation, child));
-                }
-            }
-        } else {
-            // Copy the file
-            try (FileInputStream in = new FileInputStream(sourceLocation);
-                 FileOutputStream out = new FileOutputStream(targetLocation)) {
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Copies a single asset file to the destination
-     */
-    private void copyAssetFile(String assetPath, String destPath) throws IOException {
-        InputStream in = getAssets().open(assetPath);
-        File outFile = new File(destPath);
-        
-        // Create parent directories if they don't exist
-        if (!outFile.getParentFile().exists()) {
-            outFile.getParentFile().mkdirs();
-        }
-        
-        OutputStream out = new FileOutputStream(outFile);
-        byte[] buffer = new byte[1024];
-        int read;
-        while ((read = in.read(buffer)) != -1) {
-            out.write(buffer, 0, read);
-        }
-        in.close();
-        out.flush();
-        out.close();
-        
-        Log.d("QField", "Copied asset file: " + assetPath + " to " + destPath);
-    }
-    
-    /**
-     * Recursively copies an asset folder to the destination
-     */
-    private void copyAssetFolder(String assetPath, String destPath) throws IOException {
-        AssetManager assetManager = getAssets();
-        String[] assets = assetManager.list(assetPath);
-        
-        if (assets.length == 0) {
-            // It's a file, copy it
-            copyAssetFile(assetPath, destPath);
-        } else {
-            // It's a folder, create it and copy its contents
-            File dir = new File(destPath);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            
-            for (String asset : assets) {
-                copyAssetFolder(assetPath + "/" + asset, destPath + "/" + asset);
-            }
-        }
+        v.vibrate(VibrationEffect.createOneShot(
+            milliseconds, VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
     private void processProjectIntent() {
@@ -393,7 +246,7 @@ public class QFieldActivity extends QtActivity {
                         if (type != null) {
                             // File name not provided
                             fileName =
-                                new SimpleDateFormat("ddMMyyyy_HHmmss")
+                                new SimpleDateFormat("yyyyMMdd_HHmmss")
                                     .format(new Date().getTime()) +
                                 "." +
                                 QFieldUtils.getExtensionFromMimeType(type);
@@ -604,7 +457,7 @@ public class QFieldActivity extends QtActivity {
 
     private void prepareQtActivity() {
         sharedPreferences =
-            getSharedPreferences("SIGPACGO", Context.MODE_PRIVATE);
+            getSharedPreferences("QField", Context.MODE_PRIVATE);
         sharedPreferenceEditor = sharedPreferences.edit();
 
         checkAllFileAccess(); // Storage access permission handling for Android
@@ -619,8 +472,8 @@ public class QFieldActivity extends QtActivity {
             new File(dataDir + "Imported Datasets/").mkdir();
             new File(dataDir + "Imported Projects/").mkdir();
 
-            dataDir = dataDir + "SIGPACGO/";
-            
+            dataDir = dataDir + "QField/";
+            // create QField directories
             new File(dataDir).mkdir();
             new File(dataDir + "basemaps/").mkdir();
             new File(dataDir + "fonts/").mkdir();
@@ -634,7 +487,7 @@ public class QFieldActivity extends QtActivity {
 
         String storagePath =
             Environment.getExternalStorageDirectory().getAbsolutePath();
-        String rootDataDir = storagePath + "/SIGPACGO/";
+        String rootDataDir = storagePath + "/QField/";
         File storageFile = new File(rootDataDir);
         storageFile.mkdir();
         if (storageFile.canWrite()) {
@@ -658,7 +511,7 @@ public class QFieldActivity extends QtActivity {
                 }
 
                 // create QField directories
-                String dataDir = file.getAbsolutePath() + "/SIGPACGO/";
+                String dataDir = file.getAbsolutePath() + "/QField/";
                 new File(dataDir + "basemaps/").mkdirs();
                 new File(dataDir + "fonts/").mkdirs();
                 new File(dataDir + "proj/").mkdirs();
@@ -687,7 +540,7 @@ public class QFieldActivity extends QtActivity {
             appDataDirs.append(dataDir);
             appDataDirs.append("--;--");
         }
-        intent.putExtra("SIGPACGO_APP_DATA_DIRS", appDataDirs.toString());
+        intent.putExtra("QFIELD_APP_DATA_DIRS", appDataDirs.toString());
 
         Intent sourceIntent = getIntent();
         if (sourceIntent.getAction() == Intent.ACTION_VIEW ||
@@ -1007,8 +860,8 @@ public class QFieldActivity extends QtActivity {
         resourceSuffix = suffix;
 
         String timeStamp =
-            new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());
-        resourceTempFilePath = "SIGPACGOCamera" + timeStamp;
+            new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        resourceTempFilePath = "QFieldCamera" + timeStamp;
 
         Intent intent = isVideo ? new Intent(MediaStore.ACTION_VIDEO_CAPTURE)
                                 : new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -1031,7 +884,7 @@ public class QFieldActivity extends QtActivity {
                     resourceTempFilePath = tempFile.getAbsolutePath();
 
                     Uri fileURI = FileProvider.getUriForFile(
-                        this, "com.imagritools.sigpacgo.fileprovider", tempFile);
+                        this, "ch.opengis.qfield.fileprovider", tempFile);
 
                     Log.d("QField",
                           "Camera temporary file uri: " + fileURI.toString());
@@ -1092,7 +945,7 @@ public class QFieldActivity extends QtActivity {
             Uri contentUri = Build.VERSION.SDK_INT < 24
                                  ? Uri.fromFile(resourceFile)
                                  : FileProvider.getUriForFile(
-                                       this, "com.imagritools.sigpacgo.fileprovider",
+                                       this, "ch.opengis.qfield.fileprovider",
                                        resourceCacheFile);
 
             Intent intent =

@@ -22,6 +22,7 @@
 #include <qgsproject.h>
 #include <qgsvectorlayer.h>
 #include <qgsvectorlayerutils.h>
+#include <qgsfeaturerequest.h>
 
 FeatureUtils::FeatureUtils( QObject *parent )
   : QObject( parent )
@@ -101,4 +102,172 @@ QList<QgsFeature> FeatureUtils::featuresFromJsonString( const QString &string )
 {
   const QgsFields fields = QgsJsonUtils::stringToFields( string );
   return QgsJsonUtils::stringToFeatureList( string, fields );
+}
+
+QVariantList FeatureUtils::getUniqueValues( QgsVectorLayer *layer, const QString &fieldName )
+{
+  QVariantList uniqueValues;
+  
+  if (!layer)
+    return uniqueValues;
+  
+  // Get the field index
+  int fieldIndex = layer->fields().indexOf(fieldName);
+  if (fieldIndex < 0)
+    return uniqueValues;
+  
+  // Create a request to get unique values
+  QgsFeatureRequest request;
+  // Only request the specific field we need
+  request.setSubsetOfAttributes(QgsAttributeList() << fieldIndex);
+  
+  // Get all features
+  QgsFeatureIterator features = layer->getFeatures(request);
+  QgsFeature feature;
+  QSet<QVariant> valueSet;
+  
+  // Collect unique values
+  while (features.nextFeature(feature))
+  {
+    QVariant value = feature.attribute(fieldIndex);
+    if (!value.isNull() && value.isValid() && !valueSet.contains(value))
+    {
+      valueSet.insert(value);
+    }
+  }
+  
+  // Convert set to list
+  uniqueValues = valueSet.values();
+  
+  return uniqueValues;
+}
+
+QVariantList FeatureUtils::getUniqueValuesFiltered( QgsVectorLayer *layer, const QString &fieldName, const QString &filterExpression )
+{
+  QVariantList uniqueValues;
+  
+  if (!layer)
+    return uniqueValues;
+  
+  // Get the field index
+  int fieldIndex = layer->fields().indexOf(fieldName);
+  if (fieldIndex < 0)
+    return uniqueValues;
+  
+  // Create a request to get unique values with filter
+  QgsFeatureRequest request;
+  // Only request the specific field we need
+  request.setSubsetOfAttributes(QgsAttributeList() << fieldIndex);
+  
+  // Set the filter expression
+  if (!filterExpression.isEmpty())
+  {
+    request.setFilterExpression(filterExpression);
+  }
+  
+  // Get all features
+  QgsFeatureIterator features = layer->getFeatures(request);
+  QgsFeature feature;
+  QSet<QVariant> valueSet;
+  
+  // Collect unique values
+  while (features.nextFeature(feature))
+  {
+    QVariant value = feature.attribute(fieldIndex);
+    if (!value.isNull() && value.isValid() && !valueSet.contains(value))
+    {
+      valueSet.insert(value);
+    }
+  }
+  
+  // Convert set to list
+  uniqueValues = valueSet.values();
+  
+  return uniqueValues;
+}
+
+QList<QgsFeature> FeatureUtils::getFilteredFeatures( QgsVectorLayer *layer, const QString &filterExpression )
+{
+  QList<QgsFeature> filteredFeatures;
+  
+  if (!layer)
+    return filteredFeatures;
+  
+  // Create a request with filter
+  QgsFeatureRequest request;
+  
+  // Set the filter expression
+  if (!filterExpression.isEmpty())
+  {
+    request.setFilterExpression(filterExpression);
+  }
+  
+  // Get all features
+  QgsFeatureIterator features = layer->getFeatures(request);
+  QgsFeature feature;
+  
+  // Collect features
+  while (features.nextFeature(feature))
+  {
+    filteredFeatures.append(feature);
+  }
+  
+  return filteredFeatures;
+}
+
+QgsFeature FeatureUtils::getFeatureById( QgsVectorLayer *layer, int featureId )
+{
+  QgsFeature feature;
+  
+  if (!layer)
+    return feature;
+  
+  // Create a request with feature ID filter
+  QgsFeatureRequest request;
+  request.setFilterFid(featureId);
+  
+  // Get the feature
+  layer->getFeatures(request).nextFeature(feature);
+  
+  return feature;
+}
+
+QgsRectangle FeatureUtils::extentOfFeatures( QgsQuickMapSettings *mapSettings, QgsVectorLayer *layer, const QList<QgsFeature> &features )
+{
+  if (!mapSettings || !layer || features.isEmpty())
+    return QgsRectangle();
+  
+  QgsRectangle extent;
+  bool firstFeature = true;
+  
+  // Transform coordinates to map CRS
+  QgsCoordinateTransform transf(layer->crs(), mapSettings->destinationCrs(), mapSettings->mapSettings().transformContext());
+  
+  // Calculate the combined extent of all features
+  for (const QgsFeature &feature : features)
+  {
+    QgsGeometry geom(feature.geometry());
+    if (!geom.isNull())
+    {
+      geom.transform(transf);
+      
+      if (firstFeature)
+      {
+        extent = geom.boundingBox();
+        firstFeature = false;
+      }
+      else
+      {
+        extent.combineExtentWith(geom.boundingBox());
+      }
+    }
+  }
+  
+  // Buffer the extent for better visibility
+  if (!extent.isNull())
+  {
+    extent = extent.buffered(std::max(extent.width(), extent.height()) / 10.0);
+  }
+  
+  return extent;
 }

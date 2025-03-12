@@ -1571,6 +1571,27 @@ ApplicationWindow {
         console.log("MainToolbar initialized. Always visible.")
       }
 
+      // Add Cascade Search button
+      QfToolButton {
+        id: cascadeSearchButton
+        width: 48
+        height: 48
+        round: true
+        bgcolor: Theme.toolButtonBackgroundColor
+        iconSource: Theme.getThemeVectorIcon('ic_search_white_24dp')
+        iconColor: Theme.toolButtonColor
+        visible: dashBoard.activeLayer !== null
+        
+        onClicked: {
+          if (dashBoard.activeLayer) {
+            cascadeSearchPanel.vectorLayer = dashBoard.activeLayer;
+            cascadeSearchPanel.open();
+          } else {
+            displayToast(qsTr("Please select a vector layer first"), "warning");
+          }
+        }
+      }
+
       QfToolButtonDrawer {
         name: "digitizingDrawer"
         size: 48
@@ -2463,11 +2484,11 @@ ApplicationWindow {
             
             if (Qt.platform.os === "android") {
               // Use geo: URI scheme for Android which is more reliable
-              // Format: geo:0,0?q=latitude,longitude(Label)
-              // Starting with geo:0,0 and using only the q parameter forces Google Maps to search for the coordinates
-              // rather than trying to use current location as a starting point
-              mapsUrl = "geo:0,0?q=" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
-                        "(" + qsTr("Marked Location") + ")&z=15";
+              // Format: geo:latitude,longitude?q=latitude,longitude(Label)
+              // This format ensures Google Maps opens at the specified coordinates
+              mapsUrl = "geo:" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
+                        "?q=" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
+                        "(" + qsTr("Marked Location") + ")";
             } else {
               // For other platforms, use Google Maps URL with additional parameters
               // Adding z (zoom level), t (timestamp) and forcing search mode
@@ -3408,6 +3429,22 @@ ApplicationWindow {
         highlighted = false;
       }
     }
+
+    MenuItem {
+      text: qsTr("Weather Data (RIA)")
+
+      font: Theme.defaultFont
+      icon.source: Theme.getThemeVectorIcon("ic_cloud_white_24dp")
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+
+      onTriggered: {
+        dashBoard.close();
+        mainMenu.close();
+        weatherDataPanel.open();
+        highlighted = false;
+      }
+    }
   }
 
   Menu {
@@ -4279,6 +4316,15 @@ ApplicationWindow {
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
+  WeatherDataPanel {
+    id: weatherDataPanel
+    parent: mainWindow.contentItem
+  }
+
+  CascadeSearchPanel {
+    id: cascadeSearchPanel
+  }
+
   function displayToast(message, type, action_text, action_function) {
     //toastMessage.text = message
     if (!welcomeScreen.visible)
@@ -4786,6 +4832,7 @@ ApplicationWindow {
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
+
   Changelog {
     id: changelogPopup
     objectName: 'changelogPopup'
@@ -5186,5 +5233,7 @@ ApplicationWindow {
     // Display a toast
     displayToast(qsTr("Sample projects folder created"))
   }
+  
+  // Cascade Search Panel
 }
 

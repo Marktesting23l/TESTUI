@@ -1,0 +1,512 @@
+^C
+^C
+^C
+^C
+^C
+^C
+^C
+^C
+^C
+cp /tmp/WeatherDataPanel.qml.bak src/qml/WeatherDataPanel.qml
+^C
+touch /tmp/fix_weather_panel.py
+^C
+python3 -c "with open('src/qml/WeatherDataPanel.qml', 'r+') as f: content = f.read(); content = content.replace('onErrorOccurred: handleErrorOccurred\n        errorMessage = errMessage\n        isLoading = false\n    }\n    }', 'onErrorOccurred: handleErrorOccurred\n    }'); f.seek(0); f.write(content); f.truncate()"
+^C
+sed -i 's/onErrorOccurred: handleErrorOccurred\n        errorMessage = errMessage\n        isLoading = false\n    }\n    }/onErrorOccurred: handleErrorOccurred\n    }/' src/qml/WeatherDataPanel.qml
+^C
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.12
+import QtQuick.Controls.Material 2.12
+import QtCharts 2.3
+
+Drawer {
+    id: weatherDataPanel
+    
+    property bool isLoading: false
+    property var selectedProvince: null
+    property var selectedStation: null
+    property var weatherData: null
+    property string errorMessage: ""
+    property bool hasError: errorMessage !== ""
+    
+    width: parent.width * 0.9
+    height: parent.height
+    edge: Qt.RightEdge
+    
+    // Create an instance of the RIA Weather Service
+    RIAWeatherService {
+        id: riaService
+        
+        // Use function references instead of parameter injection
+        onProvincesLoaded: handleProvincesLoaded
+        onStationsLoaded: handleStationsLoaded
+        onDailyDataLoaded: handleDailyDataLoaded
+        onMonthlyDataLoaded: handleMonthlyDataLoaded
+        onErrorOccurred: handleErrorOccurred
+        errorMessage = errMessage
+        isLoading = false
+    }
+    }
+    
+    // Handler functions for signals
+    function handleProvincesLoaded(provinces) {
+        provincesModel.clear()
+        provinces.forEach(function(province) {
+            provincesModel.append({
+                id: province.id,
+                name: province.nombre
+            })
+        })
+        isLoading = false
+    }
+    
+    function handleStationsLoaded(stations) {
+        stationsModel.clear()
+        stations.forEach(function(station) {
+            stationsModel.append({
+                code: station.codigoEstacion,
+                name: station.nombre,
+                latitude: station.latitud,
+                longitude: station.longitud,
+                altitude: station.altitud
+            })
+        })
+        isLoading = false
+    }
+    
+    function handleDailyDataLoaded(dailyData) {
+        weatherData = dailyData
+        isLoading = false
+        updateChartData()
+    }
+    
+    function handleMonthlyDataLoaded(monthlyData) {
+        weatherData = monthlyData
+        isLoading = false
+        updateChartData()
+    }
+    
+    function handleErrorOccurred(errMessage) {
+        errorMessage = errMessage
+        isLoading = false
+    }
+    
+    // Models for the ComboBoxes
+    ListModel {
+        id: provincesModel
+    }
+    
+    ListModel {
+        id: stationsModel
+    }
+    
+    // Function to load provinces when the panel is opened
+    function open() {
+        isLoading = true
+        errorMessage = ""
+        riaService.loadProvinces()
+        visible = true
+    }
+    
+    // Function to update chart data
+    function updateChartData() {
+        if (!weatherData) return
+        
+        // Clear existing series
+        temperatureChart.removeAllSeries()
+        humidityChart.removeAllSeries()
+        
+        // Create series for temperature data
+        var tempMaxSeries = temperatureChart.createSeries(ChartView.LineSeries, "Temp. Máxima", temperatureChart.axisX, temperatureChart.axisY)
+        var tempMinSeries = temperatureChart.createSeries(ChartView.LineSeries, "Temp. Mínima", temperatureChart.axisX, temperatureChart.axisY)
+        var tempMedSeries = temperatureChart.createSeries(ChartView.LineSeries, "Temp. Media", temperatureChart.axisX, temperatureChart.axisY)
+        
+        // Create series for humidity data
+        var humMaxSeries = humidityChart.createSeries(ChartView.LineSeries, "Hum. Máxima", humidityChart.axisX, humidityChart.axisY)
+        var humMinSeries = humidityChart.createSeries(ChartView.LineSeries, "Hum. Mínima", humidityChart.axisX, humidityChart.axisY)
+        var humMedSeries = humidityChart.createSeries(ChartView.LineSeries, "Hum. Media", humidityChart.axisX, humidityChart.axisY)
+        
+        // Add data points
+        if (Array.isArray(weatherData)) {
+            // For range data
+            weatherData.forEach(function(data, index) {
+                var date = new Date(data.fecha)
+                
+                tempMaxSeries.append(index, data.tempMax)
+                tempMinSeries.append(index, data.tempMin)
+                tempMedSeries.append(index, data.tempMedia)
+                
+                humMaxSeries.append(index, data.humedadMax)
+                humMinSeries.append(index, data.humedadMin)
+                humMedSeries.append(index, data.humedadMedia)
+            })
+        } else {
+            // For single day data
+            tempMaxSeries.append(0, weatherData.tempMax)
+            tempMinSeries.append(0, weatherData.tempMin)
+            tempMedSeries.append(0, weatherData.tempMedia)
+            
+            humMaxSeries.append(0, weatherData.humedadMax)
+            humMinSeries.append(0, weatherData.humedadMin)
+            humMedSeries.append(0, weatherData.humedadMedia)
+        }
+    }
+    
+    // Main content
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 16
+        spacing: 16
+        
+        // Header
+        RowLayout {
+            Layout.fillWidth: true
+            
+            Label {
+                text: "Datos Meteorológicos RIA"
+                font.pixelSize: 20
+                font.bold: true
+                Layout.fillWidth: true
+            }
+            
+            Button {
+                text: "Cerrar"
+                onClicked: weatherDataPanel.visible = false
+            }
+        }
+        
+        // Error message
+        Rectangle {
+            visible: hasError
+            color: "#FFEBEE"
+            border.color: "#D32F2F"
+            border.width: 1
+            radius: 4
+            Layout.fillWidth: true
+            height: errorLabel.height + 16
+            
+            Label {
+                id: errorLabel
+                text: errorMessage
+                color: "#D32F2F"
+                anchors.centerIn: parent
+                anchors.margins: 8
+                wrapMode: Text.WordWrap
+                width: parent.width - 16
+            }
+        }
+        
+        // Loading indicator
+        BusyIndicator {
+            visible: isLoading
+            running: isLoading
+            Layout.alignment: Qt.AlignHCenter
+        }
+        
+        // Selection controls
+        GroupBox {
+            title: "Selección"
+            Layout.fillWidth: true
+            
+            GridLayout {
+                columns: 2
+                rowSpacing: 8
+                columnSpacing: 8
+                anchors.fill: parent
+                
+                Label { text: "Provincia:" }
+                ComboBox {
+                    id: provinceComboBox
+                    Layout.fillWidth: true
+                    model: provincesModel
+                    textRole: "name"
+                    valueRole: "id"
+                    enabled: !isLoading && provincesModel.count > 0
+                    
+                    onActivated: {
+                        selectedProvince = provincesModel.get(currentIndex)
+                        selectedStation = null
+                        isLoading = true
+                        errorMessage = ""
+                        riaService.loadStations(selectedProvince.id)
+                    }
+                }
+                
+                Label { text: "Estación:" }
+                ComboBox {
+                    id: stationComboBox
+                    Layout.fillWidth: true
+                    model: stationsModel
+                    textRole: "name"
+                    valueRole: "code"
+                    enabled: !isLoading && stationsModel.count > 0 && selectedProvince !== null
+                    
+                    onActivated: {
+                        selectedStation = stationsModel.get(currentIndex)
+                    }
+                }
+            }
+        }
+        
+        // Date selection
+        GroupBox {
+            title: "Periodo"
+            Layout.fillWidth: true
+            enabled: selectedStation !== null
+            
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 8
+                
+                RadioButton {
+                    id: todayRadio
+                    text: "Hoy"
+                    checked: true
+                }
+                
+                RadioButton {
+                    id: last7DaysRadio
+                    text: "Últimos 7 días"
+                }
+                
+                RadioButton {
+                    id: customRangeRadio
+                    text: "Rango personalizado"
+                }
+                
+                GridLayout {
+                    columns: 2
+                    Layout.fillWidth: true
+                    visible: customRangeRadio.checked
+                    
+                    Label { text: "Fecha inicio:" }
+                    TextField {
+                        id: startDateField
+                        Layout.fillWidth: true
+                        placeholderText: "YYYY-MM-DD"
+                        inputMethodHints: Qt.ImhDate
+                    }
+                    
+                    Label { text: "Fecha fin:" }
+                    TextField {
+                        id: endDateField
+                        Layout.fillWidth: true
+                        placeholderText: "YYYY-MM-DD"
+                        inputMethodHints: Qt.ImhDate
+                    }
+                }
+                
+                CheckBox {
+                    id: calculateEt0CheckBox
+                    text: "Calcular ET0"
+                    checked: true
+                }
+                
+                Button {
+                    text: "Cargar datos"
+                    Layout.fillWidth: true
+                    enabled: !isLoading && selectedStation !== null
+                    
+                    onClicked: {
+                        isLoading = true
+                        errorMessage = ""
+                        
+                        if (todayRadio.checked) {
+                            // Load today's data
+                            var today = new Date()
+                            riaService.loadDailyData(
+                                selectedProvince.id,
+                                selectedStation.code,
+                                today,
+                                calculateEt0CheckBox.checked
+                            )
+                        } else if (last7DaysRadio.checked) {
+                            // Load last 7 days data
+                            var endDate = new Date()
+                            var startDate = new Date()
+                            startDate.setDate(startDate.getDate() - 6)
+                            
+                            riaService.loadDailyDataRange(
+                                selectedProvince.id,
+                                selectedStation.code,
+                                startDate,
+                                endDate,
+                                calculateEt0CheckBox.checked
+                            )
+                        } else if (customRangeRadio.checked) {
+                            // Load custom range data
+                            if (startDateField.text && endDateField.text) {
+                                var customStartDate = new Date(startDateField.text)
+                                var customEndDate = new Date(endDateField.text)
+                                
+                                riaService.loadDailyDataRange(
+                                    selectedProvince.id,
+                                    selectedStation.code,
+                                    customStartDate,
+                                    customEndDate,
+                                    calculateEt0CheckBox.checked
+                                )
+                            } else {
+                                isLoading = false
+                                errorMessage = "Por favor, introduce fechas de inicio y fin válidas"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Data visualization
+        TabBar {
+            id: dataTabBar
+            Layout.fillWidth: true
+            visible: weatherData !== null
+            
+            TabButton {
+                text: "Gráficos"
+            }
+            
+            TabButton {
+                text: "Tabla"
+            }
+        }
+        
+        StackLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            currentIndex: dataTabBar.currentIndex
+            visible: weatherData !== null
+            
+            // Charts tab
+            ColumnLayout {
+                spacing: 16
+                
+                // Temperature chart
+                ChartView {
+                    id: temperatureChart
+                    title: "Temperatura (°C)"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    antialiasing: true
+                    legend.visible: true
+                    legend.alignment: Qt.AlignBottom
+                    
+                    ValueAxis {
+                        id: tempAxisX
+                        min: 0
+                        max: Array.isArray(weatherData) ? weatherData.length - 1 : 0
+                    }
+                    
+                    ValueAxis {
+                        id: tempAxisY
+                        min: 0
+                        max: 50
+                    }
+                }
+                
+                // Humidity chart
+                ChartView {
+                    id: humidityChart
+                    title: "Humedad (%)"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    antialiasing: true
+                    legend.visible: true
+                    legend.alignment: Qt.AlignBottom
+                    
+                    ValueAxis {
+                        id: humAxisX
+                        min: 0
+                        max: Array.isArray(weatherData) ? weatherData.length - 1 : 0
+                    }
+                    
+                    ValueAxis {
+                        id: humAxisY
+                        min: 0
+                        max: 100
+                    }
+                }
+            }
+            
+            // Table tab
+            ScrollView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+                
+                ListView {
+                    id: dataListView
+                    width: parent.width
+                    model: Array.isArray(weatherData) ? weatherData : [weatherData]
+                    
+                    delegate: ItemDelegate {
+                        width: parent.width
+                        height: dataColumn.height + 16
+                        
+                        ColumnLayout {
+                            id: dataColumn
+                            width: parent.width - 16
+                            anchors.centerIn: parent
+                            spacing: 4
+                            
+                            Label {
+                                text: {
+                                    var date = new Date(modelData.fecha)
+                                    return date.toLocaleDateString()
+                                }
+                                font.bold: true
+                                font.pixelSize: 16
+                            }
+                            
+                            GridLayout {
+                                columns: 2
+                                columnSpacing: 8
+                                rowSpacing: 4
+                                Layout.fillWidth: true
+                                
+                                Label { text: "Temp. Máxima:" }
+                                Label { text: modelData.tempMax + " °C" }
+                                
+                                Label { text: "Temp. Mínima:" }
+                                Label { text: modelData.tempMin + " °C" }
+                                
+                                Label { text: "Temp. Media:" }
+                                Label { text: modelData.tempMedia + " °C" }
+                                
+                                Label { text: "Hum. Máxima:" }
+                                Label { text: modelData.humedadMax + " %" }
+                                
+                                Label { text: "Hum. Mínima:" }
+                                Label { text: modelData.humedadMin + " %" }
+                                
+                                Label { text: "Hum. Media:" }
+                                Label { text: modelData.humedadMedia + " %" }
+                                
+                                Label { text: "Precipitación:" }
+                                Label { text: modelData.precipitacion + " mm" }
+                                
+                                Label { text: "Radiación:" }
+                                Label { text: modelData.radiacion + " MJ/m²" }
+                                
+                                Label { text: "Vel. Viento:" }
+                                Label { text: modelData.velViento + " m/s" }
+                                
+                                Label { text: "ET0:" }
+                                Label { text: modelData.et0 + " mm" }
+                            }
+                            
+                            Rectangle {
+                                height: 1
+                                Layout.fillWidth: true
+                                color: "#DDDDDD"
+                                visible: index < dataListView.count - 1
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

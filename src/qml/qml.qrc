@@ -8,6 +8,7 @@
         <file>BookmarkRenderer.qml</file>
         <file>BrowserPanel.qml</file>
         <file>BusyOverlay.qml</file>
+        <file>CascadeSearchPanel.qml</file>
         <file>CodeReader.qml</file>
         <file>ConfirmationToolbar.qml</file>
         <file>CoordinateLocator.qml</file>
@@ -43,6 +44,7 @@
         <file>QFieldAudioRecorder.qml</file>
         <file>QFieldCamera.qml</file>
         <file>QFieldSettings.qml</file>
+        <file>RIAWeatherService.qml</file>
         <file>ScaleBar.qml</file>
         <file>SensorInformationView.qml</file>
         <file>Toast.qml</file>
@@ -50,6 +52,7 @@
         <file>TcpDeviceChooser.qml</file>
         <file>UdpDeviceChooser.qml</file>
         <file>VariableEditor.qml</file>
+        <file>WeatherDataPanel.qml</file>
         <file>WelcomeScreen.qml</file>
         <file>editorwidgets/EditorWidgetBase.qml</file>
         <file>editorwidgets/Binary.qml</file>
@@ -125,5 +128,6 @@
         <file>imports/Theme/QfScrollBar.qml</file>
         <file>imports/Theme/QfSearchBar.qml</file>
         <file>imports/Theme/QfDialog.qml</file>
+        <file>municipality_data.json</file>
     </qresource>
 </RCC>
