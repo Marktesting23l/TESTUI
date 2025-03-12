@@ -108,7 +108,7 @@ Page {
       Layout.fillHeight: false
       Layout.topMargin: 5
 
-      text: qsTr('You may check the %1Portable Project%2 documentation page for more help.').arg("<a href=\"https://docs.qfield.org/how-to/movable-project\">").arg("</a>")
+      text: qsTr('The WMS errors from Catastro and SIGPAC are temporal error due the server, retry opening o wait ')
       textFormat: Text.RichText
       font: Theme.tipFont
       color: Theme.secondaryTextColor

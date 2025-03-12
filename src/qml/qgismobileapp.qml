@@ -521,9 +521,13 @@ ApplicationWindow {
 
         // when hovering various toolbars, reset coordinate locator position for nicer UX
         if (!freehandHandler.active && (pointInItem(point, digitizingToolbar) || pointInItem(point, elevationProfileButton))) {
-          coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(digitizingToolbar.rubberbandModel.lastCoordinate);
+          if (digitizingToolbar.rubberbandModel) {
+            coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(digitizingToolbar.rubberbandModel.lastCoordinate);
+          }
         } else if (!freehandHandler.active && pointInItem(point, geometryEditorsToolbar)) {
-          coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(geometryEditorsToolbar.editorRubberbandModel.lastCoordinate);
+          if (geometryEditorsToolbar.editorRubberbandModel) {
+            coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(geometryEditorsToolbar.editorRubberbandModel.lastCoordinate);
+          }
         } else if (!freehandHandler.active) {
           // after a click, it seems that the position is sent once at 0,0 => weird)
           if (point.position !== Qt.point(0, 0)) {
@@ -1559,18 +1563,40 @@ ApplicationWindow {
 
     Column {
       id: mainToolbar
-      visible: true // Always visible
+      visible: !screenLocker.enabled
       anchors.left: mainMenuBar.left
       anchors.top: mainMenuBar.bottom
       anchors.leftMargin: 4
       anchors.topMargin: 4
       spacing: 4
-      z: 3000 // Ensure it's above all other elements
-      
-      Component.onCompleted: {
-        console.log("MainToolbar initialized. Always visible.")
-      }
 
+      // Add Weather Forecast button
+      QfToolButton {
+        id: weatherButton
+        width: 48
+        height: 48
+        round: true
+        bgcolor: Theme.toolButtonBackgroundColor
+        iconSource: Theme.getThemeVectorIcon('ic_weather_24dp')
+        iconColor: Theme.toolButtonColor
+        
+        onClicked: {
+          // Get current map center coordinates
+          var extent = mapCanvas.mapSettings.extent
+          // Calculate center manually from the extent
+          var centerX = (extent.xMinimum + extent.xMaximum) / 2
+          var centerY = (extent.yMinimum + extent.yMaximum) / 2
+          
+          // Create a proper point object using GeometryUtils.point
+          var center = GeometryUtils.point(centerX, centerY)
+          var centerPoint = GeometryUtils.reprojectPoint(center, mapCanvas.mapSettings.destinationCrs, CoordinateReferenceSystemUtils.wgs84Crs())
+          
+          // Update weather forecast panel with current location
+          weatherForecastPanel.updateLocation(centerPoint.y, centerPoint.x, "Ubicación del mapa")
+          weatherForecastPanel.open()
+        }
+      }
+      
       // Add Cascade Search button
       QfToolButton {
         id: cascadeSearchButton
@@ -2479,31 +2505,109 @@ ApplicationWindow {
             // Add a timestamp to prevent caching issues
             var timestamp = new Date().getTime();
             
-            // Different URL formats based on platform
-            var mapsUrl;
+            // Format coordinates consistently with 6 decimal places
+            var lat = coords.lat.toFixed(6);
+            var lng = coords.lng.toFixed(6);
             
             if (Qt.platform.os === "android") {
-              // Use geo: URI scheme for Android which is more reliable
-              // Format: geo:latitude,longitude?q=latitude,longitude(Label)
-              // This format ensures Google Maps opens at the specified coordinates
-              mapsUrl = "geo:" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
-                        "?q=" + coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
-                        "(" + qsTr("Marked Location") + ")";
+              // For Android, try multiple URL formats in sequence until one works
+              
+              // Format -1: Try to directly open Google Maps app with coordinates
+              // This is the most direct approach but requires the app to be installed
+              var mapsUrlDirect = "https://maps.google.com/maps?daddr=" + lat + "," + lng + "&dirflg=d";
+              
+              // Format 0: Native geo: URI scheme - this should open the default maps app
+              // Using a simpler format that might be more compatible
+              var mapsUrl0 = "geo:" + lat + "," + lng + "?z=15";
+              
+              // Format 0.5: Direct Google Maps package intent - most specific approach
+              var mapsUrl05 = "google.navigation:q=" + lat + "," + lng;
+              
+              // Format 1: Direct intent to Google Maps app with loc: parameter
+              var mapsUrl1 = "https://maps.google.com/maps?q=loc:" + lat + "," + lng + "&z=15&t=" + timestamp;
+              
+              // Format 2: Standard Google Maps search URL
+              var mapsUrl2 = "https://www.google.com/maps/search/?api=1&query=" + 
+                           lat + "," + lng + 
+                           "&z=15&t=" + timestamp;
+              
+              // Format 3: Google Maps directions URL (sometimes more reliable)
+              var mapsUrl3 = "https://www.google.com/maps/dir/?api=1&destination=" + 
+                           lat + "," + lng + 
+                           "&travelmode=driving&t=" + timestamp;
+              
+              // Format 4: Google Maps with @marker parameter
+              var mapsUrl4 = "https://www.google.com/maps/@?api=1&map_action=map&center=" + 
+                           lat + "," + lng + 
+                           "&zoom=15&t=" + timestamp;
+              
+              // Try to directly open Google Maps first
+              console.log("Trying to directly open Google Maps app: " + mapsUrlDirect);
+              var success = Qt.openUrlExternally(mapsUrlDirect);
+              
+              if (!success) {
+                console.log("Direct Google Maps app failed, trying native geo URI: " + mapsUrl0);
+                success = Qt.openUrlExternally(mapsUrl0);
+              }
+              
+              if (!success) {
+                console.log("Native geo URI failed, trying direct Google Maps intent: " + mapsUrl05);
+                success = Qt.openUrlExternally(mapsUrl05);
+              }
+              
+              if (!success) {
+                console.log("Direct Google Maps intent failed, trying format 1: " + mapsUrl1);
+                success = Qt.openUrlExternally(mapsUrl1);
+              }
+              
+              if (!success) {
+                console.log("Format 1 failed, trying format 2: " + mapsUrl2);
+                success = Qt.openUrlExternally(mapsUrl2);
+              }
+              
+              if (!success) {
+                console.log("Format 2 failed, trying format 3: " + mapsUrl3);
+                success = Qt.openUrlExternally(mapsUrl3);
+              }
+              
+              if (!success) {
+                console.log("Format 3 failed, trying format 4: " + mapsUrl4);
+                success = Qt.openUrlExternally(mapsUrl4);
+              }
+              
+              if (success) {
+                displayToast(qsTr("Opening location at ") + lat + ", " + lng);
+                lastCoordinates = coords;
+                return true;
+              } else {
+                console.log("All URL formats failed");
+                displayToast(qsTr("Failed to open maps application"), "warning");
+                return false;
+              }
             } else {
               // For other platforms, use Google Maps URL with additional parameters
-              // Adding z (zoom level), t (timestamp) and forcing search mode
-              mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + 
-                        coords.lat.toFixed(6) + "," + coords.lng.toFixed(6) + 
-                        "&z=15&t=" + timestamp;
+              var mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + 
+                          lat + "," + lng + "&z=15&t=" + timestamp;
+              
+              console.log("Opening URL: " + mapsUrl);
+              
+              try {
+                var success = Qt.openUrlExternally(mapsUrl);
+                if (success) {
+                  displayToast(qsTr("Opening location at ") + lat + ", " + lng);
+                  lastCoordinates = coords;
+                  return true;
+                } else {
+                  console.log("Failed to open URL: " + mapsUrl);
+                  displayToast(qsTr("Failed to open maps application"), "warning");
+                  return false;
+                }
+              } catch (e) {
+                console.log("Error opening URL: " + e);
+                displayToast(qsTr("Error opening maps application"), "warning");
+                return false;
+              }
             }
-            
-            console.log("Opening URL: " + mapsUrl);
-            Qt.openUrlExternally(mapsUrl);
-            displayToast(qsTr("Opening location at ") + coords.lat.toFixed(6) + ", " + coords.lng.toFixed(6));
-            
-            // Store these coordinates for future use
-            lastCoordinates = coords;
-            return true;
           }
           
           return false;
@@ -2619,8 +2723,8 @@ ApplicationWindow {
                 } else {
                   displayToast(qsTr("Coordinate cursor unlocked"));
                   positioningSettings.positioningCoordinateLock = false;
-                  // deactivate any active averaged position collection
-                  positionSource.averagedPosition = false;
+                  // Sync with the original gnssLockButton
+                  gnssLockButton.checked = false;
                 }
               }
             }
@@ -3366,21 +3470,7 @@ ApplicationWindow {
       }
     }
 
-    MenuItem {
-      text: qsTr("Create Sample Projects")
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_folder_white_24dp")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-
-      onTriggered: {
-        dashBoard.close();
-        ensureSampleProjects();
-        highlighted = false;
-      }
-    }
-
+ 
     MenuItem {
       text: qsTr("Message Log")
 
@@ -3442,6 +3532,35 @@ ApplicationWindow {
         dashBoard.close();
         mainMenu.close();
         weatherDataPanel.open();
+        highlighted = false;
+      }
+    }
+    
+    MenuItem {
+      text: qsTr("Weather Forecast")
+
+      font: Theme.defaultFont
+      icon.source: Theme.getThemeVectorIcon("ic_weather_24dp")
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+
+      onTriggered: {
+        // Get current map center coordinates
+        var extent = mapCanvas.mapSettings.extent
+        // Calculate center manually from the extent
+        var centerX = (extent.xMinimum + extent.xMaximum) / 2
+        var centerY = (extent.yMinimum + extent.yMaximum) / 2
+        
+        // Create a proper point object using GeometryUtils.point
+        var center = GeometryUtils.point(centerX, centerY)
+        var centerPoint = GeometryUtils.reprojectPoint(center, mapCanvas.mapSettings.destinationCrs, CoordinateReferenceSystemUtils.wgs84Crs())
+        
+        // Update weather forecast panel with current location
+        weatherForecastPanel.updateLocation(centerPoint.y, centerPoint.x, "Ubicación del mapa")
+        
+        dashBoard.close();
+        mainMenu.close();
+        weatherForecastPanel.open();
         highlighted = false;
       }
     }
@@ -4320,6 +4439,12 @@ ApplicationWindow {
     id: weatherDataPanel
     parent: mainWindow.contentItem
   }
+  
+  WeatherForecastPanel {
+    id: weatherForecastPanel
+    parent: mainWindow.contentItem
+    positionSource: positionSource
+  }
 
   CascadeSearchPanel {
     id: cascadeSearchPanel
@@ -5196,11 +5321,8 @@ ApplicationWindow {
   }
 
   function openPhotoGallery() {
-    // Get the folder name from camera settings or use DCIM as default
+    // Always use DCIM as the folder name for photos
     let folderName = "DCIM"
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
-      folderName = standaloneCameraLoader.item.cameraSettings.folderName
-    }
     
     // Create the directory if it doesn't exist
     let photosPath = qgisProject.homePath + '/' + folderName
@@ -5210,7 +5332,7 @@ ApplicationWindow {
     platformUtilities.open(photosPath)
     
     // Display a toast
-    displayToast(qsTr("Opening photo folder: ") + folderName)
+    displayToast(qsTr("Opening DCIM folder"))
   }
   
   // Function to create a DCIM folder in the project directory

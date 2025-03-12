@@ -15,6 +15,24 @@ Drawer {
     property bool hasError: errorMessage !== ""
     
     // Signal to zoom to station in QGIS
+    // This signal should be connected to a slot in the QGIS application that centers the map on the given coordinates
+    // Example connection in Python:
+    // 
+    // def zoom_to_coordinates(self, latitude, longitude):
+    //     """Zoom to the given coordinates in the QGIS map canvas"""
+    //     # Create a point with the given coordinates
+    //     point = QgsPointXY(longitude, latitude)
+    //     # Create a rectangle centered on the point
+    //     rect = QgsRectangle(point, point)
+    //     # Expand the rectangle to create some padding
+    //     rect.grow(0.01)  # Adjust this value as needed
+    //     # Set the extent of the map canvas to the rectangle
+    //     self.iface.mapCanvas().setExtent(rect)
+    //     # Refresh the map canvas
+    //     self.iface.mapCanvas().refresh()
+    //
+    // # Connect the signal
+    // self.weatherPanel.zoomToStation.connect(self.zoom_to_coordinates)
     signal zoomToStation(double latitude, double longitude)
     
     // List of Andalucía provinces IDs
@@ -23,9 +41,30 @@ Drawer {
     // Selected variable for chart display
     property string selectedVariable: "temperature" // Default to temperature
     
+    // Auto-collapse sections on small screens
+    property bool isSmallScreen: width < 500
+    
     width: parent.width * 0.9
     height: parent.height
     edge: Qt.RightEdge
+    
+    // Update isSmallScreen when the panel is resized
+    onWidthChanged: {
+        if (width < 500 && !isSmallScreen) {
+            isSmallScreen = true
+        } else if (width >= 500 && isSmallScreen) {
+            isSmallScreen = false
+        }
+    }
+    
+    // Apply theme styling
+    Material.elevation: 6
+    background: Rectangle {
+        color: Material.background
+        border.color: Material.accent
+        border.width: 1
+        radius: 4
+    }
     
     // Create an instance of the RIA Weather Service
     RIAWeatherService {
@@ -230,10 +269,10 @@ Drawer {
             
             yAxisMax = maxTemp
             dataAxisY.min = minTemp
-            
-            // Add data points
-            if (Array.isArray(weatherData)) {
-                weatherData.forEach(function(data, index) {
+        
+        // Add data points
+        if (Array.isArray(weatherData)) {
+            weatherData.forEach(function(data, index) {
                     tempMaxSeries.append(index, data.tempMax || 0)
                     tempMinSeries.append(index, data.tempMin || 0)
                     tempMedSeries.append(index, data.tempMedia || 0)
@@ -262,7 +301,7 @@ Drawer {
                     humMedSeries.append(index, data.humedadMedia || 0)
                 })
                 dataAxisX.max = weatherData.length - 1
-            } else {
+        } else {
                 humMaxSeries.append(0, weatherData.humedadMax || 0)
                 humMinSeries.append(0, weatherData.humedadMin || 0)
                 humMedSeries.append(0, weatherData.humedadMedia || 0)
@@ -635,37 +674,45 @@ Drawer {
     ColumnLayout {
         anchors.fill: parent
         // Reduce padding to create more space
-        anchors.margins: 8
-        spacing: 8
+        anchors.margins: 4
+        spacing: 2
         
         // Header
         RowLayout {
             Layout.fillWidth: true
+            spacing: 2
             
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 2
+                spacing: 1
             
-                Label {
-                    text: "Datos Meteorológicos RIA"
-                    font.pixelSize: 18
-                    font.bold: true
-                    Layout.fillWidth: true
-                }
-                
+            Label {
+                text: "Datos Meteorológicos RIA"
+                    font.pixelSize: isSmallScreen ? 14 : 18
+                font.bold: true
+                Layout.fillWidth: true
+            }
+            
                 Label {
                     text: "Datos IFAPA Andalucía - <a href='https://www.juntadeandalucia.es/agriculturaypesca/ifapa/riaweb/web/datosabiertos'>Más información</a>"
                     onLinkActivated: Qt.openUrlExternally(link)
-                    font.pixelSize: 12
+                    font.pixelSize: isSmallScreen ? 10 : 12
                     color: Material.accent
+                    visible: !isSmallScreen
                 }
             }
             
             // Add location button
             Button {
                 id: locationButton
-                text: "Ver ubicación"
+                text: isSmallScreen ? "" : "Ver ubicación"
+                icon.source: "qrc:///icons/mActionZoomToLayer.svg"
+                Material.background: Material.accent
+                Material.foreground: "white"
                 visible: selectedStation !== null
+                implicitWidth: isSmallScreen ? 36 : undefined
+                implicitHeight: isSmallScreen ? 36 : undefined
+                padding: isSmallScreen ? 2 : 6
                 onClicked: {
                     if (selectedStation && selectedStation.latitude && selectedStation.longitude) {
                         zoomToStation(selectedStation.latitude, selectedStation.longitude)
@@ -676,7 +723,13 @@ Drawer {
             }
             
             Button {
-                text: "Cerrar"
+                text: isSmallScreen ? "" : "Cerrar"
+                icon.source: "qrc:///icons/mActionRemove.svg"
+                Material.background: Material.primary
+                Material.foreground: "white"
+                implicitWidth: isSmallScreen ? 36 : undefined
+                implicitHeight: isSmallScreen ? 36 : undefined
+                padding: isSmallScreen ? 2 : 6
                 onClicked: weatherDataPanel.visible = false
             }
         }
@@ -711,15 +764,53 @@ Drawer {
         
         // Selection controls
         GroupBox {
+            id: selectionGroupBox
             title: "Selección"
             Layout.fillWidth: true
-            padding: 4
+            padding: 2
+            
+            property bool expanded: !isSmallScreen
+            
+            background: Rectangle {
+                color: Material.dialogColor
+                border.color: Material.dividerColor
+                border.width: 1
+                radius: 4
+                y: parent.topPadding - parent.bottomPadding
+                width: parent.width
+                height: parent.height - parent.topPadding + parent.bottomPadding
+            }
+            
+            label: RowLayout {
+                x: parent.leftPadding
+                width: parent.width - parent.leftPadding - parent.rightPadding
+                height: parent.topPadding
+                
+                Label {
+                    text: parent.parent.title
+                    color: Material.accent
+                    font.bold: true
+                    font.pixelSize: 14
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                }
+                
+                Button {
+                    text: selectionGroupBox.expanded ? "▲" : "▼"
+                    flat: true
+                    padding: 2
+                    implicitWidth: 24
+                    implicitHeight: 24
+                    onClicked: selectionGroupBox.expanded = !selectionGroupBox.expanded
+                }
+            }
             
             GridLayout {
                 columns: 2
-                rowSpacing: 4
-                columnSpacing: 4
+                rowSpacing: 2
+                columnSpacing: 2
                 anchors.fill: parent
+                visible: selectionGroupBox.expanded
                 
                 Label { text: "Provincia:" }
                 ComboBox {
@@ -757,33 +848,76 @@ Drawer {
         
         // Date selection
         GroupBox {
+            id: periodGroupBox
             title: "Periodo"
             Layout.fillWidth: true
             enabled: selectedStation !== null
-            padding: 4
+            padding: 2
+            
+            property bool expanded: !isSmallScreen
+            
+            background: Rectangle {
+                color: Material.dialogColor
+                border.color: Material.dividerColor
+                border.width: 1
+                radius: 4
+                y: parent.topPadding - parent.bottomPadding
+                width: parent.width
+                height: parent.height - parent.topPadding + parent.bottomPadding
+                opacity: parent.enabled ? 1.0 : 0.6
+            }
+            
+            label: RowLayout {
+                x: parent.leftPadding
+                width: parent.width - parent.leftPadding - parent.rightPadding
+                height: parent.topPadding
+                opacity: parent.parent.enabled ? 1.0 : 0.6
+                
+                Label {
+                    text: parent.parent.title
+                    color: Material.accent
+                    font.bold: true
+                    font.pixelSize: 14
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.fillWidth: true
+                }
+                
+                Button {
+                    text: periodGroupBox.expanded ? "▲" : "▼"
+                    flat: true
+                    padding: 2
+                    implicitWidth: 24
+                    implicitHeight: 24
+                    onClicked: periodGroupBox.expanded = !periodGroupBox.expanded
+                    enabled: parent.parent.parent.enabled
+                }
+            }
             
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 4
+                spacing: 2
+                visible: periodGroupBox.expanded
                 
                 // Data type selection
                 ButtonGroup { id: dataTypeGroup }
                 
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 4
+                    spacing: 2
                 
                 RadioButton {
                         id: dailyDataRadio
                         text: "Datos diarios"
                     checked: true
                         ButtonGroup.group: dataTypeGroup
+                        padding: 2
                     }
                     
                     RadioButton {
                         id: monthlyDataRadio
                         text: "Datos mensuales"
                         ButtonGroup.group: dataTypeGroup
+                        padding: 2
                         onCheckedChanged: {
                             // Disable ET0 checkbox when monthly data is selected
                             if (checked) {
@@ -804,31 +938,35 @@ Drawer {
                     // Put all options in a single row
                     RowLayout {
                         Layout.fillWidth: true
-                        spacing: 4
+                        spacing: 2
                         
                         RadioButton {
                             id: lastDataDayRadio
-                            text: "Último día con datos"
+                            text: "Último día"
                             checked: true
                             ButtonGroup.group: dailyPeriodGroup
+                            padding: 2
                         }
                         
                         RadioButton {
                             id: yesterdayRadio
                             text: "14 días"
                             ButtonGroup.group: dailyPeriodGroup
+                            padding: 2
                 }
                 
                 RadioButton {
                     id: last7DaysRadio
                             text: "7 días"
                             ButtonGroup.group: dailyPeriodGroup
+                            padding: 2
                 }
                 
                 RadioButton {
                     id: customRangeRadio
                             text: "Rango"
                             ButtonGroup.group: dailyPeriodGroup
+                            padding: 2
                         }
                 }
                 
@@ -836,8 +974,8 @@ Drawer {
                         columns: 4
                     Layout.fillWidth: true
                     visible: customRangeRadio.checked
-                        rowSpacing: 4
-                        columnSpacing: 4
+                        rowSpacing: 2
+                        columnSpacing: 2
                     
                         Label { text: "Inicio:" }
                     TextField {
@@ -860,14 +998,14 @@ Drawer {
                 // Monthly data options
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 4
+                    spacing: 2
                     visible: monthlyDataRadio.checked
                     
                     GridLayout {
                         columns: 4
                         Layout.fillWidth: true
-                        rowSpacing: 4
-                        columnSpacing: 4
+                        rowSpacing: 2
+                        columnSpacing: 2
                         
                         Label { text: "Año:" }
                         ComboBox {
@@ -926,6 +1064,7 @@ Drawer {
                     text: "Calcular ET0 (Penman-Monteith)"
                     checked: true
                     visible: dailyDataRadio.checked
+                    padding: 2
                     ToolTip.visible: hovered
                     ToolTip.text: "La ET0 (Evapotranspiración de referencia) se calcula mediante el algoritmo de Penman-Monteith"
                 }
@@ -934,6 +1073,8 @@ Drawer {
                     text: "Cargar datos"
                     Layout.fillWidth: true
                     enabled: !isLoading && selectedStation !== null
+                    Material.background: Material.primary
+                    Material.foreground: "white"
                     
                     onClicked: {
                         isLoading = true
@@ -948,9 +1089,9 @@ Drawer {
                                 // Set time to noon to avoid timezone issues
                                 twoDaysAgo.setHours(12, 0, 0, 0)
                                 
-                                riaService.loadDailyData(
-                                    selectedProvince.id,
-                                    selectedStation.code,
+                            riaService.loadDailyData(
+                                selectedProvince.id,
+                                selectedStation.code,
                                     twoDaysAgo,
                                     calculateEt0CheckBox.checked
                                 )
@@ -1055,7 +1196,7 @@ Drawer {
             
             // Chart tab
             ColumnLayout {
-                spacing: 8
+                spacing: 4
                 
                 // Single chart for all data types
                 ChartView {
@@ -1070,6 +1211,12 @@ Drawer {
                     margins.bottom: 0
                     margins.left: 0
                     margins.right: 0
+                    
+                    // Theme styling
+                    backgroundColor: Material.background
+                    titleColor: Material.foreground
+                    titleFont.pixelSize: 14
+                    titleFont.bold: true
                     
                     // Reduce spacing between bars for better mobile display
                     Component.onCompleted: {
@@ -1114,12 +1261,13 @@ Drawer {
                 
                 Flow {
                     Layout.fillWidth: true
-                    spacing: 4
+                    spacing: 2
                     
                     RadioButton {
                         text: "Temperatura"
                         checked: selectedVariable === "temperature"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "temperature"
@@ -1131,6 +1279,7 @@ Drawer {
                     RadioButton {
                         text: "Humedad"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "humidity"
@@ -1142,6 +1291,7 @@ Drawer {
                     RadioButton {
                         text: "Radiación"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "radiation"
@@ -1153,6 +1303,7 @@ Drawer {
                     RadioButton {
                         text: "ET0"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         enabled: !isMonthlyData
                         onCheckedChanged: {
                             if (checked) {
@@ -1165,6 +1316,7 @@ Drawer {
                     RadioButton {
                         text: "Precipitación"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "precipitation"
@@ -1174,8 +1326,9 @@ Drawer {
                     }
                     
                     RadioButton {
-                        text: "Integral Térmica"
+                        text: "Int. Térmica"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "thermal_integral"
@@ -1185,8 +1338,9 @@ Drawer {
                     }
                     
                     RadioButton {
-                        text: "Integral Radiación"
+                        text: "Int. Radiación"
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "radiation_integral"
@@ -1196,8 +1350,9 @@ Drawer {
                     }
                     
                     RadioButton {
-                        text: "ET0 Acumulada"
+                        text: "ET0 Acum."
                         ButtonGroup.group: variableGroup
+                        padding: 2
                         enabled: !isMonthlyData
                         onCheckedChanged: {
                             if (checked) {
