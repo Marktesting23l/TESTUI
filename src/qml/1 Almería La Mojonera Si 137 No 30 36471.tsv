@@ -1,0 +1,124 @@
+Id Estación	Provincia	Nombre	Activa	Altitud (m)	Bajo plastico	Huso	Latitud	Longitud	Visible	XUTM
+1 	Almería 	La Mojonera 	Si 	137 	No 	30 	364714000N 	024215000W 	Si 	526,376 	4,071,320
+1 	Cádiz 	Basurta-Jerez de la Frontera 	Si 	39 	No 	30 	364525000N 	060102000W 	Si 	230,650 	4,072,170
+1 	Córdoba 	Belmez 	Si 	503 	No 	30 	381515000N 	051234000W 	Si 	306,667 	4,236,350
+1 	Granada 	Baza 	Si 	718 	No 	30 	373352000N 	024603000W 	Si 	520,514 	4,157,520
+1 	Huelva 	El Tojalillo-Gibraleón 	No 	52 	No 	30 	371905000N 	070140000W 	Si 	143,043 	4,137,800
+1 	Jaén 	Huesa 	Si 	779 	No 	30 	374450000N 	030342000W 	Si 	494,567 	4,177,790
+1 	Málaga 	Málaga 	Si 	55 	No 	30 	364523000N 	043215000W 	Si 	362,741 	4,068,970
+1 	Sevilla 	Los Palacios y Villafranca 	No 	21 	No 	30 	371044000N 	055620000W 	Si 	239,078 	4,118,790
+2 	Almería 	Almería 	Si 	5 	No 	30 	365007000N 	022408000W 	Si 	553,282 	4,076,780
+2 	Cádiz 	Jerez de la Frontera 	Si 	17 	No 	30 	363833000N 	060048000W 	Si 	230,594 	4,059,470
+2 	Córdoba 	Adamuz 	No 	145 	No 	30 	375951000N 	042643000W 	Si 	373,099 	4,206,530
+2 	Granada 	Puebla de Don Fadrique 	Si 	1,017 	No 	30 	375233000N 	022254000W 	Si 	554,375 	4,192,250
+2 	Huelva 	Lepe 	Si 	45 	No 	30 	371809000N 	071435000W 	Si 	123,877 	4,136,900
+2 	Jaén 	Pozo Alcón 	Si 	881 	No 	30 	374018000N 	025548000W 	Si 	506,163 	4,169,420
+2 	Málaga 	Vélez-Málaga 	Si 	33 	No 	30 	364745000N 	040753000W 	Si 	399,039 	4,072,850
+2 	Sevilla 	Las Cabezas de San Juan 	Si 	13 	No 	30 	370056000N 	055304000W 	Si 	243,351 	4,100,490
+3 	Almería 	Níjar 	No 	158 	No 	30 	365645000N 	020735000W 	Si 	577,785 	4,089,250
+3 	Cádiz 	Sanlúcar de Barrameda 	No 	22 	No 	30 	365002000N 	061743000W 	Si 	206,106 	4,081,540
+3 	Córdoba 	Palma del Río 	No 	134 	No 	30 	374332000N 	051337000W 	Si 	303,720 	4,177,720
+3 	Granada 	Loja 	Si 	463 	No 	30 	371009000N 	040817000W 	Si 	398,957 	4,114,260
+3 	Huelva 	Gibraleón 	Si 	147 	No 	30 	372444000N 	070335000W 	Si 	140,652 	4,148,360
+3 	Jaén 	San José de los Propios 	Si 	494 	No 	30 	375128000N 	031349000W 	Si 	479,742 	4,190,080
+3 	Málaga 	Antequera 	No 	457 	No 	30 	370319000N 	043336000W 	Si 	361,277 	4,102,170
+3 	Sevilla 	Lebrija I 	Si 	1 	No 	30 	365835000N 	060734000W 	Si 	221,723 	4,096,850
+4 	Almería 	Tabernas 	Si 	502 	No 	30 	370528000N 	021808000W 	Si 	561,998 	4,105,230
+4 	Cádiz 	Villamartín 	Si 	146 	No 	30 	365035000N 	053725000W 	Si 	266,049 	4,080,680
+4 	Córdoba 	Hornachuelos 	Si 	130 	No 	30 	374311000N 	050936000W 	Si 	309,617 	4,176,930
+4 	Granada 	Pinos Puente 	No 	594 	No 	30 	371542000N 	034623000W 	Si 	431,438 	4,124,200
+4 	Huelva 	Moguer 	No 	53 	No 	30 	370847000N 	064733000W 	Si 	163,137 	4,117,860
+4 	Jaén 	Sabiote 	Si 	791 	No 	30 	380446000N 	031407000W 	Si 	479,346 	4,214,660
+4 	Málaga 	Estepona 	Si 	185 	No 	30 	362640000N 	051235000W 	Si 	301,937 	4,035,540
+4 	Sevilla 	Lebrija 2 	No 	40 	No 	30 	365355000N 	060039000W 	Si 	231,713 	4,087,880
+5 	Almería 	Fiñana 	Si 	958 	No 	30 	370924000N 	025019000W 	Si 	514,311 	4,112,270
+5 	Cádiz 	Conil de la Frontera 	Si 	22 	No 	30 	361958000N 	060757000W 	Si 	218,803 	4,025,430
+5 	Córdoba 	El Carpio 	Si 	171 	No 	30 	375450000N 	043014000W 	Si 	367,791 	4,197,330
+5 	Granada 	Iznalloz 	Si 	921 	No 	30 	372459000N 	033305000W 	Si 	451,202 	4,141,210
+5 	Huelva 	Niebla 	Si 	28 	No 	30 	372049000N 	064407000W 	Si 	169,098 	4,139,930
+5 	Jaén 	Torreblascopedro 	Si 	275 	No 	30 	375919000N 	034121000W 	Si 	439,469 	4,204,790
+5 	Málaga 	Archidona 	No 	516 	No 	30 	370436000N 	042549000W 	Si 	372,855 	4,104,350
+5 	Sevilla 	Aznalcázar 	Si 	2 	No 	30 	370906000N 	061624000W 	Si 	209,287 	4,116,730
+6 	Almería 	Virgen de Fátima-Cuevas de Almanzora 	Si 	173 	No 	30 	372320000N 	014613000W 	Si 	608,847 	4,138,750
+6 	Cádiz 	Vejer de la Frontera 	Si 	13 	No 	30 	361706000N 	055024000W 	Si 	244,927 	4,019,310
+6 	Córdoba 	Córdoba 	Si 	94 	No 	30 	375125000N 	044810000W 	Si 	341,399 	4,191,480
+6 	Granada 	Jerez del Marquesado 	Si 	1,201 	No 	30 	371125000N 	030859000W 	Si 	486,699 	4,116,020
+6 	Huelva 	Aroche 	Si 	293 	No 	30 	375729000N 	065642000W 	Si 	153,376 	4,208,510
+6 	Jaén 	Alcaudete 	Si 	640 	No 	30 	373438000N 	040442000W 	Si 	404,780 	4,159,460
+6 	Málaga 	Sierra Yeguas 	Si 	467 	No 	30 	370818000N 	045009000W 	Si 	336,928 	4,111,800
+6 	Sevilla 	Villafranco del Guadalquivir 	No 	45 	No 	30 	370554000N 	060904000W 	Si 	219,935 	4,110,450
+7 	Almería 	Huércal-Overa 	Si 	303 	No 	30 	372444000N 	015303000W 	Si 	598,735 	4,141,210
+7 	Cádiz 	Jimena de la Frontera 	Si 	50 	No 	30 	362449000N 	052301000W 	Si 	286,263 	4,032,470
+7 	Córdoba 	Santaella 	Si 	196 	No 	30 	373120000N 	045307000W 	Si 	333,382 	4,154,500
+7 	Granada 	Cádiar 	Si 	928 	No 	30 	365523000N 	031102000W 	Si 	483,613 	4,086,360
+7 	Huelva 	La Puebla de Guzmán 	Si 	248 	No 	30 	373307000N 	071454000W 	Si 	124,659 	4,164,620
+7 	Jaén 	Mancha Real 	Si 	407 	No 	30 	375459000N 	033547000W 	Si 	447,571 	4,196,710
+7 	Málaga 	IFAPA Churriana 	Si 	17 	No 	30 	364025000N 	043011000W 	Si 	365,680 	4,059,740
+7 	Sevilla 	La Puebla del Río 	Si 	3 	No 	30 	371333000N 	060801000W 	Si 	221,954 	4,124,550
+8 	Almería 	Cuevas de Almanzora 	Si 	28 	No 	30 	371524000N 	014801000W 	Si 	606,367 	4,124,030
+8 	Cádiz 	Puerto de Santa María 	No 	20 	No 	30 	363658000N 	060908000W 	Si 	218,061 	4,056,940
+8 	Córdoba 	Baena 	Si 	310 	No 	30 	374129000N 	041821000W 	Si 	384,851 	4,172,400
+8 	Granada 	Zafarraya 	Si 	892 	No 	30 	365925000N 	040913000W 	Si 	397,321 	4,094,420
+8 	Huelva 	El Campillo 	Si 	383 	No 	30 	373939000N 	063557000W 	Si 	182,491 	4,174,300
+8 	Jaén 	Ubeda 	Si 	343 	No 	30 	375634000N 	031801000W 	Si 	473,599 	4,199,520
+8 	Málaga 	Pizarra 	Si 	71 	No 	30 	364600000N 	044254000W 	Si 	346,918 	4,070,360
+8 	Sevilla 	La Puebla del Río II 	Si 	2 	No 	30 	370448000N 	060247000W 	Si 	229,178 	4,108,110
+9 	Almería 	Tíjola 	No 	740 	No 	30 	372218000N 	022725000W 	Si 	548,076 	4,136,270
+9 	Cádiz 	Sanlúcar de Barrameda 	No 	22 	No 	30 	364650000N 	061848000W 	Si 	204,285 	4,075,660
+9 	Córdoba 	Palma del Rio 	Si 	58 	No 	30 	374332000N 	051337000W 	Si 	303,720 	4,177,720
+9 	Granada 	Almuñecar 	No 	49 	No 	30 	364421000N 	034039000W 	Si 	439,500 	4,066,160
+9 	Huelva 	La Palma del Condado 	Si 	171 	No 	30 	372201000N 	063229000W 	Si 	186,354 	4,141,470
+9 	Jaén 	Linares 	No 	432 	No 	30 	380331000N 	033858000W 	Si 	443,002 	4,212,540
+9 	Málaga 	Cártama 	Si 	78 	No 	30 	364300000N 	044041000W 	Si 	350,119 	4,064,780
+9 	Sevilla 	Ecija 	Si 	109 	No 	30 	373534000N 	050437000W 	Si 	316,625 	4,162,680
+10 	Almería 	Adra 	Si 	2 	No 	30 	364448000N 	025932000W 	Si 	500,683 	4,066,780
+10 	Cádiz 	Puerto de Santa María 	Si 	3 	No 	30 	363615937N 	061017320W 	Si 	216,316 	4,055,676
+10 	Granada 	Padul 	Si 	747 	No 	30 	370107000N 	033601000W 	Si 	446,599 	4,097,120
+10 	Huelva 	Almonte 	Si 	13 	No 	30 	370853000N 	062835000W 	Si 	191,221 	4,116,990
+10 	Jaén 	Marmolejo 	No 	208 	No 	30 	380321000N 	040750000W 	Si 	400,806 	4,212,640
+10 	Málaga 	Antequera 	Si 	440 	No 	30 	370203000N 	043345000W 	Si 	361,021 	4,099,810
+10 	Sevilla 	La Luisiana 	Si 	173 	No 	30 	373130000N 	051341000W 	Si 	303,108 	4,155,460
+11 	Almería 	Níjar 	Si 	169 	No 	30 	365702000N 	020929000W 	Si 	574,960 	4,089,720
+11 	Cádiz 	Sanlúcar de Barrameda 	Si 	29 	No 	30 	364308000N 	061948000W 	Si 	202,554 	4,068,870
+11 	Granada 	Almuñecar 	Si 	29 	No 	30 	364506000N 	034044000W 	Si 	439,384 	4,067,570
+11 	Huelva 	Gibraleón - Manzorrales 	Si 	43 	No 	30 	371831903N 	070055492W 	Si 	144,096 	4,136,702
+11 	Jaén 	Chiclana de Segura 	Si 	571 	No 	30 	381810000N 	025947000W 	Si 	500,305 	4,239,420
+11 	Málaga 	Archidona 	Si 	529 	No 	30 	370613850N 	042505790W 	Si 	373,857 	4,107,195
+11 	Sevilla 	Osuna 	Si 	198 	No 	30 	371518000N 	050805000W 	Si 	310,675 	4,125,300
+12 	Almería 	Tíjola 	Si 	776 	No 	30 	372242000N 	022734000W 	Si 	547,839 	4,137,000
+12 	Granada 	Pinos Puente Casanueva 	Si 	549 	No 	30 	371430720N 	034708058W 	Si 	430,324 	4,121,993
+12 	Huelva 	Moguer El Fresno 	Si 	41 	No 	30 	371129600N 	065017920W 	Si 	159,271 	4,123,027
+12 	Jaén 	La Higuera de Arjona 	Si 	257 	No 	30 	375655000N 	040027000W 	Si 	411,463 	4,200,610
+12 	Sevilla 	La Rinconada 	Si 	25 	No 	30 	372724000N 	055529000W 	Si 	241,295 	4,149,570
+13 	Jaén 	Mengíbar 	No 	373 	No 	30 	375750000N 	034927000W 	Si 	427,594 	4,202,140
+13 	Sevilla 	Sanlúcar La Mayor 	Si 	63 	No 	30 	372518000N 	061518000W 	Si 	211,943 	4,146,640
+14 	Jaén 	Santo Tomé 	Si 	537 	No 	30 	380145000N 	030458000W 	Si 	492,726 	4,209,060
+14 	Sevilla 	Villanueva del Río y Minas 	No 	38 	No 	30 	373646000N 	054102000W 	Si 	263,096 	4,166,270
+15 	Jaén 	Jaén 	Si 	299 	No 	30 	375326000N 	034616000W 	Si 	432,183 	4,193,960
+15 	Sevilla 	Lora del Río 	Si 	44 	No 	30 	373939000N 	053226000W 	Si 	275,891 	4,171,230
+16 	Jaén 	Marmolejo 	Si 	240 	No 	30 	380256000N 	041057000W 	Si 	396,245 	4,211,910
+16 	Sevilla 	Los Molares 	Si 	77 	No 	30 	371034000N 	054022000W 	Si 	262,696 	4,117,760
+17 	Jaén 	Linares 	Si 	282 	No 	30 	380502240N 	033428370W 	Si 	449,613 	4,215,286 
+17 	Sevilla 	Guillena 	Si 	48 	No 	30 	373052000N 	060351000W 	Si 	229,175 	4,156,370
+18 	Sevilla 	Puebla Cazalla 	Si 	193 	No 	30 	371305000N 	052103000W 	Si 	291,408 	4,121,660
+19 	Sevilla 	IFAPA Centro Las Torres-Tomejil 	Si 	12 	No 	30 	373045000N 	055750000W 	Si 	238,016 	4,155,860
+20 	Sevilla 	Isla Mayor 	Si 	2 	No 	30 	370649000N 	060716000W 	Si 	222,653 	4,112,040
+21 	Sevilla 	IFAPA Centro de Los Palacios 	Si 	10 	No 	30 	371110000N 	055645000W 	Si 	238,484 	4,119,600
+22 	Sevilla 	Villanueva del Río y Minas 	Si 	31 	No 	30 	373533000N 	054119000W 	Si 	262,609 	4,164,000
+101 	Cádiz 	IFAPA Centro de Chipiona 	Si 	7 	No 	30 	364503000N 	062359000W 	Si 	196,448 	4,072,630
+101 	Córdoba 	IFAPA Centro de Cabra 	Si 	543 	No 	30 	372953000N 	042551000W 	Si 	373,516 	4,151,100
+101 	Granada 	IFAPA Centro Camino del Purchil 	Si 	630 	No 	30 	371019000N 	033818000W 	Si 	443,311 	4,114,150
+101 	Huelva 	IFAPA Centro Huelva. Finca El Cebollar 	Si 	63 	No 	30 	371425000N 	064808000W 	Si 	162,674 	4,128,310
+101 	Jaén 	Torreperogil 	Si 	535 	No 	30 	375827000N 	031438000W 	Si 	478,573 	4,203,000
+101 	Málaga 	IFAPA Centro de Campanillas 	Si 	63 	No 	30 	364344000N 	043338000W 	Si 	360,629 	4,065,960
+101 	Sevilla 	IFAPA Centro Las Torres-Tomejil. Finca Tomejil 	Si 	75 	No 	30 	372403000N 	053515000W 	Si 	270,958 	4,142,490
+102 	Córdoba 	IFAPA Centro de Hinojosa del Duque 	Si 	543 	No 	30 	382946000N 	050655000W 	Si 	315,518 	4,263,000
+102 	Granada 	Huéneja 	Si 	1,110 	No 	30 	371254090N 	025748530W 	Si 	503,240 	4,118,727
+102 	Huelva 	IFAPA Centro Huelva. El Cebollar Bajo Plástico 	Si 	64 	Si 	30 	371427000N 	064804000W 	Si 	162,775 	4,128,400
+102 	Jaén 	Villacarrillo 	Si 	649 	No 	30 	380348000N 	031201000W 	Si 	482,408 	4,212,870
+103 	Huelva 	Almonte bajo plástico 	Si 	38 	Si 	30 	370430280N 	063342270W 	Si 	183,346 	4,109,139
+103 	Jaén 	Jódar 	Si 	486 	No 	30 	375242000N 	032003000W 	Si 	470,605 	4,192,400
+104 	Huelva 	Almonte bajo plástico frb 	No 	23 	No 	30 	370531000N 	063203000W 	Si 	185,851 	4,110,940
+104 	Jaén 	IFAPA Centro Mengibar 	Si 	293 	No 	30 	375627000N 	034715000W 	Si 	430,790 	4,199,560
+106 	Huelva 	Lepe bajo plástico 	No 	74 	Si 	30 	371416661N 	071446553W 	Si 	123,271 	4,129,727
+107 	Huelva 	Palos de la Frontera bajo plástico 	Si 	11 	Si 	30 	371226230N 	065147150W 	Si 	157,141 	4,124,863 

@@ -1820,54 +1820,152 @@ Drawer {
                                 Label { 
                                     text: {
                                         var precip = 0;
-                                        if (modelData.precipitacion !== undefined && modelData.precipitacion !== null) {
-                                            if (typeof modelData.precipitacion === 'string') {
-                                                precip = parseFloat(modelData.precipitacion.replace(',', '.'));
-                                                if (isNaN(precip)) precip = 0;
-                                            } else {
-                                                precip = Number(modelData.precipitacion);
-                                                if (isNaN(precip)) precip = 0;
-                                            }
-                                        }
-                                        return precip.toFixed(1) + " mm";
-                                    }
-                                    font.pixelSize: 10
-                                }
-                                
-                                Label { 
-                                    text: "Radiación:" 
-                                    font.pixelSize: 10
-                                }
-                                Label { 
-                                    text: modelData.radiacion + " MJ/m²" 
-                                    font.pixelSize: 10
-                                }
-                                
-                                Label { 
-                                    text: "Vel. Viento:" 
-                                    font.pixelSize: 10
-                                }
-                                Label { 
-                                    text: modelData.velViento + " m/s" 
-                                    font.pixelSize: 10
-                                }
-                                
-                                Label { 
-                                    text: "ET0:" 
-                                    font.pixelSize: 10
-                                }
-                                Label { 
-                                    text: modelData.et0 !== undefined ? modelData.et0.toFixed(2) + " mm" : "N/A"  // Format with 2 decimal places and handle undefined
-                                    font.pixelSize: 10
-                                }
+        
+        // Table tab
+        ScrollView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            
+            ListView {
+                id: dataListView
+                anchors.fill: parent
+                model: weatherData !== null ? (Array.isArray(weatherData) ? weatherData : [weatherData]) : []
+                
+                delegate: ItemDelegate {
+                    width: dataListView.width
+                    height: dataColumn.height + 4
+                    
+                    ColumnLayout {
+                        id: dataColumn
+                        width: parent.width - 4
+                        anchors.centerIn: parent
+                        spacing: 1
+                        
+                        Label {
+                            text: {
+                                var date = new Date(modelData.fecha)
+                                return date.toLocaleDateString()
+                            }
+                            font.bold: true
+                            font.pixelSize: 10
+                            Layout.fillWidth: true
+                        }
+                        
+                        GridLayout {
+                            columns: 2
+                            columnSpacing: 2
+                            rowSpacing: 1
+                            Layout.fillWidth: true
+                            
+                            Label { 
+                                text: "Temp. Máxima:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.tempMax + " °C" 
+                                font.pixelSize: 10
                             }
                             
-                            Rectangle {
-                                height: 1
-                                Layout.fillWidth: true
-                                color: "#DDDDDD"
-                                visible: index < dataListView.count - 1
+                            Label { 
+                                text: "Temp. Mínima:" 
+                                font.pixelSize: 10
                             }
+                            Label { 
+                                text: modelData.tempMin + " °C" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Temp. Media:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.tempMedia + " °C" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Hum. Máxima:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.humedadMax + " %" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Hum. Mínima:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.humedadMin + " %" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Hum. Media:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.humedadMedia + " %" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Precipitación:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: {
+                                    var precip = 0;
+                                    if (modelData.precipitacion !== undefined && modelData.precipitacion !== null) {
+                                        if (typeof modelData.precipitacion === 'string') {
+                                            precip = parseFloat(modelData.precipitacion.replace(',', '.'));
+                                            if (isNaN(precip)) precip = 0;
+                                        } else {
+                                            precip = Number(modelData.precipitacion);
+                                            if (isNaN(precip)) precip = 0;
+                                        }
+                                    }
+                                    return precip.toFixed(1) + " mm";
+                                }
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Radiación:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.radiacion + " MJ/m²" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "Vel. Viento:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.velViento + " m/s" 
+                                font.pixelSize: 10
+                            }
+                            
+                            Label { 
+                                text: "ET0:" 
+                                font.pixelSize: 10
+                            }
+                            Label { 
+                                text: modelData.et0 !== undefined ? modelData.et0.toFixed(2) + " mm" : "N/A"  // Format with 2 decimal places and handle undefined
+                                font.pixelSize: 10
+                            }
+                        }
+                        
+                        Rectangle {
+                            height: 1
+                            Layout.fillWidth: true
+                            color: "#DDDDDD"
+                            visible: index < dataListView.count - 1
                         }
                     }
                 }

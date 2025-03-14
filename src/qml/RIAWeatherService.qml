@@ -293,4 +293,64 @@ QtObject {
         xhr.open("GET", url);
         xhr.send();
     }
+
+    onStationsLoaded: function(stations) {
+        stationsModel.clear()
+        if (!stations || !Array.isArray(stations)) return
+        
+        var totalStations = 0;
+        var activeStations = 0;
+        
+        stations.forEach(function(station) {
+            if (!station) return
+            totalStations++;
+            
+            // Check if station is active and not bajo plastico
+            // Handle both string and boolean values
+            var isActive = station.activa === true || station.activa === "Si";
+            var isGreenhouse = station.bajoPlastico === true || station.bajoPlastico === "Si" || 
+                              station.bajoplastico === true || station.bajoplastico === "Si";
+            
+            // Only add active stations and exclude "bajo plastico" stations
+            if (!isActive || isGreenhouse) return
+            activeStations++;
+            
+            // Helper function to safely convert to number
+            function safeNumber(value) {
+                if (value === undefined || value === null) return 0
+                
+                // Handle string values with comma as decimal separator
+                if (typeof value === 'string') {
+                    // Replace comma with dot for decimal separator
+                    value = value.replace(',', '.')
+                }
+                
+                var num = Number(value)
+                return isNaN(num) ? 0 : num
+            }
+            
+            // Ensure we have valid numbers for coordinates
+            var lat = safeNumber(station.latitud)
+            var lon = safeNumber(station.longitud)
+            var alt = safeNumber(station.altitud)
+            
+            // Debug the coordinate conversion
+            console.log("Station coordinates conversion: " + 
+                       "Original lat: " + station.latitud + " → Converted: " + lat + ", " +
+                       "Original lon: " + station.longitud + " → Converted: " + lon)
+            
+            stationsModel.append({
+                code: String(station.codigoEstacion || ""),
+                name: String(station.nombre || ""),
+                latitude: lat,
+                longitude: lon,
+                altitude: alt,
+                active: isActive,
+                greenhouse: isGreenhouse
+            })
+        })
+        
+        console.log("RIAWeatherService: Filtered stations: " + activeStations + " active non-greenhouse stations out of " + totalStations + " total stations");
+        isLoading = false
+    }
 } 

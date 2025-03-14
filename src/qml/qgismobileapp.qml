@@ -2190,7 +2190,7 @@ ApplicationWindow {
         id: gnssLockButtonToolbar
         width: 40
         height: 40
-        visible: true // Always visible regardless of GPS status
+        visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
         round: true
         checkable: true
         checked: positioningSettings.positioningCoordinateLock
@@ -2502,77 +2502,23 @@ ApplicationWindow {
           
           // Validate coordinates are in reasonable range
           if (Math.abs(coords.lat) <= 90 && Math.abs(coords.lng) <= 180) {
-            // Add a timestamp to prevent caching issues
-            var timestamp = new Date().getTime();
-            
             // Format coordinates consistently with 6 decimal places
             var lat = coords.lat.toFixed(6);
             var lng = coords.lng.toFixed(6);
             
             if (Qt.platform.os === "android") {
-              // For Android, try multiple URL formats in sequence until one works
+              // For Android, use the most reliable intent format
+              // This format directly opens Google Maps with a pin at the specified location
+              var mapsUrl = "geo:" + lat + "," + lng + "?q=" + lat + "," + lng + "(Marked Location)";
               
-              // Format -1: Try to directly open Google Maps app with coordinates
-              // This is the most direct approach but requires the app to be installed
-              var mapsUrlDirect = "https://maps.google.com/maps?daddr=" + lat + "," + lng + "&dirflg=d";
-              
-              // Format 0: Native geo: URI scheme - this should open the default maps app
-              // Using a simpler format that might be more compatible
-              var mapsUrl0 = "geo:" + lat + "," + lng + "?z=15";
-              
-              // Format 0.5: Direct Google Maps package intent - most specific approach
-              var mapsUrl05 = "google.navigation:q=" + lat + "," + lng;
-              
-              // Format 1: Direct intent to Google Maps app with loc: parameter
-              var mapsUrl1 = "https://maps.google.com/maps?q=loc:" + lat + "," + lng + "&z=15&t=" + timestamp;
-              
-              // Format 2: Standard Google Maps search URL
-              var mapsUrl2 = "https://www.google.com/maps/search/?api=1&query=" + 
-                           lat + "," + lng + 
-                           "&z=15&t=" + timestamp;
-              
-              // Format 3: Google Maps directions URL (sometimes more reliable)
-              var mapsUrl3 = "https://www.google.com/maps/dir/?api=1&destination=" + 
-                           lat + "," + lng + 
-                           "&travelmode=driving&t=" + timestamp;
-              
-              // Format 4: Google Maps with @marker parameter
-              var mapsUrl4 = "https://www.google.com/maps/@?api=1&map_action=map&center=" + 
-                           lat + "," + lng + 
-                           "&zoom=15&t=" + timestamp;
-              
-              // Try to directly open Google Maps first
-              console.log("Trying to directly open Google Maps app: " + mapsUrlDirect);
-              var success = Qt.openUrlExternally(mapsUrlDirect);
+              console.log("Opening Android Maps URL: " + mapsUrl);
+              var success = Qt.openUrlExternally(mapsUrl);
               
               if (!success) {
-                console.log("Direct Google Maps app failed, trying native geo URI: " + mapsUrl0);
-                success = Qt.openUrlExternally(mapsUrl0);
-              }
-              
-              if (!success) {
-                console.log("Native geo URI failed, trying direct Google Maps intent: " + mapsUrl05);
-                success = Qt.openUrlExternally(mapsUrl05);
-              }
-              
-              if (!success) {
-                console.log("Direct Google Maps intent failed, trying format 1: " + mapsUrl1);
-                success = Qt.openUrlExternally(mapsUrl1);
-              }
-              
-              if (!success) {
-                console.log("Format 1 failed, trying format 2: " + mapsUrl2);
-                success = Qt.openUrlExternally(mapsUrl2);
-              }
-              
-              if (!success) {
-                console.log("Format 2 failed, trying format 3: " + mapsUrl3);
-                success = Qt.openUrlExternally(mapsUrl3);
-              }
-              
-              if (!success) {
-                console.log("Format 3 failed, trying format 4: " + mapsUrl4);
-                success = Qt.openUrlExternally(mapsUrl4);
+                // Fallback to direct Google Maps URL
+                mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
+                console.log("Trying fallback URL: " + mapsUrl);
+                success = Qt.openUrlExternally(mapsUrl);
               }
               
               if (success) {
@@ -2580,31 +2526,24 @@ ApplicationWindow {
                 lastCoordinates = coords;
                 return true;
               } else {
-                console.log("All URL formats failed");
+                console.log("Failed to open maps application");
                 displayToast(qsTr("Failed to open maps application"), "warning");
                 return false;
               }
             } else {
-              // For other platforms, use Google Maps URL with additional parameters
-              var mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + 
-                          lat + "," + lng + "&z=15&t=" + timestamp;
+              // For other platforms, use Google Maps URL
+              var mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
               
               console.log("Opening URL: " + mapsUrl);
+              var success = Qt.openUrlExternally(mapsUrl);
               
-              try {
-                var success = Qt.openUrlExternally(mapsUrl);
-                if (success) {
-                  displayToast(qsTr("Opening location at ") + lat + ", " + lng);
-                  lastCoordinates = coords;
-                  return true;
-                } else {
-                  console.log("Failed to open URL: " + mapsUrl);
-                  displayToast(qsTr("Failed to open maps application"), "warning");
-                  return false;
-                }
-              } catch (e) {
-                console.log("Error opening URL: " + e);
-                displayToast(qsTr("Error opening maps application"), "warning");
+              if (success) {
+                displayToast(qsTr("Opening location at ") + lat + ", " + lng);
+                lastCoordinates = coords;
+                return true;
+              } else {
+                console.log("Failed to open URL: " + mapsUrl);
+                displayToast(qsTr("Failed to open maps application"), "warning");
                 return false;
               }
             }
@@ -2696,15 +2635,15 @@ ApplicationWindow {
     
           QfToolButton {
             id: gnssLockButton
-            visible: true // Always visible regardless of GPS status
+            visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
             round: true
             checkable: true
             checked: positioningSettings.positioningCoordinateLock
-    
+
             iconSource: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp") : Theme.getThemeVectorIcon("ic_location_locked_white_24dp")
             iconColor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.positionColor : Theme.toolButtonColor
             bgcolor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.toolButtonBackgroundColor : Theme.toolButtonBackgroundSemiOpaqueColor
-    
+
             onCheckedChanged: {
               if (gnssButton.state === "On") {
                 if (checked) {
@@ -2723,8 +2662,6 @@ ApplicationWindow {
                 } else {
                   displayToast(qsTr("Coordinate cursor unlocked"));
                   positioningSettings.positioningCoordinateLock = false;
-                  // Sync with the original gnssLockButton
-                  gnssLockButton.checked = false;
                 }
               }
             }
@@ -3798,10 +3735,66 @@ ApplicationWindow {
         var id = bookmarkModel.addBookmarkAtPoint(canvasMenu.point, name, group);
         if (id !== '') {
           bookmarkProperties.bookmarkId = id;
-          bookmarkProperties.bookmarkName = name;
-          bookmarkProperties.bookmarkGroup = group;
-          bookmarkProperties.open();
         }
+      }
+    }
+    
+    MenuItem {
+      id: sigpacIconItem
+      text: ""
+      icon.source: Theme.getThemeIcon("sigpac_icon") // Using a theme icon
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+      font: Theme.defaultFont
+      enabled: false
+    }
+    
+    MenuItem {
+      id: querySigpacItem
+      text: qsTr("Query SIGPAC")
+      icon.source: Theme.getThemeVectorIcon("ic_baseline_search_white") // Changed to map icon
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+      font: Theme.defaultFont
+
+      onTriggered: {
+        // Create the SIGPAC dialog if it doesn't exist
+        if (!sigpacDialog) {
+          try {
+            var component = Qt.createComponent("qrc:/qml/SigpacDialog.qml");
+            if (component.status === Component.Ready) {
+              sigpacDialog = component.createObject(mainWindow);
+            } else if (component.status === Component.Error) {
+              console.error("Error creating SigpacDialog:", component.errorString());
+              displayToast(qsTr("Error creating SIGPAC dialog: %1").arg(component.errorString()));
+              return;
+            }
+          } catch (e) {
+            console.error("Exception creating SigpacDialog:", e);
+            displayToast(qsTr("Exception creating SIGPAC dialog: %1").arg(e));
+            return;
+          }
+        }
+        
+        if (!sigpacDialog) {
+          displayToast(qsTr("Failed to create SIGPAC dialog"));
+          return;
+        }
+        
+        // Set the current coordinates
+        sigpacDialog.currentX = canvasMenu.point.x;
+        sigpacDialog.currentY = canvasMenu.point.y;
+        // Fix: Check if postgisSrid is defined and is a valid integer, otherwise use default 4258 (ETRS89)
+        // Using EPSG:4258 instead of EPSG:3857 since it works better with the SIGPAC service
+        sigpacDialog.currentSrid = (mapCanvas.mapSettings.destinationCrs && 
+                                   typeof mapCanvas.mapSettings.destinationCrs.postgisSrid === 'number') ? 
+                                   mapCanvas.mapSettings.destinationCrs.postgisSrid : 4258;
+        
+        // Show the dialog
+        sigpacDialog.open();
+        
+        // Query SIGPAC data for the current position
+        sigpacDialog.queryCurrentPosition();
       }
     }
 
@@ -5295,7 +5288,14 @@ ApplicationWindow {
                    today.getMinutes().toString().padStart(2, '0') +
                    today.getSeconds().toString().padStart(2, '0')
     
-    let relativePath = folderName + '/IMG_' + dateStr + '_' + timestamp + '.' + FileUtils.fileSuffix(path)
+    // Get the photo prefix if it exists
+    let prefix = ""
+    if (standaloneCameraLoader.active && standaloneCameraLoader.item && 
+        standaloneCameraLoader.item.cameraSettings.photoPrefix) {
+      prefix = standaloneCameraLoader.item.cameraSettings.photoPrefix + "_"
+    }
+    
+    let relativePath = folderName + '/' + prefix + 'IMG_' + dateStr + '_' + timestamp + '.' + FileUtils.fileSuffix(path)
     
     // Move the file to the destination folder
     platformUtilities.renameFile(path, qgisProject.homePath + '/' + relativePath)
@@ -5321,22 +5321,31 @@ ApplicationWindow {
   }
 
   function openPhotoGallery() {
-    // Always use DCIM as the folder name for photos
-    let folderName = "DCIM"
+    // Check if a project is loaded and has a valid home path
+    if (!qgisProject || !qgisProject.homePath) {
+      displayToast(qsTr("No project loaded. Please open a project first."))
+      return
+    }
     
-    // Create the directory if it doesn't exist
-    let photosPath = qgisProject.homePath + '/' + folderName
-    platformUtilities.createDir(qgisProject.homePath, folderName)
+    // Check if DCIM folder exists, if not check for SIGPACGO_Photos
+    let dcimPath = qgisProject.homePath + '/DCIM'
+    let sigpacgoPhotosPath = qgisProject.homePath + '/SIGPACGO_Photos'
     
-    // Open the folder
-    platformUtilities.open(photosPath)
-    
-    // Display a toast
+    // Try to determine which folder to open based on what exists
+    // First try to open DCIM folder
+    platformUtilities.createDir(qgisProject.homePath, "DCIM")
+    platformUtilities.open(dcimPath)
     displayToast(qsTr("Opening DCIM folder"))
   }
   
   // Function to create a DCIM folder in the project directory
   function createDCIMFolder() {
+    // Check if a project is loaded and has a valid home path
+    if (!qgisProject || !qgisProject.homePath) {
+      displayToast(qsTr("No project loaded. Please open a project first."))
+      return
+    }
+    
     // Create the DCIM directory if it doesn't exist
     platformUtilities.createDir(qgisProject.homePath, "DCIM")
     
@@ -5357,5 +5366,8 @@ ApplicationWindow {
   }
   
   // Cascade Search Panel
+
+  // Add the SIGPAC dialog property
+  property var sigpacDialog: null
 }
 

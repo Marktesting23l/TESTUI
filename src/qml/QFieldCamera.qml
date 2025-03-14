@@ -98,6 +98,7 @@ Popup {
     property bool showOverlay: true
     property string deviceId: ''
     property string folderName: "DCIM" // Default folder name is DCIM
+    property string photoPrefix: "" // New property for photo prefix
     property size resolution: Qt.size(0, 0)
     property int pixelFormat: 0
     property string stampTextColor: "#FFFF00" // Yellow text for timestamp
@@ -141,10 +142,38 @@ Popup {
       }
       
       TextField {
-        id: folderNameInput
+        id: folderNameField
         width: parent.width
         placeholderText: qsTr("e.g., Greenhouse 1")
         text: cameraSettings.folderName
+        leftPadding: 10
+        rightPadding: 10
+        verticalAlignment: TextInput.AlignVCenter
+        
+        // Use theme-aware colors for text
+        color: Theme.darkTheme ? "white" : "black"
+        placeholderTextColor: Theme.darkTheme ? "#aaaaaa" : "#888888"
+        
+        // Ensure the field gets focus and shows keyboard on Android
+        Component.onCompleted: {
+          forceActiveFocus()
+          if (Qt.platform.os === "android") {
+            Qt.inputMethod.show()
+          }
+        }
+        
+        // Style the text field to be more visible
+        background: Rectangle {
+          // Use theme-aware colors
+          color: Theme.darkTheme ? "#505050" : "white"
+          border.color: folderNameField.activeFocus ? Theme.mainColor : (Theme.darkTheme ? "#aaaaaa" : "#888888")
+          border.width: folderNameField.activeFocus ? 2 : 1
+          radius: 4
+        }
+        
+        onAccepted: {
+          folderNameDialog.accept()
+        }
       }
       
       Row {
@@ -161,7 +190,7 @@ Popup {
           text: qsTr("Save")
           width: (parent.width - 10) / 2
           onClicked: {
-            cameraSettings.folderName = folderNameInput.text.trim();
+            cameraSettings.folderName = folderNameField.text.trim();
             folderNameDialog.close();
             displayToast(qsTr("Folder name set to: ") + (cameraSettings.folderName || qsTr("Date-based folder")));
           }
@@ -178,6 +207,7 @@ Popup {
         " || if(@horizontal_accuracy != 'nan', '\n" + qsTr("Accuracy") + ": ' || format_number(@horizontal_accuracy, 1) || ' m', '')" +
         " || '\n" + qsTr("Project") + ": ' || @project_title" +
         " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
+        (cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
         " || '\nSIGPACGO - Agricultural Field Survey'"
 
     project: qgisProject
@@ -490,6 +520,11 @@ Popup {
                       
                       // Add folder info
                       coordsStr += "\n" + qsTr("Saving to") + ": " + cameraSettings.folderName
+                      
+                      // Add series/prefix info if available
+                      if (cameraSettings.photoPrefix) {
+                        coordsStr += " | " + qsTr("Series") + ": " + cameraSettings.photoPrefix
+                      }
                       
                       // Add photo count if available
                       if (typeof platformUtilities.countFilesInDir === 'function') {
@@ -865,8 +900,22 @@ Popup {
                   // Create DCIM folder if it doesn't exist
                   platformUtilities.createDir(qgisProject.homePath, cameraSettings.folderName);
                   
-                  // Capture the photo to the DCIM folder
-                  captureSession.imageCapture.captureToFile(qgisProject.homePath + '/' + cameraSettings.folderName + '/');
+                  // Get current date/time for filename
+                  let today = new Date();
+                  let dateStr = today.getFullYear().toString() +
+                               (today.getMonth() + 1).toString().padStart(2, '0') +
+                               today.getDate().toString().padStart(2, '0');
+                  
+                  let timestamp = today.getHours().toString().padStart(2, '0') +
+                                 today.getMinutes().toString().padStart(2, '0') +
+                                 today.getSeconds().toString().padStart(2, '0');
+                  
+                  // Add prefix if it exists
+                  let prefix = cameraSettings.photoPrefix ? cameraSettings.photoPrefix + "_" : "";
+                  let filename = prefix + "IMG_" + dateStr + "_" + timestamp + ".jpg";
+                  
+                  // Capture the photo to the specified folder with the constructed filename
+                  captureSession.imageCapture.captureToFile(qgisProject.homePath + '/' + cameraSettings.folderName + '/' + filename);
                   
                   if (positionSource.active) {
                     currentPosition = positionSource.positionInformation;
@@ -1242,12 +1291,17 @@ Popup {
                     width: parent.width
                     height: 50
                     text: cameraSettings.folderName
-                    placeholderText: "DCIM"
+                    placeholderText: qsTr("e.g., Greenhouse 1")
                     font.pixelSize: 18
                     
                     // Use theme-aware colors for text
                     color: Theme.darkTheme ? "white" : "black"
                     placeholderTextColor: Theme.darkTheme ? "#aaaaaa" : "#888888"
+                    
+                    // Fix placeholder text positioning
+                    leftPadding: 10
+                    rightPadding: 10
+                    verticalAlignment: TextInput.AlignVCenter
                     
                     // Ensure the field gets focus and shows keyboard on Android
                     Component.onCompleted: {
@@ -1374,6 +1428,227 @@ Popup {
         
         ToolTip.visible: hovered
         ToolTip.text: qsTr("Set photo folder (current: ") + cameraSettings.folderName + ")"
+      }
+
+      QfToolButton {
+        id: photoPrefixButton
+
+        width: 40
+        height: 40
+        padding: 2
+        visible: true // Make the button visible
+
+        iconSource: Theme.getThemeVectorIcon("ic_label_white_24dp")
+        iconColor: cameraSettings.photoPrefix ? Theme.mainColor : Theme.toolButtonColor
+        bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
+        round: true
+
+        onClicked: {
+          // Create a dialog to set the photo prefix
+          let dialog = Qt.createQmlObject(`
+            import QtQuick
+            import QtQuick.Controls
+            import QtQuick.Layouts
+            import Theme
+            
+            Dialog {
+              id: prefixDialog
+              modal: true
+              
+              // Set explicit dimensions to avoid binding loops
+              x: (parent.width - 380) / 2
+              y: (parent.height - 300) / 2
+              width: 380
+              height: 300
+              
+              // Remove standardButtons to avoid binding loops
+              standardButtons: Dialog.NoButton
+              
+              // Make the dialog more visible with a distinct background
+              background: Rectangle {
+                // Use theme-aware colors
+                color: Theme.darkTheme ? "#303030" : "#f0f0f0"
+                border.color: Theme.mainColor
+                border.width: 2
+                radius: 8
+              }
+              
+              // Add a header with a title
+              header: Rectangle {
+                color: Theme.mainColor
+                height: 50
+                width: parent.width
+                
+                Label {
+                  anchors.centerIn: parent
+                  text: qsTr("Set Photo Series")
+                  font.bold: true
+                  font.pixelSize: 18
+                  color: "white"
+                }
+              }
+              
+              contentItem: Item {
+                width: parent.width
+                height: 180
+                
+                Column {
+                  anchors.fill: parent
+                  anchors.margins: 16
+                  spacing: 16
+                  
+                  Label {
+                    width: parent.width
+                    text: qsTr("Enter photo series prefix:")
+                    font.pixelSize: 16
+                    font.bold: true
+                    // Use theme-aware text color
+                    color: Theme.darkTheme ? "white" : "#333333"
+                  }
+                  
+                  TextField {
+                    id: prefixField
+                    width: parent.width
+                    height: 50
+                    text: cameraSettings.photoPrefix
+                    placeholderText: qsTr("e.g., Nave1, Field3, Plot5")
+                    font.pixelSize: 18
+                    
+                    // Use theme-aware colors for text
+                    color: Theme.darkTheme ? "white" : "black"
+                    placeholderTextColor: Theme.darkTheme ? "#aaaaaa" : "#888888"
+                    
+                    // Fix placeholder text positioning
+                    leftPadding: 10
+                    rightPadding: 10
+                    verticalAlignment: TextInput.AlignVCenter
+                    
+                    // Ensure the field gets focus and shows keyboard on Android
+                    Component.onCompleted: {
+                      forceActiveFocus()
+                      if (Qt.platform.os === "android") {
+                        Qt.inputMethod.show()
+                      }
+                    }
+                    
+                    // Style the text field to be more visible
+                    background: Rectangle {
+                      // Use theme-aware colors
+                      color: Theme.darkTheme ? "#505050" : "white"
+                      border.color: prefixField.activeFocus ? Theme.mainColor : (Theme.darkTheme ? "#aaaaaa" : "#888888")
+                      border.width: prefixField.activeFocus ? 2 : 1
+                      radius: 4
+                    }
+                    
+                    onAccepted: {
+                      prefixDialog.accept()
+                    }
+                  }
+                  
+                  Label {
+                    width: parent.width
+                    text: qsTr("This prefix will be added to photo filenames and shown in the overlay and stamp.")
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: 14
+                    // Use theme-aware text color
+                    color: Theme.darkTheme ? "#cccccc" : "#555555"
+                  }
+                }
+              }
+              
+              // Custom footer with buttons
+              footer: Rectangle {
+                width: parent.width
+                height: 70
+                // Use theme-aware background
+                color: "transparent"
+                
+                Row {
+                  anchors.centerIn: parent
+                  spacing: 20
+                  
+                  Button {
+                    width: 150
+                    height: 50
+                    text: qsTr("Cancel")
+                    
+                    background: Rectangle {
+                      // Use theme-aware colors
+                      color: Theme.darkTheme ? "#404040" : "#dddddd"
+                      radius: 4
+                      border.color: Theme.darkTheme ? "#aaaaaa" : "#888888"
+                      border.width: 1
+                    }
+                    
+                    contentItem: Text {
+                      text: qsTr("Cancel")
+                      font.pixelSize: 16
+                      font.bold: true
+                      // Use theme-aware text color
+                      color: Theme.darkTheme ? "white" : "#333333"
+                      horizontalAlignment: Text.AlignHCenter
+                      verticalAlignment: Text.AlignVCenter
+                    }
+                    
+                    onClicked: {
+                      prefixDialog.reject()
+                    }
+                  }
+                  
+                  Button {
+                    width: 150
+                    height: 50
+                    text: qsTr("Save")
+                    
+                    background: Rectangle {
+                      color: Theme.mainColor
+                      radius: 4
+                      border.color: Qt.darker(Theme.mainColor, 1.3)
+                      border.width: 1
+                    }
+                    
+                    contentItem: Text {
+                      text: qsTr("Save")
+                      font.pixelSize: 16
+                      font.bold: true
+                      color: "white"
+                      horizontalAlignment: Text.AlignHCenter
+                      verticalAlignment: Text.AlignVCenter
+                    }
+                    
+                    onClicked: {
+                      prefixDialog.accept()
+                    }
+                  }
+                }
+              }
+              
+              onAccepted: {
+                let newPrefix = prefixField.text.trim()
+                cameraSettings.photoPrefix = newPrefix
+                if (newPrefix) {
+                  displayToast(qsTr("Photo series set to: ") + newPrefix)
+                } else {
+                  displayToast(qsTr("Photo series prefix cleared"))
+                }
+              }
+              
+              // Hide keyboard when dialog is closed
+              onClosed: {
+                if (Qt.platform.os === "android") {
+                  Qt.inputMethod.hide()
+                }
+              }
+            }
+          `, cameraItem, "prefixDialog")
+          
+          dialog.open()
+        }
+        
+        ToolTip.visible: hovered
+        ToolTip.text: cameraSettings.photoPrefix ? 
+                     qsTr("Change photo series (current: ") + cameraSettings.photoPrefix + ")" :
+                     qsTr("Set photo series prefix")
       }
     }
 

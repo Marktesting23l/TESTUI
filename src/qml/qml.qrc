@@ -132,5 +132,7 @@
         <file>WeatherForecastPanel.qml</file>
         <file>OpenMeteoWeatherService.qml</file>
         <file>forecast.json</file>
+        <file>SigpacService.qml</file>
+        <file>SigpacDialog.qml</file>
     </qresource>
 </RCC>

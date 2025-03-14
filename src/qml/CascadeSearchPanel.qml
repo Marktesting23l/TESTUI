@@ -26,6 +26,50 @@ Drawer {
     property var vectorLayer: null
     property bool isSearching: false
     
+    // Add field name mapping properties
+    property var fieldNameMapping: ({
+        "ID_RECINTO": ["ID_RECINTO", "dn_oid"],
+        "CD_PROV": ["CD_PROV", "provincia"],
+        "CD_MUN": ["CD_MUN", "municipio"],
+        "CD_POL": ["CD_POL", "poligono"],
+        "CD_PARCELA": ["CD_PARCELA", "parcela"],
+        "CD_RECINTO": ["CD_RECINTO", "recinto"],
+        "CD_USO": ["CD_USO", "uso_sigpac"],
+        "NU_AREA": ["NU_AREA", "dn_surface"]
+    })
+    
+    // Add detected field names property
+    property var detectedFieldNames: ({})
+    
+    // Function to detect which field names are being used
+    function detectFieldNames() {
+        if (!vectorLayer) return;
+        
+        var fields = vectorLayer.fields;
+        for (var standardName in fieldNameMapping) {
+            var possibleNames = fieldNameMapping[standardName];
+            var found = false;
+            
+            for (var i = 0; i < possibleNames.length; i++) {
+                if (fields.indexOf(possibleNames[i]) !== -1) {
+                    detectedFieldNames[standardName] = possibleNames[i];
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                console.warn("Could not find field for", standardName);
+                detectedFieldNames[standardName] = possibleNames[0]; // Default to first option
+            }
+        }
+    }
+    
+    // Helper function to get the actual field name
+    function getFieldName(standardName) {
+        return detectedFieldNames[standardName] || standardName;
+    }
+    
     // Store the selected values for each level
     property var selectedProvince: null
     property var selectedMunicipality: null
@@ -103,12 +147,12 @@ Drawer {
     property int itemHeight: 36
     property int itemSpacing: 5
     
+    // Add a property to control highlight duration (increase from 5000 to 10000 milliseconds)
+    property int highlightDuration: 10000 // 10 seconds highlight duration
+    
     width: Math.min(parent.width * 0.95, 400)
     height: parent.height
     edge: Qt.RightEdge
-    
-    // Add a property to control highlight duration
-    property int highlightDuration: 5000 // 5 seconds highlight duration
     
     // Helper function to get province name from code
     function getProvinceName(code) {
@@ -170,35 +214,62 @@ Drawer {
     
     // Add a function to update list view heights based on selection state
     function updateListViewHeights() {
-        // Force update of list view heights based on selection state
-        if (selectedProvince) {
-            provinceListView.height = 0;
-        } else {
-            provinceListView.height = Math.min(provinceListView.contentHeight, maxVisibleItems * itemHeight);
+        // Force update of list view heights based on selection state and visibility
+        if (provinceListView) {
+            if (selectedProvince) {
+                provinceListView.height = 0;
+            } else {
+                provinceListView.height = Math.min(provinceListView.contentHeight, maxVisibleItems * itemHeight);
+                // Force layout update
+                provinceListView.forceLayout();
+            }
         }
         
-        if (selectedMunicipality) {
-            municipalityListView.height = 0;
-        } else if (municipalitySelector.visible) {
-            municipalityListView.height = Math.min(municipalityListView.contentHeight, maxVisibleItems * itemHeight);
+        if (municipalityListView) {
+            if (selectedMunicipality) {
+                municipalityListView.height = 0;
+            } else if (municipalitySelector.visible) {
+                municipalityListView.height = Math.min(municipalityListView.contentHeight, maxVisibleItems * itemHeight);
+                // Force layout update
+                municipalityListView.forceLayout();
+            } else {
+                municipalityListView.height = 0;
+            }
         }
         
-        if (selectedPolygon) {
-            polygonListView.height = 0;
-        } else if (polygonSelector.visible) {
-            polygonListView.height = Math.min(polygonListView.contentHeight, maxVisibleItems * itemHeight);
+        if (polygonListView) {
+            if (selectedPolygon) {
+                polygonListView.height = 0;
+            } else if (polygonSelector.visible) {
+                polygonListView.height = Math.min(polygonListView.contentHeight, maxVisibleItems * itemHeight);
+                // Force layout update
+                polygonListView.forceLayout();
+            } else {
+                polygonListView.height = 0;
+            }
         }
         
-        if (selectedParcel) {
-            parcelListView.height = 0;
-        } else if (parcelSelector.visible) {
-            parcelListView.height = Math.min(parcelListView.contentHeight, maxVisibleItems * itemHeight);
+        if (parcelListView) {
+            if (selectedParcel) {
+                parcelListView.height = 0;
+            } else if (parcelSelector.visible) {
+                parcelListView.height = Math.min(parcelListView.contentHeight, maxVisibleItems * itemHeight);
+                // Force layout update
+                parcelListView.forceLayout();
+            } else {
+                parcelListView.height = 0;
+            }
         }
     }
+    
+    // Add property to track if search is active
+    property bool isSearchActive: false
     
     onOpened: {
         // Reset selections when panel is opened
         resetSelections();
+        // Detect field names
+        detectFieldNames();
         // Load provinces (first level)
         loadProvinces();
     }
@@ -260,6 +331,11 @@ Drawer {
             return;
         }
         
+        // Detect field names if not already done
+        if (Object.keys(detectedFieldNames).length === 0) {
+            detectFieldNames();
+        }
+        
         isSearching = true;
         busyIndicator.running = true;
         
@@ -273,8 +349,8 @@ Drawer {
         repeat: false
         
         onTriggered: {
-            // Get unique province values
-            provinceValues = FeatureUtils.getUniqueValues(vectorLayer, "CD_PROV");
+            // Get unique province values using the detected field name
+            provinceValues = FeatureUtils.getUniqueValues(vectorLayer, getFieldName("CD_PROV"));
             
             // Sort numerically
             provinceValues.sort(function(a, b) { return a - b; });
@@ -371,7 +447,7 @@ Drawer {
                 "65": "PARZONERIA DE ENTZIA",
             };
         }
-        else if (provinceCode === 2) {
+         else if (provinceCode === 2) {
             municipalityNames = {
                 "1": "ABENGIBRE",
                 "2": "ALATOZ",
@@ -8718,6 +8794,9 @@ Drawer {
             console.log("No municipality data available for province code: " + provinceCode);
         }
     }
+         
+        
+
 
     
     Timer {
@@ -8729,8 +8808,8 @@ Drawer {
             // Get unique municipality values for the selected province
             municipalityValues = FeatureUtils.getUniqueValuesFiltered(
                 vectorLayer, 
-                "CD_MUN", 
-                "CD_PROV = " + selectedProvince
+                getFieldName("CD_MUN"), 
+                getFieldName("CD_PROV") + " = " + selectedProvince
             );
             
             // Sort numerically
@@ -8780,8 +8859,9 @@ Drawer {
             // Get unique polygon values for the selected province and municipality
             polygonValues = FeatureUtils.getUniqueValuesFiltered(
                 vectorLayer, 
-                "CD_POL", 
-                "CD_PROV = " + selectedProvince + " AND CD_MUN = " + selectedMunicipality
+                getFieldName("CD_POL"), 
+                getFieldName("CD_PROV") + " = " + selectedProvince + 
+                " AND " + getFieldName("CD_MUN") + " = " + selectedMunicipality
             );
             
             // Sort numerically
@@ -8830,10 +8910,10 @@ Drawer {
             // Get unique parcel values for the selected province, municipality and polygon
             parcelValues = FeatureUtils.getUniqueValuesFiltered(
                 vectorLayer, 
-                "CD_PARCELA", 
-                "CD_PROV = " + selectedProvince + 
-                " AND CD_MUN = " + selectedMunicipality + 
-                " AND CD_POL = " + selectedPolygon
+                getFieldName("CD_PARCELA"), 
+                getFieldName("CD_PROV") + " = " + selectedProvince + 
+                " AND " + getFieldName("CD_MUN") + " = " + selectedMunicipality + 
+                " AND " + getFieldName("CD_POL") + " = " + selectedPolygon
             );
             
             // Sort numerically
@@ -8876,14 +8956,14 @@ Drawer {
         
         onTriggered: {
             // Build the filter expression based on selections
-            var filterExpression = "CD_PROV = " + selectedProvince + 
-                                  " AND CD_MUN = " + selectedMunicipality;
+            var filterExpression = getFieldName("CD_PROV") + " = " + selectedProvince + 
+                                  " AND " + getFieldName("CD_MUN") + " = " + selectedMunicipality;
             
             if (selectedPolygon !== null) {
-                filterExpression += " AND CD_POL = " + selectedPolygon;
+                filterExpression += " AND " + getFieldName("CD_POL") + " = " + selectedPolygon;
                 
                 if (selectedParcel !== null) {
-                    filterExpression += " AND CD_PARCELA = " + selectedParcel;
+                    filterExpression += " AND " + getFieldName("CD_PARCELA") + " = " + selectedParcel;
                 }
             }
             
@@ -8896,9 +8976,9 @@ Drawer {
                 var feature = filteredFeatures[i];
                 resultsModel.append({
                     fid: feature.id,
-                    recinto: feature.attributes["ID_RECINTO"] || "",
-                    uso: feature.attributes["CD_USO"] || "",
-                    area: feature.attributes["NU_AREA"] || 0
+                    recinto: feature.attributes[getFieldName("CD_RECINTO")] || "",
+                    uso: feature.attributes[getFieldName("CD_USO")] || "",
+                    area: feature.attributes[getFieldName("NU_AREA")] || 0
                 });
             }
             
@@ -8913,52 +8993,33 @@ Drawer {
         }
     }
     
-    // Helper function to manually buffer an extent by creating a new rectangle
-    function manualZoomWithBuffer(extent, bufferAmount) {
-        if (!extent || !extent.isNull) {
-            try {
-                // Calculate buffered coordinates
-                var xMin = extent.xMinimum - bufferAmount;
-                var xMax = extent.xMaximum + bufferAmount;
-                var yMin = extent.yMinimum - bufferAmount;
-                var yMax = extent.yMaximum + bufferAmount;
-                
-                // Create a new rectangle using the QgsRectangle constructor
-                var rectangle = Qt.createQmlObject('import QtQuick 2.0; import org.qgis; QtObject { property var rectangle: QgsRectangle.fromCoordinates(' + 
-                                                  xMin + ', ' + yMin + ', ' + xMax + ', ' + yMax + ') }', 
-                                                  cascadeSearchPanel);
-                
-                // Set the map extent to the new rectangle
-                mapCanvas.mapSettings.extent = rectangle.rectangle;
-                
-                // Close the drawer
-                cascadeSearchPanel.close();
-                
-                return true;
-            } catch (e) {
-                console.error("Error creating buffered rectangle:", e);
-                return false;
-            }
-        }
-        return false;
-    }
-    
     // Add a function to highlight multiple features
     function highlightFeatures(features) {
         if (!features || features.length === 0) return;
         
         try {
-            // Create a multi-geometry to highlight all features at once
-            var multiGeometry = FeatureUtils.createMultiGeometry(mapCanvas.mapSettings, vectorLayer, features);
-            if (multiGeometry && !multiGeometry.isNull) {
-                geometryHighlighter.geometryWrapper.qgsGeometry = multiGeometry;
+            // Create a combined geometry from all features
+            var combinedGeometry = null;
+            for (var i = 0; i < features.length; i++) {
+                var feature = features[i];
+                if (feature && feature.geometry && !feature.geometry.isNull) {
+                    if (!combinedGeometry) {
+                        combinedGeometry = feature.geometry;
+                    } else {
+                        combinedGeometry = combinedGeometry.combine(feature.geometry);
+                    }
+                }
+            }
+            
+            if (combinedGeometry && !combinedGeometry.isNull) {
+                geometryHighlighter.geometryWrapper.qgsGeometry = combinedGeometry;
                 geometryHighlighter.geometryWrapper.crs = vectorLayer.crs;
                 
                 // Make the highlight visible
                 geometryHighlighter.visible = true;
                 
-                // Set a timer to clear the highlight after the specified duration
-                highlightTimer.start();
+                // Reset and start the highlight timer
+                highlightTimer.restart();
             }
         } catch (e) {
             console.error("Error highlighting features:", e);
@@ -9044,24 +9105,18 @@ Drawer {
             displayToast(qsTr("No features to zoom to"), "warning");
             return;
         }
-        
+
         try {
-            // If there's only one feature, use the single feature zoom method
-            if (filteredFeatures.length === 1) {
-                zoomToFeature(filteredFeatures[0].id);
-                return;
-            }
-            
-            // Highlight all features
+            // First highlight all features
             highlightFeatures(filteredFeatures);
-            
+
             // Get the combined extent of all features
             var extent = FeatureUtils.extentOfFeatures(
                 mapCanvas.mapSettings, 
                 vectorLayer, 
                 filteredFeatures
             );
-            
+
             // Ensure the extent is valid
             if (extent && !extent.isNull) {
                 // Calculate width and height
@@ -9091,6 +9146,52 @@ Drawer {
         }
     }
     
+    // Helper function to manually buffer an extent by creating a new rectangle
+    function manualZoomWithBuffer(extent, bufferAmount) {
+        if (!extent || !extent.isNull) {
+            try {
+                // Calculate buffered coordinates
+                var xMin = extent.xMinimum - bufferAmount;
+                var xMax = extent.xMaximum + bufferAmount;
+                var yMin = extent.yMinimum - bufferAmount;
+                var yMax = extent.yMaximum + bufferAmount;
+                
+                // Calculate center point
+                var centerX = (xMin + xMax) / 2;
+                var centerY = (yMin + yMax) / 2;
+                
+                // Set the map center using coordinates directly
+                mapCanvas.setCenter(centerX, centerY);
+                
+                // Calculate the scale based on the extent size
+                var width = xMax - xMin;
+                var height = yMax - yMin;
+                var size = Math.max(width, height);
+                
+                // Use a smaller zoom factor (was 1.1, now 1.05)
+                var zoomFactor = 1.05;
+                
+                // For very small features, use a minimum size to prevent excessive zoom
+                var minSize = 10;
+                if (size < minSize) {
+                    size = minSize;
+                }
+                
+                // Set the scale with the adjusted zoom factor
+                mapCanvas.zoomScale(size * zoomFactor);
+                
+                // Close the drawer
+                cascadeSearchPanel.close();
+                
+                return true;
+            } catch (e) {
+                console.error("Error setting map extent:", e);
+                return false;
+            }
+        }
+        return false;
+    }
+    
     // Models for the list views
     ListModel { id: provinceModel }
     ListModel { id: municipalityModel }
@@ -9105,31 +9206,55 @@ Drawer {
             title: qsTr("SIGPAC Search")
             showBackButton: false
             showApplyButton: false
-            showCancelButton: true
-            onCancel: {
-                // Reset all selections and search fields
-                resetSelections();
-                // Show all options in all list views
-                for (var i = 0; i < provinceListView.count; i++) {
-                    var item = provinceListView.itemAtIndex(i);
-                    if (item) {
-                        item.visible = true;
+            showCancelButton: false // Changed to false since we'll add our own reset button
+            
+            // Add custom reset button that's more clickable
+            ToolButton {
+                id: resetButton
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                icon.source: Theme.getThemeIcon("ic_refresh_black_24dp")
+                icon.color: Theme.mainTextColor
+                
+                // Add text next to the icon
+                contentItem: Row {
+                    spacing: 5
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: resetButton.icon.source
+                        sourceSize.width: 24
+                        sourceSize.height: 24
+                        width: 24
+                        height: 24
+                        fillMode: Image.PreserveAspectFit
+                    }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Reset")
+                        color: Theme.mainTextColor
+                        font: Theme.defaultFont
                     }
                 }
-                // Update list view heights
-                updateListViewHeights();
-                // Load provinces again
-                loadProvinces();
-            }
-            
-            // Add reset label to make it clear this is a reset button
-            Text {
-                id: resetLabel
-                anchors.centerIn: parent.cancelButton
-                text: qsTr("Reset")
-                color: Theme.mainTextColor
-                font: Theme.defaultFont
-                z: 10 // Make sure it's above the button
+                
+                ToolTip.text: qsTr("Reset all selections")
+                ToolTip.visible: hovered
+                
+                onClicked: {
+                    // Reset all selections and search fields
+                    resetSelections();
+                    // Show all options in all list views
+                    for (var i = 0; i < provinceListView.count; i++) {
+                        var item = provinceListView.itemAtIndex(i);
+                        if (item) {
+                            item.visible = true;
+                        }
+                    }
+                    // Update list view heights
+                    updateListViewHeights();
+                    // Load provinces again
+                    loadProvinces();
+                }
             }
             
             // Add close button
@@ -9149,11 +9274,17 @@ Drawer {
             }
         }
         
+        // Make the entire content area scrollable
         ScrollView {
             id: scrollView
             anchors.fill: parent
+            anchors.margins: 0
             contentWidth: parent.width
             clip: true
+            
+            // Enable both vertical and horizontal scrolling if needed
+            ScrollBar.vertical.policy: ScrollBar.AsNeeded
+            ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             
             ColumnLayout {
                 width: scrollView.width
@@ -9193,7 +9324,9 @@ Drawer {
                                             item.visible = true;
                                         }
                                     }
-                                    provinceListView.Layout.preferredHeight = Math.min(provinceListView.contentHeight, maxVisibleItems * itemHeight);
+                                    // Force height update
+                                    provinceListView.forceLayout();
+                                    updateListViewHeights();
                                 } else if (!selectedProvince) {
                                     // Filter the province model
                                     for (var i = 0; i < provinceListView.count; i++) {
@@ -9206,6 +9339,9 @@ Drawer {
                                             item.visible = value.indexOf(searchTerm) >= 0 || name.indexOf(searchTermLower) >= 0;
                                         }
                                     }
+                                    // Force height update
+                                    provinceListView.forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                         }
@@ -9217,21 +9353,18 @@ Drawer {
                             clip: true
                             model: provinceModel
                             
-                            // Force height update when model changes
-                            onCountChanged: {
+                            // Add height binding
+                            onContentHeightChanged: {
                                 if (!selectedProvince) {
                                     height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else {
-                                    height = 0;
                                 }
                             }
                             
-                            // Force height update when visibility changes
+                            // Force layout update when visibility changes
                             onVisibleChanged: {
-                                if (visible && !selectedProvince) {
-                                    height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else if (!visible || selectedProvince) {
-                                    height = 0;
+                                if (visible) {
+                                    forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                             
@@ -9344,7 +9477,9 @@ Drawer {
                                             item.visible = true;
                                         }
                                     }
-                                    municipalityListView.Layout.preferredHeight = Math.min(municipalityListView.contentHeight, maxVisibleItems * itemHeight);
+                                    // Force height update
+                                    municipalityListView.forceLayout();
+                                    updateListViewHeights();
                                 } else if (!selectedMunicipality) {
                                     // Filter the municipality model
                                     for (var i = 0; i < municipalityListView.count; i++) {
@@ -9357,6 +9492,9 @@ Drawer {
                                             item.visible = value.indexOf(searchTerm) >= 0 || name.indexOf(searchTermLower) >= 0;
                                         }
                                     }
+                                    // Force height update
+                                    municipalityListView.forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                         }
@@ -9368,21 +9506,18 @@ Drawer {
                             clip: true
                             model: municipalityModel
                             
-                            // Force height update when model changes
-                            onCountChanged: {
-                                if (!selectedMunicipality) {
+                            // Add height binding
+                            onContentHeightChanged: {
+                                if (!selectedMunicipality && visible) {
                                     height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else {
-                                    height = 0;
                                 }
                             }
                             
-                            // Force height update when visibility changes
+                            // Force layout update when visibility changes
                             onVisibleChanged: {
-                                if (visible && !selectedMunicipality) {
-                                    height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else if (!visible || selectedMunicipality) {
-                                    height = 0;
+                                if (visible) {
+                                    forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                             
@@ -9497,7 +9632,9 @@ Drawer {
                                             item.visible = true;
                                         }
                                     }
-                                    polygonListView.Layout.preferredHeight = Math.min(polygonListView.contentHeight, maxVisibleItems * itemHeight);
+                                    // Force height update
+                                    polygonListView.forceLayout();
+                                    updateListViewHeights();
                                 } else if (!selectedPolygon) {
                                     // Filter the polygon model
                                     for (var i = 0; i < polygonListView.count; i++) {
@@ -9508,6 +9645,9 @@ Drawer {
                                             item.visible = value.indexOf(searchTerm) >= 0;
                                         }
                                     }
+                                    // Force height update
+                                    polygonListView.forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                         }
@@ -9519,21 +9659,18 @@ Drawer {
                             clip: true
                             model: polygonModel
                             
-                            // Force height update when model changes
-                            onCountChanged: {
-                                if (!selectedPolygon) {
+                            // Add height binding
+                            onContentHeightChanged: {
+                                if (!selectedPolygon && visible) {
                                     height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else {
-                                    height = 0;
                                 }
                             }
                             
-                            // Force height update when visibility changes
+                            // Force layout update when visibility changes
                             onVisibleChanged: {
-                                if (visible && !selectedPolygon) {
-                                    height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else if (!visible || selectedPolygon) {
-                                    height = 0;
+                                if (visible) {
+                                    forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                             
@@ -9644,7 +9781,9 @@ Drawer {
                                             item.visible = true;
                                         }
                                     }
-                                    parcelListView.Layout.preferredHeight = Math.min(parcelListView.contentHeight, maxVisibleItems * itemHeight);
+                                    // Force height update
+                                    parcelListView.forceLayout();
+                                    updateListViewHeights();
                                 } else if (!selectedParcel) {
                                     // Filter the parcel model
                                     for (var i = 0; i < parcelListView.count; i++) {
@@ -9655,6 +9794,9 @@ Drawer {
                                             item.visible = value.indexOf(searchTerm) >= 0;
                                         }
                                     }
+                                    // Force height update
+                                    parcelListView.forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                         }
@@ -9666,21 +9808,18 @@ Drawer {
                             clip: true
                             model: parcelModel
                             
-                            // Force height update when model changes
-                            onCountChanged: {
-                                if (!selectedParcel) {
+                            // Add height binding
+                            onContentHeightChanged: {
+                                if (!selectedParcel && visible) {
                                     height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else {
-                                    height = 0;
                                 }
                             }
                             
-                            // Force height update when visibility changes
+                            // Force layout update when visibility changes
                             onVisibleChanged: {
-                                if (visible && !selectedParcel) {
-                                    height = Math.min(contentHeight, maxVisibleItems * itemHeight);
-                                } else if (!visible || selectedParcel) {
-                                    height = 0;
+                                if (visible) {
+                                    forceLayout();
+                                    updateListViewHeights();
                                 }
                             }
                             

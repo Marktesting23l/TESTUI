@@ -314,7 +314,7 @@ QgisMobileapp::QgisMobileapp( QgsApplication *app, QObject *parent )
   mMapCanvas->mapSettings()->setProject( mProject );
   mBookmarkModel->setMapSettings( mMapCanvas->mapSettings() );
 
-  mFlatLayerTree->layerTreeModel()->setLegendMapViewData( mMapCanvas->mapSettings()->mapSettings().mapUnitsPerPixel(),
+  mFlatLayerTree->layerTreeModel()->setLegendMapViewData( mMapCanvas->mapSettings()->outputDpi() * mMapCanvas->mapSettings()->mapSettings().mapUnitsPerPixel(),
                                                           static_cast<int>( std::round( mMapCanvas->mapSettings()->outputDpi() ) ), mMapCanvas->mapSettings()->mapSettings().scale() );
 
   mLayerTreeCanvasBridge = new LayerTreeMapCanvasBridge( mFlatLayerTree, mMapCanvas->mapSettings(), mTrackingModel, this );
@@ -967,6 +967,7 @@ void QgisMobileapp::readProjectFile()
     } );
   }
 
+  // For datasets (non-project files), we need to load a base project first
   if ( vectorLayers.size() > 0 || rasterLayers.size() > 0 )
   {
     if ( crs.isValid() )
@@ -992,30 +993,147 @@ void QgisMobileapp::readProjectFile()
           else if ( QFile::exists( dataDir + QStringLiteral( "basemap.qgz" ) ) )
           {
             projectFound = true;
-            mProject->read( dataDir + QStringLiteral( "basemap.qgs" ), Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews );
+            mProject->read( dataDir + QStringLiteral( "basemap.qgz" ), Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews );
             break;
           }
         }
         if ( !projectFound )
         {
           mProject->clear();
-
-          // Add a default basemap
-          QgsRasterLayer *layer = new QgsRasterLayer( QStringLiteral( "type=xyz&tilePixelRatio=1&url=https://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png&zmax=19&zmin=0&crs=EPSG3857" ), QStringLiteral( "OpenStreetMap" ), QLatin1String( "wms" ) );
-          mProject->addMapLayers( QList<QgsMapLayer *>() << layer );
         }
-      }
-
-      if ( !mProject->error().isEmpty() )
-      {
-        QgsMessageLog::logMessage( mProject->error() );
       }
     }
     else
     {
       mProject->clear();
     }
+  }
 
+  // Add all the required basemaps to every project, regardless of whether it's a project file or a datasheet
+  // Create the basemap layers
+  QgsRasterLayer *osmLayer = new QgsRasterLayer( QStringLiteral( "type=xyz&tilePixelRatio=1&url=https://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png&zmax=19&zmin=0&crs=EPSG3857" ), QStringLiteral( "OpenStreetMap" ), QLatin1String( "wms" ) );
+  QgsRasterLayer *satelliteLayer = new QgsRasterLayer( QStringLiteral( "crs=EPSG:3857&format&type=xyz&url=http://www.google.cn/maps/vt?lyrs=s@189%26gl=cn%26x%3D{x}%26y%3D{y}%26z%3D{z}&zmax=21&zmin=0" ), QStringLiteral( "Google Satellite" ), QLatin1String( "wms" ) );
+  
+  // Add IGN (Instituto Geográfico Nacional) map
+  QgsRasterLayer *ignLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=mtn_rasterizado&styles&tilePixelRatio=0&url=https://www.ign.es/wms-inspire/mapa-raster" ),
+      QStringLiteral( "Esp IGN 1:25.000" ),
+      QLatin1String( "wms" ) );
+  
+  // Add Catastro layer instead of NDVI
+  QgsRasterLayer *catastroLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=Catastro&styles=Default&tilePixelRatio=0&url=http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx" ),
+      QStringLiteral( "Catastro" ),
+      QLatin1String( "wms" ) );
+  
+  // Add Junta de Andalucía BCA layer (renamed to Andalucía 1:10.000)
+  QgsRasterLayer *bcaLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=0&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=00_BCA&styles=default-style-00_BCA&tilePixelRatio=0&url=http://www.juntadeandalucia.es/institutodeestadisticaycartografia/geoserver-ieca/bca/wms" ),
+      QStringLiteral( "Andalucía 1:10.000" ),
+      QLatin1String( "wms" ) );
+  
+  // Add Recintos SIGPAC FEGA layer
+  QgsRasterLayer *sigpacLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=AU.Sigpac:recinto&styles=recinto&tilePixelRatio=0&url=https://wms.mapa.gob.es/sigpac/wms" ),
+      QStringLiteral( "Recintos SIGPAC FEGA" ),
+      QLatin1String( "wms" ) );
+  
+  // Add flood risk WMS layer
+  QgsRasterLayer *floodRiskLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:3857&dpiMode=7&featureCount=10&format=image/png&layers=NZ.RiskZone&styles&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agua/Riesgo/RiesgoAct_100/wms.aspx" ),
+      QStringLiteral( "Riesgo a las actividades económicas de origen fluvial T=100 años" ),
+      QLatin1String( "wms" ) );
+  
+  // Create layer groups in the desired order - Spain GIS Services first, then Utils, then Basemaps
+  QgsLayerTreeGroup *spainGisServicesGroup = mProject->layerTreeRoot()->addGroup("Spain GIS Services");
+  QgsLayerTreeGroup *utilsGroup = mProject->layerTreeRoot()->addGroup("Utils");
+  QgsLayerTreeGroup *basemapsGroup = mProject->layerTreeRoot()->addGroup("Basemaps");
+  
+  // Add basemap layers to the project and to the Basemaps group in the requested order
+  mProject->addMapLayer(ignLayer, false);
+  mProject->addMapLayer(bcaLayer, false);
+  mProject->addMapLayer(satelliteLayer, false);
+  mProject->addMapLayer(osmLayer, false);
+  basemapsGroup->addLayer(ignLayer);
+  basemapsGroup->addLayer(bcaLayer);
+  basemapsGroup->addLayer(satelliteLayer);
+  basemapsGroup->addLayer(osmLayer);
+  
+  // Create and add the cultivo layer as the first layer in Spain GIS Services
+  QgsRasterLayer *cultivoLayer = new QgsRasterLayer(
+      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/cultivo_declarado@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmax=15&zmin=12&http-header:referer=" ),
+      QStringLiteral( "cultivo" ),
+      QLatin1String( "wms" ) );
+  
+  // Create and add TeselaRECINTOS FEGA layer
+  QgsRasterLayer *teselaRecintosLayer = new QgsRasterLayer(
+      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmin=14&http-header:referer=" ),
+      QStringLiteral( "TeselaRECINTOS FEGA" ),
+      QLatin1String( "wms" ) );
+  
+  // Add Spain GIS Services layers to the project and to the Spain GIS Services group
+  mProject->addMapLayer(cultivoLayer, false);
+  mProject->addMapLayer(teselaRecintosLayer, false);
+  mProject->addMapLayer(sigpacLayer, false);
+  mProject->addMapLayer(catastroLayer, false);
+  spainGisServicesGroup->addLayer(cultivoLayer);
+  spainGisServicesGroup->addLayer(teselaRecintosLayer);
+  spainGisServicesGroup->addLayer(sigpacLayer);
+  spainGisServicesGroup->addLayer(catastroLayer);
+  
+  // Create and add the Zonas Vul Nitratos 2023 layer
+  QgsRasterLayer *zonasVulLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:3857&dpiMode=7&featureCount=10&format=image/png&layers=AM.NitrateVulnerableZone&styles&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/agua/ZonasVulnerables/2023/wms.aspx" ),
+      QStringLiteral( "Zonas Vul Nitratos 2023" ),
+      QLatin1String( "wms" ) );
+  
+  // Add layers to the Utils group
+  mProject->addMapLayer(floodRiskLayer, false);
+  mProject->addMapLayer(zonasVulLayer, false);
+  utilsGroup->addLayer(floodRiskLayer);
+  utilsGroup->addLayer(zonasVulLayer);
+  
+  // Make sure all groups are visible by default - using multiple approaches to ensure visibility
+  spainGisServicesGroup->setItemVisibilityCheckedParentRecursive(true);
+  spainGisServicesGroup->setItemVisibilityCheckedRecursive(true);
+  spainGisServicesGroup->setItemVisibilityChecked(true);
+  
+  utilsGroup->setItemVisibilityCheckedParentRecursive(true);
+  utilsGroup->setItemVisibilityCheckedRecursive(true);
+  utilsGroup->setItemVisibilityChecked(true);
+  
+  basemapsGroup->setItemVisibilityCheckedParentRecursive(true);
+  basemapsGroup->setItemVisibilityCheckedRecursive(true);
+  basemapsGroup->setItemVisibilityChecked(true);
+  
+  // Set individual layer visibility
+  // First hide all individual layers
+  for (QgsLayerTreeLayer* layer : basemapsGroup->findLayers())
+  {
+    layer->setItemVisibilityChecked(false);
+  }
+  
+  for (QgsLayerTreeLayer* layer : spainGisServicesGroup->findLayers())
+  {
+    layer->setItemVisibilityChecked(false);
+  }
+  
+  for (QgsLayerTreeLayer* layer : utilsGroup->findLayers())
+  {
+    layer->setItemVisibilityChecked(false);
+  }
+  
+  // Then set the requested layers to be visible
+  mProject->layerTreeRoot()->findLayer(satelliteLayer->id())->setItemVisibilityChecked(true);
+  mProject->layerTreeRoot()->findLayer(sigpacLayer->id())->setItemVisibilityChecked(true);
+  
+  // Set groups to be expanded by default
+  spainGisServicesGroup->setExpanded(true);
+  utilsGroup->setExpanded(true);
+  basemapsGroup->setExpanded(true);
+
+  if ( vectorLayers.size() > 0 || rasterLayers.size() > 0 )
+  {
     mProject->setCrs( crs );
     mProject->setEllipsoid( crs.ellipsoidAcronym() );
     mProject->setTitle( mProjectFileName );
