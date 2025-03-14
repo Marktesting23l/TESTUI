@@ -20,7 +20,7 @@ Popup {
   }
 
   x: edgeSpacing
-  y: mainWindow.height - 112 - virtualKeyboardHeight
+  y: mainWindow.height - 200 - virtualKeyboardHeight
   z: 10001
 
   width: mainWindow.width - edgeSpacing * 2

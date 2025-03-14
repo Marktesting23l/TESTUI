@@ -90,6 +90,27 @@ Dialog {
         sigpacService.queryByCoordinates(currentSrid, currentX, currentY, "json");
     }
     
+    // Function to set coordinates and query SIGPAC data
+    function setCoordinates(x, y) {
+        currentX = x;
+        currentY = y;
+        
+        // Try to get the SRID from the map settings if available
+        try {
+            if (typeof mapCanvas !== 'undefined' && mapCanvas.mapSettings && 
+                mapCanvas.mapSettings.destinationCrs && 
+                typeof mapCanvas.mapSettings.destinationCrs.postgisSrid === 'number') {
+                currentSrid = mapCanvas.mapSettings.destinationCrs.postgisSrid;
+            }
+        } catch (e) {
+            console.log("Could not get SRID from map settings, using default:", e);
+            // Keep using the default SRID (4258)
+        }
+        
+        // Query SIGPAC data
+        queryCurrentPosition();
+    }
+    
     // Function to query SIGPAC data for custom coordinates
     function queryCustomCoordinates(srid, x, y) {
         if (!sigpacService) {
@@ -774,17 +795,19 @@ Dialog {
                 anchors.margins: 4
                 clip: true
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                width: parent.width - 8 // parent width minus margins
+                implicitWidth: width
                 
                 TextArea {
                     id: resultsTextArea
                     readOnly: true
                     wrapMode: TextEdit.Wrap
                     font: Theme.tipFont
-                    color: Theme.mainTextColor
+                    color: Theme.mainTextColor ? Theme.mainTextColor : "black" // Ensure color is never undefined
                     
                     background: Rectangle {
-                        color: Theme.controlBackgroundColor
-                        border.color: Theme.controlBorderColor
+                        color: Theme.controlBackgroundColor ? Theme.controlBackgroundColor : "#f0f0f0" // Ensure color is never undefined
+                        border.color: Theme.controlBorderColor ? Theme.controlBorderColor : "#cccccc" // Ensure color is never undefined
                         border.width: 1
                         radius: 4
                     }

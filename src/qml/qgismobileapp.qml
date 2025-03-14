@@ -3740,16 +3740,6 @@ ApplicationWindow {
     }
     
     MenuItem {
-      id: sigpacIconItem
-      text: ""
-      icon.source: Theme.getThemeIcon("sigpac_icon") // Using a theme icon
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-      font: Theme.defaultFont
-      enabled: false
-    }
-    
-    MenuItem {
       id: querySigpacItem
       text: qsTr("Query SIGPAC")
       icon.source: Theme.getThemeVectorIcon("ic_baseline_search_white") // Changed to map icon
@@ -3769,32 +3759,804 @@ ApplicationWindow {
               displayToast(qsTr("Error creating SIGPAC dialog: %1").arg(component.errorString()));
               return;
             }
-          } catch (e) {
-            console.error("Exception creating SigpacDialog:", e);
-            displayToast(qsTr("Exception creating SIGPAC dialog: %1").arg(e));
+          } catch (error) {
+            console.error("Error creating SigpacDialog:", error);
+            displayToast(qsTr("Error creating SIGPAC dialog: %1").arg(error));
             return;
           }
         }
         
+        // Set the coordinates and show the dialog
         if (!sigpacDialog) {
           displayToast(qsTr("Failed to create SIGPAC dialog"));
           return;
         }
         
-        // Set the current coordinates
-        sigpacDialog.currentX = canvasMenu.point.x;
-        sigpacDialog.currentY = canvasMenu.point.y;
-        // Fix: Check if postgisSrid is defined and is a valid integer, otherwise use default 4258 (ETRS89)
-        // Using EPSG:4258 instead of EPSG:3857 since it works better with the SIGPAC service
-        sigpacDialog.currentSrid = (mapCanvas.mapSettings.destinationCrs && 
-                                   typeof mapCanvas.mapSettings.destinationCrs.postgisSrid === 'number') ? 
-                                   mapCanvas.mapSettings.destinationCrs.postgisSrid : 4258;
-        
-        // Show the dialog
+        // Use the setCoordinates function to set coordinates and query data
+        sigpacDialog.setCoordinates(canvasMenu.point.x, canvasMenu.point.y);
         sigpacDialog.open();
+      }
+    }
+    
+    MenuItem {
+      id: calculatorItem
+      text: qsTr("Calculator")
+      icon.source: Theme.getThemeVectorIcon("ic_info_outline_white_24dp") // Temporary icon
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+      font: Theme.defaultFont
+
+      onTriggered: {
+        // Create a calculator dialog with numeric keypad
+        var calculatorDialog = Qt.createQmlObject(`
+          import QtQuick
+          import QtQuick.Controls
+          import QtQuick.Layouts
+          import Theme
+          import org.qfield
+          
+          Dialog {
+            id: calculatorDialog
+            title: qsTr("Calculator")
+            modal: true
+            
+            x: (parent.width - width) / 2
+            y: (parent.height - height) / 2
+            width: 300
+            height: 470
+            
+            // Create an ExpressionEvaluator for calculations
+            ExpressionEvaluator {
+              id: expressionEvaluator
+              mode: ExpressionEvaluator.ExpressionMode
+              project: qgisProject
+            }
+            
+            // Function to handle button clicks - defined at dialog level
+            function handleButtonClick(value) {
+              if (value === "C") {
+                displayField.text = "";
+              } else if (value === "⌫") {
+                if (displayField.text.indexOf("=") >= 0) {
+                  displayField.text = "";
+                } else {
+                  displayField.text = displayField.text.slice(0, -1);
+                }
+              } else if (value === "=") {
+                try {
+                  if (displayField.text && displayField.text.indexOf("=") < 0) {
+                    expressionEvaluator.expressionText = displayField.text;
+                    var result = expressionEvaluator.evaluate();
+                    
+                    // Format the result to limit decimal places
+                    if (typeof result === 'number') {
+                      // Convert to string with max 8 decimal places
+                      result = parseFloat(result.toFixed(8));
+                    }
+                    
+                    displayField.text += " = " + result;
+                  }
+                } catch (error) {
+                  displayField.text = "Error";
+                }
+              } else if (["+", "-", "*", "/"].includes(value)) {
+                if (displayField.text.indexOf("=") >= 0) {
+                  var result = displayField.text.split("=")[1].trim();
+                  displayField.text = result + " " + value + " ";
+                } else {
+                  displayField.text += " " + value + " ";
+                }
+              } else {
+                if (displayField.text.indexOf("=") >= 0) {
+                  displayField.text = "";
+                }
+                displayField.text += value;
+              }
+            }
+            
+            background: Rectangle {
+              color: Theme.darkTheme ? "#303030" : "#f0f0f0"
+              border.color: Theme.mainColor
+              border.width: 2
+              radius: 8
+            }
+            
+            contentItem: ColumnLayout {
+              spacing: 10
+              
+              // Display area
+              Rectangle {
+                Layout.fillWidth: true
+                height: 60
+                color: "white"
+                border.color: "gray"
+                border.width: 1
+                
+                TextInput {
+                  id: displayField
+                  anchors.fill: parent
+                  anchors.margins: 5
+                  font.pixelSize: 20
+                  verticalAlignment: TextInput.AlignVCenter
+                  horizontalAlignment: TextInput.AlignRight
+                  readOnly: true
+                  text: ""
+                  
+                  // Make it look like a display
+                  color: "black"
+                  selectionColor: "transparent"
+                }
+                
+                // Show result in a different color
+                Rectangle {
+                  anchors.fill: parent
+                  color: "transparent"
+                  visible: displayField.text.indexOf("=") >= 0
+                  
+                  Text {
+                    anchors.fill: parent
+                    anchors.rightMargin: 5
+                    text: {
+                      if (displayField.text.indexOf("=") >= 0) {
+                        return displayField.text.split("=")[1].trim();
+                      }
+                      return "";
+                    }
+                    font.pixelSize: 20
+                    color: "green"
+                    horizontalAlignment: Text.AlignRight
+                    verticalAlignment: Text.AlignVCenter
+                  }
+                }
+              }
+              
+              // Help text for available functions
+              Rectangle {
+                Layout.fillWidth: true
+                height: 40
+                color: "#F0F0F0"
+                
+                Text {
+                  anchors.fill: parent
+                  anchors.margins: 5
+                  text: qsTr("Available: +, -, *, /, sin(), cos(), sqrt(), pi")
+                  font.pixelSize: 12
+                  color: "#666666"
+                  wrapMode: Text.WordWrap
+                }
+              }
+              
+              // Calculator keypad container
+              Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "#E8E8E8"
+                radius: 4
+                
+                ColumnLayout {
+                  anchors.fill: parent
+                  anchors.margins: 5
+                  spacing: 5
+                  
+                  // Row 1: Clear and Backspace
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "C"
+                      
+                      background: Rectangle {
+                        color: "#FF6666"
+                        radius: 4
+                        border.width: 1
+                        border.color: Qt.darker("#FF6666", 1.2)
+                      }
+                      
+                      contentItem: Text {
+                        text: "C"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("C")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "⌫"
+                      
+                      background: Rectangle {
+                        color: "#FFCC66"
+                        radius: 4
+                        border.width: 1
+                        border.color: Qt.darker("#FFCC66", 1.2)
+                      }
+                      
+                      contentItem: Text {
+                        text: "⌫"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("⌫")
+                    }
+                  }
+                  
+                  // Row 2: 7, 8, 9, ÷
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "7"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "7"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("7")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "8"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "8"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("8")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "9"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "9"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("9")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "÷"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "÷"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("/")
+                    }
+                  }
+                  
+                  // Row 3: 4, 5, 6, ×
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "4"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "4"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("4")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "5"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "5"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("5")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "6"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "6"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("6")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "×"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "×"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("*")
+                    }
+                  }
+                  
+                  // Row 4: 1, 2, 3, -
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "1"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "1"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("1")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "2"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "2"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("2")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "3"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "3"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("3")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "-"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "-"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("-")
+                    }
+                  }
+                  
+                  // Row 5: 0, ., =, +
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "0"
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "0"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("0")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "."
+                      
+                      background: Rectangle {
+                        color: "#FFFFFF"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "."
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "black"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick(".")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "="
+                      
+                      background: Rectangle {
+                        color: "#66CC99"
+                        radius: 4
+                        border.width: 1
+                        border.color: Qt.darker("#66CC99", 1.2)
+                      }
+                      
+                      contentItem: Text {
+                        text: "="
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("=")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "+"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "+"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("+")
+                    }
+                  }
+                  
+                  // Function buttons row
+                  RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 5
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "sin"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "sin"
+                        font.pixelSize: 16
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("sin(")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "cos"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "cos"
+                        font.pixelSize: 16
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("cos(")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "sqrt"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "sqrt"
+                        font.pixelSize: 16
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("sqrt(")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: "("
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: "("
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick("(")
+                    }
+                    
+                    Button {
+                      Layout.fillWidth: true
+                      Layout.preferredHeight: 40
+                      text: ")"
+                      
+                      background: Rectangle {
+                        color: "#E6E6E6"
+                        radius: 4
+                        border.width: 1
+                        border.color: "#CCCCCC"
+                      }
+                      
+                      contentItem: Text {
+                        text: ")"
+                        font.pixelSize: 18
+                        font.bold: true
+                        color: "#0066CC"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                      }
+                      
+                      onClicked: calculatorDialog.handleButtonClick(")")
+                    }
+                  }
+                  
+                  // Close button - moved inside the keypad
+                  Button {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    Layout.topMargin: 10
+                    text: qsTr("Close")
+                    
+                    background: Rectangle {
+                      color: "#DDDDDD"
+                      radius: 4
+                      border.width: 1
+                      border.color: "#BBBBBB"
+                    }
+                    
+                    contentItem: Text {
+                      text: qsTr("Close")
+                      font.pixelSize: 16
+                      color: "black"
+                      horizontalAlignment: Text.AlignHCenter
+                      verticalAlignment: Text.AlignVCenter
+                    }
+                    
+                    onClicked: calculatorDialog.close()
+                  }
+                }
+              }
+            }
+          }
+        `, mainWindow, "calculatorDialog")
         
-        // Query SIGPAC data for the current position
-        sigpacDialog.queryCurrentPosition();
+        calculatorDialog.open()
       }
     }
 
