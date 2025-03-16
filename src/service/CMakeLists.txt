@@ -1,5 +1,5 @@
-set(QFIELD_SERVICE_SRCS qfieldcloudservice.cpp qfieldpositioningservice.cpp)
-set(QFIELD_SERVICE_HDRS qfieldcloudservice.h qfieldpositioningservice.h)
+set(QFIELD_SERVICE_SRCS qfieldpositioningservice.cpp)
+set(QFIELD_SERVICE_HDRS qfieldpositioningservice.h)
 
 add_library(qfield_service STATIC ${QFIELD_SERVICE_SRCS} ${QFIELD_SERVICE_HDRS})
 
