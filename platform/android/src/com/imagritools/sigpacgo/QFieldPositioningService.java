@@ -98,38 +98,9 @@ public class QFieldPositioningService extends QtService {
             stopSelf();
             return;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.v("QFieldPositioningService", "onDestroy triggered");
-        notificationManager.cancel(NOTIFICATION_ID);
-        super.onDestroy();
-        instance = null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v("QFieldPositioningService", "onStartCommand triggered");
-
-        if (intent != null && intent.hasExtra("content")) {
-            ClipboardManager clipboard =
-                (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(intent.getStringExtra("content"));
-            return START_NOT_STICKY;
-        }
-
-        int ret = super.onStartCommand(intent, flags, startId);
-        if (instance != null) {
-            Log.v("QFieldPositioningService",
-                  "service already running, aborting onStartCommand.");
-            return START_NOT_STICKY;
-        }
-
-        instance = this;
-
-        notificationManager =
-            (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        
+        // Initialize notification manager early
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             notificationChannel = new NotificationChannel(
@@ -141,7 +112,8 @@ public class QFieldPositioningService extends QtService {
             notificationChannel.enableVibration(false);
             notificationManager.createNotificationChannel(notificationChannel);
         }
-
+        
+        // Create and show a notification immediately to avoid ANR
         Notification.Builder builder =
             new Notification.Builder(this)
                 .setSmallIcon(R.drawable.sigpacgo_logo)
@@ -166,8 +138,41 @@ public class QFieldPositioningService extends QtService {
         } catch (SecurityException e) {
             Log.v("QFieldPositioningService",
                   "Missing permission to launch the positioning service");
+            stopSelf();
+            return;
+        }
+        
+        instance = this;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.v("QFieldPositioningService", "onDestroy triggered");
+        notificationManager.cancel(NOTIFICATION_ID);
+        super.onDestroy();
+        instance = null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.v("QFieldPositioningService", "onStartCommand triggered");
+
+        if (intent != null && intent.hasExtra("content")) {
+            ClipboardManager clipboard =
+                (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(intent.getStringExtra("content"));
             return START_NOT_STICKY;
         }
+
+        int ret = super.onStartCommand(intent, flags, startId);
+        if (instance != null && instance != this) {
+            Log.v("QFieldPositioningService",
+                  "service already running, aborting onStartCommand.");
+            return START_NOT_STICKY;
+        }
+
+        // We already initialized everything in onCreate, so we don't need to do it again here
+        // This avoids the ANR issue by ensuring startForeground is called early in the service lifecycle
 
         return START_STICKY;
     }
