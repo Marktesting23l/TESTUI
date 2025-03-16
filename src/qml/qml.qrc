@@ -130,5 +130,7 @@
         <file>forecast.json</file>
         <file>SigpacService.qml</file>
         <file>SigpacDialog.qml</file>
+        <file>Information.qml</file>
+        <file>TermsAndConditions.qml</file>
     </qresource>
 </RCC>

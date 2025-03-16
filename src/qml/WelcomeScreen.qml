@@ -34,6 +34,12 @@ Page {
     property string phrasesFilePath: ''
   }
 
+  // Add Terms and Conditions popup
+  TermsAndConditions {
+    id: termsAndConditions
+    parent: Overlay.overlay
+  }
+
   Rectangle {
     id: welcomeBackground
     anchors.fill: parent

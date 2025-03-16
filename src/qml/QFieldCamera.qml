@@ -1784,4 +1784,46 @@ Popup {
       }
     }
   }
+
+  Rectangle {
+    id: stampBackground
+    visible: stampCheckBox.checked
+    color: "#80000000"
+    height: dateStamp.height + 10 // Increased height to fully show the date
+    width: parent.width
+    anchors.bottom: parent.bottom
+  }
+
+  // Improved rectangular accuracy indicator for camera
+  Rectangle {
+    id: cameraAccuracyIndicator
+    visible: positioningSettings.accuracyIndicator && positionSource.active
+    width: 24
+    height: 12
+    radius: 3
+    color: {
+      if (positionSource.accuracy === 'bad')
+        return Theme.accuracyBad
+      else if (positionSource.accuracy === 'good')
+        return Theme.accuracyExcellent
+      else
+        return Theme.accuracyTolerated
+    }
+    border.color: Theme.light
+    border.width: 1
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.rightMargin: 10
+    anchors.topMargin: 10
+    z: 1000
+    
+    // Add a small GPS icon to make it clear what this indicator represents
+    Text {
+      anchors.centerIn: parent
+      text: "GPS"
+      color: "white"
+      font.pixelSize: 8
+      font.bold: true
+    }
+  }
 }

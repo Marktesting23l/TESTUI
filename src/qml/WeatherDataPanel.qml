@@ -315,7 +315,6 @@ Drawer {
         radius: 4
     }
     
-    // Create an instance of the RIA Weather Service
     RIAWeatherService {
         id: riaService
         
@@ -323,7 +322,6 @@ Drawer {
             provincesModel.clear()
             // Only add the 8 provinces of Andalucía
             provinces.forEach(function(province) {
-                // Filter to only include Andalucía provinces
                 if (andaluciaProvinceIds.indexOf(province.id) !== -1) {
                 provincesModel.append({
                     id: province.id,

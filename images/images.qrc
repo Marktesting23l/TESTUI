@@ -63,19 +63,8 @@
         <file>themes/sigpacgo/nodpi/ic_calendar_today_black_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_close_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_ellipsis_black_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_white_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_active_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_attention_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_project_48dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_off_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_upload_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_download_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_synchronize_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_project_offline_48dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_project_download_48dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_project_upload_48dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_cloud_project_localonly_48dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_geotag_white_24dp.svg</file>
+        <file>themes/sigpacgo/nodpi/weather-station.svg</file>
         <file>themes/sigpacgo/nodpi/ic_geotag_missing_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_chevron_left_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_chevron_right_white_24dp.svg</file>
@@ -170,6 +159,11 @@
         <file>themes/sigpacgo/nodpi/ic_tune_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_expression_black_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_message_log_black_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_qfield_black_24dp.svg</file>
+        <file>themes/sigpacgo/nodpi/ic_sigpacgo.svg</file>
+        <file>themes/sigpacgo/nodpi/info_box.svg</file>
+        <file>themes/sigpacgo/nodpi/weather.svg</file>
+        <file>themes/sigpacgo/nodpi/satellite.svg</file>
+        <file>themes/sigpacgo/nodpi/maps.svg</file>
+        <file>themes/sigpacgo/nodpi/calculator.svg</file>
     </qresource>
 </RCC>

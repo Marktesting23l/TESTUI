@@ -272,13 +272,28 @@ ApplicationWindow {
   }
 
   onToggleDigitizeMode: {
+    // First check if we're already in digitize mode
     if (stateMachine.state === "digitize") {
+      // Check if we're in the middle of digitizing
       if (digitizingToolbar.rubberbandModel && digitizingToolbar.rubberbandModel.vertexCount > 1) {
-        displayToast(qsTr("Finish or dimiss the digitizing feature before toggling to browse mode"));
+        displayToast(qsTr("Finish or dismiss the digitizing feature before toggling to browse mode"));
       } else {
+        // Clean up any digitizing state
+        if (digitizingToolbar.rubberbandModel) {
+          digitizingToolbar.rubberbandModel.reset();
+        }
+        
+        // Change to browse mode
         changeMode("browse");
       }
     } else {
+      // Check if we have an editable layer before entering digitize mode
+      if (!dashBoard.ensureEditableLayerSelected()) {
+        displayToast(qsTr("No editable layers found. Cannot enter digitize mode."), "warning");
+        return;
+      }
+      
+      // Change to digitize mode
       changeMode("digitize");
     }
   }
@@ -286,19 +301,34 @@ ApplicationWindow {
   onChangeMode: mode => {
     if (stateMachine.state === mode)
       return;
+    
+    console.log("Changing mode from " + stateMachine.state + " to " + mode);
+    
+    // Store the previous state
     stateMachine.lastState = stateMachine.state;
     stateMachine.state = mode;
+    
+    // Handle mode-specific actions
     switch (stateMachine.state) {
     case 'browse':
       projectInfo.stateMode = mode;
       platformUtilities.setHandleVolumeKeys(false);
+      
+      // Ensure digitizing components are properly reset
+      if (digitizingToolbar.rubberbandModel) {
+        digitizingToolbar.rubberbandModel.reset();
+      }
+      
       displayToast(qsTr('You are now in browse mode'));
       break;
     case 'digitize':
       projectInfo.stateMode = mode;
       platformUtilities.setHandleVolumeKeys(qfieldSettings.digitizingVolumeKeys);
-      dashBoard.ensureEditableLayerSelected();
-      if (dashBoard.activeLayer) {
+      
+      // Ensure we have a valid editable layer
+      var hasEditableLayer = dashBoard.ensureEditableLayerSelected();
+      
+      if (hasEditableLayer && dashBoard.activeLayer) {
         displayToast(qsTr('You are now in digitize mode on layer %1').arg(dashBoard.activeLayer.name));
       } else {
         displayToast(qsTr('You are now in digitize mode'));
@@ -1391,7 +1421,7 @@ ApplicationWindow {
       anchors.left: parent.left
       anchors.bottom: parent.bottom
       anchors.leftMargin: 8
-      anchors.bottomMargin: 20
+      anchors.bottomMargin: 50
     }
 
     Column {
@@ -1415,6 +1445,21 @@ ApplicationWindow {
       anchors.topMargin: 4
 
       onClicked: messageLog.visible = true
+    }
+
+    QfToolButton {
+      id: informationButton
+      iconSource: Theme.getThemeVectorIcon("info_box")
+      round: true
+      bgcolor: Theme.toolButtonBackgroundColor
+      visible: !screenLocker.enabled
+      width: 30
+      height: 30
+      anchors.right: pluginsToolbar.right
+      anchors.top: alertIcon.bottom
+      anchors.topMargin: 4
+
+      onClicked: informationPanel.visible = true
     }
 
     Column {
@@ -1506,8 +1551,8 @@ ApplicationWindow {
       visible: !screenLocker.enabled
       width: childrenRect.width
       height: childrenRect.height
-      topPadding: mainWindow.sceneTopMargin + 10
-      leftPadding: 20
+      topPadding: mainWindow.sceneTopMargin + 20
+      leftPadding: 15
       spacing: 15
 
       QfToolButton {
@@ -1523,43 +1568,12 @@ ApplicationWindow {
         }
       }
 
-      QfToolButton {
-        id: sentinelButton
-        round: true
-        iconSource: Theme.getThemeVectorIcon("ic_satellite_white_24dp")
-        bgcolor: Theme.mainColor
-        visible: settings.valueBool("QField/Sentinel/EnableLayers", true)
-        
-        onClicked: {
-          if (typeof qfieldSettings !== 'undefined' && qfieldSettings) {
-            qfieldSettings.openSentinelConfig();
-          } else {
-            // Fallback if qfieldSettings is not available
-            var component = Qt.createComponent("SentinelConfigScreen.qml");
-            if (component.status === Component.Ready) {
-              var sentinelConfig = component.createObject(mainWindow, {
-                "instanceId": settings.value("QField/Sentinel/InstanceId", "")
-              });
-              sentinelConfig.open();
-            } else {
-              console.error("Error loading SentinelConfigScreen.qml:", component.errorString());
-            }
-          }
-        }
-        
-        ToolTip {
-          text: qsTr("Sentinel Settings")
-          visible: parent.hovered
-          delay: 500
-        }
-      }
-
       BusyIndicator {
-      id: busyIndicator
-      width: menuButton.width + 15
-      height: width
-      running: mapCanvasMap.isRendering
-    }
+        id: busyIndicator
+        width: menuButton.width + 15
+        height: width
+        running: mapCanvasMap.isRendering
+      }
     
       QfActionButton {
         id: closeMeasureTool
@@ -1601,11 +1615,11 @@ ApplicationWindow {
       // Add Weather Forecast button
       QfToolButton {
         id: weatherButton
-        width: 48
-        height: 48
+        width: 40
+        height: 40
         round: true
         bgcolor: Theme.toolButtonBackgroundColor
-        iconSource: Theme.getThemeVectorIcon('ic_weather_24dp')
+        iconSource: Theme.getThemeVectorIcon('weather')
         iconColor: Theme.toolButtonColor
         
         onClicked: {
@@ -1647,6 +1661,7 @@ ApplicationWindow {
       }
 
       QfToolButtonDrawer {
+        id: digitizingDrawer
         name: "digitizingDrawer"
         size: 48
         round: true
@@ -1654,7 +1669,10 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon('ic_digitizing_settings_black_24dp')
         iconColor: Theme.toolButtonColor
         spacing: 4
-        visible: stateMachine.state === "digitize"
+        
+        // Only show when in digitize mode and not in the middle of digitizing
+        visible: stateMachine.state === "digitize" && 
+                 (!digitizingToolbar.rubberbandModel || digitizingToolbar.rubberbandModel.vertexCount <= 1)
         
         Component.onCompleted: {
           console.log("DigitizingDrawer initialized. Will be visible when stateMachine.state === 'digitize'")
@@ -1662,8 +1680,16 @@ ApplicationWindow {
         
         onVisibleChanged: {
           console.log("DigitizingDrawer visibility changed to: " + visible + ", stateMachine.state: " + stateMachine.state)
-          if (stateMachine.state === "digitize") {
-            console.log("In digitize mode, drawer should be visible")
+        }
+
+        // Listen for state changes to update visibility
+        Connections {
+          target: stateMachine
+          function onStateChanged() {
+            // Update visibility based on state
+            digitizingDrawer.visible = stateMachine.state === "digitize" && 
+                                      (!digitizingToolbar.rubberbandModel || 
+                                       digitizingToolbar.rubberbandModel.vertexCount <= 1)
           }
         }
 
@@ -2120,7 +2146,7 @@ ApplicationWindow {
         width: 40
         height: 40
         round: true
-        iconSource: Theme.getThemeVectorIcon('ic_photo_camera_white_24dp')
+        iconSource: Theme.getThemeVectorIcon('ic_camera_photo_black_24dp')
         iconColor: Theme.toolButtonColor
         bgcolor: Theme.mainColor
         onClicked: {
@@ -2128,7 +2154,7 @@ ApplicationWindow {
         }
         
         ToolTip.visible: hovered
-        ToolTip.text: qsTr("Take photos")
+        ToolTip.text: qsTr("Take geo-tagged photos")
       }
       
       // Add a button to create a DCIM folder in the project directory
@@ -2234,10 +2260,8 @@ ApplicationWindow {
         // Accuracy indicator badge
         Rectangle {
           anchors {
-            top: parent.top
-            right: parent.right
-            rightMargin: 2
-            topMargin: 2
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
           }
           
           width: 12
@@ -2291,13 +2315,47 @@ ApplicationWindow {
           }
         }
       }
-      
+     QfToolButton {
+      id: sentinelButton
+      visible: settings.valueBool("QField/Sentinel/EnableLayers", true)
+      round: true
+      bgcolor: Theme.toolButtonBackgroundColor
+      iconSource: Theme.getThemeIcon("satellite")
+      iconColor: Theme.toolButtonColor
+      width: 40
+      height: 40
+
+
+
+    onClicked: {
+        if (typeof qfieldSettings !== 'undefined' && qfieldSettings) {
+            qfieldSettings.openSentinelConfig();
+        } else {
+            // Fallback if qfieldSettings is not available
+            var component = Qt.createComponent("SentinelConfigScreen.qml");
+            if (component.status === Component.Ready) {
+                var sentinelConfig = component.createObject(mainWindow, {
+                    "instanceId": settings.value("QField/Sentinel/InstanceId", "")
+                });
+                sentinelConfig.open();
+            } else {
+                console.error("Error loading SentinelConfigScreen.qml:", component.errorString());
+            }
+        }
+    }
+
+        ToolTip {
+        text: qsTr("Sentinel Settings")
+        visible: parent.hovered
+        delay: 500
+      }
+    }
       QfToolButton {
         id: googleSearchButton
         height: 40
         width: 40
         round: true
-        iconSource: Theme.getThemeVectorIcon("ic_baseline_search_white")
+        iconSource: Theme.getThemeVectorIcon("maps")
         iconColor: googleSearchButton.enabled ? Theme.toolButtonColor : Theme.mainTextDisabledColor
         bgcolor: dashBoard.opened ? Theme.mainColor : Theme.toolButtonBackgroundColor
         
@@ -2848,10 +2906,8 @@ ApplicationWindow {
 
         Rectangle {
           anchors {
-            top: parent.top
-            right: parent.right
-            rightMargin: 2
-            topMargin: 2
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
           }
 
           width: 12
@@ -2914,12 +2970,17 @@ ApplicationWindow {
         showConfirmButton: stateMachine.state === "digitize"
         screenHovering: mapCanvasMap.hovered
         
+        // Make sure the toolbar is visible when it should be
+        visible: stateVisible
+        
         Component.onCompleted: {
           console.log("DigitizingToolbar initialized. Will be visible when stateMachine.state is 'digitize' or 'measure'")
         }
         
         onStateVisibleChanged: {
           console.log("DigitizingToolbar stateVisible changed to: " + stateVisible + ", stateMachine.state: " + stateMachine.state)
+          // Ensure visibility matches stateVisible
+          visible = stateVisible
         }
 
         digitizingLogger.type: stateMachine.state === 'measure' ? '' : 'add'
@@ -3149,82 +3210,46 @@ ApplicationWindow {
   DashBoard {
     id: dashBoard
     objectName: "dashBoard"
-
-    allowActiveLayerChange: !digitizingToolbar.isDigitizing
-    allowInteractive: !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !screenLocker.enabled
     mapSettings: mapCanvas.mapSettings
-
-    Component.onCompleted: focusstack.addFocusTaker(this)
-
-    onReturnHome: {
-      if (currentRubberband && currentRubberband.model.vertexCount > 1) {
-        digitizingToolbar.cancelDialog.open();
-        shouldReturnHome = true;
-      } else if (!shouldReturnHome) {
-        openWelcomeScreen();
-      }
-    }
+    layerTree: flatLayerTree
+    allowActiveLayerChange: stateMachine.state === "browse"
 
     onShowMainMenu: p => {
-      mainMenu.popup(p.x - mainMenu.width - 2, p.y - 2);
-    }
-
-    
-
-    onToggleMeasurementTool: {
-      if (featureForm.state === "ProcessingAlgorithmForm") {
-        cancelAlgorithmDialog.visible = true;
-      } else {
-        activateMeasurementMode();
-      }
+      mainMenu.popup(p.x, p.y);
     }
 
     onShowPrintLayouts: p => {
-      if (layoutListInstantiator.count > 1) {
-        printMenu.popup(p.x, p.y);
-      } else {
-        mainMenu.close();
-        displayToast(qsTr('Printing...'));
-        printMenu.printName = layoutListInstantiator.count === 1 ? layoutListInstantiator.model.titleAt(0) : "";
-        printMenu.printTimer.restart();
-      }
+      printLayoutListModel.reloadModel();
+      printLayoutsMenu.popup(p.x, p.y);
     }
 
     onShowProjectFolder: {
-      dashBoard.close();
       qfieldLocalDataPickerScreen.projectFolderView = true;
-      qfieldLocalDataPickerScreen.model.resetToPath(projectInfo.filePath);
+      qfieldLocalDataPickerScreen.model.resetToProjectFolder();
       qfieldLocalDataPickerScreen.visible = true;
     }
 
-    // If the user clicks the "Return home" button in the middle of digitizing, we will ask if they want to discard their changes.
-    // If they press cancel, nothing will happen, but if they press discard, we will discard their digitizing.
-    // We will also use `shouldReturnHome` to know that we need to return home as well or not.
-    property bool shouldReturnHome: false
-
-    function ensureEditableLayerSelected() {
-      var firstEditableLayer = null;
-      var activeLayerLocked = false;
-      for (var i = 0; i < layerTree.rowCount(); i++) {
-        var index = layerTree.index(i, 0);
-        if (firstEditableLayer === null) {
-          if (layerTree.data(index, FlatLayerTreeModel.Type) === 'layer' && layerTree.data(index, FlatLayerTreeModel.ReadOnly) === false && layerTree.data(index, FlatLayerTreeModel.GeometryLocked) === false) {
-            firstEditableLayer = layerTree.data(index, FlatLayerTreeModel.VectorLayerPointer);
-          }
-        }
-        if (activeLayer != null && activeLayer === layerTree.data(index, FlatLayerTreeModel.VectorLayerPointer)) {
-          if (layerTree.data(index, FlatLayerTreeModel.ReadOnly) === true || layerTree.data(index, FlatLayerTreeModel.GeometryLocked) === true) {
-            activeLayerLocked = true;
-          } else {
-            break;
-          }
-        }
-        if (firstEditableLayer !== null && (activeLayer == null || activeLayerLocked === true)) {
-          activeLayer = firstEditableLayer;
-          break;
-        }
+    onToggleMeasurementTool: {
+      if (stateMachine.state === "measure") {
+        changeMode(stateMachine.lastState);
+      } else {
+        stateMachine.lastState = stateMachine.state;
+        changeMode("measure");
       }
     }
+    
+    onShowweatherDataPanel: {
+      weatherDataPanel.open();
+    }
+
+    onReturnHome: {
+      if (qgisProject.fileName !== '') {
+        qgisProject.close();
+      }
+      welcomeScreen.visible = true;
+    }
+
+    Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
   BookmarkProperties {
@@ -3531,10 +3556,10 @@ ApplicationWindow {
     
 
     MenuItem {
-      text: qsTr("Weather Data (RIA)")
+      text: qsTr("Agro-stations (RIA)")
 
       font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_cloud_white_24dp")
+      icon.source: Theme.getThemeVectorIcon("weather-station")
       height: 48
       leftPadding: Theme.menuItemLeftPadding
 
@@ -3547,43 +3572,32 @@ ApplicationWindow {
     }
     
     MenuItem {
-      text: qsTr("Weather Forecast")
+      text: qsTr("Information")
 
       font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_weather_24dp")
+      icon.source: Theme.getThemeVectorIcon("info_box")
       height: 48
       leftPadding: Theme.menuItemLeftPadding
 
       onTriggered: {
-        // Get current map center coordinates
-        var extent = mapCanvas.mapSettings.extent
-        // Calculate center manually from the extent
-        var centerX = (extent.xMinimum + extent.xMaximum) / 2
-        var centerY = (extent.yMinimum + extent.yMaximum) / 2
-        
-        // Create a proper point object using GeometryUtils.point
-        var center = GeometryUtils.point(centerX, centerY)
-        var centerPoint = GeometryUtils.reprojectPoint(center, mapCanvas.mapSettings.destinationCrs, CoordinateReferenceSystemUtils.wgs84Crs())
-        
-        // Update weather forecast panel with current location
-        weatherForecastPanel.updateLocation(centerPoint.y, centerPoint.x, "Ubicación del mapa")
-        
         dashBoard.close();
         mainMenu.close();
-        weatherForecastPanel.open();
+        informationPanel.visible = true;
         highlighted = false;
       }
-    } 
+    }
+
     MenuItem {
       text: qsTr("About SIGPACGO")
 
       font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_qfield_black_24dp")
+      icon.source: Theme.getThemeVectorIcon("ic_sigpacgo")
       height: 48
       leftPadding: Theme.menuItemLeftPadding
 
       onTriggered: {
         dashBoard.close();
+        mainMenu.close();
         aboutDialog.visible = true;
         highlighted = false;
       }
@@ -3868,13 +3882,12 @@ ApplicationWindow {
     MenuItem {
       id: calculatorItem
       text: qsTr("Calculator")
-      icon.source: Theme.getThemeVectorIcon("ic_info_outline_white_24dp") // Temporary icon
+      icon.source: Theme.getThemeVectorIcon("calculator") 
       height: 48
       leftPadding: Theme.menuItemLeftPadding
       font: Theme.defaultFont
 
       onTriggered: {
-        // Create a calculator dialog with numeric keypad
         var calculatorDialog = Qt.createQmlObject(`
           import QtQuick
           import QtQuick.Controls
@@ -5607,6 +5620,13 @@ ApplicationWindow {
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
+  Information {
+    id: informationPanel
+    anchors.fill: parent
+
+    Component.onCompleted: focusstack.addFocusTaker(this)
+  }
+
   TrackerSettings {
     id: trackerSettings
   }
@@ -6089,5 +6109,73 @@ ApplicationWindow {
 
   // Add the SIGPAC dialog property
   property var sigpacDialog: null
+
+  // Add accuracy indicator to the location button
+  Rectangle {
+    id: accuracyIndicator
+    visible: positioningSettings.accuracyIndicator && positionSource.active
+    width: 16
+    height: 8
+    radius: 2
+    color: {
+      if (positionSource.accuracy === 'bad')
+        return Theme.accuracyBad
+      else if (positionSource.accuracy === 'good')
+        return Theme.accuracyExcellent
+      else
+        return Theme.accuracyTolerated
+    }
+    border.color: Theme.light
+    border.width: 1
+    anchors.right: gnssButton.right
+    anchors.bottom: gnssButton.bottom
+    anchors.rightMargin: 0
+    anchors.bottomMargin: 0
+    z: gnssButton.z + 1
+  }
+
+  // Add center reticle
+  Item {
+    id: centerReticle
+    anchors.centerIn: mapCanvas
+    visible: stateMachine.state === "browse" && !dashBoard.opened && !aboutDialog.visible && !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !sketcher.visible && !overlayFeatureFormDrawer.visible && !informationPanel.visible
+    z: 100
+    
+    Rectangle {
+      id: horizontalLine
+      width: 10
+      height: 1
+      color: Theme.mainColor
+      opacity: 0.7
+      anchors.centerIn: parent
+    }
+    
+    Rectangle {
+      id: verticalLine
+      width: 1
+      height: 10
+      color: Theme.mainColor
+      opacity: 0.7
+      anchors.centerIn: parent
+    }
+    
+    Rectangle {
+      id: centerDot
+      width: 3
+      height: 3
+      radius: width / 2
+      color: Theme.mainColor
+      opacity: 0.7
+      anchors.centerIn: parent
+    }
+  }
+
+  // Properly positioned Sentinel button next to Google button
+  
+  
+  Menu {
+    id: sentinelMenu
+    // Keep existing menu content
+  }
 }
 

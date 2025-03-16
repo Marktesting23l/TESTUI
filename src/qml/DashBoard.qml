@@ -17,6 +17,7 @@ Drawer {
   signal showPrintLayouts(point p)
   signal showProjectFolder
   signal toggleMeasurementTool
+  signal showweatherDataPanel
   signal returnHome
 
   property bool allowInteractive: true
@@ -24,6 +25,7 @@ Drawer {
   property alias activeLayer: legend.activeLayer
   property alias layerTree: legend.model
   property MapSettings mapSettings
+  property bool shouldReturnHome: false
 
   property color mainColor: Theme.mainColor
 
@@ -135,9 +137,6 @@ Drawer {
             }
           }
 
-
-        
-
           QfToolButton {
             id: projectFolderButton
             anchors.verticalCenter: parent.verticalCenter
@@ -147,6 +146,18 @@ Drawer {
             round: true
             onClicked: {
               showProjectFolder();
+            }
+          }
+
+          QfToolButton {
+            id: weatherDataButton
+            anchors.verticalCenter: parent.verticalCenter
+            font: Theme.defaultFont
+            iconSource: Theme.getThemeVectorIcon("weather-station")
+            iconColor: Theme.mainOverlayColor
+            round: true
+            onClicked: {
+              showweatherDataPanel();
             }
           }
         }
@@ -396,5 +407,34 @@ Drawer {
   TemporalProperties {
     id: temporalProperties
     mapSettings: dashBoard.mapSettings
+  }
+
+  // Function to ensure an editable layer is selected
+  function ensureEditableLayerSelected() {
+    if (!activeLayer || activeLayer.readOnly) {
+      // Find the first editable layer
+      var editableLayers = []
+      
+      // Iterate through the layer tree to find editable layers
+      for (var i = 0; i < layerTree.rowCount(); i++) {
+        var index = layerTree.index(i, 0)
+        var layer = layerTree.data(index, 0)
+        
+        // Check if it's a valid vector layer and not read-only
+        if (layer && layer.isValid && !layer.readOnly && layer.type === 0) { // type 0 is VectorLayer
+          editableLayers.push(layer)
+        }
+      }
+      
+      if (editableLayers.length > 0) {
+        // Set the first editable layer as active
+        legend.activeLayer = editableLayers[0]
+        return true
+      } else {
+        console.log("No editable layers found")
+        return false
+      }
+    }
+    return true
   }
 }
