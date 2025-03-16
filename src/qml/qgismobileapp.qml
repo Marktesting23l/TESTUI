@@ -2299,135 +2299,10 @@ ApplicationWindow {
         round: true
         iconSource: Theme.getThemeVectorIcon("ic_baseline_search_white")
         iconColor: googleSearchButton.enabled ? Theme.toolButtonColor : Theme.mainTextDisabledColor
-        bgcolor: manualInputMode ? Theme.accentColor : (dashBoard.opened ? Theme.mainColor : Theme.toolButtonBackgroundColor)
+        bgcolor: dashBoard.opened ? Theme.mainColor : Theme.toolButtonBackgroundColor
         
         property var lastCoordinates: null
         property string lastClipboardText: ""
-        property bool manualInputMode: false
-        
-        // Bottom right indicator to show manual mode is active
-        Rectangle {
-          visible: manualInputMode
-          anchors.right: parent.right
-          anchors.bottom: parent.bottom
-          anchors.margins: 2
-          width: 10
-          height: 10
-          radius: 5
-          color: Theme.accentColor
-        }
-        
-        // Custom dialog for coordinate input
-        property var coordInputDialog: Popup {
-          id: coordInputPopup
-          width: Math.min(mainWindow.width * 0.9, 400)
-          height: coordInputColumn.height + 40
-          x: (mainWindow.width - width) / 2
-          y: (mainWindow.height - height) / 2
-          modal: true
-          closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-          
-          Column {
-            id: coordInputColumn
-            width: parent.width - 40
-            anchors.centerIn: parent
-            spacing: 10
-            
-            Text {
-              width: parent.width
-              text: qsTr("Enter Coordinates")
-              font.bold: true
-              font.pixelSize: 16
-              color: Theme.mainTextColor
-            }
-            
-            Text {
-              width: parent.width
-              text: qsTr("Supported formats:") 
-              font.pixelSize: 12
-              color: Theme.mainTextColor
-              wrapMode: Text.WordWrap
-            }
-            
-            Text {
-              width: parent.width
-              text: "• 36.97550N, 2.51755W\n• N36.97550, W2.51755\n• 36.97550, -2.51755"
-              font.pixelSize: 12
-              color: Theme.secondaryTextColor
-              wrapMode: Text.WordWrap
-            }
-            
-            TextField {
-              id: coordInput
-              width: parent.width
-              placeholderText: qsTr("Enter coordinates")
-              text: googleSearchButton.lastClipboardText || ""
-              selectByMouse: true
-              
-              // Auto-select all text when the field gets focus
-              onFocusChanged: {
-                if (focus && text) {
-                  selectAll();
-                }
-              }
-              
-              // Handle Enter/Return key
-              Keys.onReturnPressed: {
-                var coords = googleSearchButton.parseCoordinates(text);
-                if (coords) {
-                  if (googleSearchButton.openCoordinatesInMaps(coords)) {
-                    // Save the text for future use
-                    googleSearchButton.lastClipboardText = text;
-                    coordInputPopup.close();
-                  } else {
-                    displayToast(qsTr("Invalid coordinates"), "warning");
-                  }
-                } else {
-                  displayToast(qsTr("Could not parse coordinates"), "warning");
-                }
-              }
-            }
-            
-            Row {
-              width: parent.width
-              spacing: 10
-              
-              Button {
-                text: qsTr("Cancel")
-                onClicked: coordInputPopup.close()
-                width: (parent.width - 10) / 2
-              }
-              
-              Button {
-                text: qsTr("Open in Maps")
-                width: (parent.width - 10) / 2
-                onClicked: {
-                  var coords = googleSearchButton.parseCoordinates(coordInput.text);
-                  if (coords) {
-                    if (googleSearchButton.openCoordinatesInMaps(coords)) {
-                      // Save the text for future use
-                      googleSearchButton.lastClipboardText = coordInput.text;
-                      coordInputPopup.close();
-                    } else {
-                      displayToast(qsTr("Invalid coordinates"), "warning");
-                    }
-                  } else {
-                    displayToast(qsTr("Could not parse coordinates"), "warning");
-                  }
-                }
-              }
-            }
-          }
-        }
-        
-        // Show the coordinate input dialog
-        function showManualInputDialog(initialText) {
-          if (initialText) {
-            coordInputDialog.coordInput.text = initialText;
-          }
-          coordInputDialog.open();
-          return true;
-        }
         
         function parseCoordinates(text) {
           // Check if text is undefined or empty
@@ -2552,35 +2427,35 @@ ApplicationWindow {
               // Try multiple formats in sequence until one works
               var success = false;
               
-              // Format 1: Use http://maps.google.com/maps?daddr format (most reliable according to StackOverflow)
-              var mapsUrl = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
+              // Format 1: Use Google Maps with destination parameter (most reliable for navigation)
+              var mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
               console.log("Trying Maps URL format 1: " + mapsUrl);
               success = Qt.openUrlExternally(mapsUrl);
               
-              // Format 2: Use geo:lat,lng format (direct coordinates)
+              // Format 2: Use Google Maps search with query parameter
               if (!success) {
-                mapsUrl = "geo:" + lat + "," + lng;
+                mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
                 console.log("Trying Maps URL format 2: " + mapsUrl);
                 success = Qt.openUrlExternally(mapsUrl);
               }
               
-              // Format 3: Use geo:0,0?q=lat,lng(Label) format with label
+              // Format 3: Use http://maps.google.com/maps?daddr format
               if (!success) {
-                mapsUrl = "geo:0,0?q=" + lat + "," + lng + "(Marked+Location)";
+                mapsUrl = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
                 console.log("Trying Maps URL format 3: " + mapsUrl);
                 success = Qt.openUrlExternally(mapsUrl);
               }
               
-              // Format 4: Use geo:lat,lng?q=lat,lng format (pin at location)
+              // Format 4: Use geo:lat,lng format (direct coordinates)
               if (!success) {
-                mapsUrl = "geo:" + lat + "," + lng + "?q=" + lat + "," + lng;
+                mapsUrl = "geo:" + lat + "," + lng;
                 console.log("Trying Maps URL format 4: " + mapsUrl);
                 success = Qt.openUrlExternally(mapsUrl);
               }
               
-              // Format 5: Use https://www.google.com/maps/search format
+              // Format 5: Use geo:0,0?q=lat,lng(Label) format with label
               if (!success) {
-                mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
+                mapsUrl = "geo:0,0?q=" + lat + "," + lng + "(Marked+Location)";
                 console.log("Trying Maps URL format 5: " + mapsUrl);
                 success = Qt.openUrlExternally(mapsUrl);
               }
@@ -2596,7 +2471,7 @@ ApplicationWindow {
               }
             } else {
               // For other platforms, use Google Maps URL
-              var mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
+              var mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
               
               console.log("Opening URL: " + mapsUrl);
               var success = Qt.openUrlExternally(mapsUrl);
@@ -2621,7 +2496,7 @@ ApplicationWindow {
           if (Qt.platform.os !== "android") return false;
           
           try {
-            console.log("Trying to open coordinates with Android intent flags");
+            console.log("Trying to open coordinates with Android intent flags: " + lat + ", " + lng);
             
             // Get the Android Context
             var androidContext = Qt.androidContext();
@@ -2635,8 +2510,9 @@ ApplicationWindow {
             var intentClass = androidContext.getClassLoader().loadClass("android.content.Intent");
             var parseMethod = uriClass.getMethod("parse", "java.lang.String");
             
-            // Create Uri object - try with the daddr format which is often used for navigation
-            var uriString = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
+            // Create Uri object - try with the destination format which is most reliable for navigation
+            var uriString = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
+            console.log("Using URI: " + uriString);
             var uri = parseMethod.invoke(null, uriString);
             
             // Create Intent with ACTION_VIEW
@@ -2673,7 +2549,7 @@ ApplicationWindow {
           if (Qt.platform.os !== "android") return false;
           
           try {
-            console.log("Trying to open coordinates with native Android intent");
+            console.log("Trying to open coordinates with native Android intent: " + lat + ", " + lng);
             
             // Get the Android Context
             var androidContext = Qt.androidContext();
@@ -2682,22 +2558,25 @@ ApplicationWindow {
               return false;
             }
             
-            // Try multiple URI formats
+            // Try multiple URI formats with a focus on navigation-specific formats
             var uriStrings = [
-              // Format 1: Standard geo URI with label
-              "geo:0,0?q=" + lat + "," + lng + "(Marked Location)",
+              // Format 1: Google Maps with destination parameter (most reliable for navigation)
+              "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng,
               
-              // Format 2: Direct geo coordinates
-              "geo:" + lat + "," + lng,
+              // Format 2: Google Maps search with query parameter
+              "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng,
               
-              // Format 3: Google Maps navigation URI
+              // Format 3: Direct navigation to coordinates
               "google.navigation:q=" + lat + "," + lng,
               
               // Format 4: Google Maps with daddr parameter (destination address)
               "http://maps.google.com/maps?daddr=" + lat + "," + lng,
               
-              // Format 5: Google Maps search
-              "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng
+              // Format 5: Standard geo URI with label
+              "geo:0,0?q=" + lat + "," + lng + "(Marked Location)",
+              
+              // Format 6: Direct geo coordinates
+              "geo:" + lat + "," + lng
             ];
             
             // Load required Java classes
@@ -2721,6 +2600,11 @@ ApplicationWindow {
                 // Set the package to Google Maps
                 intent.getMethod("setPackage", "java.lang.String").invoke(intent, "com.google.android.apps.maps");
                 
+                // Add FLAG_ACTIVITY_NEW_TASK flag to ensure it opens in a new task
+                var flagNewTaskField = intentClass.getField("FLAG_ACTIVITY_NEW_TASK");
+                var flagNewTask = flagNewTaskField.getInt(null);
+                intent.getMethod("addFlags", "int").invoke(intent, flagNewTask);
+                
                 // Start the activity
                 androidContext.getMethod("startActivity", "android.content.Intent").invoke(androidContext, intent);
                 
@@ -2741,49 +2625,67 @@ ApplicationWindow {
         }
 
         onClicked: {
-          // In manual mode, always show the input dialog
-          if (manualInputMode) {
-            showManualInputDialog(lastClipboardText);
-          } else {
-            // In auto mode, try to use current position first
-            if (positionSource.active && positionSource.positionInformation.latitudeValid && 
-                positionSource.positionInformation.longitudeValid) {
-              
-              var currentCoords = {
-                lat: positionSource.positionInformation.latitude,
-                lng: positionSource.positionInformation.longitude
-              };
-              
-              openCoordinatesInMaps(currentCoords);
-              displayToast(qsTr("Opening maps at current position"));
-            } else if (lastCoordinates) {
-              // Use last coordinates as fallback
-              openCoordinatesInMaps(lastCoordinates);
-              displayToast(qsTr("Opening maps at last used coordinates"));
-            } else {
-              // If all else fails, show manual input
-              showManualInputDialog(lastClipboardText);
+          // First try to get coordinates from system clipboard
+          var clipboardText = platformUtilities.getTextFromClipboard();
+          console.log("Clipboard content: " + clipboardText);
+          
+          // If we have text in clipboard, try to parse it
+          if (clipboardText && clipboardText.trim() !== '') {
+            var coords = parseCoordinates(clipboardText);
+            if (coords) {
+              // Use coordinates from clipboard
+              lastClipboardText = clipboardText; // Save for future use
+              if (openCoordinatesInMaps(coords)) {
+                displayToast(qsTr("Opening maps at coordinates: ") + coords.lat.toFixed(6) + ", " + coords.lng.toFixed(6));
+                lastCoordinates = coords; // Save for future use
+                return;
+              }
             }
           }
-        }
-        
-        onPressAndHold: {
-          // Toggle between manual and auto modes
-          manualInputMode = !manualInputMode;
           
-          if (manualInputMode) {
-            displayToast(qsTr("Manual coordinate input mode enabled"));
-            // Show the input dialog immediately when switching to manual mode
-            showManualInputDialog(lastClipboardText);
+          // If clipboard doesn't have valid coordinates, try saved clipboard text
+          if (lastClipboardText) {
+            var coords = parseCoordinates(lastClipboardText);
+            if (coords) {
+              // Use coordinates from saved clipboard text
+              if (openCoordinatesInMaps(coords)) {
+                displayToast(qsTr("Opening maps at coordinates: ") + coords.lat.toFixed(6) + ", " + coords.lng.toFixed(6));
+                return;
+              }
+            }
+          }
+          
+          // Fallback to current position if available
+          if (positionSource.active && positionSource.positionInformation.latitudeValid && 
+              positionSource.positionInformation.longitudeValid) {
+            
+            var currentCoords = {
+              lat: positionSource.positionInformation.latitude,
+              lng: positionSource.positionInformation.longitude
+            };
+            
+            if (openCoordinatesInMaps(currentCoords)) {
+              displayToast(qsTr("Opening maps at current position"));
+              lastCoordinates = currentCoords; // Save for future use
+            } else {
+              displayToast(qsTr("Failed to open maps application"), "warning");
+            }
+          } else if (lastCoordinates) {
+            // Use last coordinates as fallback
+            if (openCoordinatesInMaps(lastCoordinates)) {
+              displayToast(qsTr("Opening maps at last used coordinates"));
+            } else {
+              displayToast(qsTr("Failed to open maps application"), "warning");
+            }
           } else {
-            displayToast(qsTr("Automatic position mode enabled"));
+            displayToast(qsTr("No coordinates available. Copy coordinates to clipboard first."), "warning");
           }
         }
         
+        // Remove press and hold functionality that enabled manual input mode
+        
         ToolTip.visible: hovered
-        ToolTip.text: manualInputMode ? 
-                     qsTr("Manual mode: Click to enter coordinates") : 
-                     qsTr("Auto mode: Uses current position. Long press to switch to manual input")
+        ToolTip.text: qsTr("Open coordinates in maps app. Copy coordinates first.")
       }
 
           QfToolButton {
