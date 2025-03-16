@@ -17,7 +17,6 @@
 #define DIGITIZINGLOGGER_H
 
 #include "gnsspositioninformation.h"
-#include "qfieldcloudconnection.h"
 #include "qgsquickmapsettings.h"
 #include "snappingresult.h"
 
@@ -40,7 +39,6 @@ class DigitizingLogger : public QObject
     Q_PROPERTY( GnssPositionInformation positionInformation READ positionInformation WRITE setPositionInformation NOTIFY positionInformationChanged )
     Q_PROPERTY( bool positionLocked READ positionLocked WRITE setPositionLocked NOTIFY positionLockedChanged )
     Q_PROPERTY( SnappingResult topSnappingResult READ topSnappingResult WRITE setTopSnappingResult NOTIFY topSnappingResultChanged )
-    Q_PROPERTY( CloudUserInformation cloudUserInformation READ cloudUserInformation WRITE setCloudUserInformation NOTIFY cloudUserInformationChanged );
 
   public:
     explicit DigitizingLogger();
@@ -109,17 +107,6 @@ class DigitizingLogger : public QObject
     void setTopSnappingResult( const SnappingResult &topSnappingResult );
 
     /**
-     * Returns the current cloud user information
-     */
-    CloudUserInformation cloudUserInformation() const { return mCloudUserInformation; }
-
-    /**
-     * Sets the current cloud user information
-     * \param cloudUserInformation the cloud user information
-     */
-    void setCloudUserInformation( const CloudUserInformation &cloudUserInformation );
-
-    /**
      * Adds a \a point into the digitizing logs' buffer.
      */
     Q_INVOKABLE void addCoordinate( const QgsPoint &point );
@@ -149,7 +136,6 @@ class DigitizingLogger : public QObject
     void positionLockedChanged();
     void topSnappingResultChanged();
     void currentCoordinateChanged();
-    void cloudUserInformationChanged();
 
   private:
     //! Finds and link to the logs layer in present in the project
@@ -165,7 +151,6 @@ class DigitizingLogger : public QObject
     GnssPositionInformation mPositionInformation;
     bool mPositionLocked = false;
     SnappingResult mTopSnappingResult;
-    CloudUserInformation mCloudUserInformation;
 
     QList<QgsFeature> mPointFeatures;
 };

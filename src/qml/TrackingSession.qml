@@ -76,6 +76,5 @@ Item {
     }
 
     positionLocked: true
-    cloudUserInformation: projectInfo.cloudUserInformation
   }
 }

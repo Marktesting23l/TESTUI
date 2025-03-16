@@ -19,7 +19,6 @@
 #define PROJECTINFO_H
 
 #include "layertreemodel.h"
-#include "qfieldcloudutils.h"
 #include "qgsquickmapcanvasmap.h"
 #include "qgsquickmapsettings.h"
 #include "trackingmodel.h"
@@ -78,7 +77,6 @@ class ProjectInfo : public QObject
     /**
      * Set cloud user information for offline usage.
      */
-    Q_PROPERTY( CloudUserInformation cloudUserInformation READ cloudUserInformation WRITE setCloudUserInformation NOTIFY cloudUserInformationChanged )
 
   public:
     explicit ProjectInfo( QObject *parent = nullptr );
@@ -160,20 +158,6 @@ class ProjectInfo : public QObject
      */
     void setSnappingEnabled( bool enabled );
 
-    /**
-     * Returns the saved cloud user infomation for offline usage
-     */
-    CloudUserInformation cloudUserInformation() const;
-
-    /**
-     * Saves the cloud user infomation for offline usage
-     */
-    void setCloudUserInformation( const CloudUserInformation cloudUserInformation );
-
-    /**
-     * Restores last saved cloud user information details attached to the current project
-     */
-    Q_INVOKABLE void restoreCloudUserInformation();
 
     //! Save an ongoing vector \a layer tracking session details
     Q_INVOKABLE void saveTracker( QgsVectorLayer *layer );
@@ -210,7 +194,6 @@ class ProjectInfo : public QObject
     void activeLayerChanged();
     void trackingModelChanged();
     void snappingEnabledChanged();
-    void cloudUserInformationChanged();
 
   private slots:
 

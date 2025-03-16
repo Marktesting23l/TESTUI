@@ -15,7 +15,6 @@ Drawer {
 
   signal showMainMenu(point p)
   signal showPrintLayouts(point p)
-  signal showCloudPopup
   signal showProjectFolder
   signal toggleMeasurementTool
   signal returnHome

@@ -371,8 +371,8 @@ Rectangle {
         editButton.supportsEditing = selection.focusedLayer && selection.focusedLayer.supportsEditing;
       }
       function onFocusedFeatureChanged() {
-        if (QFieldCloudUtils.getProjectId(qgisProject.fileName) != '') {
-          editButton.isCreatedCloudFeature = cloudProjectsModel.layerObserver.deltaFileWrapper.isCreatedFeature(selection.focusedLayer, selection.focusedFeature);
+        if (selection.focusedLayer && !selection.focusedLayer.readOnly) {
+          editButton.isCreatedCloudFeature = false;
         } else {
           editButton.isCreatedCloudFeature = false;
         }

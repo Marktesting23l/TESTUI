@@ -233,12 +233,6 @@ void FeatureModel::setPositionLocked( bool positionLocked )
   emit positionLockedChanged();
 }
 
-void FeatureModel::setCloudUserInformation( const CloudUserInformation &cloudUserInformation )
-{
-  mCloudUserInformation = cloudUserInformation;
-
-  emit cloudUserInformationChanged();
-}
 
 void FeatureModel::setLinkedParentFeature( const QgsFeature &feature )
 {
@@ -469,7 +463,6 @@ QgsExpressionContext FeatureModel::createExpressionContext() const
   {
     expressionContext << ExpressionContextUtils::mapToolCaptureScope( mTopSnappingResult );
   }
-  expressionContext << ExpressionContextUtils::cloudUserScope( mCloudUserInformation );
 
   if ( mLinkedParentFeature.isValid() )
   {

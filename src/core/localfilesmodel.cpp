@@ -17,7 +17,6 @@
 #include "localfilesmodel.h"
 #include "platformutilities.h"
 #include "qfield.h"
-#include "qfieldcloudutils.h"
 #include "webdavconnection.h"
 
 #include <QDir>
@@ -141,14 +140,7 @@ const QString LocalFilesModel::getCurrentTitleFromPath( const QString &path ) co
   {
     return tr( "Sample projects" );
   }
-  else
-  {
-    const QString cloudProjectId = QFieldCloudUtils::getProjectId( path );
-    if ( !cloudProjectId.isEmpty() )
-    {
-      return QFieldCloudUtils::projectSetting( cloudProjectId, QStringLiteral( "name" ), QString() ).toString();
-    }
-  }
+  
 
   return QFileInfo( path ).fileName();
 }

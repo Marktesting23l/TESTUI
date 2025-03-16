@@ -19,7 +19,6 @@
 #define EXPRESSIONEVALUATOR_H
 
 #include "gnsspositioninformation.h"
-#include "qfieldcloudutils.h"
 #include "qgsquickmapsettings.h"
 
 #include <QObject>
@@ -48,7 +47,6 @@ class ExpressionEvaluator : public QObject
     Q_PROPERTY( QgsProject *project READ project WRITE setProject NOTIFY projectChanged )
     Q_PROPERTY( QgsQuickMapSettings *mapSettings READ mapSettings WRITE setMapSettings NOTIFY mapSettingsChanged )
     Q_PROPERTY( GnssPositionInformation positionInformation READ positionInformation WRITE setPositionInformation NOTIFY positionInformationChanged )
-    Q_PROPERTY( CloudUserInformation cloudUserInformation READ cloudUserInformation WRITE setCloudUserInformation NOTIFY cloudUserInformationChanged )
 
   public:
     //! Expression evaluator modes
@@ -103,11 +101,6 @@ class ExpressionEvaluator : public QObject
     //! Sets the position information attached to the expression context
     void setPositionInformation( const GnssPositionInformation &positionInformation );
 
-    //! Returns the cloud user information attached to the expression context
-    CloudUserInformation cloudUserInformation() const { return mCloudUserInformation; }
-
-    //! Sets the cloud user information attached to the expression context
-    void setCloudUserInformation( const CloudUserInformation &cloudUserInformation );
 
     //! Returns the evaluated expression text value
     Q_INVOKABLE QVariant evaluate();
@@ -120,7 +113,6 @@ class ExpressionEvaluator : public QObject
     void projectChanged();
     void mapSettingsChanged();
     void positionInformationChanged();
-    void cloudUserInformationChanged();
 
   private:
     Mode mMode = ExpressionMode;
@@ -132,6 +124,5 @@ class ExpressionEvaluator : public QObject
     QgsProject *mProject = nullptr;
     QgsQuickMapSettings *mMapSettings = nullptr;
     GnssPositionInformation mPositionInformation;
-    CloudUserInformation mCloudUserInformation;
 };
 #endif // EXPRESSIONEVALUATOR_H

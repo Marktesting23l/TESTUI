@@ -30,6 +30,8 @@ Page {
   property alias snapToCommonAngleIsRelative: registry.snapToCommonAngleIsRelative
   property alias snapToCommonAngleDegrees: registry.snapToCommonAngleDegrees
   property alias snapToCommonAngleTolerance: registry.snapToCommonAngleTolerance
+  property alias sentinelInstanceId: registry.sentinelInstanceId
+  property alias enableSentinelLayers: registry.enableSentinelLayers
 
   visible: false
   focus: visible
@@ -43,6 +45,21 @@ Page {
 
   function reset() {
     variableEditor.reset();
+  }
+
+  function openSentinelConfig() {
+    var component = Qt.createComponent("SentinelConfigScreen.qml");
+    if (component.status === Component.Ready) {
+      var sentinelConfig = component.createObject(mainWindow, {
+        "instanceId": registry.sentinelInstanceId
+      });
+      sentinelConfig.open();
+      sentinelConfig.onInstanceIdChanged.connect(function() {
+        registry.sentinelInstanceId = sentinelConfig.instanceId;
+      });
+    } else {
+      console.error("Error loading SentinelConfigScreen.qml:", component.errorString());
+    }
   }
 
   Settings {
@@ -60,6 +77,8 @@ Page {
     property bool enableInfoCollection: false
     property bool enableMapRotation: true
     property double quality: 1.0
+    property string sentinelInstanceId: settings.value("QField/Sentinel/InstanceId", "")
+    property bool enableSentinelLayers: settings.valueBool("QField/Sentinel/EnableLayers", true)
 
     property bool snapToCommonAngleIsEnabled: false
     property bool snapToCommonAngleIsRelative: true
@@ -71,6 +90,14 @@ Page {
 
     onFingerTapDigitizingChanged: {
       coordinateLocator.sourceLocation = undefined;
+    }
+
+    onSentinelInstanceIdChanged: {
+      settings.setValue("QField/Sentinel/InstanceId", sentinelInstanceId);
+    }
+
+    onEnableSentinelLayersChanged: {
+      settings.setValue("QField/Sentinel/EnableLayers", enableSentinelLayers);
     }
   }
 
@@ -166,10 +193,18 @@ Page {
       for (var i = 0; i < count; i++) {
         if (get(i).settingAlias === 'nativeCamera2') {
           setProperty(i, 'isVisible', platformUtilities.capabilities & PlatformUtilities.NativeCamera ? true : false);
-        } else if (get(i).settingAlias === 'enableInfoCollection') {
-          setProperty(i, 'isVisible', true);
         }
       }
+    }
+  }
+
+  ListModel {
+    id: sentinelSettingsModel
+    ListElement {
+      title: qsTr("Enable Sentinel WMS Layers")
+      description: qsTr("Add Sentinel satellite imagery layers to all projects.")
+      settingAlias: "enableSentinelLayers"
+      isVisible: true
     }
   }
 
@@ -785,6 +820,79 @@ Page {
               interactive: false
 
               model: advancedSettingsModel
+
+              delegate: listItem
+            }
+
+            GridLayout {
+              Layout.fillWidth: true
+              Layout.leftMargin: 20
+              Layout.rightMargin: 20
+
+              columns: 2
+              columnSpacing: 0
+              rowSpacing: 5
+
+              Label {
+                text: qsTr('Sentinel WMS Settings')
+                font: Theme.strongFont
+                color: Theme.mainColor
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
+                Layout.topMargin: 5
+                Layout.columnSpan: 2
+              }
+
+              Rectangle {
+                Layout.fillWidth: true
+                Layout.columnSpan: 2
+                height: 1
+                color: Theme.mainColor
+              }
+
+              QfToolButton {
+                id: openSentinelConfigButton
+                Layout.preferredWidth: 48
+                Layout.preferredHeight: 48
+                Layout.alignment: Qt.AlignVCenter
+                Layout.topMargin: 10
+                Layout.columnSpan: 2
+                Layout.fillWidth: true
+                
+                text: qsTr("Advanced Sentinel Configuration")
+                iconSource: Theme.getThemeVectorIcon("ic_settings_white_24dp")
+                iconColor: Theme.mainColor
+                bgcolor: Theme.toolButtonBackgroundColor
+                
+                onClicked: openSentinelConfig()
+              }
+
+              Label {
+                text: qsTr("Configure Sentinel Hub WMS layers and parameters")
+                font: Theme.tipFont
+                color: Theme.secondaryTextColor
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
+                Layout.columnSpan: 2
+              }
+
+              Label {
+                text: qsTr("Note: You need to restart QField or reload your project for Sentinel settings to take effect.")
+                font: Theme.tipFont
+                color: Theme.warningColor
+                wrapMode: Text.WordWrap
+                Layout.fillWidth: true
+                Layout.columnSpan: 2
+                Layout.topMargin: 10
+              }
+            }
+
+            ListView {
+              Layout.preferredWidth: mainWindow.width
+              Layout.preferredHeight: childrenRect.height
+              interactive: false
+
+              model: sentinelSettingsModel
 
               delegate: listItem
             }
@@ -1666,3 +1774,4 @@ Page {
     }
   }
 }
+

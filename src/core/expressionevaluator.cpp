@@ -85,11 +85,7 @@ void ExpressionEvaluator::setPositionInformation( const GnssPositionInformation 
   emit positionInformationChanged();
 }
 
-void ExpressionEvaluator::setCloudUserInformation( const CloudUserInformation &cloudUserInformation )
-{
-  mCloudUserInformation = cloudUserInformation;
-  emit cloudUserInformationChanged();
-}
+
 
 QVariant ExpressionEvaluator::evaluate()
 {
@@ -102,10 +98,6 @@ QVariant ExpressionEvaluator::evaluate()
   if ( mPositionInformation.isValid() )
   {
     expressionContext << ExpressionContextUtils::positionScope( mPositionInformation, false );
-  }
-  if ( !mCloudUserInformation.username.isEmpty() )
-  {
-    expressionContext << ExpressionContextUtils::cloudUserScope( mCloudUserInformation );
   }
   if ( mMapSettings )
   {

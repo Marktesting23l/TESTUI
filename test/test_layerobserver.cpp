@@ -18,7 +18,6 @@
 #define QFIELDTEST_MAIN
 #include "catch2.h"
 #include "layerobserver.h"
-#include "utils/qfieldcloudutils.h"
 
 QStringList getDeltaOperations( QString fileName )
 {
@@ -65,7 +64,6 @@ TEST_CASE( "LayerObserver" )
   REQUIRE( QDir( settingsDir.path() ).mkpath( QStringLiteral( "cloud_projects/TEST_PROJECT_ID" ) ) );
 
   QDir projectDir( QStringLiteral( "%1/cloud_projects/TEST_PROJECT_ID" ).arg( settingsDir.path() ) );
-  QFieldCloudUtils::setLocalCloudDirectory( settingsDir.path() );
   QFile projectFile( QStringLiteral( "%1/%2" ).arg( projectDir.path(), QStringLiteral( "project.qgs" ) ) );
   QFile attachmentFile( QStringLiteral( "%1/%2" ).arg( projectDir.path(), QStringLiteral( "attachment.jpg" ) ) );
 

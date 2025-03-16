@@ -177,6 +177,11 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
      */
     void setScreenDimmerTimeout( int timeoutSeconds );
 
+    /**
+     * Creates a custom Sentinel layer with the provided URL, name, and instance ID
+     */
+    void createCustomSentinelLayer(const QString &url, const QString &name, const QString &instanceId);
+
     bool event( QEvent *event ) override;
 
     /**
@@ -204,6 +209,11 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
      * Emitted when a map canvas extent change is needed
      */
     void setMapExtent( const QgsRectangle &extent );
+
+    /**
+     * Emitted when a message needs to be displayed to the user
+     */
+    void messageEmitted( const QString &message, const QString &type = QString() );
 
   private slots:
 
@@ -258,6 +268,42 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
     QgsApplication *mApp;
 };
 
+/**
+ * This class handles rate limiting for WMS requests to prevent excessive credit usage
+ * with services like Sentinel Hub.
+ */
+class WmsRateLimiter : public QObject
+{
+    Q_OBJECT
+
+  public:
+    explicit WmsRateLimiter(QObject *parent = nullptr);
+    
+    /**
+     * Sets the delay between requests in milliseconds
+     */
+    void setDelay(int delayMs);
+    
+    /**
+     * Returns whether rate limiting is enabled
+     */
+    bool isEnabled() const;
+    
+    /**
+     * Enables or disables rate limiting
+     */
+    void setEnabled(bool enabled);
+    
+    /**
+     * Static instance accessor
+     */
+    static WmsRateLimiter *instance();
+    
+  private:
+    static WmsRateLimiter *sInstance;
+    bool mEnabled;
+    int mDelayMs;
+};
 
 Q_DECLARE_METATYPE( QgsFeatureId )
 Q_DECLARE_METATYPE( QgsAttributes )

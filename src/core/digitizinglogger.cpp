@@ -100,12 +100,7 @@ void DigitizingLogger::setMapSettings( QgsQuickMapSettings *mapSettings )
   emit mapSettingsChanged();
 }
 
-void DigitizingLogger::setCloudUserInformation( const CloudUserInformation &cloudUserInformation )
-{
-  mCloudUserInformation = cloudUserInformation;
 
-  emit cloudUserInformationChanged();
-}
 
 void DigitizingLogger::setDigitizingLayer( QgsVectorLayer *layer )
 {
@@ -171,7 +166,6 @@ void DigitizingLogger::addCoordinate( const QgsPoint &point )
   if ( mTopSnappingResult.isValid() )
     expressionContext << ExpressionContextUtils::mapToolCaptureScope( mTopSnappingResult );
 
-  expressionContext << ExpressionContextUtils::cloudUserScope( mCloudUserInformation );
 
   QgsExpressionContextScope *scope = new QgsExpressionContextScope( QObject::tr( "Digitizing Logger" ) );
   scope->addVariable( QgsExpressionContextScope::StaticVariable( QStringLiteral( "digitizing_type" ), mType, true, true ) );

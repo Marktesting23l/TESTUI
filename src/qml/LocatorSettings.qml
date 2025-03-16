@@ -89,19 +89,7 @@ Popup {
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
             }
-            CheckBox {
-              Layout.fillWidth: true
-              topPadding: 5
-              bottomPadding: 5
-              text: qsTr('Enable %1 locator by default').arg('<b>' + Name + '</b>')
-              font: Theme.tipFont
-              indicator.height: 16
-              indicator.width: 16
-              indicator.implicitHeight: 24
-              indicator.implicitWidth: 24
-              checked: Default ? true : false
-              onClicked: Default = checked
-            }
+
           }
         }
       }

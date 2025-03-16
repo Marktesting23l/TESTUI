@@ -1578,11 +1578,11 @@ Drawer {
                     BarCategoryAxis {
                         id: dataAxisX
                         titleText: "Fecha"
-                        labelsFont.pixelSize: 10 // Revert to original size
+                        labelsFont.pixelSize: 9 // Revert to original size
                         // Categories will be set in updateChartData
                         gridVisible: true
                         minorGridVisible: false
-                        labelsAngle: -45 // Angle labels for better readability
+                        labelsAngle: -90 // Angle labels for better readability
                     }
                     
                     ValueAxis {
@@ -1617,8 +1617,8 @@ Drawer {
                         text: "Temperatura"
                         checked: selectedVariable === "temperature"
                         ButtonGroup.group: variableGroup
-                        padding: 0
-                        font.pixelSize: 10
+                        padding: 1
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "temperature"
@@ -1630,8 +1630,8 @@ Drawer {
                     RadioButton {
                         text: "Humedad"
                         ButtonGroup.group: variableGroup
-                        padding: 0
-                        font.pixelSize: 10
+                        padding: 1
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "humidity"
@@ -1643,8 +1643,8 @@ Drawer {
                     RadioButton {
                         text: "Radiación"
                         ButtonGroup.group: variableGroup
-                        padding: 0
-                        font.pixelSize: 10
+                        padding: 1
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "radiation"
@@ -1656,9 +1656,9 @@ Drawer {
                     RadioButton {
                         text: "ET0"
                         ButtonGroup.group: variableGroup
-                        padding: 0
+                        padding: 1
                         enabled: !isMonthlyData
-                        font.pixelSize: 10
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "et0"
@@ -1670,8 +1670,8 @@ Drawer {
                     RadioButton {
                         text: "Precipitación"
                         ButtonGroup.group: variableGroup
-                        padding: 0
-                        font.pixelSize: 10
+                        padding: 1
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "precipitation"
@@ -1683,8 +1683,8 @@ Drawer {
                     RadioButton {
                         text: "Int. Térmica"
                         ButtonGroup.group: variableGroup
-                        padding: 0
-                        font.pixelSize: 10
+                        padding: 1
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "thermal_integral"
@@ -1696,8 +1696,8 @@ Drawer {
                     RadioButton {
                         text: "Int. Radiación"
                         ButtonGroup.group: variableGroup
-                        padding: 0
-                        font.pixelSize: 10
+                        padding: 1
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "radiation_integral"
@@ -1709,9 +1709,9 @@ Drawer {
                     RadioButton {
                         text: "ET0 Acum."
                         ButtonGroup.group: variableGroup
-                        padding: 0
+                        padding: 1
                         enabled: !isMonthlyData
-                        font.pixelSize: 10
+                        font.pixelSize: 9
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "et0_accumulated"

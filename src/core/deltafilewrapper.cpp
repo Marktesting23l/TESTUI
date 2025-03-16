@@ -18,7 +18,7 @@
 #include "deltafilewrapper.h"
 #include "qfield.h"
 #include "utils/fileutils.h"
-#include "utils/qfieldcloudutils.h"
+
 
 #include <QDebug>
 #include <QFile>
@@ -59,9 +59,7 @@ DeltaFileWrapper::DeltaFileWrapper( const QgsProject *project, const QString &fi
     mErrorType = DeltaFileWrapper::LockError;
 #endif
 
-  if ( mErrorType == DeltaFileWrapper::ErrorTypes::NoError )
-    mCloudProjectId = QFieldCloudUtils::getProjectId( mProject->fileName() );
-
+  
   if ( mErrorType == DeltaFileWrapper::ErrorTypes::NoError && mCloudProjectId.isNull() )
     mErrorType = DeltaFileWrapper::ErrorTypes::NotCloudProjectError;
 
@@ -494,9 +492,7 @@ void DeltaFileWrapper::addPatch( const QString &localLayerId, const QString &sou
       { "sourcePk", oldFeature.attribute( sourcePkAttrName ).toString() },
       { "sourceLayerId", sourceLayerId },
       { "uuid", QUuid::createUuid().toString( QUuid::WithoutBraces ) },
-      { "exportId", QFieldCloudUtils::projectSetting( mCloudProjectId, QStringLiteral( "lastExportId" ) ).toString() },
-      { "clientId", QFieldCloudUtils::projectSetting( mCloudProjectId, QStringLiteral( "lastLocalExportId" ) ).toString() },
-    } );
+   } );
 
   const QgsGeometry oldGeom = oldFeature.geometry();
   const QgsGeometry newGeom = newFeature.geometry();
@@ -686,8 +682,6 @@ void DeltaFileWrapper::addDelete( const QString &localLayerId, const QString &so
       { "sourcePk", oldFeature.attribute( sourcePkAttrName ).toString() },
       { "sourceLayerId", sourceLayerId },
       { "uuid", QUuid::createUuid().toString( QUuid::WithoutBraces ) },
-      { "exportId", QFieldCloudUtils::projectSetting( mCloudProjectId, QStringLiteral( "lastExportId" ) ).toString() },
-      { "clientId", QFieldCloudUtils::projectSetting( mCloudProjectId, QStringLiteral( "lastLocalExportId" ) ).toString() },
     } );
 
   const QStringList attachmentFieldsList = attachmentFieldNames( mProject, localLayerId );
@@ -744,8 +738,6 @@ void DeltaFileWrapper::addCreate( const QString &localLayerId, const QString &so
       { "sourcePk", newFeature.attribute( sourcePkAttrName ).toString() },
       { "sourceLayerId", sourceLayerId },
       { "uuid", QUuid::createUuid().toString( QUuid::WithoutBraces ) },
-      { "exportId", QFieldCloudUtils::projectSetting( mCloudProjectId, QStringLiteral( "lastExportId" ) ).toString() },
-      { "clientId", QFieldCloudUtils::projectSetting( mCloudProjectId, QStringLiteral( "lastLocalExportId" ) ).toString() },
     } );
   const QgsAttributes newAttrs = newFeature.attributes();
   const QgsFields newFields = newFeature.fields();

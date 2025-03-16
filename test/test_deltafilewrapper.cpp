@@ -22,7 +22,6 @@
 #include "qfield.h"
 #include "qgsvectorlayerjoininfo.h"
 #include "utils/fileutils.h"
-#include "utils/qfieldcloudutils.h"
 
 #include <QFileInfo>
 #include <qgsproject.h>
@@ -139,7 +138,6 @@ TEST_CASE( "DeltaFileWrapper" )
   REQUIRE( QDir( settingsDir.path() ).mkpath( QStringLiteral( "cloud_projects/TEST_PROJECT_ID" ) ) );
 
   QDir projectDir( QStringLiteral( "%1/cloud_projects/TEST_PROJECT_ID" ).arg( settingsDir.path() ) );
-  QFieldCloudUtils::setLocalCloudDirectory( settingsDir.path() );
   QFile projectFile( QStringLiteral( "%1/%2" ).arg( projectDir.path(), QStringLiteral( "project.qgs" ) ) );
 
   REQUIRE( projectFile.open( QIODevice::WriteOnly ) );
@@ -173,8 +171,6 @@ TEST_CASE( "DeltaFileWrapper" )
   REQUIRE( project->addMapLayer( layer.get(), false, false ) );
   REQUIRE( project->addMapLayer( joinedLayer.get(), false, false ) );
 
-  QFieldCloudUtils::setProjectSetting( QStringLiteral( "TEST_PROJECT_ID" ), QStringLiteral( "lastLocalExportId" ), QStringLiteral( "22222222-2222-2222-2222-222222222222" ) );
-  QFieldCloudUtils::setProjectSetting( QStringLiteral( "TEST_PROJECT_ID" ), QStringLiteral( "lastExportId" ), QStringLiteral( "33333333-3333-3333-3333-333333333333" ) );
 
   QgsFeature f( layer->fields(), 1 );
 

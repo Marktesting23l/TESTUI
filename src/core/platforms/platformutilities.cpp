@@ -21,7 +21,7 @@
 #include "platformutilities.h"
 #include "projectsource.h"
 #include "qfield.h"
-#include "qfieldcloudconnection.h"
+#include <QSettings>
 #include "qgsmessagelog.h"
 #include "resourcesource.h"
 #include "stringutils.h"
@@ -499,15 +499,7 @@ double PlatformUtilities::systemFontPointSize() const
   return QApplication::font().pointSizeF() + 2.0;
 }
 
-void PlatformUtilities::uploadPendingAttachments( QFieldCloudConnection *connection ) const
-{
-  QTimer::singleShot( 500, [connection]() {
-    if ( connection )
-    {
-      connection->uploadPendingAttachments();
-    }
-  } );
-}
+
 
 bool PlatformUtilities::isSystemDarkTheme() const
 {

@@ -27,7 +27,6 @@
 #include <qgsfield.h>
 
 
-class QFieldCloudConnection;
 class ProjectSource;
 class ResourceSource;
 
@@ -291,7 +290,6 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     /**
      * Uploads any pending attachments linked to the logged in user account.
      */
-    Q_INVOKABLE virtual void uploadPendingAttachments( QFieldCloudConnection *connection ) const;
 
     /**
      * Returns TRUE is the system uses a dark theme.

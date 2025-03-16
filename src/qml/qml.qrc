@@ -47,6 +47,7 @@
         <file>RIAWeatherService.qml</file>
         <file>ScaleBar.qml</file>
         <file>SensorInformationView.qml</file>
+        <file>SentinelConfigScreen.qml</file>
         <file>Toast.qml</file>
         <file>EgenioussDeviceChooser.qml</file>
         <file>TcpDeviceChooser.qml</file>
@@ -114,11 +115,6 @@
         <file>ImageDial.qml</file>
         <file>ScreenLocker.qml</file>
         <file>SerialPortDeviceChooser.qml</file>
-        <file>QFieldCloudLogin.qml</file>
-        <file>QFieldCloudScreen.qml</file>
-        <file>QFieldCloudPopup.qml</file>
-        <file>QFieldCloudDeltaHistory.qml</file>
-        <file>QFieldCloudPackageLayersFeedback.qml</file>
         <file>QFieldLocalDataPickerScreen.qml</file>
         <file>QFieldSketcher.qml</file>
         <file>PluginManagerSettings.qml</file>

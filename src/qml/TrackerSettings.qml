@@ -526,7 +526,6 @@ Popup {
 
     positionInformation: coordinateLocator.positionInformation
     positionLocked: true
-    cloudUserInformation: projectInfo.cloudUserInformation
   }
 
   AttributeFormModel {

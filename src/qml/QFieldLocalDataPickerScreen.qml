@@ -704,23 +704,9 @@ Page {
         }
       }
 
-      MenuSeparator {
-        width: parent.width
-      }
+      
 
-      MenuItem {
-        id: storageHelp
-
-        font: Theme.defaultFont
-        width: parent.width
-        height: 48
-        leftPadding: Theme.menuItemLeftPadding
-
-        text: qsTr("Storage management help")
-        onTriggered: {
-          Qt.openUrlExternally("https://docs.qfield.org/get-started/storage/");
-        }
-      }
+      
     }
 
     Menu {

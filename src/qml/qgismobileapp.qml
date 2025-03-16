@@ -635,7 +635,7 @@ ApplicationWindow {
     MapCanvas {
       id: mapCanvasMap
 
-      property bool isEnabled: !dashBoard.opened && !aboutDialog.visible && !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !qfieldCloudScreen.visible && !qfieldCloudPopup.visible && !codeReader.visible && !sketcher.visible && !overlayFeatureFormDrawer.visible && !rotateFeaturesToolbar.rotateFeaturesRequested
+      property bool isEnabled: !dashBoard.opened && !aboutDialog.visible && !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !sketcher.visible && !overlayFeatureFormDrawer.visible && !rotateFeaturesToolbar.rotateFeaturesRequested
       interactive: isEnabled && !screenLocker.enabled && !snapToCommonAngleMenu.visible
       isMapRotationEnabled: qfieldSettings.enableMapRotation
       incrementalRendering: true
@@ -1131,7 +1131,6 @@ ApplicationWindow {
       mapSettings: mapCanvas.mapSettings
       project: qgisProject
       positionInformation: positionSource.positionInformation
-      cloudUserInformation: projectInfo.cloudUserInformation
     }
 
     Connections {
@@ -1524,7 +1523,36 @@ ApplicationWindow {
         }
       }
 
-      
+      QfToolButton {
+        id: sentinelButton
+        round: true
+        iconSource: Theme.getThemeVectorIcon("ic_satellite_white_24dp")
+        bgcolor: Theme.mainColor
+        visible: settings.valueBool("QField/Sentinel/EnableLayers", true)
+        
+        onClicked: {
+          if (typeof qfieldSettings !== 'undefined' && qfieldSettings) {
+            qfieldSettings.openSentinelConfig();
+          } else {
+            // Fallback if qfieldSettings is not available
+            var component = Qt.createComponent("SentinelConfigScreen.qml");
+            if (component.status === Component.Ready) {
+              var sentinelConfig = component.createObject(mainWindow, {
+                "instanceId": settings.value("QField/Sentinel/InstanceId", "")
+              });
+              sentinelConfig.open();
+            } else {
+              console.error("Error loading SentinelConfigScreen.qml:", component.errorString());
+            }
+          }
+        }
+        
+        ToolTip {
+          text: qsTr("Sentinel Settings")
+          visible: parent.hovered
+          delay: 500
+        }
+      }
 
       BusyIndicator {
       id: busyIndicator
@@ -2507,17 +2535,53 @@ ApplicationWindow {
             var lng = coords.lng.toFixed(6);
             
             if (Qt.platform.os === "android") {
-              // For Android, use the most reliable intent format
-              // This format directly opens Google Maps with a pin at the specified location
-              var mapsUrl = "geo:" + lat + "," + lng + "?q=" + lat + "," + lng + "(Marked Location)";
+              // Try to use native Android intent first (most reliable)
+              if (openCoordinatesWithAndroidIntent(lat, lng)) {
+                displayToast(qsTr("Opening location at ") + lat + ", " + lng);
+                lastCoordinates = coords;
+                return true;
+              }
               
-              console.log("Opening Android Maps URL: " + mapsUrl);
-              var success = Qt.openUrlExternally(mapsUrl);
+              // Try alternative intent approach with flags
+              if (openCoordinatesWithAndroidIntentFlags(lat, lng)) {
+                displayToast(qsTr("Opening location at ") + lat + ", " + lng);
+                lastCoordinates = coords;
+                return true;
+              }
               
+              // Try multiple formats in sequence until one works
+              var success = false;
+              
+              // Format 1: Use http://maps.google.com/maps?daddr format (most reliable according to StackOverflow)
+              var mapsUrl = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
+              console.log("Trying Maps URL format 1: " + mapsUrl);
+              success = Qt.openUrlExternally(mapsUrl);
+              
+              // Format 2: Use geo:lat,lng format (direct coordinates)
               if (!success) {
-                // Fallback to direct Google Maps URL
+                mapsUrl = "geo:" + lat + "," + lng;
+                console.log("Trying Maps URL format 2: " + mapsUrl);
+                success = Qt.openUrlExternally(mapsUrl);
+              }
+              
+              // Format 3: Use geo:0,0?q=lat,lng(Label) format with label
+              if (!success) {
+                mapsUrl = "geo:0,0?q=" + lat + "," + lng + "(Marked+Location)";
+                console.log("Trying Maps URL format 3: " + mapsUrl);
+                success = Qt.openUrlExternally(mapsUrl);
+              }
+              
+              // Format 4: Use geo:lat,lng?q=lat,lng format (pin at location)
+              if (!success) {
+                mapsUrl = "geo:" + lat + "," + lng + "?q=" + lat + "," + lng;
+                console.log("Trying Maps URL format 4: " + mapsUrl);
+                success = Qt.openUrlExternally(mapsUrl);
+              }
+              
+              // Format 5: Use https://www.google.com/maps/search format
+              if (!success) {
                 mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
-                console.log("Trying fallback URL: " + mapsUrl);
+                console.log("Trying Maps URL format 5: " + mapsUrl);
                 success = Qt.openUrlExternally(mapsUrl);
               }
               
@@ -2526,7 +2590,7 @@ ApplicationWindow {
                 lastCoordinates = coords;
                 return true;
               } else {
-                console.log("Failed to open maps application");
+                console.log("Failed to open maps application with all URL formats");
                 displayToast(qsTr("Failed to open maps application"), "warning");
                 return false;
               }
@@ -2550,6 +2614,130 @@ ApplicationWindow {
           }
           
           return false;
+        }
+        
+        // Alternative approach using intent flags
+        function openCoordinatesWithAndroidIntentFlags(lat, lng) {
+          if (Qt.platform.os !== "android") return false;
+          
+          try {
+            console.log("Trying to open coordinates with Android intent flags");
+            
+            // Get the Android Context
+            var androidContext = Qt.androidContext();
+            if (!androidContext) {
+              console.log("Failed to get Android context");
+              return false;
+            }
+            
+            // Load required Java classes
+            var uriClass = androidContext.getClassLoader().loadClass("android.net.Uri");
+            var intentClass = androidContext.getClassLoader().loadClass("android.content.Intent");
+            var parseMethod = uriClass.getMethod("parse", "java.lang.String");
+            
+            // Create Uri object - try with the daddr format which is often used for navigation
+            var uriString = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
+            var uri = parseMethod.invoke(null, uriString);
+            
+            // Create Intent with ACTION_VIEW
+            var actionViewField = intentClass.getField("ACTION_VIEW");
+            var actionView = actionViewField.get(null);
+            var intent = intentClass.getConstructor("java.lang.String", "android.net.Uri").newInstance(actionView, uri);
+            
+            // Set the package to Google Maps
+            intent.getMethod("setPackage", "java.lang.String").invoke(intent, "com.google.android.apps.maps");
+            
+            // Add FLAG_ACTIVITY_NEW_TASK flag
+            var flagNewTaskField = intentClass.getField("FLAG_ACTIVITY_NEW_TASK");
+            var flagNewTask = flagNewTaskField.getInt(null);
+            intent.getMethod("addFlags", "int").invoke(intent, flagNewTask);
+            
+            // Add FLAG_ACTIVITY_CLEAR_TOP flag
+            var flagClearTopField = intentClass.getField("FLAG_ACTIVITY_CLEAR_TOP");
+            var flagClearTop = flagClearTopField.getInt(null);
+            intent.getMethod("addFlags", "int").invoke(intent, flagClearTop);
+            
+            // Start the activity
+            androidContext.getMethod("startActivity", "android.content.Intent").invoke(androidContext, intent);
+            
+            console.log("Successfully launched Android intent with flags");
+            return true;
+          } catch (e) {
+            console.log("Error launching Android intent with flags: " + e);
+            return false;
+          }
+        }
+        
+        // Function to use Android's native intent system directly
+        function openCoordinatesWithAndroidIntent(lat, lng) {
+          if (Qt.platform.os !== "android") return false;
+          
+          try {
+            console.log("Trying to open coordinates with native Android intent");
+            
+            // Get the Android Context
+            var androidContext = Qt.androidContext();
+            if (!androidContext) {
+              console.log("Failed to get Android context");
+              return false;
+            }
+            
+            // Try multiple URI formats
+            var uriStrings = [
+              // Format 1: Standard geo URI with label
+              "geo:0,0?q=" + lat + "," + lng + "(Marked Location)",
+              
+              // Format 2: Direct geo coordinates
+              "geo:" + lat + "," + lng,
+              
+              // Format 3: Google Maps navigation URI
+              "google.navigation:q=" + lat + "," + lng,
+              
+              // Format 4: Google Maps with daddr parameter (destination address)
+              "http://maps.google.com/maps?daddr=" + lat + "," + lng,
+              
+              // Format 5: Google Maps search
+              "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng
+            ];
+            
+            // Load required Java classes
+            var uriClass = androidContext.getClassLoader().loadClass("android.net.Uri");
+            var parseMethod = uriClass.getMethod("parse", "java.lang.String");
+            var intentClass = androidContext.getClassLoader().loadClass("android.content.Intent");
+            var actionViewField = intentClass.getField("ACTION_VIEW");
+            var actionView = actionViewField.get(null);
+            
+            // Try each URI format
+            for (var i = 0; i < uriStrings.length; i++) {
+              try {
+                console.log("Trying Android intent with URI: " + uriStrings[i]);
+                
+                // Create Uri object
+                var uri = parseMethod.invoke(null, uriStrings[i]);
+                
+                // Create Intent
+                var intent = intentClass.getConstructor("java.lang.String", "android.net.Uri").newInstance(actionView, uri);
+                
+                // Set the package to Google Maps
+                intent.getMethod("setPackage", "java.lang.String").invoke(intent, "com.google.android.apps.maps");
+                
+                // Start the activity
+                androidContext.getMethod("startActivity", "android.content.Intent").invoke(androidContext, intent);
+                
+                console.log("Successfully launched native Android intent with format " + (i + 1));
+                return true;
+              } catch (e) {
+                console.log("Failed with format " + (i + 1) + ": " + e);
+                // Continue to next format
+              }
+            }
+            
+            console.log("All native Android intent formats failed");
+            return false;
+          } catch (e) {
+            console.log("Error in openCoordinatesWithAndroidIntent: " + e);
+            return false;
+          }
         }
 
         onClicked: {
@@ -2841,7 +3029,6 @@ ApplicationWindow {
           positionInformation: positionSource.positionInformation
           topSnappingResult: coordinateLocator.topSnappingResult
           positionLocked: positionSource.active && positioningSettings.positioningCoordinateLock
-          cloudUserInformation: projectInfo.cloudUserInformation
           geometry: Geometry {
             id: digitizingGeometry
             rubberbandModel: digitizingRubberband.model
@@ -3062,7 +3249,7 @@ ApplicationWindow {
     objectName: "dashBoard"
 
     allowActiveLayerChange: !digitizingToolbar.isDigitizing
-    allowInteractive: !welcomeScreen.visible && !qfieldSettings.visible && !qfieldCloudScreen.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !screenLocker.enabled
+    allowInteractive: !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !screenLocker.enabled
     mapSettings: mapCanvas.mapSettings
 
     Component.onCompleted: focusstack.addFocusTaker(this)
@@ -3080,10 +3267,7 @@ ApplicationWindow {
       mainMenu.popup(p.x - mainMenu.width - 2, p.y - 2);
     }
 
-    onShowCloudPopup: {
-      dashBoard.close();
-      qfieldCloudPopup.show();
-    }
+    
 
     onToggleMeasurementTool: {
       if (featureForm.state === "ProcessingAlgorithmForm") {
@@ -3442,20 +3626,7 @@ ApplicationWindow {
       width: parent.width
     }
 
-    MenuItem {
-      text: qsTr("About SIGPACGO")
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_qfield_black_24dp")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-
-      onTriggered: {
-        dashBoard.close();
-        aboutDialog.visible = true;
-        highlighted = false;
-      }
-    }
+    
 
     MenuItem {
       text: qsTr("Weather Data (RIA)")
@@ -3500,8 +3671,22 @@ ApplicationWindow {
         weatherForecastPanel.open();
         highlighted = false;
       }
+    } 
+    MenuItem {
+      text: qsTr("About SIGPACGO")
+
+      font: Theme.defaultFont
+      icon.source: Theme.getThemeVectorIcon("ic_qfield_black_24dp")
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+
+      onTriggered: {
+        dashBoard.close();
+        aboutDialog.visible = true;
+        highlighted = false;
+      }
     }
-  }
+  } 
 
   Menu {
     id: sensorMenu
@@ -5352,45 +5537,8 @@ ApplicationWindow {
       gridDecoration.annotationOutlineColor = gridDecorationConfiguration["annotationOutlineColor"];
       gridDecoration.enabled = gridDecorationConfiguration["hasLines"] || gridDecorationConfiguration["hasMarkers"];
       recentProjectListModel.reloadModel();
-      const cloudProjectId = QFieldCloudUtils.getProjectId(qgisProject.fileName);
-      cloudProjectsModel.currentProjectId = cloudProjectId;
-      cloudProjectsModel.refreshProjectModification(cloudProjectId);
-      if (cloudProjectId !== '') {
-        var cloudProjectData = cloudProjectsModel.getProjectData(cloudProjectId);
-        switch (cloudProjectData.UserRole) {
-        case 'reader':
-          stateMachine.state = "browse";
-          projectInfo.hasInsertRights = false;
-          projectInfo.hasEditRights = false;
-          break;
-        case 'reporter':
-          projectInfo.hasInsertRights = true;
-          projectInfo.hasEditRights = false;
-          break;
-        case 'editor':
-        case 'manager':
-        case 'admin':
-          projectInfo.hasInsertRights = true;
-          projectInfo.hasEditRights = true;
-          break;
-        default:
-          projectInfo.hasInsertRights = true;
-          projectInfo.hasEditRights = true;
-          break;
-        }
-        if (cloudProjectsModel.layerObserver.deltaFileWrapper.hasError()) {
-          qfieldCloudPopup.show();
-        }
-        if (cloudConnection.status === QFieldCloudConnection.LoggedIn) {
-          projectInfo.cloudUserInformation = cloudConnection.userInformation;
-          cloudProjectsModel.refreshProjectFileOutdatedStatus(cloudProjectId);
-        } else {
-          projectInfo.restoreCloudUserInformation();
-        }
-      } else {
-        projectInfo.hasInsertRights = true;
-        projectInfo.hasEditRights = true;
-      }
+      projectInfo.hasInsertRights = true;
+      projectInfo.hasEditRights = true;
       if (stateMachine.state === "digitize" && !qfieldAuthRequestHandler.hasPendingAuthRequest) {
         dashBoard.ensureEditableLayerSelected();
       }
@@ -5561,73 +5709,11 @@ ApplicationWindow {
     id: trackerSettings
   }
 
-  QFieldCloudConnection {
-    id: cloudConnection
+  
 
-    property int previousStatus: QFieldCloudConnection.Disconnected
+  
 
-    onStatusChanged: {
-      if (cloudConnection.status === QFieldCloudConnection.Disconnected && previousStatus === QFieldCloudConnection.LoggedIn) {
-        displayToast(qsTr('Signed out'));
-      } else if (cloudConnection.status === QFieldCloudConnection.Connecting) {
-        displayToast(qsTr('Connecting...'));
-      } else if (cloudConnection.status === QFieldCloudConnection.LoggedIn) {
-        displayToast(qsTr('Signed in'));
-        if (QFieldCloudUtils.hasPendingAttachments()) {
-          // Go ahead and upload pending attachments in the background
-          platformUtilities.uploadPendingAttachments(cloudConnection);
-        }
-        var cloudProjectId = QFieldCloudUtils.getProjectId(qgisProject.fileName);
-        if (cloudProjectId) {
-          projectInfo.cloudUserInformation = userInformation;
-          cloudProjectsModel.refreshProjectFileOutdatedStatus(cloudProjectId);
-        }
-      }
-      previousStatus = cloudConnection.status;
-    }
-    onLoginFailed: function (reason) {
-      displayToast(reason);
-    }
-  }
-
-  QFieldCloudProjectsModel {
-    id: cloudProjectsModel
-    cloudConnection: cloudConnection
-    layerObserver: layerObserverAlias
-    gpkgFlusher: gpkgFlusherAlias
-
-    onProjectDownloaded: function (projectId, projectName, hasError, errorString) {
-      return hasError ? displayToast(qsTr("Project %1 failed to download").arg(projectName), 'error') : displayToast(qsTr("Project %1 successfully downloaded, it's now available to open").arg(projectName));
-    }
-
-    onPushFinished: function (projectId, isDownloadingProject, hasError, errorString) {
-      if (hasError) {
-        displayToast(qsTr("Changes failed to reach QFieldCloud: %1").arg(errorString), 'error');
-        return;
-      }
-      if (!isDownloadingProject) {
-        displayToast(qsTr("Changes successfully pushed to QFieldCloud"));
-      }
-      if (QFieldCloudUtils.hasPendingAttachments()) {
-        // Go ahead and upload pending attachments in the background
-        platformUtilities.uploadPendingAttachments(cloudConnection);
-      }
-    }
-
-    onWarning: message => displayToast(message)
-
-    onDeltaListModelChanged: function () {
-      qfieldCloudDeltaHistory.model = cloudProjectsModel.currentProjectData.DeltaList;
-    }
-  }
-
-  QFieldCloudDeltaHistory {
-    id: qfieldCloudDeltaHistory
-
-    modal: true
-    closePolicy: Popup.CloseOnEscape
-    parent: Overlay.overlay
-  }
+  
 
   WelcomeScreen {
     id: welcomeScreen
@@ -5646,9 +5732,7 @@ ApplicationWindow {
       qfieldLocalDataPickerScreen.visible = true;
     }
 
-    onShowQFieldCloudScreen: {
-      qfieldCloudScreen.visible = true;
-    }
+    
 
     onShowSettings: {
       qfieldSettings.reset();
@@ -5658,34 +5742,7 @@ ApplicationWindow {
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
-  QFieldCloudScreen {
-    id: qfieldCloudScreen
-
-    anchors.fill: parent
-    visible: false
-    focus: visible
-
-    onFinished: {
-      visible = false;
-    }
-
-    Component.onCompleted: focusstack.addFocusTaker(this)
-  }
-
-  QFieldCloudPopup {
-    id: qfieldCloudPopup
-    visible: false
-    focus: visible
-    parent: Overlay.overlay
-
-    width: parent.width
-    height: parent.height
-  }
-
-  QFieldCloudPackageLayersFeedback {
-    id: cloudPackageLayersFeedback
-    visible: false
-  }
+  
 
   QFieldLocalDataPickerScreen {
     id: qfieldLocalDataPickerScreen
@@ -5836,7 +5893,6 @@ ApplicationWindow {
     positionInformation: positionSource.positionInformation
     positionLocked: positionSource.active && positioningSettings.positioningCoordinateLock
     vertexModel: geometryEditingVertexModel
-    cloudUserInformation: projectInfo.cloudUserInformation
   }
 
   VertexModel {

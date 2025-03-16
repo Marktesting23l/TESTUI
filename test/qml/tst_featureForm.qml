@@ -322,10 +322,6 @@ TestCase {
     property string topSnappingResult: ""
   }
 
-  Item {
-    id: projectInfo
-    property string cloudUserInformation: ""
-  }
 
   Item {
     id: sketcher

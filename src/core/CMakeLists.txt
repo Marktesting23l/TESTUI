@@ -8,7 +8,6 @@ set(QFIELD_CORE_SRCS
     utils/layerutils.cpp
     utils/positioningutils.cpp
     utils/projectutils.cpp
-    utils/qfieldcloudutils.cpp
     utils/relationutils.cpp
     utils/snappingutils.cpp
     utils/stringutils.cpp
@@ -24,7 +23,6 @@ set(QFIELD_CORE_SRCS
     locator/featureslocatorfilter.cpp
     locator/finlandlocatorfilter.cpp
     locator/gotolocatorfilter.cpp
-    locator/helplocatorfilter.cpp
     locator/qfieldlocatorfilter.cpp
     locator/locatormodelsuperbridge.cpp
     positioning/abstractgnssreceiver.cpp
@@ -99,8 +97,6 @@ set(QFIELD_CORE_SRCS
     projectsource.cpp
     projectsimageprovider.cpp
     qfieldappauthrequesthandler.cpp
-    qfieldcloudconnection.cpp
-    qfieldcloudprojectsmodel.cpp
     qgismobileapp.cpp
     qgsgeometrywrapper.cpp
     qgsgpkgflusher.cpp
@@ -132,7 +128,6 @@ set(QFIELD_CORE_HDRS
     utils/layerutils.h
     utils/positioningutils.h
     utils/projectutils.h
-    utils/qfieldcloudutils.h
     utils/relationutils.h
     utils/snappingutils.h
     utils/stringutils.h
@@ -148,7 +143,6 @@ set(QFIELD_CORE_HDRS
     locator/featureslocatorfilter.h
     locator/finlandlocatorfilter.h
     locator/gotolocatorfilter.h
-    locator/helplocatorfilter.h
     locator/qfieldlocatorfilter.h
     locator/locatormodelsuperbridge.h
     positioning/abstractgnssreceiver.h
@@ -224,8 +218,6 @@ set(QFIELD_CORE_HDRS
     projectsource.h
     projectsimageprovider.h
     qfieldappauthrequesthandler.h
-    qfieldcloudconnection.h
-    qfieldcloudprojectsmodel.h
     qgismobileapp.h
     qgsgeometrywrapper.h
     qgsgpkgflusher.h

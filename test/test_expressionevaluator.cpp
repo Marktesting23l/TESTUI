@@ -39,8 +39,7 @@ TEST_CASE( "ExpressionEvaluator" )
   GnssPositionInformation positionInformation = PositioningUtils::createGnssPositionInformation( 1.234, 1.234, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, QDateTime(), QStringLiteral( "test" ) );
   evaluator.setPositionInformation( positionInformation );
 
-  CloudUserInformation cloudUserInformation( QStringLiteral( "nyuki" ), QStringLiteral( "nyuki@opengis.ch" ) );
-  evaluator.setCloudUserInformation( cloudUserInformation );
+  
 
   SECTION( "Expression mode" )
   {

@@ -69,7 +69,6 @@ Popup {
         positionInformation: coordinateLocator.positionInformation
         positionLocked: coordinateLocator.overrideLocation !== undefined
         topSnappingResult: coordinateLocator.topSnappingResult
-        cloudUserInformation: projectInfo.cloudUserInformation
       }
     }
 

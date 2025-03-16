@@ -187,6 +187,25 @@ void AppInterface::setScreenDimmerTimeout( int timeoutSeconds )
   mApp->setScreenDimmerTimeout( timeoutSeconds );
 }
 
+void AppInterface::setCustomWmsParameters( const QVariantMap &parameters )
+{
+  // Store the custom WMS parameters in the project
+  QgsProject *project = QgsProject::instance();
+  if (project)
+  {
+    // Save each parameter as a project variable
+    QVariantMap::const_iterator i = parameters.constBegin();
+    while (i != parameters.constEnd())
+    {
+      project->writeEntry("Sentinel", QString("CustomWmsParam_%1").arg(i.key()), i.value().toString());
+      ++i;
+    }
+    
+    // Set a flag indicating custom parameters are in use
+    project->writeEntry("Sentinel", "UseCustomWmsParams", true);
+  }
+}
+
 QVariantMap AppInterface::availableLanguages() const
 {
   QVariantMap languages;

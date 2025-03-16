@@ -20,7 +20,6 @@
 
 #include "geometry.h"
 #include "gnsspositioninformation.h"
-#include "qfieldcloudconnection.h"
 #include "snappingresult.h"
 #include "vertexmodel.h"
 
@@ -50,7 +49,6 @@ class FeatureModel : public QAbstractListModel
     Q_PROPERTY( GnssPositionInformation positionInformation READ positionInformation WRITE setPositionInformation NOTIFY positionInformationChanged )
     Q_PROPERTY( SnappingResult topSnappingResult READ topSnappingResult WRITE setTopSnappingResult NOTIFY topSnappingResultChanged )
     Q_PROPERTY( bool positionLocked READ positionLocked WRITE setPositionLocked NOTIFY positionLockedChanged )
-    Q_PROPERTY( CloudUserInformation cloudUserInformation READ cloudUserInformation WRITE setCloudUserInformation NOTIFY cloudUserInformationChanged )
     Q_PROPERTY( QgsProject *project READ project WRITE setProject NOTIFY projectChanged )
     Q_PROPERTY( bool batchMode READ batchMode WRITE setBatchMode NOTIFY batchModeChanged )
 
@@ -256,14 +254,7 @@ class FeatureModel : public QAbstractListModel
     /**
      * Returns the current cloud user information
      */
-    CloudUserInformation cloudUserInformation() const { return mCloudUserInformation; }
-
-    /**
-     * Sets the current cloud user information
-     * \param cloudUserInformation the cloud user information
-     */
-    void setCloudUserInformation( const CloudUserInformation &cloudUserInformation );
-
+ 
     //! Returns the current project from which the digitizing logs will be sought
     QgsProject *project() const { return mProject; }
 
@@ -309,7 +300,6 @@ class FeatureModel : public QAbstractListModel
     void topSnappingResultChanged();
     void positionLockedChanged();
     void projectChanged();
-    void cloudUserInformationChanged();
     void batchModeChanged();
 
     void warning( const QString &text );
@@ -341,7 +331,6 @@ class FeatureModel : public QAbstractListModel
     Geometry *mGeometry = nullptr;
     GnssPositionInformation mPositionInformation;
     SnappingResult mTopSnappingResult;
-    CloudUserInformation mCloudUserInformation;
     QgsProject *mProject = nullptr;
     QString mTempName;
     bool mPositionLocked = false;

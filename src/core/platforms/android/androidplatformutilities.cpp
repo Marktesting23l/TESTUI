@@ -24,7 +24,6 @@
 #include "fileutils.h"
 #include "qfield.h"
 #include "qfield_android.h"
-#include "qfieldcloudconnection.h"
 
 #include <QJniEnvironment>
 #include <QJniObject>
@@ -759,22 +758,7 @@ QVariantMap AndroidPlatformUtilities::sceneMargins( QQuickWindow *window ) const
   return margins;
 }
 
-void AndroidPlatformUtilities::uploadPendingAttachments( QFieldCloudConnection *connection ) const
-{
-  // Request notification permission
-  checkAndAcquirePermissions( { QStringLiteral( "android.permission.POST_NOTIFICATIONS" ) } );
 
-  QTimer::singleShot( 500, [connection]() {
-    if ( connection )
-    {
-      qInfo() << "Launching QFieldCloud service...";
-      QJniObject::callStaticMethod<void>( "com/imagritools/" APP_PACKAGE_NAME "/QFieldCloudService",
-                                          "startQFieldCloudService",
-                                          "(Landroid/content/Context;)V",
-                                          qtAndroidContext().object() );
-    }
-  } );
-}
 
 bool AndroidPlatformUtilities::isSystemDarkTheme() const
 {

@@ -16,7 +16,6 @@
 
 #include "platformutilities.h"
 #include "qfield.h"
-#include "qfieldcloudutils.h"
 #include "recentprojectlistmodel.h"
 
 #include <QDir>
@@ -62,11 +61,9 @@ void RecentProjectListModel::reloadModel()
     QFileInfo fi( path );
     if ( fi.exists() && fi.isReadable() )
     {
-      ProjectType projectType = path.startsWith( QFieldCloudUtils::localCloudDirectory() )
-                                  ? CloudProject
-                                : SUPPORTED_PROJECT_EXTENSIONS.contains( fi.suffix() )
-                                  ? LocalProject
-                                  : LocalDataset;
+      ProjectType projectType = SUPPORTED_PROJECT_EXTENSIONS.contains( fi.suffix() )
+                                ? LocalProject
+                                : LocalDataset;
       mRecentProjects.append( RecentProject( projectType,
                                              settings.value( QStringLiteral( "title" ) ).toString(),
                                              path,

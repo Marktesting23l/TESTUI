@@ -20,7 +20,6 @@
 #define EXPRESSIONCONTEXTUTILS_H
 
 #include "gnsspositioninformation.h"
-#include "qfieldcloudconnection.h"
 #include "snappingresult.h"
 
 #include <qgsexpressioncontext.h>
@@ -37,7 +36,6 @@ class ExpressionContextUtils : public QObject
 
     static QgsExpressionContextScope *positionScope( const GnssPositionInformation &positionInformation, bool positionLocked );
     static QgsExpressionContextScope *mapToolCaptureScope( const SnappingResult &topSnappingResult );
-    static QgsExpressionContextScope *cloudUserScope( const CloudUserInformation &cloudUserInformation );
 
     /**
       * Returns a layer context variables.

@@ -61,6 +61,12 @@ class AppInterface : public QObject
 
     Q_INVOKABLE void setScreenDimmerTimeout( int timeoutSeconds );
 
+    /**
+     * Sets custom WMS parameters for use in Sentinel layers
+     * \param parameters A map of parameter name/value pairs
+     */
+    Q_INVOKABLE void setCustomWmsParameters( const QVariantMap &parameters );
+
     Q_INVOKABLE QVariantMap availableLanguages() const;
 
     Q_INVOKABLE bool isFileExtensionSupported( const QString &filename ) const;

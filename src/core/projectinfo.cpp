@@ -298,38 +298,7 @@ void ProjectInfo::setSnappingEnabled( bool enabled )
   emit snappingEnabledChanged();
 }
 
-CloudUserInformation ProjectInfo::cloudUserInformation() const
-{
-  if ( mFilePath.isEmpty() )
-    return CloudUserInformation( QString(), QString() );
 
-  CloudUserInformation userinfo(
-    mSettings.value( QStringLiteral( "/qgis/projectInfo/%1/cloudUserInfo/json" ).arg( mFilePath ), QStringLiteral( "{}" ) )
-      .toJsonValue()
-      .toObject() );
-
-  return userinfo;
-}
-
-void ProjectInfo::setCloudUserInformation( const CloudUserInformation cloudUserInformation )
-{
-  if ( mFilePath.isEmpty() )
-    return;
-
-  if ( cloudUserInformation.isEmpty() )
-    return;
-
-  mSettings.beginGroup( QStringLiteral( "/qgis/projectInfo/%1/cloudUserInfo" ).arg( mFilePath ) );
-  mSettings.setValue( QStringLiteral( "json" ), cloudUserInformation.toJson() );
-  mSettings.endGroup();
-
-  emit cloudUserInformationChanged();
-}
-
-void ProjectInfo::restoreCloudUserInformation()
-{
-  emit cloudUserInformationChanged();
-}
 
 void ProjectInfo::saveLayerSnappingConfiguration( QgsMapLayer *layer )
 {

@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include "layerobserver.h"
-#include "qfieldcloudutils.h"
 
 #include <QDebug>
 #include <QDir>
@@ -67,13 +66,7 @@ void LayerObserver::onHomePathChanged()
 
   mObservedLayerIds.clear();
 
-  if ( !QFieldCloudUtils::getProjectId( mProject->fileName() ).isEmpty() )
-  {
-    if ( mDeltaFileWrapper->hasError() )
-      QgsMessageLog::logMessage( QStringLiteral( "The current delta file wrapper experienced an error: %1" ).arg( mDeltaFileWrapper->errorString() ) );
-
-    addLayerListeners();
-  }
+  
 }
 
 void LayerObserver::onLayersAdded( const QList<QgsMapLayer *> &layers )
@@ -283,10 +276,6 @@ void LayerObserver::addLayerListeners()
 {
   const QList<QgsMapLayer *> layers = mProject->mapLayers().values();
 
-  // we should keep track only of the layers on cloud projects
-  if ( QFieldCloudUtils::getProjectId( mProject->fileName() ).isEmpty() )
-    return;
-
   for ( QgsMapLayer *layer : layers )
   {
     QgsVectorLayer *vl = qobject_cast<QgsVectorLayer *>( layer );
@@ -296,7 +285,7 @@ void LayerObserver::addLayerListeners()
       if ( mObservedLayerIds.contains( vl->id() ) )
         continue;
 
-      if ( !vl->readOnly() && QFieldCloudUtils::isCloudAction( vl ) )
+      if ( !vl->readOnly() )
       {
         // Ignore all layers that cannot determine a primary key column
         if ( DeltaFileWrapper::getLocalPkAttribute( vl ).first == -1 )
@@ -320,16 +309,13 @@ void LayerObserver::addLayerListeners()
         disconnect( vl, &QgsVectorLayer::committedFeaturesRemoved, this, &LayerObserver::onCommittedFeaturesRemoved );
         disconnect( vl, &QgsVectorLayer::committedAttributeValuesChanges, this, &LayerObserver::onCommittedAttributeValuesChanges );
         disconnect( vl, &QgsVectorLayer::committedGeometriesChanges, this, &LayerObserver::onCommittedGeometriesChanges );
-        // TODO use the future "afterCommitChanges" signal
         disconnect( vl, &QgsVectorLayer::editingStopped, this, &LayerObserver::onEditingStopped );
 
-        // for `cloud` projects, we keep track of any change that has occurred
         connect( vl, &QgsVectorLayer::beforeCommitChanges, this, &LayerObserver::onBeforeCommitChanges );
         connect( vl, &QgsVectorLayer::committedFeaturesAdded, this, &LayerObserver::onCommittedFeaturesAdded );
         connect( vl, &QgsVectorLayer::committedFeaturesRemoved, this, &LayerObserver::onCommittedFeaturesRemoved );
         connect( vl, &QgsVectorLayer::committedAttributeValuesChanges, this, &LayerObserver::onCommittedAttributeValuesChanges );
         connect( vl, &QgsVectorLayer::committedGeometriesChanges, this, &LayerObserver::onCommittedGeometriesChanges );
-        // TODO use the future "afterCommitChanges" signal
         connect( vl, &QgsVectorLayer::editingStopped, this, &LayerObserver::onEditingStopped );
 
         mObservedLayerIds.insert( vl->id() );

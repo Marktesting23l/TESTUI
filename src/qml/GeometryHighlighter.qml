@@ -8,7 +8,7 @@ Item {
   id: geometryHighlighter
 
   property alias geometryWrapper: geometryRenderer.geometryWrapper
-  property int duration: 3000
+  property int duration: 6000
 
   SequentialAnimation {
     id: timer

@@ -19,7 +19,6 @@ Page {
 
   property alias model: table.model
   signal openLocalDataPicker
-  signal showQFieldCloudScreen
   signal showSettings
 
   visible: false
@@ -291,7 +290,56 @@ Page {
               }
             }
           }
-
+          RowLayout {
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            Layout.bottomMargin: mainWindow.sceneBottomMargin
+            
+            Rectangle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 40
+              color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.08)
+              radius: 4
+              border.color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.2)
+              border.width: 1
+              
+              RowLayout {
+                id: switchRow
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 15
+                
+                QfSwitch {
+                  id: reloadOnLaunch
+                  Layout.alignment: Qt.AlignVCenter
+                  small: true
+                  
+                  checked: registry.loadProjectOnLaunch
+                  onCheckedChanged: {
+                    registry.loadProjectOnLaunch = checked;
+                  }
+                }
+                
+                Label {
+                  Layout.fillWidth: true
+                  Layout.alignment: Qt.AlignVCenter
+                  font: Theme.tipFont
+                  wrapMode: Text.WordWrap
+                  color: reloadOnLaunch.checked ? Theme.mainTextColor : Theme.secondaryTextColor
+                  verticalAlignment: Text.AlignVCenter
+                  
+                  text: registry.defaultProject != '' ? qsTr('Load default project on launch') : qsTr('Load last opened project on launch')
+                  
+                  MouseArea {
+                    anchors.fill: parent
+                    onClicked: reloadOnLaunch.checked = !reloadOnLaunch.checked
+                  }
+                }
+              }
+            }
+          }
           // Main project section
           Rectangle {
             id: mainProjectContainer
@@ -567,8 +615,7 @@ Page {
                           source: {
                             switch (type) {
                               case 0: return Theme.getThemeVectorIcon('ic_map_green_48dp');     // local project
-                              case 1: return Theme.getThemeVectorIcon('ic_cloud_project_48dp'); // cloud project
-                              case 2: return Theme.getThemeVectorIcon('ic_file_green_48dp');    // local dataset
+                              case 1: return Theme.getThemeVectorIcon('ic_file_green_48dp');    // local dataset
                               default: return '';
                             }
                           }
@@ -674,9 +721,6 @@ Page {
                       gridDelegate.isPressed = false;
                     }
                     onClicked: {
-                      if (type == 1 && cloudConnection.hasToken && cloudConnection.status !== QFieldCloudConnection.LoggedIn) {
-                        cloudConnection.login();
-                      }
                       iface.loadFile(path, title);
                     }
                     onPressAndHold: {
@@ -768,56 +812,7 @@ Page {
             }
           }
 
-          RowLayout {
-            Layout.leftMargin: 10
-            Layout.rightMargin: 10
-            Layout.bottomMargin: mainWindow.sceneBottomMargin
-            
-            Rectangle {
-              Layout.fillWidth: true
-              Layout.preferredHeight: 40
-              color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.08)
-              radius: 4
-              border.color: Qt.hsla(Theme.mainColor.hslHue, Theme.mainColor.hslSaturation, Theme.mainColor.hslLightness, 0.2)
-              border.width: 1
-              
-              RowLayout {
-                id: switchRow
-                anchors.fill: parent
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 15
-                
-                QfSwitch {
-                  id: reloadOnLaunch
-                  Layout.alignment: Qt.AlignVCenter
-                  small: true
-                  
-                  checked: registry.loadProjectOnLaunch
-                  onCheckedChanged: {
-                    registry.loadProjectOnLaunch = checked;
-                  }
-                }
-                
-                Label {
-                  Layout.fillWidth: true
-                  Layout.alignment: Qt.AlignVCenter
-                  font: Theme.tipFont
-                  wrapMode: Text.WordWrap
-                  color: reloadOnLaunch.checked ? Theme.mainTextColor : Theme.secondaryTextColor
-                  verticalAlignment: Text.AlignVCenter
-                  
-                  text: registry.defaultProject != '' ? qsTr('Load default project on launch') : qsTr('Load last opened project on launch')
-                  
-                  MouseArea {
-                    anchors.fill: parent
-                    onClicked: reloadOnLaunch.checked = !reloadOnLaunch.checked
-                  }
-                }
-              }
-            }
-          }
+          
         }
       }
     }

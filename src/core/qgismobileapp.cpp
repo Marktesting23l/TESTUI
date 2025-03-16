@@ -101,9 +101,6 @@
 #include "projectsource.h"
 #include "projectutils.h"
 #include "qfield.h"
-#include "qfieldcloudconnection.h"
-#include "qfieldcloudprojectsmodel.h"
-#include "qfieldcloudutils.h"
 #include "qfieldlocatorfilter.h"
 #include "qgismobileapp.h"
 #include "qgsgeometrywrapper.h"
@@ -195,6 +192,40 @@
 
 #define QUOTE( string ) _QUOTE( string )
 #define _QUOTE( string ) #string
+
+// Implementation of WmsRateLimiter
+WmsRateLimiter *WmsRateLimiter::sInstance = nullptr;
+
+WmsRateLimiter::WmsRateLimiter(QObject *parent)
+  : QObject(parent)
+  , mEnabled(false)
+  , mDelayMs(1000)
+{
+}
+
+void WmsRateLimiter::setDelay(int delayMs)
+{
+  mDelayMs = delayMs;
+}
+
+bool WmsRateLimiter::isEnabled() const
+{
+  return mEnabled;
+}
+
+void WmsRateLimiter::setEnabled(bool enabled)
+{
+  mEnabled = enabled;
+}
+
+WmsRateLimiter *WmsRateLimiter::instance()
+{
+  if (!sInstance)
+  {
+    sInstance = new WmsRateLimiter();
+  }
+  return sInstance;
+}
 
 QgisMobileapp::QgisMobileapp( QgsApplication *app, QObject *parent )
   : QQmlApplicationEngine( parent )
@@ -419,11 +450,6 @@ void QgisMobileapp::initDeclarative( QQmlEngine *engine )
   // Register QField QML types
   qRegisterMetaType<PlatformUtilities::Capabilities>( "PlatformUtilities::Capabilities" );
   qRegisterMetaType<GeometryUtils::GeometryOperationResult>( "GeometryOperationResult" );
-  qRegisterMetaType<QFieldCloudConnection::ConnectionStatus>( "QFieldCloudConnection::ConnectionStatus" );
-  qRegisterMetaType<CloudUserInformation>( "CloudUserInformation" );
-  qRegisterMetaType<QFieldCloudProjectsModel::ProjectStatus>( "QFieldCloudProjectsModel::ProjectStatus" );
-  qRegisterMetaType<QFieldCloudProjectsModel::ProjectCheckout>( "QFieldCloudProjectsModel::ProjectCheckout" );
-  qRegisterMetaType<QFieldCloudProjectsModel::ProjectModification>( "QFieldCloudProjectsModel::ProjectModification" );
   qRegisterMetaType<Tracker::MeasureType>( "Tracker::MeasureType" );
   qRegisterMetaType<PositioningSource::ElevationCorrectionMode>( "PositioningSource::ElevationCorrectionMode" );
 
@@ -490,9 +516,6 @@ void QgisMobileapp::initDeclarative( QQmlEngine *engine )
   engine->rootContext()->setContextProperty( "withNfc", QVariant( NearFieldReader::isSupported() ) );
   qmlRegisterType<ChangelogContents>( "org.qfield", 1, 0, "ChangelogContents" );
   qmlRegisterType<LayerResolver>( "org.qfield", 1, 0, "LayerResolver" );
-  qmlRegisterType<QFieldCloudConnection>( "org.qfield", 1, 0, "QFieldCloudConnection" );
-  qmlRegisterType<QFieldCloudProjectsModel>( "org.qfield", 1, 0, "QFieldCloudProjectsModel" );
-  qmlRegisterType<QFieldCloudProjectsFilterModel>( "org.qfield", 1, 0, "QFieldCloudProjectsFilterModel" );
   qmlRegisterType<DeltaListModel>( "org.qfield", 1, 0, "DeltaListModel" );
   qmlRegisterType<ScaleBarMeasurement>( "org.qfield", 1, 0, "ScaleBarMeasurement" );
   qmlRegisterType<SensorListModel>( "org.qfield", 1, 0, "SensorListModel" );
@@ -529,7 +552,6 @@ void QgisMobileapp::initDeclarative( QQmlEngine *engine )
   REGISTER_SINGLETON( "org.qfield", RelationUtils, "RelationUtils" );
   REGISTER_SINGLETON( "org.qfield", StringUtils, "StringUtils" );
   REGISTER_SINGLETON( "org.qfield", UrlUtils, "UrlUtils" );
-  REGISTER_SINGLETON( "org.qfield", QFieldCloudUtils, "QFieldCloudUtils" );
   REGISTER_SINGLETON( "org.qfield", PositioningUtils, "PositioningUtils" );
   REGISTER_SINGLETON( "org.qfield", ProjectUtils, "ProjectUtils" );
   REGISTER_SINGLETON( "org.qfield", CoordinateReferenceSystemUtils, "CoordinateReferenceSystemUtils" );
@@ -812,15 +834,13 @@ void QgisMobileapp::readProjectFile()
   }
 
   QString title;
-  if ( mProject->fileName().startsWith( QFieldCloudUtils::localCloudDirectory() ) )
+  if (mProject->fileName().isEmpty()) 
   {
-    // Overwrite the title to match what is used in QFieldCloud
-    const QString projectId = fi.dir().dirName();
-    title = QSettings().value( QStringLiteral( "QFieldCloud/projects/%1/name" ).arg( projectId ), fi.fileName() ).toString();
+    title = mProjectFileName; 
   }
   else
   {
-    title = mProject->title().isEmpty() ? mProjectFileName : mProject->title();
+    title = mProject->title().isEmpty() ? mProjectFileName : mProject->title(); // Set title based on project title or file name
   }
 
   QList<QPair<QString, QString>> projects = recentProjects();
@@ -1044,9 +1064,391 @@ void QgisMobileapp::readProjectFile()
       QStringLiteral( "Riesgo a las actividades económicas de origen fluvial T=100 años" ),
       QLatin1String( "wms" ) );
   
-  // Create layer groups in the desired order - Spain GIS Services first, then Utils, then Basemaps
+  // Create layer groups in the desired order - Sentinel first, then Spain GIS Services, then Utils, then Basemaps
   QgsLayerTreeGroup *spainGisServicesGroup = mProject->layerTreeRoot()->addGroup("Spain GIS Services");
   QgsLayerTreeGroup *utilsGroup = mProject->layerTreeRoot()->addGroup("Utils");
+
+  // Add Sentinel Imagery group if user has configured an instance ID
+  QSettings sentinelSettings;
+  QString sentinelInstanceId = sentinelSettings.value(QStringLiteral("QField/Sentinel/InstanceId"), QString()).toString();
+  bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnableLayers"), true).toBool();
+  
+  // Read layer configuration from settings
+  QStringList enabledLayers;
+  QString enabledLayersStr = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnabledLayers"), "TRUE_COLOR,FALSE_COLOR,NDVI").toString();
+  if (!enabledLayersStr.isEmpty()) {
+    enabledLayers = enabledLayersStr.split(",");
+  } else {
+    enabledLayers << "TRUE_COLOR" << "FALSE_COLOR" << "NDVI";
+  }
+  QString ndviStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/NDVI"), "VIZ").toString();
+  QString falseColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/FALSE_COLOR"), "DEFAULT").toString();
+  QString trueColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/TRUE_COLOR"), "DEFAULT").toString();
+  QString eviStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/EVI"), "ON").toString();
+  QString customLayerStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/CUSTOM"), "DEFAULT").toString();
+  QString customLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/CustomLayerId"), "").toString();
+  
+  // Read custom layer script parameters
+  QString evalScriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScriptUrl"), "").toString();
+  QString evalScript = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScript"), "").toString();
+  
+  // Read WMS parameters from settings
+  QString crsSetting = sentinelSettings.value(QStringLiteral("QField/Sentinel/CRS"), "EPSG:4326").toString();
+  QString format = sentinelSettings.value(QStringLiteral("QField/Sentinel/Format"), "image/png").toString();
+  QString dpiMode = sentinelSettings.value(QStringLiteral("QField/Sentinel/DPIMode"), "7").toString();
+  QString tilePixelRatio = sentinelSettings.value(QStringLiteral("QField/Sentinel/TilePixelRatio"), "0").toString();
+  
+  // Time parameters
+  bool timeEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/TimeEnabled"), false).toBool();
+  QString timeParams;
+  if (timeEnabled) {
+    QString startDate = sentinelSettings.value(QStringLiteral("QField/Sentinel/TimeStart"), "").toString();
+    QString endDate = sentinelSettings.value(QStringLiteral("QField/Sentinel/TimeEnd"), "").toString();
+    if (!startDate.isEmpty() && !endDate.isEmpty()) {
+      timeParams = QStringLiteral("&time=%1/%2").arg(startDate).arg(endDate);
+    }
+  }
+  
+  // Advanced parameters
+  QString advancedParams;
+  bool showAdvancedParams = sentinelSettings.value(QStringLiteral("QField/Sentinel/AdvancedParamsEnabled"), false).toBool();
+  if (showAdvancedParams) {
+    QString maxCC = sentinelSettings.value(QStringLiteral("QField/Sentinel/MAXCC"), "100").toString();
+    if (maxCC != "100") {
+      advancedParams += QStringLiteral("&MAXCC=%1").arg(maxCC);
+    }
+    
+    QString quality = sentinelSettings.value(QStringLiteral("QField/Sentinel/QUALITY"), "90").toString();
+    if (format == "image/jpeg" && quality != "90") {
+      advancedParams += QStringLiteral("&QUALITY=%1").arg(quality);
+    }
+    
+    QString warnings = sentinelSettings.value(QStringLiteral("QField/Sentinel/WARNINGS"), "YES").toString();
+    if (warnings != "YES") {
+      advancedParams += QStringLiteral("&WARNINGS=%1").arg(warnings);
+    }
+    
+    QString priority = sentinelSettings.value(QStringLiteral("QField/Sentinel/PRIORITY"), "mostRecent").toString();
+    if (priority != "mostRecent") {
+      advancedParams += QStringLiteral("&PRIORITY=%1").arg(priority);
+    }
+  }
+  
+  // BBOX limiting
+  QString bboxParams;
+  bool bboxLimitingEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/BboxLimitingEnabled"), false).toBool();
+  if (bboxLimitingEnabled) {
+    QString bboxWidth = sentinelSettings.value(QStringLiteral("QField/Sentinel/BboxWidth"), "10000").toString();
+    QString bboxHeight = sentinelSettings.value(QStringLiteral("QField/Sentinel/BboxHeight"), "10000").toString();
+    
+    // For a real implementation, we would calculate the BBOX based on the current map center
+    // This is a simplified example using a dummy BBOX centered at 0,0
+    double width = bboxWidth.toDouble();
+    double height = bboxHeight.toDouble();
+    double halfWidth = width / 2;
+    double halfHeight = height / 2;
+    bboxParams = QStringLiteral("&BBOX=%1,%2,%3,%4").arg(-halfWidth).arg(-halfHeight).arg(halfWidth).arg(halfHeight);
+  }
+  
+  // Custom script
+  QString scriptParams;
+  bool customScriptEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/CustomScriptEnabled"), false).toBool();
+  if (customScriptEnabled) {
+    QString scriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/ScriptUrl"), "").toString();
+    if (!scriptUrl.isEmpty()) {
+      scriptParams = QStringLiteral("&EVALSCRIPTURL=%1").arg(scriptUrl);
+    }
+    
+    // Check if we have a direct script instead of URL
+    QString customScript = sentinelSettings.value(QStringLiteral("QField/Sentinel/CustomScript"), "").toString();
+    if (!customScript.isEmpty()) {
+      // BASE64 encode the script
+      QByteArray scriptBytes = customScript.toUtf8();
+      QByteArray encodedScript = scriptBytes.toBase64();
+      scriptParams = QStringLiteral("&EVALSCRIPT=%1").arg(QString::fromUtf8(encodedScript));
+    }
+  }
+  
+  // Rate limiting
+  bool rateLimitingEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/RateLimitingEnabled"), false).toBool();
+  if (rateLimitingEnabled) {
+    int delayMs = sentinelSettings.value(QStringLiteral("QField/Sentinel/RateLimitDelay"), 1000).toInt();
+    WmsRateLimiter::instance()->setEnabled(true);
+    WmsRateLimiter::instance()->setDelay(delayMs);
+    
+    // Log that rate limiting is enabled
+    QgsMessageLog::logMessage(QStringLiteral("Sentinel WMS rate limiting enabled with %1ms delay").arg(delayMs), "QField", Qgis::Info);
+  } else {
+    WmsRateLimiter::instance()->setEnabled(false);
+  }
+  
+  // Create Sentinel group first (before basemaps) so it appears on top
+  QgsLayerTreeGroup *sentinelGroup = nullptr;
+  
+  if (!sentinelInstanceId.isEmpty() && enableSentinelLayers)
+  {
+    sentinelGroup = mProject->layerTreeRoot()->addGroup("Sentinel Imagery");
+    
+    // Create Sentinel WMS layers using the user's instance ID and configured settings
+    if (enabledLayers.contains("NDVI"))
+    {
+      // NDVI layer
+      QString ndviUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=NDVI&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+          .arg(crsSetting)
+          .arg(dpiMode)
+          .arg(format)
+          .arg(ndviStyle)
+          .arg(tilePixelRatio)
+          .arg(sentinelInstanceId);
+      
+      // Add time parameters if enabled
+      if (!timeParams.isEmpty()) {
+        ndviUrl += timeParams;
+      }
+      
+      // Add advanced parameters if enabled
+      if (!advancedParams.isEmpty()) {
+        ndviUrl += advancedParams;
+      }
+      
+      // Add BBOX parameters if enabled
+      if (!bboxParams.isEmpty()) {
+        ndviUrl += bboxParams;
+      }
+      
+      // Add custom script if enabled
+      if (!scriptParams.isEmpty()) {
+        ndviUrl += scriptParams;
+      }
+      
+      QgsRasterLayer *ndviLayer = new QgsRasterLayer(
+          ndviUrl,
+          QStringLiteral("Sentinel NDVI"),
+          QLatin1String("wms"));
+      
+      if (ndviLayer->isValid())
+      {
+        mProject->addMapLayer(ndviLayer, false);
+        sentinelGroup->addLayer(ndviLayer);
+      }
+      else
+      {
+        delete ndviLayer;
+      }
+    }
+    
+    if (enabledLayers.contains("FALSE_COLOR"))
+    {
+      // False Color layer
+      QString falseColorUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=FALSE_COLOR&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+          .arg(crsSetting)
+          .arg(dpiMode)
+          .arg(format)
+          .arg(falseColorStyle)
+          .arg(tilePixelRatio)
+          .arg(sentinelInstanceId);
+      
+      // Add time parameters if enabled
+      if (!timeParams.isEmpty()) {
+        falseColorUrl += timeParams;
+      }
+      
+      // Add advanced parameters if enabled
+      if (!advancedParams.isEmpty()) {
+        falseColorUrl += advancedParams;
+      }
+      
+      // Add BBOX parameters if enabled
+      if (!bboxParams.isEmpty()) {
+        falseColorUrl += bboxParams;
+      }
+      
+      // Add custom script if enabled
+      if (!scriptParams.isEmpty()) {
+        falseColorUrl += scriptParams;
+      }
+      
+      QgsRasterLayer *falseColorLayer = new QgsRasterLayer(
+          falseColorUrl,
+          QStringLiteral("Sentinel False Color"),
+          QLatin1String("wms"));
+      
+      if (falseColorLayer->isValid())
+      {
+        mProject->addMapLayer(falseColorLayer, false);
+        sentinelGroup->addLayer(falseColorLayer);
+      }
+      else
+      {
+        delete falseColorLayer;
+      }
+    }
+    
+    if (enabledLayers.contains("TRUE_COLOR"))
+    {
+      // True Color layer
+      QString trueColorUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=TRUE_COLOR&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+          .arg(crsSetting)
+          .arg(dpiMode)
+          .arg(format)
+          .arg(trueColorStyle)
+          .arg(tilePixelRatio)
+          .arg(sentinelInstanceId);
+      
+      // Add time parameters if enabled
+      if (!timeParams.isEmpty()) {
+        trueColorUrl += timeParams;
+      }
+      
+      // Add advanced parameters if enabled
+      if (!advancedParams.isEmpty()) {
+        trueColorUrl += advancedParams;
+      }
+      
+      // Add BBOX parameters if enabled
+      if (!bboxParams.isEmpty()) {
+        trueColorUrl += bboxParams;
+      }
+      
+      // Add custom script if enabled
+      if (!scriptParams.isEmpty()) {
+        trueColorUrl += scriptParams;
+      }
+      
+      QgsRasterLayer *trueColorLayer = new QgsRasterLayer(
+          trueColorUrl,
+          QStringLiteral("Sentinel True Color"),
+          QLatin1String("wms"));
+      
+      if (trueColorLayer->isValid())
+      {
+        mProject->addMapLayer(trueColorLayer, false);
+        sentinelGroup->addLayer(trueColorLayer);
+      }
+      else
+      {
+        delete trueColorLayer;
+      }
+    }
+    
+    if (enabledLayers.contains("EVI"))
+    {
+      // EVI layer
+      QString eviUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=EVI&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+          .arg(crsSetting)
+          .arg(dpiMode)
+          .arg(format)
+          .arg(eviStyle)
+          .arg(tilePixelRatio)
+          .arg(sentinelInstanceId);
+      
+      // Add time parameters if enabled
+      if (!timeParams.isEmpty()) {
+        eviUrl += timeParams;
+      }
+      
+      // Add advanced parameters if enabled
+      if (!advancedParams.isEmpty()) {
+        eviUrl += advancedParams;
+      }
+      
+      // Add BBOX parameters if enabled
+      if (!bboxParams.isEmpty()) {
+        eviUrl += bboxParams;
+      }
+      
+      // Add custom script if enabled
+      if (!scriptParams.isEmpty()) {
+        eviUrl += scriptParams;
+      }
+      
+      QgsRasterLayer *eviLayer = new QgsRasterLayer(
+          eviUrl,
+          QStringLiteral("Sentinel EVI"),
+          QLatin1String("wms"));
+      
+      if (eviLayer->isValid())
+      {
+        mProject->addMapLayer(eviLayer, false);
+        sentinelGroup->addLayer(eviLayer);
+      }
+      else
+      {
+        delete eviLayer;
+      }
+    }
+    
+    // Custom layer with user-defined layer ID
+    if (enabledLayers.contains("CUSTOM") && !customLayerId.isEmpty())
+    {
+      // Read custom layer script parameters
+      QString evalScriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScriptUrl"), "").toString();
+      QString evalScript = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScript"), "").toString();
+      
+      // Custom layer
+      QString customLayerUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
+          .arg(crsSetting)
+          .arg(dpiMode)
+          .arg(format)
+          .arg(customLayerId)
+          .arg(customLayerStyle)
+          .arg(tilePixelRatio)
+          .arg(sentinelInstanceId);
+      
+      // Add time parameters if enabled
+      if (!timeParams.isEmpty()) {
+        customLayerUrl += timeParams;
+      }
+      
+      // Add advanced parameters if enabled
+      if (!advancedParams.isEmpty()) {
+        customLayerUrl += advancedParams;
+      }
+      
+      // Add BBOX parameters if enabled
+      if (!bboxParams.isEmpty()) {
+        customLayerUrl += bboxParams;
+      }
+      
+      // Add custom script if enabled
+      if (!scriptParams.isEmpty()) {
+        customLayerUrl += scriptParams;
+      }
+      
+      // Add custom layer script parameters if available
+      // Note: EVALSCRIPTURL takes precedence over EVALSCRIPT if both are provided
+      if (!evalScriptUrl.isEmpty()) {
+        customLayerUrl += QStringLiteral("&EVALSCRIPTURL=%1").arg(evalScriptUrl);
+        QgsMessageLog::logMessage(QStringLiteral("Adding EVALSCRIPTURL to custom layer: %1").arg(evalScriptUrl), "QField", Qgis::Info);
+      } else if (!evalScript.isEmpty()) {
+        // Use the BASE64 script directly (already encoded by the user)
+        customLayerUrl += QStringLiteral("&EVALSCRIPT=%1").arg(evalScript);
+        QgsMessageLog::logMessage(QStringLiteral("Adding EVALSCRIPT to custom layer: %1").arg(evalScript), "QField", Qgis::Info);
+      }
+      
+      QgsMessageLog::logMessage(QStringLiteral("Custom layer URL: %1").arg(customLayerUrl), "QField", Qgis::Info);
+      
+      QgsRasterLayer *customLayer = new QgsRasterLayer(
+          customLayerUrl,
+          QStringLiteral("Sentinel %1").arg(customLayerId),
+          QLatin1String("wms"));
+      
+      if (customLayer->isValid())
+      {
+        mProject->addMapLayer(customLayer, false);
+        sentinelGroup->addLayer(customLayer);
+      }
+      else
+      {
+        delete customLayer;
+      }
+    }
+    
+    // Set Sentinel group to be expanded by default
+    sentinelGroup->setExpanded(true);
+  }
+  
+  // Now create the basemaps group after Sentinel group
   QgsLayerTreeGroup *basemapsGroup = mProject->layerTreeRoot()->addGroup("Basemaps");
   
   // Add basemap layers to the project and to the Basemaps group in the requested order
@@ -1106,6 +1508,14 @@ void QgisMobileapp::readProjectFile()
   basemapsGroup->setItemVisibilityCheckedRecursive(true);
   basemapsGroup->setItemVisibilityChecked(true);
   
+  // Set Sentinel group visibility if it exists
+  if (sentinelGroup)
+  {
+    sentinelGroup->setItemVisibilityCheckedParentRecursive(true);
+    sentinelGroup->setItemVisibilityCheckedRecursive(true);
+    sentinelGroup->setItemVisibilityChecked(true);
+  }
+  
   // Set individual layer visibility
   // First hide all individual layers
   for (QgsLayerTreeLayer* layer : basemapsGroup->findLayers())
@@ -1121,6 +1531,21 @@ void QgisMobileapp::readProjectFile()
   for (QgsLayerTreeLayer* layer : utilsGroup->findLayers())
   {
     layer->setItemVisibilityChecked(false);
+  }
+  
+  // Hide all Sentinel layers by default
+  if (sentinelGroup)
+  {
+    for (QgsLayerTreeLayer* layer : sentinelGroup->findLayers())
+    {
+      layer->setItemVisibilityChecked(false);
+      
+      // Make True Color layer visible by default if it exists
+      if (layer->name() == "Sentinel True Color")
+      {
+        layer->setItemVisibilityChecked(true);
+      }
+    }
   }
   
   // Then set the requested layers to be visible
