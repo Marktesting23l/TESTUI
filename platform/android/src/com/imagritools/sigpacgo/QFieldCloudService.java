@@ -53,7 +53,7 @@ public class QFieldCloudService extends QtService {
     public static void startQFieldCloudService(Context context) {
         Log.v("QFieldCloudService", "Starting QFieldCloudService");
         Intent intent = new Intent(context, QFieldCloudService.class);
-        context.startForegroundService(intent);
+        context.startService(intent);
     }
 
     @Override
@@ -74,31 +74,6 @@ public class QFieldCloudService extends QtService {
             notificationChannel.enableVibration(false);
             notificationManager.createNotificationChannel(notificationChannel);
         }
-        
-        // Create and show a notification immediately to avoid ANR
-        showNotification();
-        
-        // Start as foreground service to avoid ANR
-        Notification.Builder builder =
-            new Notification.Builder(this)
-                .setSmallIcon(R.drawable.sigpacgo_logo)
-                .setWhen(System.currentTimeMillis())
-                .setContentTitle("SIGPACGOCloud")
-                .setContentText(getString(R.string.upload_pending_attachments))
-                .setProgress(0, 0, true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.setChannelId(CHANNEL_ID);
-        }
-
-        Notification notification = builder.build();
-        
-        try {
-            startForeground(NOTIFICATION_ID, notification);
-        } catch (SecurityException e) {
-            Log.v("QFieldCloudService", "Missing permission to launch the cloud service");
-            stopSelf();
-        }
     }
 
     @Override
@@ -111,7 +86,7 @@ public class QFieldCloudService extends QtService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int ret = super.onStartCommand(intent, flags, startId);
-        // Notification is already shown in onCreate
+        showNotification();
         return ret;
     }
 
