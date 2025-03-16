@@ -58,7 +58,6 @@
     <string name="import_project_wait">Importando proyecto...</string>
     <string name="import_dataset_wait">Importando datos...</string>
     <string name="update_project_wait">Actualizando proyecto...</string>
-    <string name="upload_pending_attachments">Subiendo a SIGPAC-GoCloud...</string>
     <string name="operation_unsupported">No compatible</string>
     <string name="import_operation_unsupported">Tu dispositivo no soporta esta importación.</string>
     <string name="export_operation_unsupported">Tu dispositivo no soporta esta exportación.</string>
