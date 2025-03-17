@@ -28,7 +28,7 @@ RoundButton {
   bottomInset: 0
   leftInset: 0
   rightInset: 0
-  padding: 10
+  padding: 6
 
   background: Rectangle {
     id: backgroundRectangle

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls.Material 2.12
 import QtCharts 2.3
+import Theme
+import "." as QFieldItems  // Import local components
 
 Drawer {
     id: weatherForecastPanel
@@ -40,8 +42,8 @@ Drawer {
     // Apply theme styling
     Material.elevation: 6
     background: Rectangle {
-        color: Material.background
-        border.color: Material.accent
+        color: Theme.mainBackgroundColor
+        border.color: Theme.accentColor
         border.width: 1
         radius: 4
     }
@@ -51,12 +53,15 @@ Drawer {
         // Initialize the daily forecast model
         dailyForecastModel = Qt.createQmlObject('import QtQuick 2.12; ListModel {}', weatherForecastPanel);
         
-        // Set default location to Sevilla if no location is specified
+        // Set default location to Almeria if no location is specified
         if (currentLatitude === 0 && currentLongitude === 0) {
-            currentLatitude = 37.38;
-            currentLongitude = -5.97;
-            locationName = "Sevilla";
+            currentLatitude = 36.84;
+            currentLongitude = -2.46;
+            locationName = "Almería";
         }
+        
+        // Set the location box to expanded by default
+        locationBox.expanded = true;
     }
     
     // Function to update the time range of the hourly chart
@@ -120,7 +125,7 @@ Drawer {
         
         // Make the line thicker and set a nice color
         series.width = 3;
-        series.color = Material.accent;
+        series.color = Theme.accentColor;
         
         // Set up the data for the selected variable
         var minValue = Number.MAX_VALUE;
@@ -312,6 +317,7 @@ Drawer {
         // Add data to model
         for (var i = 0; i < forecastData.daily.length; i++) {
             var day = forecastData.daily[i]
+            console.log("Day " + i + " weather icon: " + day.weatherIcon)
             
             dailyForecastModel.append({
                 date: day.date,
@@ -340,6 +346,7 @@ Drawer {
         }
         
         // Update current weather display
+        console.log("Current weather icon path: " + forecastData.current.weatherIcon)
         currentWeatherIcon.source = forecastData.current.weatherIcon
         currentWeatherDescription.text = forecastData.current.weatherDescription
         currentTemperature.text = forecastData.current.temperature.toFixed(1) + "°C"
@@ -415,7 +422,7 @@ Drawer {
                     Label {
                         text: locationName
                         font.pixelSize: isSmallScreen ? 12 : 14
-                        color: Material.accent
+                        color: Theme.accentColor
                         Layout.fillWidth: true
                     }
                     
@@ -423,7 +430,7 @@ Drawer {
                         text: "Datos de <a href='https://open-meteo.com/'>Open-Meteo</a>"
                         onLinkActivated: function(link) { Qt.openUrlExternally(link) }
                         font.pixelSize: 10
-                        color: Material.accent
+                        color: Theme.accentColor
                         visible: !isSmallScreen
                     }
                 }
@@ -431,8 +438,8 @@ Drawer {
                 Button {
                     text: "Cerrar"
                     icon.source: "qrc:///icons/mActionRemove.svg"
-                    Material.background: Material.primary
-                    Material.foreground: "white"
+                    Material.background: Theme.mainColor
+                    Material.foreground: Theme.buttonTextColor
                     implicitWidth: 80  // Wider button for better readability
                     implicitHeight: 36
                     padding: 4
@@ -481,8 +488,8 @@ Drawer {
                 padding: 8
                 
                 background: Rectangle {
-                    color: Material.dialogColor
-                    border.color: Material.dividerColor
+                    color: Theme.controlBackgroundColor
+                    border.color: Theme.controlBorderColor
                     border.width: 1
                     radius: 4
                     y: parent.topPadding - parent.bottomPadding
@@ -494,7 +501,7 @@ Drawer {
                     x: parent.leftPadding
                     width: parent.width - parent.leftPadding - parent.rightPadding
                     text: parent.title
-                    color: Material.accent
+                    color: Theme.accentColor
                     font.bold: true
                     font.pixelSize: 14
                 }
@@ -510,6 +517,18 @@ Drawer {
                         Layout.preferredWidth: 48
                         Layout.preferredHeight: 48
                         fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        cache: true
+                        sourceSize.width: 48
+                        sourceSize.height: 48
+                        
+                        // Fallback icon if the weather icon fails to load
+                        onStatusChanged: {
+                            if (status === Image.Error) {
+                                console.error("Failed to load weather icon: " + source);
+                                source = "qrc:/themes/sigpacgo/nodpi/weather.svg";
+                            }
+                        }
                     }
                     
                     // Weather details - Simplified for mobile
@@ -585,8 +604,8 @@ Drawer {
                 padding: 4
                 
                 background: Rectangle {
-                    color: Material.dialogColor
-                    border.color: Material.dividerColor
+                    color: Theme.controlBackgroundColor
+                    border.color: Theme.controlBorderColor
                     border.width: 1
                     radius: 4
                     y: parent.topPadding - parent.bottomPadding
@@ -600,7 +619,7 @@ Drawer {
                     
                     Label {
                         text: parent.parent.title
-                        color: Material.accent
+                        color: Theme.accentColor
                         font.bold: true
                         font.pixelSize: 12
                         Layout.fillWidth: true
@@ -608,7 +627,7 @@ Drawer {
                     
                     ComboBox {
                         id: timeRangeCombo
-                        Layout.preferredWidth: 100
+                        Layout.preferredWidth: 120
                         model: [
                             { text: "24 horas", value: 24 },
                             { text: "48 horas", value: 48 },
@@ -619,6 +638,13 @@ Drawer {
                         currentIndex: 0
                         onCurrentIndexChanged: {
                             updateHourlyChartTimeRange()
+                            
+                            // Set vertical labels for 7-day view
+                            if (currentIndex === 3) { // 7 days option
+                                hourlyAxisX.labelsAngle = 90;
+                            } else {
+                                hourlyAxisX.labelsAngle = 45;
+                            }
                         }
                     }
                     
@@ -653,9 +679,9 @@ Drawer {
                 Item {
                     anchors.fill: parent
                     anchors.topMargin: 5  // Space for the combo boxes
-                    anchors.bottomMargin: 5
-                    anchors.leftMargin: 4
-                    anchors.rightMargin: 4
+                    anchors.bottomMargin: 2
+                    anchors.leftMargin: 2
+                    anchors.rightMargin: 2
                     
                     ChartView {
                         id: hourlyChart
@@ -664,11 +690,19 @@ Drawer {
                         legend.visible: false
                         backgroundColor: "transparent"
                         
+                        // Set margins to 0 to maximize chart area
+                        margins {
+                            top: 0
+                            bottom: 0
+                            left: 0
+                            right: 0
+                        }
+                        
                         // Add a border to make the chart more visible
                         Rectangle {
                             anchors.fill: parent
                             color: "transparent"
-                            border.color: Material.dividerColor
+                            border.color: Theme.controlBorderColor
                             border.width: 1
                             z: -1
                         }
@@ -683,6 +717,9 @@ Drawer {
                             titleText: "Hora"
                             titleFont.pixelSize: 12
                             titleFont.bold: true
+                            labelsAngle: 45  // Rotate labels by 45 degrees
+                            labelsColor: Theme.mainTextColor
+                            gridLineColor: Theme.controlBorderColor
                         }
                         
                         ValueAxis {
@@ -693,6 +730,8 @@ Drawer {
                             titleText: "Temperatura (°C)"
                             titleFont.pixelSize: 12
                             titleFont.bold: true
+                            labelsColor: Theme.mainTextColor
+                            gridLineColor: Theme.controlBorderColor
                         }
                     }
                 }
@@ -703,6 +742,98 @@ Drawer {
                     function onForecastDataChanged() {
                         if (forecastData) {
                             updateHourlyChart()
+                            
+                            // Set vertical labels for 7-day view
+                            if (timeRangeCombo.currentIndex === 3) { // 7 days option
+                                hourlyAxisX.labelsAngle = 90;
+                            } else {
+                                hourlyAxisX.labelsAngle = 45;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Daily forecast - Horizontal list
+            ListView {
+                id: dailyForecastList
+                Layout.fillWidth: true
+                Layout.preferredHeight: 120
+                Layout.margins: 8
+                visible: forecastData !== null && !isLoading && dailyForecastModel.count > 0
+                orientation: ListView.Horizontal
+                spacing: 8
+                clip: true
+                model: dailyForecastModel
+                
+                delegate: Rectangle {
+                    width: 100
+                    height: dailyForecastList.height
+                    color: Theme.controlBackgroundAlternateColor
+                    border.color: Theme.controlBorderColor
+                    border.width: 1
+                    radius: 4
+                    
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.margins: 4
+                        spacing: 2
+                        
+                        Label {
+                            text: model.dayOfWeek
+                            font.bold: true
+                            font.pixelSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            Layout.fillWidth: true
+                            color: Theme.mainTextColor
+                        }
+                        
+                        Image {
+                            source: model.weatherIcon
+                            Layout.preferredWidth: 40
+                            Layout.preferredHeight: 40
+                            Layout.alignment: Qt.AlignHCenter
+                            fillMode: Image.PreserveAspectFit
+                            asynchronous: true
+                            cache: true
+                            sourceSize.width: 40
+                            sourceSize.height: 40
+                            
+                            // Fallback icon if the weather icon fails to load
+                            onStatusChanged: {
+                                if (status === Image.Error) {
+                                    console.error("Failed to load daily weather icon: " + source);
+                                    source = "qrc:/themes/sigpacgo/nodpi/weather.svg";
+                                }
+                            }
+                        }
+                        
+                        Label {
+                            text: model.weatherDescription
+                            font.pixelSize: 10
+                            horizontalAlignment: Text.AlignHCenter
+                            Layout.fillWidth: true
+                            elide: Text.ElideRight
+                            wrapMode: Text.WordWrap
+                            maximumLineCount: 2
+                            color: Theme.mainTextColor
+                        }
+                        
+                        Label {
+                            text: model.maxTemp.toFixed(1) + "° / " + model.minTemp.toFixed(1) + "°"
+                            font.pixelSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            Layout.fillWidth: true
+                            color: Theme.mainTextColor
+                        }
+                        
+                        Label {
+                            text: model.precipitation > 0 ? model.precipitation.toFixed(1) + " mm" : ""
+                            font.pixelSize: 10
+                            horizontalAlignment: Text.AlignHCenter
+                            Layout.fillWidth: true
+                            visible: model.precipitation > 0
+                            color: Theme.mainTextColor
                         }
                     }
                 }
@@ -716,11 +847,11 @@ Drawer {
                 Layout.preferredHeight: locationBox.expanded ? 180 : 40
                 Layout.margins: 2
                 
-                property bool expanded: false
+                property bool expanded: true  // Set to true by default
                 
                 background: Rectangle {
-                    color: Material.dialogColor
-                    border.color: Material.dividerColor
+                    color: Theme.controlBackgroundColor
+                    border.color: Theme.controlBorderColor
                     border.width: 1
                     radius: 4
                     y: parent.topPadding - parent.bottomPadding
@@ -735,7 +866,7 @@ Drawer {
                     
                     Label {
                         text: parent.parent.title
-                        color: Material.accent
+                        color: Theme.accentColor
                         font.bold: true
                         font.pixelSize: 14
                         verticalAlignment: Text.AlignVCenter
@@ -789,8 +920,8 @@ Drawer {
                         text: "Ubicación actual"
                         Layout.columnSpan: 2
                         Layout.fillWidth: true
-                        Material.background: Material.accent
-                        Material.foreground: "white"
+                        Material.background: Theme.accentColor
+                        Material.foreground: Theme.buttonTextColor
                         onClicked: {
                             // Use the positioning system to get the current location
                             if (positionSource && positionSource.positionInformation && 
@@ -810,16 +941,16 @@ Drawer {
                                     updateLocation(lat, lon, name);
                                 }
                             } else {
-                                // Fallback to default location if positioning is not available
-                                latitudeField.text = "37.38";
-                                longitudeField.text = "-5.97";
-                                locationNameField.text = "Sevilla";
+                                // Fallback to Almería if positioning is not available
+                                latitudeField.text = "36.84";
+                                longitudeField.text = "-2.46";
+                                locationNameField.text = "Almería";
                                 
                                 // Show a message to the user
                                 errorMessage = "No se pudo obtener la ubicación actual. Usando ubicación predeterminada.";
                                 
                                 // Update the forecast with the default location
-                                updateLocation(37.38, -5.97, "Sevilla");
+                                updateLocation(36.84, -2.46, "Almería");
                             }
                         }
                     }
@@ -828,8 +959,8 @@ Drawer {
                         text: "Actualizar"
                         Layout.columnSpan: 2
                         Layout.fillWidth: true
-                        Material.background: Material.primary
-                        Material.foreground: "white"
+                        Material.background: Theme.mainColor
+                        Material.foreground: Theme.buttonTextColor
                         enabled: !isLoading
                         onClicked: {
                             var lat = parseFloat(latitudeField.text)

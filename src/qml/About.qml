@@ -49,7 +49,6 @@ Item {
         width: aboutPanel.width - 40
         height: Math.max(mainWindow.height - sponsorshipButton.height - linksButton.height - qfieldAppDirectoryLabel.height - aboutContainer.spacing * 3 - aboutContainer.anchors.topMargin - aboutContainer.anchors.bottomMargin - 10, qfieldPart.height + opengisPart.height + customImagePart.height + spacing * 2)
 
-        // First section - SIGPACGO logo and info
         ColumnLayout {
           id: qfieldPart
           Layout.fillWidth: true
@@ -81,19 +80,10 @@ Item {
             textFormat: Text.RichText
             wrapMode: Text.WordWrap
 
-            text: {
-              let links = '<a href="https://github.com/opengisch/QField/commit/' + gitRev + '">' + gitRev.substr(0, 6) + '</a>';
-              if (appVersion && appVersion !== '1.0.0') {
-                links += ' <a href="https://github.com/opengisch/QField/releases/tag/' + appVersion + '">' + appVersion + '</a>';
-              }
-              // the `qgisVersion` has the format `<int>.<int>.<int>-<any text>`, so we get everything before the first `-`
-              const qgisVersionWithoutName = qgisVersion.split("-", 1)[0];
-              const dependencies = [["QGIS", qgisVersionWithoutName], ["GDAL/OGR", gdalVersion], ["Qt", qVersion]];
-              const dependenciesStr = dependencies.map(pair => pair.join(" ")).join(" | ");
-              return "SIGPACGO<br>" + appVersionStr + " (" + links + ")<br>" + dependenciesStr;
+            text: {"Desarrollo basado en: QGIS 3.40.3 BRATISLAVIA | QField 3.5.2 | 
+            GDAL/OGR 3.10.1 | Qt 6.8.2 | ANDROID NDK 26 |"
             }
 
-            onLinkActivated: link => Qt.openUrlExternally(link)
           }
         }
 
@@ -143,19 +133,19 @@ Item {
           spacing: 5
 
           MouseArea {
-            Layout.preferredWidth: 80
+            Layout.preferredWidth: 200
             Layout.preferredHeight: 100
             Layout.alignment: Qt.AlignHCenter
             Image {
-              id: opengisLogo
+              id: inTecnaturLogo
               width: parent.width
               height: parent.height
               fillMode: Image.PreserveAspectFit
-              source: "qrc:/images/imagr-logo.svg"
+              source: "qrc:/images/intecnatur-logo.svg"
               sourceSize.width: width * screen.devicePixelRatio
               sourceSize.height: height * screen.devicePixelRatio
             }
-            onClicked: Qt.openUrlExternally("https://opengis.ch")
+            onClicked: Qt.openUrlExternally("https://sites.google.com/view/intecnatur")
           }
 
           Label {
@@ -165,7 +155,8 @@ Item {
             font: Theme.strongFont
             color: Theme.light
             textFormat: Text.RichText
-            text: qsTr("Developed by") + '<br><a href="https://opengis.ch">OPENGIS.ch</a>'
+            text: qsTr("Mis agradecimientos a los amigos de InTecnatur consultoría agroecológica") + 
+                 " " + '<br><a href="https://sites.google.com/view/intecnatur">https://sites.google.com/view/intecnatur</a>'
             onLinkActivated: link => Qt.openUrlExternally(link)
           }
         }

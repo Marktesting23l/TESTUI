@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls.Material 2.12
 import QtCharts 2.3
 import QtPositioning 5.12
+import "imports/Theme" as AppTheme
 
 Drawer {
     id: weatherDataPanel
@@ -15,25 +16,6 @@ Drawer {
     property string errorMessage: ""
     property bool hasError: errorMessage !== ""
     
-    // Signal to zoom to station in QGIS
-    // This signal should be connected to a slot in the QGIS application that centers the map on the given coordinates
-    // Example connection in Python:
-    // 
-    // def zoom_to_coordinates(self, latitude, longitude):
-    //     """Zoom to the given coordinates in the QGIS map canvas"""
-    //     # Create a point with the given coordinates
-    //     point = QgsPointXY(longitude, latitude)
-    //     # Create a rectangle centered on the point
-    //     rect = QgsRectangle(point, point)
-    //     # Expand the rectangle to create some padding
-    //     rect.grow(0.01)  # Adjust this value as needed
-    //     # Set the extent of the map canvas to the rectangle
-    //     self.iface.mapCanvas().setExtent(rect)
-    //     # Refresh the map canvas
-    //     self.iface.mapCanvas().refresh()
-    //
-    // # Connect the signal
-    // self.weatherPanel.zoomToStation.connect(self.zoom_to_coordinates)
     signal zoomToStation(double latitude, double longitude)
     
     // List of Andalucía provinces IDs
@@ -48,6 +30,9 @@ Drawer {
     // Property to store user's current position
     property double userLatitude: 0
     property double userLongitude: 0
+    
+    // Property to track if we've already found the nearest station
+    property bool hasFoundNearestStation: false
     
     // Hardcoded station coordinates from the TSV file
     property var stationCoordinates: [
@@ -158,7 +143,6 @@ Drawer {
         { provinceId: 41, code: "101", name: "IFAPA Centro Las Torres-Tomejil. Finca Tomejil", latitude: 37.4008, longitude: -5.5875 }
     ]
     
-    // Position source for geolocation
     PositionSource {
         id: positionSource
         active: false
@@ -180,6 +164,9 @@ Drawer {
     
     // Function to find the nearest station to the user's location
     function findNearestStation() {
+        // Reset the flag when manually requesting to find nearest station
+        hasFoundNearestStation = false
+        
         // Check if we have user's position
         if (userLatitude === 0 && userLongitude === 0) {
             // Try to get user's position
@@ -253,6 +240,7 @@ Drawer {
                     if (stationsModel.get(k).code === nearestStation.code) {
                         stationComboBox.currentIndex = k;
                         selectedStation = stationsModel.get(k);
+                        hasFoundNearestStation = true;
                         break;
                     }
                 }
@@ -309,8 +297,8 @@ Drawer {
     // Apply theme styling
     Material.elevation: 6
     background: Rectangle {
-        color: Material.background
-        border.color: Material.accent
+        color: AppTheme.Theme.mainBackgroundColor
+        border.color: AppTheme.Theme.accentColor
         border.width: 1
         radius: 4
     }
@@ -971,15 +959,32 @@ Drawer {
             Layout.fillWidth: true
             spacing: 1
             
+            Image {
+                source: "qrc:///icons/Flag_of_Andalucía.svg.svg"
+                width: 24
+                height: 24
+                Layout.leftMargin: 4
+                Layout.alignment: Qt.AlignVCenter
+                
+                // If the weather icon is not available, use a fallback
+                onStatusChanged: {
+                    if (status === Image.Error) {
+                        source = "qrc:///icons/mActionMetadata.svg" // Fallback icon
+                    }
+                }
+            }
+            
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 0
+                Layout.leftMargin: 4
             
                 Label {
                     text: "Datos Meteorológicos RIA"
                     font.pixelSize: isSmallScreen ? 12 : 16
                     font.bold: true
                     Layout.fillWidth: true
+                    color: AppTheme.Theme.mainTextColor
                 }
                 
                 Label {
@@ -987,6 +992,7 @@ Drawer {
                     font.pixelSize: isSmallScreen ? 10 : 12
                     Layout.fillWidth: true
                     onLinkActivated: Qt.openUrlExternally(link)
+                    color: AppTheme.Theme.accentColor
                 }
             }
             
@@ -994,8 +1000,8 @@ Drawer {
             Button {
                 text: isSmallScreen ? "" : "Cargar estación más cercana"
                 icon.source: "qrc:///icons/mActionGps.svg"
-                Material.background: Material.accent
-                Material.foreground: "white"
+                Material.background: AppTheme.Theme.accentColor
+                Material.foreground: AppTheme.Theme.buttonTextColor
                 implicitWidth: isSmallScreen ? 70 : undefined
                 implicitHeight: isSmallScreen ? 40 : undefined
                 padding: isSmallScreen ? 0 : 4
@@ -1008,31 +1014,13 @@ Drawer {
                 ToolTip.text: "Cargar la estación meteorológica más cercana a tu ubicación"
             }
             
-            // Add location button - Wider but less height
-            Button {
-                id: locationButton
-                text: isSmallScreen ? "" : "Ver ubicación"
-                icon.source: "qrc:///icons/mActionZoomToLayer.svg"
-                Material.background: Material.accent
-                Material.foreground: "white"
-                visible: selectedStation !== null
-                implicitWidth: isSmallScreen ? 70 : undefined
-                implicitHeight: isSmallScreen ? 40 : undefined
-                padding: isSmallScreen ? 0 : 4
-                onClicked: {
-                    if (selectedStation && selectedStation.latitude && selectedStation.longitude) {
-                        zoomToStation(selectedStation.latitude, selectedStation.longitude)
-                    }
-                }
-                ToolTip.visible: hovered
-                ToolTip.text: "Centrar el mapa en la ubicación de la estación"
-            }
+
             
             Button {
                 text: isSmallScreen ? "" : "Cerrar"
                 icon.source: "qrc:///icons/mActionRemove.svg"
-                Material.background: Material.primary
-                Material.foreground: "white"
+                Material.background: AppTheme.Theme.mainColor
+                Material.foreground: AppTheme.Theme.buttonTextColor
                 implicitWidth: isSmallScreen ? 70 : undefined
                 implicitHeight: isSmallScreen ? 40 : undefined
                 padding: isSmallScreen ? 0 : 4
@@ -1044,7 +1032,7 @@ Drawer {
         Rectangle {
             visible: hasError
             color: "#FFEBEE"
-            border.color: "#D32F2F"
+            border.color: AppTheme.Theme.errorColor
             border.width: 1
             radius: 4
             Layout.fillWidth: true
@@ -1053,7 +1041,7 @@ Drawer {
             Label {
                 id: errorLabel
                 text: errorMessage
-                color: "#D32F2F"
+                color: AppTheme.Theme.errorColor
                 anchors.centerIn: parent
                 anchors.margins: 8
                 wrapMode: Text.WordWrap
@@ -1078,8 +1066,8 @@ Drawer {
             property bool expanded: true // Always expanded by default
             
             background: Rectangle {
-                color: Material.dialogColor
-                border.color: Material.dividerColor
+                color: AppTheme.Theme.controlBackgroundColor
+                border.color: AppTheme.Theme.controlBorderColor
                 border.width: 1
                 radius: 4
                 y: parent.topPadding - parent.bottomPadding
@@ -1094,7 +1082,7 @@ Drawer {
                 
                 Label {
                     text: parent.parent.title
-                    color: Material.accent
+                    color: AppTheme.Theme.accentColor
                     font.bold: true
                     font.pixelSize: 14
                     verticalAlignment: Text.AlignVCenter
@@ -1121,6 +1109,7 @@ Drawer {
                 Label { 
                     text: "Provincia:" 
                     font.pixelSize: 10
+                    color: AppTheme.Theme.mainTextColor
                 }
                 ComboBox {
                     id: provinceComboBox
@@ -1143,6 +1132,7 @@ Drawer {
                 Label { 
                     text: "Estación:" 
                     font.pixelSize: 10
+                    color: AppTheme.Theme.mainTextColor
                 }
                 ComboBox {
                     id: stationComboBox
@@ -1171,8 +1161,8 @@ Drawer {
             property bool expanded: true // Always expanded by default
             
             background: Rectangle {
-                color: Material.dialogColor
-                border.color: Material.dividerColor
+                color: AppTheme.Theme.controlBackgroundColor
+                border.color: AppTheme.Theme.controlBorderColor
                 border.width: 1
                 radius: 4
                 y: parent.topPadding - parent.bottomPadding
@@ -1189,7 +1179,7 @@ Drawer {
                 
                 Label {
                     text: parent.parent.title
-                    color: Material.accent
+                    color: AppTheme.Theme.accentColor
                     font.bold: true
                     font.pixelSize: 14
                     verticalAlignment: Text.AlignVCenter
@@ -1409,14 +1399,19 @@ Drawer {
                 Button {
                     text: "Cargar datos"
                     Layout.fillWidth: true
-                    enabled: !isLoading && selectedStation !== null
-                    Material.background: Material.primary
-                    Material.foreground: "white"
+                    enabled: !isLoading && selectedStation !== null && selectedProvince !== null
+                    Material.background: AppTheme.Theme.mainColor
+                    Material.foreground: AppTheme.Theme.buttonTextColor
                     font.bold: true
                     font.pixelSize: 14
                     implicitHeight: 36
                     
                     onClicked: {
+                        if (!selectedProvince) {
+                            errorMessage = "Por favor, seleccione una provincia primero."
+                            return;
+                        }
+                        
                         isLoading = true
                         errorMessage = ""
                         
@@ -1523,12 +1518,14 @@ Drawer {
                 text: "Gráfico"
                 padding: 0
                 font.pixelSize: 10
+                Material.foreground: AppTheme.Theme.mainTextColor
             }
             
             TabButton {
                 text: "Tabla"
                 padding: 0
                 font.pixelSize: 10
+                Material.foreground: AppTheme.Theme.mainTextColor
             }
         }
         
@@ -1560,8 +1557,8 @@ Drawer {
                     margins.right: 0
                     
                     // Theme styling
-                    backgroundColor: Material.background
-                    titleColor: Material.foreground
+                    backgroundColor: AppTheme.Theme.mainBackgroundColor
+                    titleColor: AppTheme.Theme.mainTextColor
                     titleFont.pixelSize: 12
                     titleFont.bold: true
                     
@@ -1617,6 +1614,7 @@ Drawer {
                         ButtonGroup.group: variableGroup
                         padding: 1
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "temperature"
@@ -1630,6 +1628,7 @@ Drawer {
                         ButtonGroup.group: variableGroup
                         padding: 1
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "humidity"
@@ -1643,6 +1642,7 @@ Drawer {
                         ButtonGroup.group: variableGroup
                         padding: 1
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "radiation"
@@ -1657,6 +1657,7 @@ Drawer {
                         padding: 1
                         enabled: !isMonthlyData
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "et0"
@@ -1670,6 +1671,7 @@ Drawer {
                         ButtonGroup.group: variableGroup
                         padding: 1
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "precipitation"
@@ -1683,6 +1685,7 @@ Drawer {
                         ButtonGroup.group: variableGroup
                         padding: 1
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "thermal_integral"
@@ -1696,6 +1699,7 @@ Drawer {
                         ButtonGroup.group: variableGroup
                         padding: 1
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "radiation_integral"
@@ -1710,6 +1714,7 @@ Drawer {
                         padding: 1
                         enabled: !isMonthlyData
                         font.pixelSize: 9
+                        Material.accent: AppTheme.Theme.accentColor
                         onCheckedChanged: {
                             if (checked) {
                                 selectedVariable = "et0_accumulated"
@@ -1749,6 +1754,7 @@ Drawer {
                                 font.bold: true
                                 font.pixelSize: 10
                                 Layout.fillWidth: true
+                                color: AppTheme.Theme.mainTextColor
                             }
                             
                             GridLayout {
@@ -1760,10 +1766,12 @@ Drawer {
                                 Label { 
                                     text: "Temp. Máxima:" 
                                     font.pixelSize: 10
+                                    color: AppTheme.Theme.mainTextColor
                                 }
                                 Label { 
                                     text: modelData.tempMax + " °C" 
                                     font.pixelSize: 10
+                                    color: AppTheme.Theme.mainTextColor
                                 }
                                 
                                 Label { 
@@ -1863,7 +1871,7 @@ Drawer {
                             Rectangle {
                                 height: 1
                                 Layout.fillWidth: true
-                                color: "#DDDDDD"
+                                color: AppTheme.Theme.controlBorderColor
                                 visible: index < dataListView.count - 1
                             }
                         }

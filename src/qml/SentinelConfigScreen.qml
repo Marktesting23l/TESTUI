@@ -14,16 +14,67 @@ Popup {
   
   // Properties
   property string instanceId: ""
-  property string customLayerId: ""
-  property string evalScriptUrl: ""
-  property string evalScript: ""
-  property var selectedLayers: ["TRUE_COLOR", "FALSE_COLOR", "NDVI", "CUSTOM"]
-  property var layerStyles: {
-    "TRUE_COLOR": "DEFAULT",
-    "FALSE_COLOR": "DEFAULT",
-    "NDVI": "VIZ",
-    "CUSTOM": "DEFAULT"
-  }
+  property string custom1LayerId: ""
+  property string custom2LayerId: ""
+  property var selectedLayers: []
+  property var layerStyles: ({
+    "TRUE_COLOR": "ON",
+    "FALSE_COLOR": "ON",
+    "NDVI": "ON",
+    "CUSTOM1": "DEFAULT",
+    "CUSTOM2": "DEFAULT"
+  })
+  property var predefinedLayers: [
+    {name: "True color", id: "TRUE_COLOR"},
+    {name: "B1 - Coastal aerosol", id: "B01"},
+    {name: "B2 - Blue", id: "B02"},
+    {name: "B3 - Green", id: "B03"},
+    {name: "B4 - Red", id: "B04"},
+    {name: "B5 - Vegetation Red Edge (705 nm)", id: "B05"},
+    {name: "B6 - Vegetation Red Edge (740 nm)", id: "B06"},
+    {name: "B7 - Vegetation Red Edge (783 nm)", id: "B07"},
+    {name: "B8 - Near infrared", id: "B08"},
+    {name: "B8A - Vegetation Red Edge (865 nm)", id: "B8A"},
+    {name: "B9 - Water vapour", id: "B09"},
+    {name: "B10 - SWIR - Cirrus", id: "B10"},
+    {name: "B11 - SWIR (1610 nm)", id: "B11"},
+    {name: "B12 - SWIR (2190 nm)", id: "B12"},
+    {name: "Agriculture", id: "AGRICULTURE"},
+    {name: "ARI1 (Anthocyanin Reflectance Index)", id: "ARI1"},
+    {name: "ARI2 (Anthocyanin Reflectance Index)", id: "ARI2"},
+    {name: "Atmospheric penetration", id: "ATMOSPHERIC_PENETRATION"},
+    {name: "BAI (Burn Area Index)", id: "BAI"},
+    {name: "Bathymetric", id: "BATHYMETRIC"},
+    {name: "CHL-RED-EDGE (Chlorophyll Red-Edge)", id: "CHL_RED_EDGE"},
+    {name: "CRI1 (Carotenoid Reflectance Index 1)", id: "CRI1"},
+    {name: "CRI2 (Carotenoid Reflectance Index 2)", id: "CRI2"},
+    {name: "EVI (Enhanced Vegetation Index)", id: "EVI"},
+    {name: "EVI2 (Enhanced Vegetation Index 2)", id: "EVI2"},
+    {name: "False color (urban)", id: "FALSE_COLOR_URBAN"},
+    {name: "False color (vegetation)", id: "FALSE_COLOR"},
+    {name: "Geology", id: "GEOLOGY"},
+    {name: "GRVI1 (Green-red Vegetation Index)", id: "GRVI1"},
+    {name: "LAI-SAVI (Leaf Area Index - Soil Adjusted Vegetation Index)", id: "LAI_SAVI"},
+    {name: "Moisture Index", id: "MOISTURE_INDEX"},
+    {name: "MSAVI2 (Second Modified Soil Adjusted Vegetation Index)", id: "MSAVI2"},
+    {name: "NBR-RAW (Normalized Burn Ratio)", id: "NBR_RAW"},
+    {name: "NDVI (Normalized Difference Vegetation Index)", id: "NDVI"},
+    {name: "NDVI-GRAY (Normalized Difference Vegetation Index - Grayscale)", id: "NDVI_GRAY"},
+    {name: "NDVI-GREEN (Normalized Difference Vegetation Index - Green)", id: "NDVI_GREEN_GRAY"},
+    {name: "NDWI (Normalized Difference Water Index)", id: "NDWI"},
+    {name: "PSRI (Plant Senescence Reflectance Index)", id: "PSRI"},
+    {name: "PSRI-NIR (Plant Senescence Reflectance Index - Near Infra-red)", id: "PSRI_NIR"},
+    {name: "RE-NDWI (Red Edge - Normalized Difference Water Index)", id: "RE_NDWI"},
+    {name: "Red edge NDVI", id: "RED_EDGE_NDVI"},
+    {name: "RGB (11,8,3)", id: "RGB_11_8_3"},
+    {name: "RGB (4,3,1) - Bathymetric", id: "RGB_4_3_1"},
+    {name: "RGB (8,11,12)", id: "RGB_8_11_12"},
+    {name: "RGB (8,11,4)", id: "RGB_8_11_4"},
+    {name: "RGB (8,5,4)", id: "RGB_8_5_4"},
+    {name: "RGB (8,6,4)", id: "RGB_8_6_4"},
+    {name: "SAVI (Soil Adjusted Vegetation Index)", id: "SAVI"},
+    {name: "SWIR", id: "SWIR"}
+  ]
   
   // Layout
   x: 0
@@ -72,7 +123,7 @@ Popup {
         
         Label {
           Layout.fillWidth: true
-          text: qsTr("Sentinel Hub Configuration")
+          text: qsTr("Configuración de Sentinel Hub")
           font.pixelSize: 20
           font.bold: true
           color: "white"
@@ -133,7 +184,8 @@ Popup {
               settings.setValue("QField/Sentinel/RateLimitDelay", rateLimitDelayField.text)
             }
             
-            // Save custom script settings
+            // Save custom script settings - commented out as they don't work
+            /*
             settings.setValue("QField/Sentinel/CustomScriptEnabled", enableCustomScript.checked)
             if (enableCustomScript.checked) {
               settings.setValue("QField/Sentinel/ScriptUrl", scriptUrlField.text)
@@ -143,8 +195,14 @@ Popup {
             // Save custom layer script settings
             settings.setValue("QField/Sentinel/EvalScriptUrl", customEvalScriptUrlField.text)
             settings.setValue("QField/Sentinel/EvalScript", customEvalScriptField.text)
+            */
+            
+            // Set a flag to force reload of layers
+            settings.setValue("QField/Sentinel/SettingsChanged", true)
             
             mainWindow.displayToast(qsTr("Sentinel settings saved. Restart QField or reload your project for changes to take effect."))
+            
+            // Close the screen
             sentinelConfigScreen.close()
           }
         }
@@ -156,7 +214,7 @@ Popup {
       id: tabBar
       Layout.fillWidth: true
       Layout.preferredHeight: defaultHeight
-      model: [qsTr("Basic"), qsTr("Layers"), qsTr("Query Builder")]
+      model: [qsTr("Básico"), qsTr("Capas"), qsTr("Constructor de Consultas")]
     }
     
     // Tab Content
@@ -189,7 +247,7 @@ Popup {
               Layout.leftMargin: 20
               Layout.rightMargin: 20
               Layout.topMargin: 20
-              text: qsTr("Sentinel Hub Instance ID")
+              text: qsTr("ID de Instancia de Sentinel Hub")
               font: Theme.strongFont
               color: Theme.mainColor
             }
@@ -200,7 +258,7 @@ Popup {
               Layout.leftMargin: 20
               Layout.rightMargin: 20
               text: sentinelConfigScreen.instanceId
-              placeholderText: qsTr("Enter your Sentinel Hub instance ID")
+              placeholderText: qsTr("Ingrese su ID de instancia de Sentinel Hub")
               font: Theme.defaultFont
               
               onTextChanged: {
@@ -212,7 +270,7 @@ Popup {
               Layout.fillWidth: true
               Layout.leftMargin: 20
               Layout.rightMargin: 20
-              text: qsTr("The instance ID is required to access Sentinel Hub WMS services. You can find it in your Sentinel Hub account.")
+              text: qsTr("El ID de instancia es necesario para acceder a los servicios WMS de Sentinel Hub. Puede encontrarlo en su cuenta de Copernicus Data Space Ecosystem.")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
@@ -220,7 +278,7 @@ Popup {
             
             Label {
               Layout.fillWidth: true
-              text: qsTr("Learn more about <a href='https://www.sentinel-hub.com/'>Sentinel Hub</a>")
+              text: qsTr("Más información sobre <a href='https://dataspace.copernicus.eu/'>Copernicus Data Space Ecosystem</a>")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               textFormat: Qt.RichText
@@ -240,14 +298,14 @@ Popup {
             
             Label {
               Layout.fillWidth: true
-              text: qsTr("How to get a Sentinel Hub Instance ID:")
+              text: qsTr("Cómo obtener un ID de Instancia de Sentinel Hub:")
               font: Theme.strongFont
               color: Theme.mainColor
             }
             
             Label {
               Layout.fillWidth: true
-              text: qsTr("1. Create an account at <a href='https://www.sentinel-hub.com/'>sentinel-hub.com</a>")
+              text: qsTr("1. Cree una cuenta en <a href='https://dataspace.copernicus.eu/'>dataspace.copernicus.eu</a>")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               textFormat: Qt.RichText
@@ -259,7 +317,7 @@ Popup {
             
             Label {
               Layout.fillWidth: true
-              text: qsTr("2. Create a new configuration")
+              text: qsTr("2. Cree una nueva configuración")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
@@ -267,7 +325,15 @@ Popup {
             
             Label {
               Layout.fillWidth: true
-              text: qsTr("3. Find your instance ID in the configuration details")
+              text: qsTr("3. Encuentre su ID de instancia en los detalles de configuración")
+              font: Theme.tipFont
+              color: Theme.secondaryTextColor
+              wrapMode: Text.WordWrap
+            }
+            
+            Label {
+              Layout.fillWidth: true
+              text: qsTr("El nivel gratuito incluye 30,000 unidades de procesamiento por mes")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
@@ -297,7 +363,7 @@ Popup {
               Layout.leftMargin: 20
               Layout.rightMargin: 20
               Layout.topMargin: 40
-              text: qsTr("Available Sentinel Layers")
+              text: qsTr("Capas de Sentinel Disponibles")
               font: Theme.strongFont
               color: Theme.mainColor
             }
@@ -307,7 +373,7 @@ Popup {
               Layout.leftMargin: 20
               Layout.rightMargin: 20
               Layout.bottomMargin: 20
-              text: qsTr("Toggle layers to include in your projects")
+              text: qsTr("Active las capas para incluirlas en sus proyectos")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
@@ -326,11 +392,13 @@ Popup {
                 property string customId: ""
                 property string scriptUrl: ""
                 property string scriptContent: ""
+                property bool hasLayerDropdown: false
+                property string selectedLayerId: ""
                 
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
                 Layout.rightMargin: 20
-                Layout.preferredHeight: layerCardContent.height + 60
+                Layout.preferredHeight: hasLayerDropdown ? 250 : (hasCustomOptions ? 350 : 150)
                 Layout.bottomMargin: 40
                 color: Theme.toolButtonBackgroundColor
                 radius: 8
@@ -355,18 +423,38 @@ Popup {
                       
                       onCheckedChanged: {
                         isChecked = checked
-                        if (checked && !selectedLayers.includes(layerName)) {
-                          selectedLayers.push(layerName)
-                        } else if (!checked && selectedLayers.includes(layerName)) {
+                        if (checked) {
+                          // Add layer to selectedLayers when checked
+                          if (!selectedLayers.includes(layerName)) {
+                            selectedLayers.push(layerName)
+                          }
+                          // Set default style when adding a layer
+                          if (!layerStyles[layerName]) {
+                            layerStyles[layerName] = layerName.startsWith("CUSTOM") ? "DEFAULT" : "ON"
+                            currentStyle = layerStyles[layerName]
+                            if (layerName.startsWith("CUSTOM")) {
+                              styleCombo.currentIndex = 0 // DEFAULT
+                            } else {
+                              styleCombo.currentIndex = 0 // ON
+                            }
+                          }
+                        } else {
+                          // Remove layer from selectedLayers when unchecked
                           selectedLayers = selectedLayers.filter(layer => layer !== layerName)
                         }
+                        
+                        // Save the toggle state immediately
+                        if (typeof settings !== 'undefined' && settings !== null) {
+                          saveLayerSettings()
+                        }
+                        
                         updatePreview()
                       }
                     }
                     
                     ColumnLayout {
                       Layout.fillWidth: true
-                      spacing: 12
+                      spacing: -25
                       
                       Label {
                         text: layerName
@@ -381,190 +469,185 @@ Popup {
                         wrapMode: Text.WordWrap
                         Layout.fillWidth: true
                       }
+                      
+                      // Layer dropdown for predefined layers - always in layout but visibility controlled
+                      Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 80 // Fixed height to prevent movement
+                        clip: true
+                        visible: hasLayerDropdown
+                        
+                        ColumnLayout {
+                          id: layerDropdownColumn
+                          anchors.fill: parent
+                          opacity: layerSwitch.checked ? 1.0 : 0.0
+                          enabled: layerSwitch.checked
+                          spacing: -10
+                          
+                          ComboBox {
+                            id: layerDropdown
+                            Layout.fillWidth: true
+                            enabled: layerSwitch.checked
+                            model: []
+                            textRole: "text"
+                            
+                            Component.onCompleted: {
+                              // Populate the dropdown with predefined layers
+                              let items = []
+                              for (let i = 0; i < predefinedLayers.length; i++) {
+                                items.push({
+                                  text: predefinedLayers[i].name,
+                                  value: predefinedLayers[i].id
+                                })
+                              }
+                              model = items
+                              
+                              // Set initial selection based on selectedLayerId
+                              for (let i = 0; i < items.length; i++) {
+                                if (items[i].value === selectedLayerId) {
+                                  currentIndex = i
+                                  break
+                                }
+                              }
+                            }
+                            
+                            onCurrentIndexChanged: {
+                              if (currentIndex >= 0 && currentIndex < model.length) {
+                                selectedLayerId = model[currentIndex].value
+                                updatePreview()
+                                
+                                // Save the selected layer ID immediately
+                                if (typeof settings !== 'undefined' && settings !== null) {
+                                  if (layerName === "TRUE_COLOR") {
+                                    settings.setValue("QField/Sentinel/TrueColorLayerId", selectedLayerId)
+                                  } else if (layerName === "FALSE_COLOR") {
+                                    settings.setValue("QField/Sentinel/FalseColorLayerId", selectedLayerId)
+                                  } else if (layerName === "NDVI") {
+                                    settings.setValue("QField/Sentinel/NdviLayerId", selectedLayerId)
+                                  }
+                                  settings.setValue("QField/Sentinel/SettingsUpdated", true)
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                     
-                    ComboBox {
-                      id: styleCombo
-                      model: layerName === "CUSTOM" ? ["DEFAULT", "ON", "OFF"] : ["ON", "OFF"]
-                      currentIndex: layerName === "CUSTOM" ? 
-                                    (currentStyle === "DEFAULT" ? 0 : (currentStyle === "ON" ? 1 : 2)) : 
-                                    (currentStyle === "ON" ? 0 : 1)
-                      enabled: layerSwitch.checked
+                    ColumnLayout {
+                      spacing: 5
                       Layout.preferredWidth: 120
+                      Layout.alignment: Qt.AlignTop
                       
-                      onCurrentTextChanged: {
-                        currentStyle = currentText
-                        layerStyles[layerName] = currentText
-                        updatePreview()
+                      Label {
+                        text: qsTr("Estilo")
+                        font: Theme.tipFont
+                        color: Theme.secondaryTextColor
+                        Layout.alignment: Qt.AlignHCenter
+                      }
+                      
+                      ComboBox {
+                        id: styleCombo
+                        model: layerName.startsWith("CUSTOM") ? ["DEFAULT", "ON", "OFF"] : ["ON", "OFF"]
+                        currentIndex: layerName.startsWith("CUSTOM") ? 
+                                      (currentStyle === "DEFAULT" ? 0 : (currentStyle === "ON" ? 1 : 2)) : 
+                                      (currentStyle === "ON" ? 0 : 1)
+                        enabled: layerSwitch.checked
+                        Layout.preferredWidth: 120
+                        
+                        onCurrentTextChanged: {
+                          currentStyle = currentText
+                          layerStyles[layerName] = currentText
+                          
+                          // Save the style setting immediately
+                          if (typeof settings !== 'undefined' && settings !== null) {
+                            settings.setValue("QField/Sentinel/Styles/" + layerName, currentText)
+                            settings.setValue("QField/Sentinel/SettingsUpdated", true)
+                            saveLayerSettings()
+                          }
+                          
+                          updatePreview()
+                        }
                       }
                     }
                   }
                   
-                  // Custom options container (only visible for Custom layer)
-                  ColumnLayout {
-                    id: customOptionsContainer
+                  // Custom options container (only visible for Custom layers)
+                  Item {
                     Layout.fillWidth: true
-                    Layout.topMargin: 25
-                    spacing: 25
-                    visible: hasCustomOptions && layerSwitch.checked
+                    Layout.preferredHeight: 180 // Fixed height to prevent movement
+                    clip: true
+                    visible: hasCustomOptions
                     
-                    Rectangle {
-                      Layout.fillWidth: true
-                      height: 2
-                      color: Theme.secondaryTextColor
-                      opacity: 0.3
-                      Layout.bottomMargin: 10
-                    }
-                    
-                    // Custom Layer ID Section
                     ColumnLayout {
-                      Layout.fillWidth: true
-                      spacing: 15
+                      id: customOptionsLayout
+                      width: parent.width
+                      opacity: layerSwitch.checked ? 1.0 : 0.0
+                      enabled: layerSwitch.checked
+                      spacing: 10
                       
-                      Label {
-                        text: qsTr("Custom Layer ID:")
-                        font: Theme.defaultFont
-                        color: Theme.mainColor
-                      }
-                      
-                      TextField {
-                        id: layerIdField
+                      Rectangle {
                         Layout.fillWidth: true
-                        Layout.topMargin: 5
-                        placeholderText: qsTr("Enter layer ID (e.g., AGRICULTURE)")
-                        text: customId
-                        
-                        onTextChanged: {
-                          customId = text
-                          if (layerName === "CUSTOM") {
-                            sentinelConfigScreen.customLayerId = text
-                          }
-                          updatePreview()
-                        }
-                      }
-                      
-                      Label {
-                        visible: layerIdField.text.trim() === ""
-                        text: qsTr("Please enter a layer ID for the custom layer")
-                        font: Theme.tipFont
-                        color: Theme.warningColor
-                        wrapMode: Text.WordWrap
-                      }
-                    }
-                    
-                    // Script URL Section
-                    ColumnLayout {
-                      Layout.fillWidth: true
-                      spacing: 15
-                      Layout.topMargin: 20
-                      
-                      Label {
-                        text: qsTr("Script URL:")
-                        font: Theme.defaultFont
-                        color: Theme.mainColor
-                      }
-                      
-                      TextField {
-                        id: scriptUrlField
-                        Layout.fillWidth: true
-                        Layout.topMargin: 5
-                        placeholderText: qsTr("https://example.com/script.js")
-                        text: scriptUrl
-                        
-                        onTextChanged: {
-                          scriptUrl = text
-                          if (layerName === "CUSTOM") {
-                            sentinelConfigScreen.evalScriptUrl = text
-                          }
-                          updatePreview()
-                        }
-                      }
-                      
-                      Label {
-                        text: qsTr("The script URL should point to a JavaScript file hosted on an HTTPS server.")
-                        font: Theme.tipFont
+                        height: 2
                         color: Theme.secondaryTextColor
-                        wrapMode: Text.WordWrap
-                      }
-                    }
-                    
-                    // OR Separator
-                    Label {
-                      text: qsTr("OR")
-                      font.bold: true
-                      color: Theme.mainColor
-                      horizontalAlignment: Text.AlignHCenter
-                      Layout.fillWidth: true
-                      Layout.topMargin: 20
-                      Layout.bottomMargin: 20
-                    }
-                    
-                    // BASE64 Script Section
-                    ColumnLayout {
-                      Layout.fillWidth: true
-                      spacing: 15
-                      
-                      Label {
-                        text: qsTr("BASE64 Encoded Script:")
-                        font: Theme.defaultFont
-                        color: Theme.mainColor
+                        opacity: 0.3
+                        Layout.bottomMargin: 5
                       }
                       
-                      TextArea {
-                        id: scriptContentField
+                      // Custom Layer ID Section
+                      ColumnLayout {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 150
-                        Layout.topMargin: 5
-                        placeholderText: qsTr("Paste your BASE64 encoded script here")
-                        text: scriptContent
-                        wrapMode: TextEdit.Wrap
+                        spacing: 0
                         
-                        onTextChanged: {
-                          scriptContent = text
-                          if (layerName === "CUSTOM") {
-                            sentinelConfigScreen.evalScript = text
+                        Label {
+                          text: qsTr("ID de Capa Personalizada:")
+                          font: Theme.defaultFont
+                          color: Theme.mainColor
+                        }
+                        
+                        TextField {
+                          id: layerIdField
+                          Layout.fillWidth: true
+                          Layout.topMargin: 0
+                          placeholderText: qsTr("Ingrese ID de capa (ej., AGRICULTURE)")
+                          text: customId
+                          enabled: layerSwitch.checked
+                          
+                          onTextChanged: {
+                            customId = text
+                            if (layerName === "CUSTOM1") {
+                              sentinelConfigScreen.custom1LayerId = text
+                            } else if (layerName === "CUSTOM2") {
+                              sentinelConfigScreen.custom2LayerId = text
+                            }
+                            updatePreview()
+                            
+                            // Save the custom layer ID immediately
+                            if (typeof settings !== 'undefined' && settings !== null) {
+                              if (layerName === "CUSTOM1") {
+                                settings.setValue("QField/Sentinel/Custom1LayerId", text)
+                              } else if (layerName === "CUSTOM2") {
+                                settings.setValue("QField/Sentinel/Custom2LayerId", text)
+                              }
+                              settings.setValue("QField/Sentinel/SettingsUpdated", true)
+                            }
                           }
-                          updatePreview()
-                        }
-                      }
-                      
-                      Label {
-                        text: qsTr("The script must be BASE64 encoded before pasting here.")
-                        font: Theme.tipFont
-                        color: Theme.secondaryTextColor
-                        wrapMode: Text.WordWrap
-                      }
-                      
-                      Label {
-                        text: qsTr("Note: Either provide a Script URL OR a BASE64 encoded script, not both.")
-                        font: Theme.tipFont
-                        color: Theme.warningColor
-                        wrapMode: Text.WordWrap
-                        visible: scriptUrlField.text.trim() !== "" && scriptContentField.text.trim() !== ""
-                      }
-                    }
-                    
-                    // Save Button for Custom Layer
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 60
-                      Layout.topMargin: 30
-                      Layout.bottomMargin: 10
-                      visible: layerName === "CUSTOM"
-                      
-                      text: qsTr("Save Custom Layer Settings")
-                      font.bold: true
-                      
-                      onClicked: {
-                        // Make sure to get the latest values from the custom layer
-                        if (customLayerLoader && customLayerLoader.item) {
-                          sentinelConfigScreen.customLayerId = customLayerLoader.item.customId
-                          sentinelConfigScreen.evalScriptUrl = customLayerLoader.item.scriptUrl
-                          sentinelConfigScreen.evalScript = customLayerLoader.item.scriptContent
                         }
                         
-                        saveLayerSettings()
-                        mainWindow.displayToast(qsTr("Custom layer settings saved"))
+                        Label {
+                          visible: layerIdField.text.trim() === ""
+                          text: qsTr("Por favor ingrese un ID para la capa personalizada")
+                          font: Theme.tipFont
+                          color: Theme.warningColor
+                          wrapMode: Text.WordWrap
+                        }
+                      }
+                      
+                      ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 15
+                        Layout.topMargin: 20
+                        visible: false // Hide script options
                       }
                     }
                   }
@@ -577,7 +660,7 @@ Popup {
                   // Initialize the style combo based on layerStyles
                   if (layerStyles[layerName]) {
                     currentStyle = layerStyles[layerName]
-                    if (layerName === "CUSTOM") {
+                    if (layerName.startsWith("CUSTOM")) {
                       styleCombo.currentIndex = currentStyle === "DEFAULT" ? 0 : (currentStyle === "ON" ? 1 : 2)
                     } else {
                       styleCombo.currentIndex = currentStyle === "ON" ? 0 : 1
@@ -594,9 +677,11 @@ Popup {
               
               onLoaded: {
                 item.layerName = "TRUE_COLOR"
-                item.layerDescription = qsTr("Natural color image (RGB)")
+                item.layerDescription = ""
                 item.isChecked = selectedLayers.includes("TRUE_COLOR")
                 item.currentStyle = layerStyles["TRUE_COLOR"] || "ON"
+                item.hasLayerDropdown = true
+                item.selectedLayerId = settings.value("QField/Sentinel/TrueColorLayerId", "TRUE_COLOR")
               }
             }
             
@@ -607,9 +692,11 @@ Popup {
               
               onLoaded: {
                 item.layerName = "FALSE_COLOR"
-                item.layerDescription = qsTr("Uses near-infrared instead of blue band")
+                item.layerDescription = ""
                 item.isChecked = selectedLayers.includes("FALSE_COLOR")
                 item.currentStyle = layerStyles["FALSE_COLOR"] || "ON"
+                item.hasLayerDropdown = true
+                item.selectedLayerId = settings.value("QField/Sentinel/FalseColorLayerId", "FALSE_COLOR")
               }
             }
             
@@ -620,43 +707,71 @@ Popup {
               
               onLoaded: {
                 item.layerName = "NDVI"
-                item.layerDescription = qsTr("Normalized Difference Vegetation Index")
+                item.layerDescription = ""
                 item.isChecked = selectedLayers.includes("NDVI")
                 item.currentStyle = layerStyles["NDVI"] || "ON"
+                item.hasLayerDropdown = true
+                item.selectedLayerId = settings.value("QField/Sentinel/NdviLayerId", "NDVI")
               }
             }
             
-            // EVI Layer
+            // Custom1 Layer
             Loader {
               Layout.fillWidth: true
               sourceComponent: layerCardComponent
               
               onLoaded: {
-                item.layerName = "EVI"
-                item.layerDescription = qsTr("Enhanced Vegetation Index")
-                item.isChecked = selectedLayers.includes("EVI")
-                item.currentStyle = layerStyles["EVI"] || "ON"
-              }
-            }
-            
-            // Custom Layer
-            Loader {
-              id: customLayerLoader
-              Layout.fillWidth: true
-              sourceComponent: layerCardComponent
-              
-              onLoaded: {
-                item.layerName = "CUSTOM"
-                item.layerDescription = qsTr("Custom layer with configurable layer ID")
-                item.isChecked = selectedLayers.includes("CUSTOM")
-                item.currentStyle = layerStyles["CUSTOM"] || "DEFAULT"
+                item.layerName = "CUSTOM1"
+                item.layerDescription = qsTr("Capa personalizada con ID configurable")
+                item.isChecked = selectedLayers.includes("CUSTOM1")
+                item.currentStyle = layerStyles["CUSTOM1"] || "DEFAULT"
                 item.hasCustomOptions = true
-                item.customId = sentinelConfigScreen.customLayerId
-                item.scriptUrl = sentinelConfigScreen.evalScriptUrl
-                item.scriptContent = sentinelConfigScreen.evalScript
+                item.customId = sentinelConfigScreen.custom1LayerId
               }
             }
-              Rectangle {
+            
+            // Custom2 Layer
+            Loader {
+              Layout.fillWidth: true
+              sourceComponent: layerCardComponent
+              
+              onLoaded: {
+                item.layerName = "CUSTOM2"
+                item.layerDescription = qsTr("Capa personalizada con ID configurable")
+                item.isChecked = selectedLayers.includes("CUSTOM2")
+                item.currentStyle = layerStyles["CUSTOM2"] || "DEFAULT"
+                item.hasCustomOptions = true
+                item.customId = sentinelConfigScreen.custom2LayerId
+              }
+            }
+            
+            // Save All Button for Layers Tab
+            Button {
+              Layout.fillWidth: true
+              Layout.leftMargin: 20
+              Layout.rightMargin: 20
+              Layout.preferredHeight: 40
+              Layout.topMargin: 200
+              Layout.bottomMargin: 5
+              
+              text: qsTr("Guardar Configuración de Capas")
+              font.bold: true
+              
+              onClicked: {
+                // Make sure to get the latest values from the custom layer
+                if (customLayerLoader && customLayerLoader.item) {
+                  sentinelConfigScreen.customLayerId = customLayerLoader.item.customId
+                  sentinelConfigScreen.evalScriptUrl = customLayerLoader.item.scriptUrl
+                  sentinelConfigScreen.evalScript = customLayerLoader.item.scriptContent
+                }
+                
+                saveLayerSettings()
+                mainWindow.displayToast(qsTr("Configuración de capas guardada"))
+              }
+            }
+            
+            // Layer Style Options Help Section - moved below the custom fields
+            Rectangle {
               Layout.fillWidth: true
               Layout.leftMargin: 20
               Layout.rightMargin: 20
@@ -676,14 +791,14 @@ Popup {
                 spacing: 4
                 
                 Label {
-                  text: qsTr("Layer Style Options")
+                  text: qsTr("Opciones de Estilo de Capa")
                   font.bold: true
                   color: Theme.mainColor
                 }
                 
                 Label {
                   Layout.fillWidth: true
-                  text: qsTr("ON: Layer is visible with default styling")
+                  text: qsTr("Interruptor: Controla si la capa está incluida en su proyecto")
                   font: Theme.tipFont
                   color: Theme.secondaryTextColor
                   wrapMode: Text.WordWrap
@@ -691,7 +806,7 @@ Popup {
                 
                 Label {
                   Layout.fillWidth: true
-                  text: qsTr("OFF: Layer is available but initially hidden")
+                  text: qsTr("ON: La capa es visible con el estilo predeterminado")
                   font: Theme.tipFont
                   color: Theme.secondaryTextColor
                   wrapMode: Text.WordWrap
@@ -699,37 +814,19 @@ Popup {
                 
                 Label {
                   Layout.fillWidth: true
-                  text: qsTr("DEFAULT: Uses Sentinel Hub's default styling (Custom layer only)")
+                  text: qsTr("OFF: La capa está incluida pero inicialmente oculta")
                   font: Theme.tipFont
                   color: Theme.secondaryTextColor
                   wrapMode: Text.WordWrap
                 }
-              }
-            }
-            
-            
-            // Save All Button for Layers Tab
-            Button {
-              Layout.fillWidth: true
-              Layout.leftMargin: 20
-              Layout.rightMargin: 20
-              Layout.preferredHeight: 40
-              Layout.topMargin: 200
-              Layout.bottomMargin: 5
-              
-              text: qsTr("Save All Layer Settings")
-              font.bold: true
-              
-              onClicked: {
-                // Make sure to get the latest values from the custom layer
-                if (customLayerLoader && customLayerLoader.item) {
-                  sentinelConfigScreen.customLayerId = customLayerLoader.item.customId
-                  sentinelConfigScreen.evalScriptUrl = customLayerLoader.item.scriptUrl
-                  sentinelConfigScreen.evalScript = customLayerLoader.item.scriptContent
-                }
                 
-                saveLayerSettings()
-                mainWindow.displayToast(qsTr("All layer settings saved"))
+                Label {
+                  Layout.fillWidth: true
+                  text: qsTr("DEFAULT: Usa el estilo predeterminado de Sentinel Hub (solo capa personalizada)")
+                  font: Theme.tipFont
+                  color: Theme.secondaryTextColor
+                  wrapMode: Text.WordWrap
+                }
               }
             }
             
@@ -760,7 +857,7 @@ Popup {
               Layout.leftMargin: 20
               Layout.rightMargin: 20
               Layout.topMargin: 20
-              text: qsTr("WMS Query Builder")
+              text: qsTr("Constructor de Consultas WMS")
               font: Theme.strongFont
               color: Theme.mainColor
             }
@@ -769,7 +866,7 @@ Popup {
               Layout.fillWidth: true
               Layout.leftMargin: 20
               Layout.rightMargin: 20
-              text: qsTr("Configure additional WMS parameters:")
+              text: qsTr("Configure parámetros adicionales de WMS:")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
@@ -806,7 +903,7 @@ Popup {
               Layout.rightMargin: 20
               
               Label {
-                text: qsTr("Format:")
+                text: qsTr("Formato:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -828,7 +925,7 @@ Popup {
               id: enableTimeRange
               Layout.leftMargin: 20
               Layout.rightMargin: 20
-              text: qsTr("Enable time range")
+              text: qsTr("Habilitar rango de tiempo")
               checked: false
               
               onCheckedChanged: {
@@ -840,7 +937,7 @@ Popup {
               Layout.fillWidth: true
               Layout.leftMargin: 20
               Layout.rightMargin: 20
-              text: qsTr("The time range allows you to filter images by date. Sentinel Hub will return the most recent image within the specified date range that meets your criteria (e.g., cloud coverage).")
+              text: qsTr("El rango de tiempo permite filtrar imágenes por fecha. Sentinel Hub devolverá la imagen más reciente dentro del rango de fechas especificado que cumpla con sus criterios (por ejemplo, cobertura de nubes).")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
               wrapMode: Text.WordWrap
@@ -856,7 +953,7 @@ Popup {
               opacity: enableTimeRange.checked ? 1.0 : 0.5
               
               Label {
-                text: qsTr("Start date:")
+                text: qsTr("Fecha de inicio:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -865,7 +962,7 @@ Popup {
                 id: startDateField
                 Layout.fillWidth: true
                 text: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0]
-                placeholderText: "YYYY-MM-DD"
+                placeholderText: "AAAA-MM-DD"
                 
                 onTextChanged: {
                   updatePreview()
@@ -873,7 +970,7 @@ Popup {
               }
               
               Label {
-                text: qsTr("End date:")
+                text: qsTr("Fecha de fin:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -882,7 +979,7 @@ Popup {
                 id: endDateField
                 Layout.fillWidth: true
                 text: new Date().toISOString().split('T')[0]
-                placeholderText: "YYYY-MM-DD"
+                placeholderText: "AAAA-MM-DD"
                 
                 onTextChanged: {
                   updatePreview()
@@ -895,7 +992,7 @@ Popup {
               id: showAdvancedParams
               Layout.leftMargin: 20
               Layout.rightMargin: 20
-              text: qsTr("Show advanced parameters")
+              text: qsTr("Mostrar parámetros avanzados")
               checked: false
             }
             
@@ -907,7 +1004,7 @@ Popup {
               visible: showAdvancedParams.checked
               
               Label {
-                text: qsTr("DPI Mode:")
+                text: qsTr("Modo DPI:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -924,14 +1021,14 @@ Popup {
               
               Label {
                 Layout.columnSpan: 2
-                text: qsTr("DPI Mode controls the resolution of the WMS images. Higher values mean higher resolution but use more credits.")
+                text: qsTr("El Modo DPI controla la resolución de las imágenes WMS. Valores más altos significan mayor resolución pero usan más créditos.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
               }
               
               Label {
-                text: qsTr("Tile Pixel Ratio:")
+                text: qsTr("Relación de Píxeles de Tesela:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -948,14 +1045,14 @@ Popup {
               
               Label {
                 Layout.columnSpan: 2
-                text: qsTr("Tile Pixel Ratio affects the resolution of tiles. Higher values use more credits.")
+                text: qsTr("La Relación de Píxeles de Tesela afecta la resolución de las teselas. Valores más altos usan más créditos.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
               }
               
               Label {
-                text: qsTr("Max Cloud Coverage (%):")
+                text: qsTr("Cobertura Máxima de Nubes (%):")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -973,14 +1070,14 @@ Popup {
               
               Label {
                 Layout.columnSpan: 2
-                text: qsTr("Maximum allowable cloud coverage in percent. Lower values may result in fewer available images.")
+                text: qsTr("Cobertura máxima permitida de nubes en porcentaje. Valores más bajos pueden resultar en menos imágenes disponibles.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
               }
               
               Label {
-                text: qsTr("Quality (JPEG only):")
+                text: qsTr("Calidad (solo JPEG):")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -997,7 +1094,7 @@ Popup {
               }
               
               Label {
-                text: qsTr("Show Warnings:")
+                text: qsTr("Mostrar Advertencias:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -1005,7 +1102,7 @@ Popup {
               ComboBox {
                 id: warningsCombo
                 Layout.fillWidth: true
-                model: ["YES", "NO"]
+                model: ["SÍ", "NO"]
                 currentIndex: 0
                 
                 onCurrentTextChanged: {
@@ -1014,7 +1111,7 @@ Popup {
               }
               
               Label {
-                text: qsTr("Priority:")
+                text: qsTr("Prioridad:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -1022,7 +1119,7 @@ Popup {
               ComboBox {
                 id: priorityCombo
                 Layout.fillWidth: true
-                model: ["mostRecent", "leastRecent", "leastCC", "leastTimeDifference"]
+                model: ["másReciente", "menosReciente", "menosCC", "menorDiferenciaTiempo"]
                 currentIndex: 0
                 
                 onCurrentTextChanged: {
@@ -1034,13 +1131,13 @@ Popup {
               Label {
                 Layout.columnSpan: 2
                 Layout.topMargin: 10
-                text: qsTr("Credit Usage Limiting Options")
+                text: qsTr("Opciones de Limitación de Uso de Créditos")
                 font.bold: true
                 color: Theme.mainColor
               }
               
               Label {
-                text: qsTr("Enable BBOX Limiting:")
+                text: qsTr("Habilitar Limitación de BBOX:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -1056,14 +1153,14 @@ Popup {
               
               Label {
                 Layout.columnSpan: 2
-                text: qsTr("Limiting BBOX restricts the area requested, saving processing credits.")
+                text: qsTr("Limitar BBOX restringe el área solicitada, ahorrando créditos de procesamiento.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
               }
               
               Label {
-                text: qsTr("BBOX Width (m):")
+                text: qsTr("Ancho de BBOX (m):")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 enabled: enableBboxLimiting.checked
@@ -1081,7 +1178,7 @@ Popup {
               }
               
               Label {
-                text: qsTr("BBOX Height (m):")
+                text: qsTr("Alto de BBOX (m):")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 enabled: enableBboxLimiting.checked
@@ -1099,7 +1196,7 @@ Popup {
               }
               
               Label {
-                text: qsTr("Enable Rate Limiting:")
+                text: qsTr("Habilitar Limitación de Tasa:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
               }
@@ -1115,14 +1212,14 @@ Popup {
               
               Label {
                 Layout.columnSpan: 2
-                text: qsTr("Rate limiting adds a delay between requests to avoid excessive credit usage.")
+                text: qsTr("La limitación de tasa agrega un retraso entre solicitudes para evitar un uso excesivo de créditos.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
               }
               
               Label {
-                text: qsTr("Delay Between Requests (ms):")
+                text: qsTr("Retraso Entre Solicitudes (ms):")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 enabled: enableRateLimiting.checked
@@ -1148,21 +1245,20 @@ Popup {
                 font.bold: true
                 font.pixelSize: 16
                 color: Theme.mainColor
+                visible: false
               }
               
               Label {
                 text: qsTr("Enable Custom Script:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
+                visible: false
               }
               
               CheckBox {
                 id: enableCustomScript
                 checked: false
-                
-                onCheckedChanged: {
-                  updatePreview()
-                }
+                visible: false
               }
               
               Label {
@@ -1171,6 +1267,7 @@ Popup {
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
+                visible: false
               }
               
               Label {
@@ -1178,6 +1275,7 @@ Popup {
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 enabled: enableCustomScript.checked
+                visible: false
               }
               
               TextField {
@@ -1186,10 +1284,7 @@ Popup {
                 text: ""
                 placeholderText: "https://example.com/script.js"
                 enabled: enableCustomScript.checked
-                
-                onTextChanged: {
-                  updatePreview()
-                }
+                visible: false
               }
               
               Label {
@@ -1200,6 +1295,7 @@ Popup {
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
                 enabled: enableCustomScript.checked
+                visible: false
               }
               
               Label {
@@ -1208,6 +1304,7 @@ Popup {
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 enabled: enableCustomScript.checked
+                visible: false
               }
               
               TextArea {
@@ -1230,10 +1327,7 @@ Popup {
                   border.width: 1
                   radius: 4
                 }
-                
-                onTextChanged: {
-                  updatePreview()
-                }
+                visible: false
               }
               
               Label {
@@ -1243,6 +1337,7 @@ Popup {
                 color: Theme.warningColor
                 wrapMode: Text.WordWrap
                 enabled: enableCustomScript.checked
+                visible: false
               }
               
               Button {
@@ -1250,11 +1345,7 @@ Popup {
                 text: qsTr("Save Script to Library")
                 enabled: enableCustomScript.checked && customScriptField.text.length > 0
                 Layout.alignment: Qt.AlignRight
-                
-                onClicked: {
-                  // Open dialog to name and save the script
-                  saveScriptDialog.open()
-                }
+                visible: false
               }
               
               ComboBox {
@@ -1266,19 +1357,7 @@ Popup {
                 Layout.bottomMargin: 10
                 enabled: enableCustomScript.checked
                 model: []
-                
-                Component.onCompleted: {
-                  loadSavedScripts()
-                }
-                
-                onCurrentIndexChanged: {
-                  if (currentIndex > 0) {
-                    // Load the selected script
-                    let scriptName = currentText
-                    let scriptContent = settings.value("QField/Sentinel/SavedScripts/" + scriptName, "")
-                    customScriptField.text = scriptContent
-                  }
-                }
+                visible: false
               }
               
               Label {
@@ -1287,7 +1366,7 @@ Popup {
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
-                visible: enableCustomScript.checked && savedScriptsCombo.count > 1
+                visible: false
               }
               
               Button {
@@ -1295,39 +1374,11 @@ Popup {
                 text: qsTr("Delete Selected Script")
                 enabled: enableCustomScript.checked && savedScriptsCombo.currentIndex > 0
                 Layout.alignment: Qt.AlignRight
-                
-                onClicked: {
-                  // Delete the selected script
-                  let scriptName = savedScriptsCombo.currentText
-                  
-                  // Check if settings object exists
-                  if (typeof settings === 'undefined' || settings === null) {
-                    console.log("Settings object is null or undefined")
-                    mainWindow.displayToast(qsTr("Error: Settings object is not available"))
-                    return
-                  }
-                  
-                  settings.remove("QField/Sentinel/SavedScripts/" + scriptName)
-                  
-                  // Update the scripts list by removing the script name from the list
-                  let scriptNames = settings.value("QField/Sentinel/SavedScriptsList", "").toString()
-                  let scriptNamesList = scriptNames ? scriptNames.split(",") : []
-                  
-                  // Remove the script name from the list
-                  let index = scriptNamesList.indexOf(scriptName)
-                  if (index !== -1) {
-                    scriptNamesList.splice(index, 1)
-                    settings.setValue("QField/Sentinel/SavedScriptsList", scriptNamesList.join(","))
-                  }
-                  
-                  loadSavedScripts()
-                  mainWindow.displayToast(qsTr("Script deleted: ") + scriptName)
-                }
+                visible: false
               }
               
               Label {
                 Layout.columnSpan: 2
-                Layout.topMargin: 10
                 text: qsTr("WMS vs WMTS")
                 font.bold: true
                 color: Theme.mainColor
@@ -1335,7 +1386,7 @@ Popup {
               
               Label {
                 Layout.columnSpan: 2
-                text: qsTr("WMS (Web Map Service) provides custom-generated images on demand, ideal for NDVI and crop analysis with flexible parameters.\n\nWMTS (Web Map Tile Service) uses pre-rendered tiles, faster but less flexible for custom analysis. For crop monitoring, WMS is generally preferred.")
+                text: qsTr("WMS (Servicio de Mapas Web) proporciona imágenes generadas a pedido, ideal para NDVI y análisis de cultivos con parámetros flexibles.\n\nWMTS (Servicio de Teselas de Mapas Web) utiliza teselas pre-renderizadas, más rápido pero menos flexible para análisis personalizados. Para monitoreo de cultivos, generalmente se prefiere WMS.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
@@ -1348,7 +1399,7 @@ Popup {
               Layout.rightMargin: 20
               Layout.topMargin: 10
               visible: showAdvancedParams.checked
-              text: qsTr("Note: Advanced parameters can significantly affect your Sentinel Hub credit usage. Use with caution.")
+              text: qsTr("Nota: Los parámetros avanzados pueden afectar significativamente el uso de créditos de Sentinel Hub. Úselos con precaución.")
               font: Theme.tipFont
               color: Theme.warningColor
               wrapMode: Text.WordWrap
@@ -1365,7 +1416,7 @@ Popup {
     // Preview Section
     Rectangle {
       Layout.fillWidth: true
-      Layout.preferredHeight: 150
+      Layout.preferredHeight: 250
       Layout.leftMargin: 20
       Layout.rightMargin: 20
       Layout.bottomMargin: 5
@@ -1378,7 +1429,7 @@ Popup {
         spacing: 1
         
         Label {
-          text: qsTr("Preview WMS URL")
+          text: qsTr("Vista Previa de URL WMS")
           font.bold: true
           color: Theme.mainTextColor
         }
@@ -1411,7 +1462,7 @@ Popup {
         }
         
         Button {
-          text: qsTr("Copy to Clipboard")
+          text: qsTr("Copiar al Portapapeles")
           Layout.alignment: Qt.AlignRight
           Layout.preferredHeight: 30
           Layout.preferredWidth: 180
@@ -1420,11 +1471,11 @@ Popup {
             // Check if clipboard is available
             if (typeof mainWindow.clipboard !== 'undefined' && mainWindow.clipboard) {
               mainWindow.clipboard.setText(previewText.text)
-              mainWindow.displayToast(qsTr("URL copied to clipboard"))
+              mainWindow.displayToast(qsTr("URL copiada al portapapeles"))
             } else {
               // Fallback if clipboard is not available
               console.log("Clipboard not available, URL: " + previewText.text)
-              mainWindow.displayToast(qsTr("Clipboard not available. See console for URL."))
+              mainWindow.displayToast(qsTr("Portapapeles no disponible. Ver consola para URL."))
             }
           }
         }
@@ -1435,7 +1486,7 @@ Popup {
   // Save Script Dialog
   Dialog {
     id: saveScriptDialog
-    title: qsTr("Save Script")
+    title: qsTr("Guardar Script")
     standardButtons: Dialog.Save | Dialog.Cancel
     modal: true
     
@@ -1447,27 +1498,27 @@ Popup {
       width: parent.width
       
       Label {
-        text: qsTr("Script Name:")
+        text: qsTr("Nombre del Script:")
         font: Theme.defaultFont
       }
       
       TextField {
         id: scriptNameField
         Layout.fillWidth: true
-        placeholderText: qsTr("Enter a name for your script")
+        placeholderText: qsTr("Ingrese un nombre para su script")
       }
     }
     
     onAccepted: {
       if (scriptNameField.text.trim() === "") {
-        mainWindow.displayToast(qsTr("Please enter a name for your script"))
+        mainWindow.displayToast(qsTr("Por favor ingrese un nombre para su script"))
         return
       }
       
       // Check if settings object exists
       if (typeof settings === 'undefined' || settings === null) {
         console.log("Settings object is null or undefined")
-        mainWindow.displayToast(qsTr("Error: Settings object is not available"))
+        mainWindow.displayToast(qsTr("Error: El objeto de configuración no está disponible"))
         return
       }
       
@@ -1494,7 +1545,7 @@ Popup {
         savedScriptsCombo.currentIndex = index
       }
       
-      mainWindow.displayToast(qsTr("Script saved: ") + scriptName)
+      mainWindow.displayToast(qsTr("Script guardado: ") + scriptName)
       scriptNameField.text = ""
     }
   }
@@ -1505,141 +1556,56 @@ Popup {
     let instanceId = instanceIdField ? instanceIdField.text : ""
     
     if (!instanceId) {
-      previewText.text = qsTr("Please enter a Sentinel Hub instance ID")
+      previewText.text = qsTr("Por favor ingrese un ID de instancia de Sentinel Hub")
       return
     }
     
-    // For custom layer, check if we have a layer ID
-    if (selectedLayers.includes("CUSTOM")) {
-      // Get the custom layer ID from the loader
-      let customLayerId = ""
-      if (customLayerLoader && customLayerLoader.item) {
-        customLayerId = customLayerLoader.item.customId
-      }
+    // Get the selected layer and its ID
+    let selectedLayer = selectedLayers.length > 0 ? selectedLayers[0] : ""
+    if (!selectedLayer) {
+      previewText.text = qsTr("Por favor seleccione al menos una capa")
+      return
+    }
+    
+    let layerId = ""
+    let style = ""
+    
+    // Determine the layer ID and style based on the selected layer
+    if (selectedLayer === "TRUE_COLOR") {
+      layerId = settings.value("QField/Sentinel/TrueColorLayerId", "TRUE_COLOR")
+      style = layerStyles["TRUE_COLOR"] || "ON"
+    } else if (selectedLayer === "FALSE_COLOR") {
+      layerId = settings.value("QField/Sentinel/FalseColorLayerId", "FALSE_COLOR")
+      style = layerStyles["FALSE_COLOR"] || "ON"
+    } else if (selectedLayer === "NDVI") {
+      layerId = settings.value("QField/Sentinel/NdviLayerId", "NDVI")
+      style = layerStyles["NDVI"] || "ON"
+    } else if (selectedLayer === "CUSTOM1") {
+      layerId = custom1LayerId
+      style = layerStyles["CUSTOM1"] || "DEFAULT"
       
-      if (!customLayerId) {
-        previewText.text = qsTr("Please enter a custom layer ID")
+      if (!layerId) {
+        previewText.text = qsTr("Por favor ingrese un ID de capa personalizada para Custom1")
         return
       }
+    } else if (selectedLayer === "CUSTOM2") {
+      layerId = custom2LayerId
+      style = layerStyles["CUSTOM2"] || "DEFAULT"
       
-      // Build the WMS URL for the custom layer
-      let params = [
-        "contextualWMSLegend=0",
-        "crs=" + crsCombo.currentText,
-        "dpiMode=" + dpiModeField.text,
-        "featureCount=5",
-        "format=" + formatCombo.currentText,
-        "layers=" + customLayerId,
-        "styles=" + layerStyles["CUSTOM"]
-      ]
-      
-      // Add script parameters if available
-      let scriptUrl = ""
-      let scriptContent = ""
-      
-      if (customLayerLoader && customLayerLoader.item) {
-        scriptUrl = customLayerLoader.item.scriptUrl
-        scriptContent = customLayerLoader.item.scriptContent
+      if (!layerId) {
+        previewText.text = qsTr("Por favor ingrese un ID de capa personalizada para Custom2")
+        return
       }
-      
-      if (scriptUrl) {
-        params.push("EVALSCRIPTURL=" + scriptUrl)
-      } else if (scriptContent) {
-        params.push("EVALSCRIPT=" + scriptContent)
-      }
-      
-      // Add tile pixel ratio if not default
-      if (dpiModeField.text !== "0") {
-        params.push("tilePixelRatio=" + tilePixelRatioField.text)
-      }
-      
-      // Add time parameter if enabled
-      if (enableTimeRange.checked) {
-        params.push("time=" + startDateField.text + "/" + endDateField.text)
-      }
-      
-      // Add BBOX limiting if enabled
-      if (enableBboxLimiting.checked && bboxWidthField.text && bboxHeightField.text) {
-        // This is a simplified example - in a real implementation, you would calculate the BBOX
-        // based on the current map center and the specified width/height
-        let width = parseFloat(bboxWidthField.text)
-        let height = parseFloat(bboxHeightField.text)
-        
-        // For demonstration purposes, we'll use a dummy BBOX centered at 0,0
-        let halfWidth = width / 2
-        let halfHeight = height / 2
-        let bbox = [-halfWidth, -halfHeight, halfWidth, halfHeight].join(",")
-        params.push("BBOX=" + bbox)
-      }
-      
-      // Add advanced parameters if enabled
-      if (showAdvancedParams.checked) {
-        // Add MAXCC parameter
-        if (maxCCField.text !== "100") {
-          params.push("MAXCC=" + maxCCField.text)
-        }
-        
-        // Add QUALITY parameter for JPEG
-        if (formatCombo.currentText === "image/jpeg" && qualityField.text !== "90") {
-          params.push("QUALITY=" + qualityField.text)
-        }
-        
-        // Add WARNINGS parameter
-        if (warningsCombo.currentText !== "YES") {
-          params.push("WARNINGS=" + warningsCombo.currentText)
-        }
-        
-        // Add PRIORITY parameter
-        if (priorityCombo.currentText !== "mostRecent") {
-          params.push("PRIORITY=" + priorityCombo.currentText)
-        }
-        
-        // Add custom script if enabled
-        if (enableCustomScript.checked) {
-          if (scriptUrlField && scriptUrlField.text) {
-            params.push("EVALSCRIPTURL=" + scriptUrlField.text)
-          } else if (customScriptField && customScriptField.text) {
-            // For preview purposes, we'll show a placeholder for the BASE64 encoded script
-            params.push("EVALSCRIPT=[BASE64_ENCODED_SCRIPT]")
-          }
-        }
-      }
-      
-      // Add the URL
-      params.push("url=https://sh.dataspace.copernicus.eu/ogc/wms/" + instanceId)
-      
-      // Construct the final URL
-      let wmsUrl = params.join("&")
-      
-      // Add note about rate limiting if enabled
-      if (enableRateLimiting.checked) {
-        let delay = rateLimitDelayField.text || "1000"
-        previewText.text = wmsUrl + "\n\n" + qsTr("Note: Rate limiting is enabled with a delay of ") + delay + qsTr(" ms between requests.")
-      } else {
-        previewText.text = wmsUrl
-      }
-      
-      // If custom layer has script parameters, show them below the URL
-      if (scriptUrl) {
-        previewText.text += "\n\n" + qsTr("Custom Layer Script URL:") + "\n" + scriptUrl
-      } else if (scriptContent) {
-        previewText.text += "\n\n" + qsTr("Custom Layer BASE64 Script:") + "\n" + scriptContent
-      }
-      
-      return
     }
     
     // Build the WMS URL for the selected layer
-    let selectedLayer = selectedLayers.length > 0 ? selectedLayers[0] : "NDVI"
-    let style = layerStyles[selectedLayer] || "ON"
-    
     let params = [
       "contextualWMSLegend=0",
       "crs=" + crsCombo.currentText,
       "dpiMode=" + dpiModeField.text,
       "featureCount=5",
       "format=" + formatCombo.currentText,
-      "layers=" + selectedLayer,
+      "layers=" + layerId,
       "styles=" + style
     ]
     
@@ -1680,23 +1646,13 @@ Popup {
       }
       
       // Add WARNINGS parameter
-      if (warningsCombo.currentText !== "YES") {
+      if (warningsCombo.currentText !== "SÍ") {
         params.push("WARNINGS=" + warningsCombo.currentText)
       }
       
       // Add PRIORITY parameter
-      if (priorityCombo.currentText !== "mostRecent") {
+      if (priorityCombo.currentText !== "másReciente") {
         params.push("PRIORITY=" + priorityCombo.currentText)
-      }
-      
-      // Add custom script if enabled
-      if (enableCustomScript.checked) {
-        if (scriptUrlField && scriptUrlField.text) {
-          params.push("EVALSCRIPTURL=" + scriptUrlField.text)
-        } else if (customScriptField && customScriptField.text) {
-          // For preview purposes, we'll show a placeholder for the BASE64 encoded script
-          params.push("EVALSCRIPT=[BASE64_ENCODED_SCRIPT]")
-        }
       }
     }
     
@@ -1709,14 +1665,9 @@ Popup {
     // Add note about rate limiting if enabled
     if (enableRateLimiting.checked) {
       let delay = rateLimitDelayField.text || "1000"
-      previewText.text = wmsUrl + "\n\n" + qsTr("Note: Rate limiting is enabled with a delay of ") + delay + qsTr(" ms between requests.")
+      previewText.text = wmsUrl + "\n\n" + qsTr("Nota: La limitación de tasa está habilitada con un retraso de ") + delay + qsTr(" ms entre solicitudes.")
     } else {
       previewText.text = wmsUrl
-    }
-    
-    // If custom script is enabled and has content, show it below the URL
-    if (enableCustomScript.checked && customScriptField && customScriptField.text) {
-      previewText.text += "\n\n" + qsTr("Custom Script:") + "\n" + customScriptField.text
     }
   }
   
@@ -1728,7 +1679,7 @@ Popup {
     }
     
     // Create model with a "Select a script..." option first
-    let model = [qsTr("Select a script...")]
+    let model = [qsTr("Seleccionar un script...")]
     
     // Try to get scripts from settings using value() with empty default
     // This is a workaround since childKeys() is not available
@@ -1756,23 +1707,52 @@ Popup {
     }
     
     // Load saved settings
-    let enabledLayersStr = settings.value("QField/Sentinel/EnabledLayers", "TRUE_COLOR,FALSE_COLOR,NDVI,CUSTOM")
-    let enabledLayersList = enabledLayersStr.split(",")
+    let enabledLayersStr = settings.value("QField/Sentinel/EnabledLayers", "")
+    let enabledLayersList = enabledLayersStr ? enabledLayersStr.split(",") : []
+    
+    // If no layers are enabled, select the default layers
+    if (enabledLayersList.length === 0 || enabledLayersStr === "") {
+      enabledLayersList = ["TRUE_COLOR", "FALSE_COLOR", "NDVI"]
+      // Save these default selections
+      settings.setValue("QField/Sentinel/EnabledLayers", enabledLayersList.join(","))
+    }
     
     // Initialize selectedLayers with the saved layers
     selectedLayers = []
     for (let i = 0; i < enabledLayersList.length; i++) {
       if (enabledLayersList[i].trim() !== "") {
         selectedLayers.push(enabledLayersList[i])
-        layerStyles[enabledLayersList[i]] = settings.value("QField/Sentinel/Styles/" + enabledLayersList[i], 
-                                                          enabledLayersList[i] === "CUSTOM" ? "DEFAULT" : "ON")
+        
+        // Set default style to "ON" for all layers except CUSTOM which is "DEFAULT"
+        let defaultStyle = enabledLayersList[i].startsWith("CUSTOM") ? "DEFAULT" : "ON"
+        layerStyles[enabledLayersList[i]] = settings.value("QField/Sentinel/Styles/" + enabledLayersList[i], defaultStyle)
+        
+        // Ensure we don't have empty or null styles
+        if (!layerStyles[enabledLayersList[i]] || layerStyles[enabledLayersList[i]] === "") {
+          layerStyles[enabledLayersList[i]] = defaultStyle
+        }
+        
+        // Log the loaded style for debugging
+        console.log("Loaded style for " + enabledLayersList[i] + ": " + layerStyles[enabledLayersList[i]])
       }
     }
     
-    // Load custom layer ID and script settings
-    customLayerId = settings.value("QField/Sentinel/CustomLayerId", "")
-    evalScriptUrl = settings.value("QField/Sentinel/EvalScriptUrl", "")
-    evalScript = settings.value("QField/Sentinel/EvalScript", "")
+    // Load custom layer IDs
+    custom1LayerId = settings.value("QField/Sentinel/Custom1LayerId", "")
+    custom2LayerId = settings.value("QField/Sentinel/Custom2LayerId", "")
+    
+    // Set default layer IDs if not already set
+    if (!settings.value("QField/Sentinel/TrueColorLayerId", "")) {
+      settings.setValue("QField/Sentinel/TrueColorLayerId", "TRUE_COLOR")
+    }
+    
+    if (!settings.value("QField/Sentinel/FalseColorLayerId", "")) {
+      settings.setValue("QField/Sentinel/FalseColorLayerId", "FALSE_COLOR")
+    }
+    
+    if (!settings.value("QField/Sentinel/NdviLayerId", "")) {
+      settings.setValue("QField/Sentinel/NdviLayerId", "NDVI")
+    }
     
     // Load WMS parameters
     crsCombo.currentIndex = crsCombo.find(settings.value("QField/Sentinel/CRS", "EPSG:4326"))
@@ -1791,8 +1771,8 @@ Popup {
     showAdvancedParams.checked = settings.valueBool("QField/Sentinel/AdvancedParamsEnabled", false)
     maxCCField.text = settings.value("QField/Sentinel/MAXCC", "100")
     qualityField.text = settings.value("QField/Sentinel/QUALITY", "90")
-    warningsCombo.currentIndex = warningsCombo.find(settings.value("QField/Sentinel/WARNINGS", "YES"))
-    priorityCombo.currentIndex = priorityCombo.find(settings.value("QField/Sentinel/PRIORITY", "mostRecent"))
+    warningsCombo.currentIndex = warningsCombo.find(settings.value("QField/Sentinel/WARNINGS", "SÍ"))
+    priorityCombo.currentIndex = priorityCombo.find(settings.value("QField/Sentinel/PRIORITY", "másReciente"))
     
     // Load BBOX limiting settings
     enableBboxLimiting.checked = settings.valueBool("QField/Sentinel/BboxLimitingEnabled", false)
@@ -1834,32 +1814,60 @@ Popup {
       settings.setValue("QField/Sentinel/InstanceId", instanceIdField.text)
     }
     
-    // Get custom layer values from the custom layer component if it exists
-    if (customLayerLoader && customLayerLoader.item) {
-      customLayerId = customLayerLoader.item.customId
-      evalScriptUrl = customLayerLoader.item.scriptUrl
-      evalScript = customLayerLoader.item.scriptContent
-    }
-    
     // Save custom layer settings
-    settings.setValue("QField/Sentinel/CustomLayerId", customLayerId)
-    settings.setValue("QField/Sentinel/EvalScriptUrl", evalScriptUrl)
-    settings.setValue("QField/Sentinel/EvalScript", evalScript)
+    settings.setValue("QField/Sentinel/Custom1LayerId", custom1LayerId)
+    settings.setValue("QField/Sentinel/Custom2LayerId", custom2LayerId)
     
-    // Save layer configuration
-    let enabledLayersList = []
-    for (let i = 0; i < selectedLayers.length; i++) {
-      enabledLayersList.push(selectedLayers[i])
-    }
-    
+    // Save layer configuration - only save layers that are actually enabled
     // Convert to string to avoid QJSValue error
-    settings.setValue("QField/Sentinel/EnabledLayers", enabledLayersList.join(","))
+    settings.setValue("QField/Sentinel/EnabledLayers", selectedLayers.join(","))
     
-    // Save all layer styles
+    // Save all layer styles - but only for valid layers
+    const validLayers = ["TRUE_COLOR", "FALSE_COLOR", "NDVI", "CUSTOM1", "CUSTOM2"]
+    
+    // Debug: Log all keys in layerStyles to find the empty key
+    console.log("All keys in layerStyles:")
     for (let layer in layerStyles) {
-      settings.setValue("QField/Sentinel/Styles/" + layer, layerStyles[layer])
+      console.log("Key: '" + layer + "', Value: '" + layerStyles[layer] + "'")
     }
     
-    mainWindow.displayToast(qsTr("Layer settings saved"))
+    // Clean up layerStyles to remove any invalid entries
+    for (let layer in layerStyles) {
+      if (!validLayers.includes(layer) || layer === "") {
+        console.log("Removing invalid layer style key: '" + layer + "'")
+        delete layerStyles[layer]
+      }
+    }
+    
+    // Save only valid layer styles
+    for (let i = 0; i < validLayers.length; i++) {
+      const layer = validLayers[i]
+      if (layerStyles[layer]) {
+        settings.setValue("QField/Sentinel/Styles/" + layer, layerStyles[layer])
+      } else {
+        // Set default style if missing
+        const defaultStyle = layer.startsWith("CUSTOM") ? "DEFAULT" : "ON"
+        settings.setValue("QField/Sentinel/Styles/" + layer, defaultStyle)
+        layerStyles[layer] = defaultStyle
+      }
+    }
+    
+    // Also save a flag to indicate that settings have been updated
+    settings.setValue("QField/Sentinel/SettingsUpdated", true)
+    
+    // Save a flag to force reload of layers
+    settings.setValue("QField/Sentinel/SettingsChanged", true)
+    
+    // Enable or disable Sentinel layers based on whether any layers are selected
+    settings.setValue("QField/Sentinel/EnableLayers", selectedLayers.length > 0)
+    
+    // Log the settings for debugging
+    console.log("Saved Sentinel settings:")
+    console.log("EnabledLayers: " + selectedLayers.join(","))
+    for (let layer in layerStyles) {
+      console.log("Style for " + layer + ": " + layerStyles[layer])
+    }
+    
+    mainWindow.displayToast(qsTr("Configuración de Sentinel guardada. Reinicie QField o recargue su proyecto para que los cambios surtan efecto."))
   }
 } 

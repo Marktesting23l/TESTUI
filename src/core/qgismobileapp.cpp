@@ -188,6 +188,7 @@
 #include <qgsvectorlayer.h>
 #include <qgsvectorlayereditbuffer.h>
 #include <qgsvectorlayertemporalproperties.h>
+#include <qgsvectortilelayer.h>
 
 
 #define QUOTE( string ) _QUOTE( string )
@@ -1040,7 +1041,6 @@ void QgisMobileapp::readProjectFile()
       QStringLiteral( "Esp IGN 1:25.000" ),
       QLatin1String( "wms" ) );
   
-  // Add Catastro layer instead of NDVI
   QgsRasterLayer *catastroLayer = new QgsRasterLayer(
       QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=Catastro&styles=Default&tilePixelRatio=0&url=http://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx" ),
       QStringLiteral( "Catastro" ),
@@ -1061,13 +1061,20 @@ void QgisMobileapp::readProjectFile()
   // Add flood risk WMS layer
   QgsRasterLayer *floodRiskLayer = new QgsRasterLayer(
       QStringLiteral( "contextualWMSLegend=1&crs=EPSG:3857&dpiMode=7&featureCount=10&format=image/png&layers=NZ.RiskZone&styles&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agua/Riesgo/RiesgoAct_100/wms.aspx" ),
-      QStringLiteral( "Riesgo a las actividades económicas de origen fluvial T=100 años" ),
+      QStringLiteral( "Riesgo inundación T100" ),
       QLatin1String( "wms" ) );
   
-  // Create layer groups in the desired order - Sentinel first, then Spain GIS Services, then Utils, then Basemaps
+  // Create layer groups in the desired order - Data Collection first, then Sentinel, then Spain GIS Services, then Utils, then Basemaps
+  QgsLayerTreeGroup *dataCollectionGroup = mProject->layerTreeRoot()->addGroup("Data Collection");
   QgsLayerTreeGroup *spainGisServicesGroup = mProject->layerTreeRoot()->addGroup("Spain GIS Services");
   QgsLayerTreeGroup *utilsGroup = mProject->layerTreeRoot()->addGroup("Utils");
 
+  // Create a Spain GIS Base Layers subgroup for Recintos SIGPAC FEGA and Catastro
+  QgsLayerTreeGroup *spainGisBaseLayersGroup = spainGisServicesGroup->addGroup("Spain GIS Base Layers");
+  
+  // Create a Spain GIS VectorTiles group as a subgroup of Spain GIS Services
+  QgsLayerTreeGroup *spainGisVectorTilesGroup = spainGisServicesGroup->addGroup("Spain GIS VectorTiles");
+  
   // Add Sentinel Imagery group if user has configured an instance ID
   QSettings sentinelSettings;
   QString sentinelInstanceId = sentinelSettings.value(QStringLiteral("QField/Sentinel/InstanceId"), QString()).toString();
@@ -1081,12 +1088,36 @@ void QgisMobileapp::readProjectFile()
   } else {
     enabledLayers << "TRUE_COLOR" << "FALSE_COLOR" << "NDVI";
   }
-  QString ndviStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/NDVI"), "VIZ").toString();
-  QString falseColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/FALSE_COLOR"), "DEFAULT").toString();
-  QString trueColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/TRUE_COLOR"), "DEFAULT").toString();
-  QString eviStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/EVI"), "ON").toString();
-  QString customLayerStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/CUSTOM"), "DEFAULT").toString();
-  QString customLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/CustomLayerId"), "").toString();
+  
+  // Read style settings for each layer
+  QString ndviStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/NDVI"), "ON").toString();
+  QString falseColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/FALSE_COLOR"), "ON").toString();
+  QString trueColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/TRUE_COLOR"), "ON").toString();
+  QString custom1Style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/CUSTOM1"), "DEFAULT").toString();
+  QString custom2Style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/CUSTOM2"), "DEFAULT").toString();
+  
+  // Read custom layer IDs from settings
+  QString custom1LayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/Custom1LayerId"), "").toString();
+  QString custom2LayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/Custom2LayerId"), "").toString();
+  
+  // Read layer IDs for the dropdown layers
+  QString trueColorLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/TrueColorLayerId"), "TRUE_COLOR").toString();
+  QString falseColorLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/FalseColorLayerId"), "FALSE_COLOR").toString();
+  QString ndviLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/NdviLayerId"), "NDVI").toString();
+  
+  // Check if settings have been updated
+  bool settingsUpdated = sentinelSettings.value(QStringLiteral("QField/Sentinel/SettingsUpdated"), false).toBool();
+  
+  // Log the layer configuration for debugging
+  QgsMessageLog::logMessage(QStringLiteral("Sentinel enabled layers: %1").arg(enabledLayersStr), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("NDVI style: %1").arg(ndviStyle), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("FALSE_COLOR style: %1").arg(falseColorStyle), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("TRUE_COLOR style: %1").arg(trueColorStyle), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("CUSTOM1 style: %1").arg(custom1Style), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("CUSTOM2 style: %1").arg(custom2Style), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("TRUE_COLOR layer ID: %1").arg(trueColorLayerId), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("FALSE_COLOR layer ID: %1").arg(falseColorLayerId), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("NDVI layer ID: %1").arg(ndviLayerId), "QField", Qgis::Info);
   
   // Read custom layer script parameters
   QString evalScriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScriptUrl"), "").toString();
@@ -1185,18 +1216,22 @@ void QgisMobileapp::readProjectFile()
   // Create Sentinel group first (before basemaps) so it appears on top
   QgsLayerTreeGroup *sentinelGroup = nullptr;
   
-  if (!sentinelInstanceId.isEmpty() && enableSentinelLayers)
+  if (!sentinelInstanceId.isEmpty() && enableSentinelLayers && !enabledLayers.isEmpty())
   {
+    QgsMessageLog::logMessage(QStringLiteral("Creating Sentinel layers with instance ID: %1").arg(sentinelInstanceId), "QField", Qgis::Info);
+    QgsMessageLog::logMessage(QStringLiteral("Enabled layers: %1").arg(enabledLayersStr), "QField", Qgis::Info);
+    
     sentinelGroup = mProject->layerTreeRoot()->addGroup("Sentinel Imagery");
     
     // Create Sentinel WMS layers using the user's instance ID and configured settings
     if (enabledLayers.contains("NDVI"))
     {
       // NDVI layer
-      QString ndviUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=NDVI&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+      QString ndviUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
           .arg(crsSetting)
           .arg(dpiMode)
           .arg(format)
+          .arg(ndviLayerId)
           .arg(ndviStyle)
           .arg(tilePixelRatio)
           .arg(sentinelInstanceId);
@@ -1223,13 +1258,19 @@ void QgisMobileapp::readProjectFile()
       
       QgsRasterLayer *ndviLayer = new QgsRasterLayer(
           ndviUrl,
-          QStringLiteral("Sentinel NDVI"),
+          QStringLiteral("Sentinel %1").arg(ndviLayerId),
           QLatin1String("wms"));
       
       if (ndviLayer->isValid())
       {
         mProject->addMapLayer(ndviLayer, false);
         sentinelGroup->addLayer(ndviLayer);
+        
+        // Set layer visibility based on style
+        QgsLayerTreeLayer* treeLayer = sentinelGroup->findLayer(ndviLayer->id());
+        if (treeLayer) {
+          treeLayer->setItemVisibilityChecked(ndviStyle != "OFF");
+        }
       }
       else
       {
@@ -1240,10 +1281,11 @@ void QgisMobileapp::readProjectFile()
     if (enabledLayers.contains("FALSE_COLOR"))
     {
       // False Color layer
-      QString falseColorUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=FALSE_COLOR&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+      QString falseColorUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
           .arg(crsSetting)
           .arg(dpiMode)
           .arg(format)
+          .arg(falseColorLayerId)
           .arg(falseColorStyle)
           .arg(tilePixelRatio)
           .arg(sentinelInstanceId);
@@ -1270,13 +1312,19 @@ void QgisMobileapp::readProjectFile()
       
       QgsRasterLayer *falseColorLayer = new QgsRasterLayer(
           falseColorUrl,
-          QStringLiteral("Sentinel False Color"),
+          QStringLiteral("Sentinel %1").arg(falseColorLayerId),
           QLatin1String("wms"));
       
       if (falseColorLayer->isValid())
       {
         mProject->addMapLayer(falseColorLayer, false);
         sentinelGroup->addLayer(falseColorLayer);
+        
+        // Set layer visibility based on style
+        QgsLayerTreeLayer* treeLayer = sentinelGroup->findLayer(falseColorLayer->id());
+        if (treeLayer) {
+          treeLayer->setItemVisibilityChecked(falseColorStyle != "OFF");
+        }
       }
       else
       {
@@ -1287,10 +1335,11 @@ void QgisMobileapp::readProjectFile()
     if (enabledLayers.contains("TRUE_COLOR"))
     {
       // True Color layer
-      QString trueColorUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=TRUE_COLOR&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+      QString trueColorUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
           .arg(crsSetting)
           .arg(dpiMode)
           .arg(format)
+          .arg(trueColorLayerId)
           .arg(trueColorStyle)
           .arg(tilePixelRatio)
           .arg(sentinelInstanceId);
@@ -1317,13 +1366,19 @@ void QgisMobileapp::readProjectFile()
       
       QgsRasterLayer *trueColorLayer = new QgsRasterLayer(
           trueColorUrl,
-          QStringLiteral("Sentinel True Color"),
+          QStringLiteral("Sentinel %1").arg(trueColorLayerId),
           QLatin1String("wms"));
       
       if (trueColorLayer->isValid())
       {
         mProject->addMapLayer(trueColorLayer, false);
         sentinelGroup->addLayer(trueColorLayer);
+        
+        // Set layer visibility based on style
+        QgsLayerTreeLayer* treeLayer = sentinelGroup->findLayer(trueColorLayer->id());
+        if (treeLayer) {
+          treeLayer->setItemVisibilityChecked(trueColorStyle != "OFF");
+        }
       }
       else
       {
@@ -1331,116 +1386,105 @@ void QgisMobileapp::readProjectFile()
       }
     }
     
-    if (enabledLayers.contains("EVI"))
+    // Custom layer with user-defined layer ID - REMOVED
+    
+    // Custom1 layer with user-defined layer ID
+    if (enabledLayers.contains("CUSTOM1") && !custom1LayerId.isEmpty())
     {
-      // EVI layer
-      QString eviUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=EVI&styles=%4&tilePixelRatio=%5&url=https://sh.dataspace.copernicus.eu/ogc/wms/%6")
+      // Custom1 layer
+      QString custom1LayerUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
           .arg(crsSetting)
           .arg(dpiMode)
           .arg(format)
-          .arg(eviStyle)
+          .arg(custom1LayerId)
+          .arg(custom1Style)
           .arg(tilePixelRatio)
           .arg(sentinelInstanceId);
       
       // Add time parameters if enabled
       if (!timeParams.isEmpty()) {
-        eviUrl += timeParams;
+        custom1LayerUrl += timeParams;
       }
       
       // Add advanced parameters if enabled
       if (!advancedParams.isEmpty()) {
-        eviUrl += advancedParams;
+        custom1LayerUrl += advancedParams;
       }
       
       // Add BBOX parameters if enabled
       if (!bboxParams.isEmpty()) {
-        eviUrl += bboxParams;
+        custom1LayerUrl += bboxParams;
       }
       
-      // Add custom script if enabled
-      if (!scriptParams.isEmpty()) {
-        eviUrl += scriptParams;
-      }
-      
-      QgsRasterLayer *eviLayer = new QgsRasterLayer(
-          eviUrl,
-          QStringLiteral("Sentinel EVI"),
+      QgsRasterLayer *custom1Layer = new QgsRasterLayer(
+          custom1LayerUrl,
+          QStringLiteral("Sentinel %1").arg(custom1LayerId),
           QLatin1String("wms"));
       
-      if (eviLayer->isValid())
+      if (custom1Layer->isValid())
       {
-        mProject->addMapLayer(eviLayer, false);
-        sentinelGroup->addLayer(eviLayer);
+        mProject->addMapLayer(custom1Layer, false);
+        sentinelGroup->addLayer(custom1Layer);
+        
+        // Set layer visibility based on style
+        QgsLayerTreeLayer* treeLayer = sentinelGroup->findLayer(custom1Layer->id());
+        if (treeLayer) {
+          treeLayer->setItemVisibilityChecked(custom1Style != "OFF");
+        }
       }
       else
       {
-        delete eviLayer;
+        delete custom1Layer;
       }
     }
     
-    // Custom layer with user-defined layer ID
-    if (enabledLayers.contains("CUSTOM") && !customLayerId.isEmpty())
+    // Custom2 layer with user-defined layer ID
+    if (enabledLayers.contains("CUSTOM2") && !custom2LayerId.isEmpty())
     {
-      // Read custom layer script parameters
-      QString evalScriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScriptUrl"), "").toString();
-      QString evalScript = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScript"), "").toString();
-      
-      // Custom layer
-      QString customLayerUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
+      // Custom2 layer
+      QString custom2LayerUrl = QStringLiteral("contextualWMSLegend=0&crs=%1&dpiMode=%2&featureCount=5&format=%3&layers=%4&styles=%5&tilePixelRatio=%6&url=https://sh.dataspace.copernicus.eu/ogc/wms/%7")
           .arg(crsSetting)
           .arg(dpiMode)
           .arg(format)
-          .arg(customLayerId)
-          .arg(customLayerStyle)
+          .arg(custom2LayerId)
+          .arg(custom2Style)
           .arg(tilePixelRatio)
           .arg(sentinelInstanceId);
       
       // Add time parameters if enabled
       if (!timeParams.isEmpty()) {
-        customLayerUrl += timeParams;
+        custom2LayerUrl += timeParams;
       }
       
       // Add advanced parameters if enabled
       if (!advancedParams.isEmpty()) {
-        customLayerUrl += advancedParams;
+        custom2LayerUrl += advancedParams;
       }
       
       // Add BBOX parameters if enabled
       if (!bboxParams.isEmpty()) {
-        customLayerUrl += bboxParams;
+        custom2LayerUrl += bboxParams;
       }
       
-      // Add custom script if enabled
-      if (!scriptParams.isEmpty()) {
-        customLayerUrl += scriptParams;
-      }
-      
-      // Add custom layer script parameters if available
-      // Note: EVALSCRIPTURL takes precedence over EVALSCRIPT if both are provided
-      if (!evalScriptUrl.isEmpty()) {
-        customLayerUrl += QStringLiteral("&EVALSCRIPTURL=%1").arg(evalScriptUrl);
-        QgsMessageLog::logMessage(QStringLiteral("Adding EVALSCRIPTURL to custom layer: %1").arg(evalScriptUrl), "QField", Qgis::Info);
-      } else if (!evalScript.isEmpty()) {
-        // Use the BASE64 script directly (already encoded by the user)
-        customLayerUrl += QStringLiteral("&EVALSCRIPT=%1").arg(evalScript);
-        QgsMessageLog::logMessage(QStringLiteral("Adding EVALSCRIPT to custom layer: %1").arg(evalScript), "QField", Qgis::Info);
-      }
-      
-      QgsMessageLog::logMessage(QStringLiteral("Custom layer URL: %1").arg(customLayerUrl), "QField", Qgis::Info);
-      
-      QgsRasterLayer *customLayer = new QgsRasterLayer(
-          customLayerUrl,
-          QStringLiteral("Sentinel %1").arg(customLayerId),
+      QgsRasterLayer *custom2Layer = new QgsRasterLayer(
+          custom2LayerUrl,
+          QStringLiteral("Sentinel %1").arg(custom2LayerId),
           QLatin1String("wms"));
       
-      if (customLayer->isValid())
+      if (custom2Layer->isValid())
       {
-        mProject->addMapLayer(customLayer, false);
-        sentinelGroup->addLayer(customLayer);
+        mProject->addMapLayer(custom2Layer, false);
+        sentinelGroup->addLayer(custom2Layer);
+        
+        // Set layer visibility based on style
+        QgsLayerTreeLayer* treeLayer = sentinelGroup->findLayer(custom2Layer->id());
+        if (treeLayer) {
+          treeLayer->setItemVisibilityChecked(custom2Style != "OFF");
+        }
       }
       else
       {
-        delete customLayer;
+        delete custom2Layer;
       }
     }
     
@@ -1462,24 +1506,26 @@ void QgisMobileapp::readProjectFile()
   basemapsGroup->addLayer(osmLayer);
   
   // Create and add the cultivo layer as the first layer in Spain GIS Services
-  QgsRasterLayer *cultivoLayer = new QgsRasterLayer(
-      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/cultivo_declarado@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmax=15&zmin=12&http-header:referer=" ),
-      QStringLiteral( "cultivo" ),
-      QLatin1String( "wms" ) );
+  QgsVectorTileLayer *cultivoLayer = new QgsVectorTileLayer(
+      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/cultivo_declarado@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmax=14&zmin=0&http-header:referer=" ),
+      QStringLiteral( "cultivos declarados" ) );
   
   // Create and add TeselaRECINTOS FEGA layer
-  QgsRasterLayer *teselaRecintosLayer = new QgsRasterLayer(
-      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmin=14&http-header:referer=" ),
-      QStringLiteral( "TeselaRECINTOS FEGA" ),
-      QLatin1String( "wms" ) );
+  QgsVectorTileLayer *teselaRecintosLayer = new QgsVectorTileLayer(
+      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmax=14&zmin=0&http-header:referer=" ),
+      QStringLiteral( "TeselaRECINTOS FEGA" ) );
   
-  // Add Spain GIS Services layers to the project and to the Spain GIS Services group
+  // Add vector tile layers to the project and to the Spain GIS VectorTiles group
   mProject->addMapLayer(cultivoLayer, false);
   mProject->addMapLayer(teselaRecintosLayer, false);
+  spainGisVectorTilesGroup->addLayer(cultivoLayer);
+  spainGisVectorTilesGroup->addLayer(teselaRecintosLayer);
+  
+  // Add Spain GIS Services layers to the project and to the Spain GIS Services group
   mProject->addMapLayer(sigpacLayer, false);
   mProject->addMapLayer(catastroLayer, false);
-  spainGisServicesGroup->addLayer(cultivoLayer);
-  spainGisServicesGroup->addLayer(teselaRecintosLayer);
+  spainGisBaseLayersGroup->addLayer(sigpacLayer);
+  spainGisBaseLayersGroup->addLayer(catastroLayer);
   spainGisServicesGroup->addLayer(sigpacLayer);
   spainGisServicesGroup->addLayer(catastroLayer);
   
@@ -1489,70 +1535,232 @@ void QgisMobileapp::readProjectFile()
       QStringLiteral( "Zonas Vul Nitratos 2023" ),
       QLatin1String( "wms" ) );
   
+  // Create and add IGN WMS layers
+  QgsRasterLayer *puntosAcotadosLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4258&dpiMode=7&featureCount=10&format=image/png&layers=EL.SpotElevation&styles=puntosacotados&tilePixelRatio=0&url=https://servicios.idee.es/wms-inspire/mdt" ),
+      QStringLiteral( "IGN: puntos acotados" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *curvasNivelLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4258&dpiMode=7&featureCount=10&format=image/png&layers=EL.ContourLine&styles=curvasnivel&tilePixelRatio=0&url=https://servicios.idee.es/wms-inspire/mdt" ),
+      QStringLiteral( "Curvas de nivel" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *modeloDigitalTerrenoLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4258&dpiMode=7&featureCount=10&format=image/png&layers=EL.ElevationGridCoverage&styles=EL.ElevationGridCoverage.Default&tilePixelRatio=0&url=https://servicios.idee.es/wms-inspire/mdt" ),
+      QStringLiteral( "Modelo digital terreno" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *hidrografiaLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4258&dpiMode=7&featureCount=10&format=image/png&tilePixelRatio=0&url=https://servicios.idee.es/wms-inspire/hidrografia&layers=HY.PhysicalWaters.HydroPointOfInterest&layers=HY.PhysicalWaters.ManMadeObject&layers=HY.PhysicalWaters.LandWaterBoundary&layers=HY.Network&layers=HY.PhysicalWaters.Waterbodies&layers=HY.PhysicalWaters.Wetland&layers=HY.PhysicalWaters.Catchments&styles=&styles=&styles=&styles=&styles=&styles=&styles=" ),
+      QStringLiteral( "Hidrografía España" ),
+      QLatin1String( "wms" ) );
+      
+  // Create and add climate WMS layers
+  QgsRasterLayer *etpMediaAnualLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4230&dpiMode=7&featureCount=10&format=image/png&layers=Evapotranspiración&styles=default&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agricultura/CaractAgroClimaticas/wms.aspx" ),
+      QStringLiteral( "ETP media anual" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *temperaturaMaximaLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4230&dpiMode=7&featureCount=10&format=image/png&layers=Temperatura máxima&styles&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agricultura/CaractAgroClimaticas/wms.aspx" ),
+      QStringLiteral( "Temperatura máxima" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *temperaturaMediaLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4230&dpiMode=7&featureCount=10&format=image/png&layers=Temperatura media anual&styles&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agricultura/CaractAgroClimaticas/wms.aspx" ),
+      QStringLiteral( "Temperatura media" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *temperaturaMinimaLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4230&dpiMode=7&featureCount=10&format=image/png&layers=Temperatura mínima&styles&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agricultura/CaractAgroClimaticas/wms.aspx" ),
+      QStringLiteral( "Temperatura mínima" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *clasificacionClimaticaLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4230&dpiMode=7&featureCount=10&format=image/png&layers=Clasificación climáticos&styles=default&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Agricultura/CaractAgroClimaticas/wms.aspx" ),
+      QStringLiteral( "Clasif. clim J. Papadakis" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *necesidadesRiegoLayer = new QgsRasterLayer(
+      QStringLiteral( "allowTemporalUpdates=true&contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=necesidades_riego&styles&temporalSource=provider&tilePixelRatio=0&timeDimensionExtent=2014-01-01T00:00:00.000Z/2023-01-01T00:00:00.000Z/P1Y&type=wmst&url=https://wmts.mapama.gob.es/sig/desarrollorural/necesidades_riego/ows" ),
+      QStringLiteral( "Necesidades de riego" ),
+      QLatin1String( "wms" ) );
+      
+  QgsRasterLayer *protectedSitesLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=PS.ProtectedSite&styles=PS.ProtectedSite.Default&tilePixelRatio=0&url=https://wms.mapama.gob.es/sig/Biodiversidad/ENP/wms.aspx" ),
+      QStringLiteral( "Protected Sites Default Style" ),
+      QLatin1String( "wms" ) );
+      
+  // Create and add Cultivo Declarado 2024 layer for Spain GIS Services
+  QgsRasterLayer *cultivoDeclarado2024Layer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=AU.Sigpac:cultivo_declarado&styles&tilePixelRatio=0&url=https://sigpac-hubcloud.es/wms" ),
+      QStringLiteral( "Cultivo Declarado 2024" ),
+      QLatin1String( "wms" ) );
+  
   // Add layers to the Utils group
   mProject->addMapLayer(floodRiskLayer, false);
   mProject->addMapLayer(zonasVulLayer, false);
+  mProject->addMapLayer(puntosAcotadosLayer, false);
+  mProject->addMapLayer(curvasNivelLayer, false);
+  mProject->addMapLayer(modeloDigitalTerrenoLayer, false);
+  mProject->addMapLayer(hidrografiaLayer, false);
+  mProject->addMapLayer(etpMediaAnualLayer, false);
+  mProject->addMapLayer(temperaturaMaximaLayer, false);
+  mProject->addMapLayer(temperaturaMediaLayer, false);
+  mProject->addMapLayer(temperaturaMinimaLayer, false);
+  mProject->addMapLayer(clasificacionClimaticaLayer, false);
+  mProject->addMapLayer(necesidadesRiegoLayer, false);
+  mProject->addMapLayer(protectedSitesLayer, false);
   utilsGroup->addLayer(floodRiskLayer);
   utilsGroup->addLayer(zonasVulLayer);
+  utilsGroup->addLayer(puntosAcotadosLayer);
+  utilsGroup->addLayer(curvasNivelLayer);
+  utilsGroup->addLayer(modeloDigitalTerrenoLayer);
+  utilsGroup->addLayer(hidrografiaLayer);
+  utilsGroup->addLayer(etpMediaAnualLayer);
+  utilsGroup->addLayer(temperaturaMaximaLayer);
+  utilsGroup->addLayer(temperaturaMediaLayer);
+  utilsGroup->addLayer(temperaturaMinimaLayer);
+  utilsGroup->addLayer(clasificacionClimaticaLayer);
+  utilsGroup->addLayer(necesidadesRiegoLayer);
+  utilsGroup->addLayer(protectedSitesLayer);
+  
+  // Create a vector point layer for data collection
+  QString datosLayerDef = QStringLiteral( "Point?crs=EPSG:4326"
+                                         "&field=fid:integer"
+                                         "&field=Nombre:string(255)"
+                                         "&field=Picture:string(255)"
+                                         "&field=Descripcion:string(255)"
+                                         "&field=Valor:integer"
+                                         "&field=Fecha:date"
+                                         "&field=Notas:string(255)" );
+  
+  QgsVectorLayer *datosPuntoLayer = new QgsVectorLayer( datosLayerDef, QStringLiteral( "Datos Punto" ), QStringLiteral( "memory" ) );
+  
+  // Set up field aliases for better usability
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "fid" ), "ID" );
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "Nombre" ), "Nombre" );
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "Ppicture" ), "Foto" );
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "Descripcion" ), "Descripción" );
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "Valor" ), "Valor" );
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "Fecha" ), "Fecha" );
+  datosPuntoLayer->setFieldAlias( datosPuntoLayer->fields().indexFromName( "Notas" ), "Notas" );
+  
+  // Create a raster layer for data collection with the same fields
+  QString datosRasterLayerDef = QStringLiteral( "Polygon?crs=EPSG:4326"
+                                         "&field=fid:integer"
+                                         "&field=Nombre:string(255)"
+                                         "&field=Picture:string(255)"
+                                         "&field=Descripcion:string(255)"
+                                         "&field=Valor:integer"
+                                         "&field=Fecha:date"
+                                         "&field=Notas:string(255)" );
+  
+  QgsVectorLayer *datosRasterLayer = new QgsVectorLayer( datosRasterLayerDef, QStringLiteral( "Datos Raster" ), QStringLiteral( "memory" ) );
+  
+  // Set up field aliases for better usability
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "fid" ), "ID" );
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "Nombre" ), "Nombre" );
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "Ppicture" ), "Foto" );
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "Descripcion" ), "Descripción" );
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "Valor" ), "Valor" );
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "Fecha" ), "Fecha" );
+  datosRasterLayer->setFieldAlias( datosRasterLayer->fields().indexFromName( "Notas" ), "Notas" );
+  
+  // Add the layers to the project
+  mProject->addMapLayer( datosPuntoLayer, false );
+  mProject->addMapLayer( datosRasterLayer, false );
+  
+  // Add layers to the Data Collection group
+  dataCollectionGroup->addLayer( datosPuntoLayer );
+  dataCollectionGroup->addLayer( datosRasterLayer );
+  
+  // Add Spain GIS Services layers to the project and to the Spain GIS Base Layers group
+  mProject->addMapLayer(cultivoDeclarado2024Layer, false);
+  mProject->addMapLayer(sigpacLayer, false);
+  mProject->addMapLayer(catastroLayer, false);
+  
+  // Add Cultivo Declarado as the first layer in Spain GIS Base Layers
+  spainGisBaseLayersGroup->addLayer(cultivoDeclarado2024Layer);
+  spainGisBaseLayersGroup->addLayer(sigpacLayer);
+  spainGisBaseLayersGroup->addLayer(catastroLayer);
+  
+  // Set TeselaRecintos FEGA opacity to 50%
+  teselaRecintosLayer->setOpacity(0.5);
   
   // Make sure all groups are visible by default - using multiple approaches to ensure visibility
   spainGisServicesGroup->setItemVisibilityCheckedParentRecursive(true);
-  spainGisServicesGroup->setItemVisibilityCheckedRecursive(true);
+  spainGisServicesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
   spainGisServicesGroup->setItemVisibilityChecked(true);
   
   utilsGroup->setItemVisibilityCheckedParentRecursive(true);
-  utilsGroup->setItemVisibilityCheckedRecursive(true);
+  utilsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
   utilsGroup->setItemVisibilityChecked(true);
   
   basemapsGroup->setItemVisibilityCheckedParentRecursive(true);
-  basemapsGroup->setItemVisibilityCheckedRecursive(true);
+  basemapsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
   basemapsGroup->setItemVisibilityChecked(true);
+  
+  dataCollectionGroup->setItemVisibilityCheckedParentRecursive(true);
+  dataCollectionGroup->setItemVisibilityCheckedRecursive(true);
+  dataCollectionGroup->setItemVisibilityChecked(true);
   
   // Set Sentinel group visibility if it exists
   if (sentinelGroup)
   {
-    sentinelGroup->setItemVisibilityCheckedParentRecursive(true);
-    sentinelGroup->setItemVisibilityCheckedRecursive(true);
-    sentinelGroup->setItemVisibilityChecked(true);
-  }
-  
-  // Set individual layer visibility
-  // First hide all individual layers
-  for (QgsLayerTreeLayer* layer : basemapsGroup->findLayers())
-  {
-    layer->setItemVisibilityChecked(false);
-  }
-  
-  for (QgsLayerTreeLayer* layer : spainGisServicesGroup->findLayers())
-  {
-    layer->setItemVisibilityChecked(false);
-  }
-  
-  for (QgsLayerTreeLayer* layer : utilsGroup->findLayers())
-  {
-    layer->setItemVisibilityChecked(false);
-  }
-  
-  // Hide all Sentinel layers by default
-  if (sentinelGroup)
-  {
-    for (QgsLayerTreeLayer* layer : sentinelGroup->findLayers())
-    {
-      layer->setItemVisibilityChecked(false);
+    // Check if Sentinel layers are enabled at all
+    bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnableLayers"), true).toBool();
+    
+    if (!enableSentinelLayers) {
+      // If Sentinel layers are disabled, hide the entire group
+      sentinelGroup->setItemVisibilityChecked(false);
+    } else {
+      // Otherwise, set visibility based on layer settings
+      sentinelGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
       
-      // Make True Color layer visible by default if it exists
-      if (layer->name() == "Sentinel True Color")
+      for (QgsLayerTreeLayer* layer : sentinelGroup->findLayers())
       {
-        layer->setItemVisibilityChecked(true);
+        // Default to hidden
+        layer->setItemVisibilityChecked(false);
+        
+        // Check if this layer should be visible based on its style setting
+        QString layerName;
+        if (layer->name() == "Sentinel True Color") {
+          layerName = "TRUE_COLOR";
+        } else if (layer->name() == "Sentinel False Color") {
+          layerName = "FALSE_COLOR";
+        } else if (layer->name() == "Sentinel NDVI") {
+          layerName = "NDVI";
+        } else if (layer->name() == "Sentinel EVI") {
+          layerName = "EVI";
+        } else if (layer->name().startsWith("Sentinel ")) {
+          layerName = "CUSTOM";
+        }
+        
+        // If the layer is in the enabled layers list and its style is "ON" or "DEFAULT", make it visible
+        if (!layerName.isEmpty() && enabledLayers.contains(layerName)) {
+          QString style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/%1").arg(layerName), "ON").toString();
+          if (style == "ON" || (layerName == "CUSTOM" && style == "DEFAULT")) {
+            layer->setItemVisibilityChecked(false); // Set to false by default
+          } else {
+            // Explicitly set to false if style is "OFF"
+            layer->setItemVisibilityChecked(false);
+          }
+        } else {
+          // Explicitly set to false if not in enabled layers
+          layer->setItemVisibilityChecked(false);
+        }
       }
     }
   }
   
-  // Then set the requested layers to be visible
-  mProject->layerTreeRoot()->findLayer(satelliteLayer->id())->setItemVisibilityChecked(true);
-  mProject->layerTreeRoot()->findLayer(sigpacLayer->id())->setItemVisibilityChecked(true);
+  // Then set only the requested layers to be visible
+  mProject->layerTreeRoot()->findLayer(satelliteLayer->id())->setItemVisibilityChecked(true); // Google Satellite
+  mProject->layerTreeRoot()->findLayer(sigpacLayer->id())->setItemVisibilityChecked(true); // Recintos SIGPAC FEGA
   
   // Set groups to be expanded by default
+  dataCollectionGroup->setExpanded(true);
   spainGisServicesGroup->setExpanded(true);
   utilsGroup->setExpanded(true);
   basemapsGroup->setExpanded(true);

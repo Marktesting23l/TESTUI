@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/images">
         <file alias="imagr-logo.svg">icons/Logo_imagr.svg</file>
+        <file alias="intecnatur-logo.svg">icons/InTecnatur_logo.svg</file>
         </qresource>
     <qresource prefix="/pictures">
         <file alias="qfield-love.png">pictures/qfield-love.png</file>
@@ -165,5 +166,23 @@
         <file>themes/sigpacgo/nodpi/satellite.svg</file>
         <file>themes/sigpacgo/nodpi/maps.svg</file>
         <file>themes/sigpacgo/nodpi/calculator.svg</file>
+        <file>themes/sigpacgo/nodpi/sigpac_search.svg</file>
+        <file>themes/sigpacgo/nodpi/spain.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/clear.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/mostly_clear.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/partly_cloudy.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/cloudy.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/fog.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/drizzle.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/freezing_drizzle.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/light_rain.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/rain.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/heavy_rain.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/freezing_rain.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/snow.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/showers.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/snow_showers.svg</file>
+        <file>themes/sigpacgo/nodpi/weather/thunderstorm.svg</file>
+        <file>themes/sigpacgo/nodpi/Flag_of_Andalucía.svg</file>
     </qresource>
 </RCC>

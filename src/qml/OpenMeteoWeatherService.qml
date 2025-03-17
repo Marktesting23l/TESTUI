@@ -13,8 +13,36 @@ QtObject {
     // Signal emitted when an error occurs
     signal errorOccurred(string errorMessage)
     
+    // Function to test if the weather icons are accessible
+    function testWeatherIcons() {
+        console.log("Testing weather icons accessibility...");
+        
+        // Test a few icon paths
+        var iconPaths = [
+            "qrc:/themes/sigpacgo/nodpi/weather/clear.svg",
+            "qrc:/themes/sigpacgo/nodpi/weather/cloudy.svg",
+            "qrc:/themes/sigpacgo/nodpi/weather/rain.svg",
+            "qrc:/themes/sigpacgo/nodpi/weather/snow.svg"
+        ];
+        
+        for (var i = 0; i < iconPaths.length; i++) {
+            var testImage = Qt.createQmlObject('import QtQuick 2.12; Image { source: "' + iconPaths[i] + '"; }', openMeteoService);
+            console.log("Testing icon: " + iconPaths[i] + ", status: " + testImage.status);
+            
+            // Status values: Image.Null (0), Image.Ready (1), Image.Loading (2), Image.Error (3)
+            if (testImage.status === Image.Error) {
+                console.error("Failed to load icon: " + iconPaths[i]);
+            }
+        }
+        
+        console.log("Weather icons test completed");
+    }
+    
     // Function to load weather forecast for a location
     function loadForecast(latitude, longitude) {
+        // Test weather icons first
+        testWeatherIcons();
+        
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -296,39 +324,44 @@ QtObject {
         
         // Try to map the code to an icon
         switch(code) {
-            case 0: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/clear.svg"; break;
-            case 1: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/mostly_clear.svg"; break;
-            case 2: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/partly_cloudy.svg"; break;
-            case 3: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/cloudy.svg"; break;
+            case 0: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/clear.svg"; break;
+            case 1: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/mostly_clear.svg"; break;
+            case 2: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/partly_cloudy.svg"; break;
+            case 3: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/cloudy.svg"; break;
             case 45:
-            case 48: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/fog.svg"; break;
+            case 48: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/fog.svg"; break;
             case 51:
             case 53:
-            case 55: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/drizzle.svg"; break;
+            case 55: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/drizzle.svg"; break;
             case 56:
-            case 57: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/freezing_drizzle.svg"; break;
-            case 61: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/light_rain.svg"; break;
-            case 63: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/rain.svg"; break;
-            case 65: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/heavy_rain.svg"; break;
+            case 57: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/freezing_drizzle.svg"; break;
+            case 61: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/light_rain.svg"; break;
+            case 63: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/rain.svg"; break;
+            case 65: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/heavy_rain.svg"; break;
             case 66:
-            case 67: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/freezing_rain.svg"; break;
+            case 67: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/freezing_rain.svg"; break;
             case 71:
             case 73:
             case 75:
-            case 77: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/snow.svg"; break;
+            case 77: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/snow.svg"; break;
             case 80:
             case 81:
-            case 82: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/showers.svg"; break;
+            case 82: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/showers.svg"; break;
             case 85:
-            case 86: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/snow_showers.svg"; break;
+            case 86: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/snow_showers.svg"; break;
             case 95:
             case 96:
-            case 99: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/thunderstorm.svg"; break;
-            default: iconPath = "qrc:///images/themes/sigpacgo/nodpi/weather/cloudy.svg"; break;
+            case 99: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/thunderstorm.svg"; break;
+            default: iconPath = "qrc:/themes/sigpacgo/nodpi/weather/cloudy.svg"; break;
         }
         
-        // Fallback to a generic icon if the specific one is not available
-        // Use a standard icon from the Qt resources that's likely to be available
-        return "qrc:///icons/mActionAddRasterLayer.svg";
+        // Check if the icon path is valid, otherwise use a fallback
+        if (!iconPath) {
+            console.error("Invalid weather icon path for code: " + code);
+            iconPath = "qrc:/themes/sigpacgo/nodpi/weather.svg";
+        }
+        
+        console.log("Weather icon for code " + code + ": " + iconPath);
+        return iconPath;
     }
 } 

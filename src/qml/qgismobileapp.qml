@@ -1438,8 +1438,11 @@ ApplicationWindow {
       id: alertIcon
       iconSource: Theme.getThemeVectorIcon("ic_alert_black_24dp")
       round: true
-      bgcolor: "transparent"
+      bgcolor: Theme.toolButtonBackgroundColor
       visible: !screenLocker.enabled && messageLog.unreadMessages
+      width: 30
+      height: 30
+      padding: 2
       anchors.right: pluginsToolbar.right
       anchors.top: pluginsToolbar.bottom
       anchors.topMargin: 4
@@ -1455,6 +1458,7 @@ ApplicationWindow {
       visible: !screenLocker.enabled
       width: 30
       height: 30
+      padding: 2
       anchors.right: pluginsToolbar.right
       anchors.top: alertIcon.bottom
       anchors.topMargin: 4
@@ -1482,6 +1486,7 @@ ApplicationWindow {
 
         width: 48
         height: 48
+        padding: 2 
 
         onClicked: {
           if (gnssButton.followActive)
@@ -1500,6 +1505,7 @@ ApplicationWindow {
 
         width: 48
         height: 48
+        padding: 2 
 
         onClicked: {
           if (gnssButton.followActive)
@@ -1552,7 +1558,7 @@ ApplicationWindow {
       width: childrenRect.width
       height: childrenRect.height
       topPadding: mainWindow.sceneTopMargin + 20
-      leftPadding: 15
+      leftPadding: 12
       spacing: 15
 
       QfToolButton {
@@ -1560,6 +1566,7 @@ ApplicationWindow {
         round: true
         iconSource: Theme.getThemeVectorIcon("ic_menu_white_24dp")
         bgcolor: dashBoard.opened ? Theme.mainColor : Theme.darkGray
+        padding: 2 // Reduce padding to make room for larger icon
 
         onClicked: dashBoard.opened ? dashBoard.close() : dashBoard.open()
 
@@ -1615,12 +1622,13 @@ ApplicationWindow {
       // Add Weather Forecast button
       QfToolButton {
         id: weatherButton
-        width: 40
-        height: 40
+        width: 48
+        height: 48
         round: true
         bgcolor: Theme.toolButtonBackgroundColor
         iconSource: Theme.getThemeVectorIcon('weather')
         iconColor: Theme.toolButtonColor
+        padding: 1 // Reduce padding to make room for larger icon
         
         onClicked: {
           // Get current map center coordinates
@@ -1642,13 +1650,14 @@ ApplicationWindow {
       // Add Cascade Search button
       QfToolButton {
         id: cascadeSearchButton
-        width: 48
-        height: 48
+        width: 42
+        height: 42
         round: true
         bgcolor: Theme.toolButtonBackgroundColor
-        iconSource: Theme.getThemeVectorIcon('ic_search_white_24dp')
+        iconSource: Theme.getThemeVectorIcon('sigpac_search')
         iconColor: Theme.toolButtonColor
         visible: dashBoard.activeLayer !== null
+        padding: 2 // Reduce padding to make room for larger icon
         
         onClicked: {
           if (dashBoard.activeLayer) {
@@ -1697,7 +1706,7 @@ ApplicationWindow {
           id: snappingButton
           width: 48
           height: 48
-          padding: 4
+          padding: 2
           round: true
           state: qgisProject && qgisProject.snappingConfig.enabled ? "On" : "Off"
           iconSource: Theme.getThemeVectorIcon("ic_snapping_white_24dp")
@@ -2119,6 +2128,7 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon('ic_camera_photo_black_24dp')
         iconColor: Theme.toolButtonColor
         bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
+        padding: 4 // Reduce padding to make room for larger icon
         onClicked: {
           dashBoard.ensureEditableLayerSelected()
           if (!positionSource.active || !positionSource.positionInformation.latitudeValid || !positionSource.positionInformation.longitudeValid) {
@@ -2149,6 +2159,7 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon('ic_camera_photo_black_24dp')
         iconColor: Theme.toolButtonColor
         bgcolor: Theme.mainColor
+        padding: 2 
         onClicked: {
           standaloneCameraLoader.active = true
         }
@@ -2164,6 +2175,7 @@ ApplicationWindow {
         height: 40
         round: true
         visible: qgisProject && !!qgisProject.homePath
+        padding: 4 // Reduce padding to make room for larger icon
         
         iconSource: Theme.getThemeVectorIcon('ic_folder_white_24dp')
         iconColor: Theme.toolButtonColor
@@ -2248,6 +2260,7 @@ ApplicationWindow {
         round: true
         checkable: true
         checked: positioningSettings.positioningCoordinateLock
+        padding: 4 // Reduce padding to make room for larger icon
         
         iconSource: positionSource.active && positioningSettings.positioningCoordinateLock ? 
                    Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp") : 
@@ -2257,11 +2270,13 @@ ApplicationWindow {
         bgcolor: positionSource.active && positioningSettings.positioningCoordinateLock ? 
                 Theme.toolButtonBackgroundColor : Theme.toolButtonBackgroundSemiOpaqueColor
         
-        // Accuracy indicator badge
+        // Accuracy indicator badge - moved to bottom left
         Rectangle {
           anchors {
-            horizontalCenter: parent.horizontalCenter
-            verticalCenter: parent.verticalCenter
+            left: parent.left
+            bottom: parent.bottom
+            leftMargin: -2
+            bottomMargin: -2
           }
           
           width: 12
@@ -2324,6 +2339,7 @@ ApplicationWindow {
       iconColor: Theme.toolButtonColor
       width: 40
       height: 40
+      padding: 4 // Reduce padding to make room for larger icon
 
 
 
@@ -2358,6 +2374,7 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon("maps")
         iconColor: googleSearchButton.enabled ? Theme.toolButtonColor : Theme.mainTextDisabledColor
         bgcolor: dashBoard.opened ? Theme.mainColor : Theme.toolButtonBackgroundColor
+        padding: 1 
         
         property var lastCoordinates: null
         property string lastClipboardText: ""
@@ -3842,8 +3859,8 @@ ApplicationWindow {
     
     MenuItem {
       id: querySigpacItem
-      text: qsTr("Query SIGPAC")
-      icon.source: Theme.getThemeVectorIcon("ic_baseline_search_white") // Changed to map icon
+      text: qsTr("Query SIGPAC ONLINE")
+      icon.source: Theme.getThemeVectorIcon("spain") // Changed to map icon
       height: 48
       leftPadding: Theme.menuItemLeftPadding
       font: Theme.defaultFont

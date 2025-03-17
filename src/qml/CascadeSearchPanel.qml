@@ -9203,18 +9203,17 @@ Drawer {
         anchors.fill: parent
         
         header: QfPageHeader {
-            title: qsTr("SIGPAC Search")
+            title: qsTr("SIGPAC Offline Search")
             showBackButton: false
             showApplyButton: false
             showCancelButton: false // Changed to false since we'll add our own reset button
             
-            // Add custom reset button that's more clickable
             ToolButton {
                 id: resetButton
                 anchors.left: parent.left
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                icon.source: Theme.getThemeIcon("ic_refresh_black_24dp")
+                icon.source: Theme.getThemeIcon("sigpac_search")
                 icon.color: Theme.mainTextColor
                 
                 // Add text next to the icon
