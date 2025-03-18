@@ -19,6 +19,7 @@ Drawer {
   signal toggleMeasurementTool
   signal showweatherDataPanel
   signal returnHome
+  signal closeProject
 
   property bool allowInteractive: true
   property alias allowActiveLayerChange: legend.allowActiveLayerChange

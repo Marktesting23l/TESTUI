@@ -70,6 +70,28 @@ void PlatformUtilities::copySampleProjects()
 {
   const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/sigpacgo/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
   Q_ASSERT( success );
+  
+  // Also copy the SIGPAC base map
+  copySigpacBaseMap();
+}
+
+void PlatformUtilities::copySigpacBaseMap()
+{
+  // Source is from resources directory
+  QString sourceDir = systemSharedDataLocation() + QLatin1String( "/sigpacgo/sigpacgo_base" );
+  // Target is directly in app data location for easy access
+  QString targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_base" ) );
+  
+  // Create the directory if it doesn't exist
+  QDir targetDirObj(targetDir);
+  if (!targetDirObj.exists())
+  {
+    targetDirObj.mkpath(".");
+  }
+  
+  // Copy the base map project
+  const bool success = FileUtils::copyRecursively(sourceDir, targetDir);
+  qDebug() << "Copying SIGPAC base map from" << sourceDir << "to" << targetDir << (success ? "succeeded" : "failed");
 }
 
 void PlatformUtilities::initSystem()
@@ -195,7 +217,7 @@ bool PlatformUtilities::createDir( const QString &path, const QString &dirname )
 bool PlatformUtilities::rmFile( const QString &filename ) const
 {
   QFile file( filename );
-  return file.remove( filename );
+  return file.remove();
 }
 
 bool PlatformUtilities::renameFile( const QString &oldFilePath, const QString &newFilePath, bool overwrite ) const
@@ -533,4 +555,18 @@ void PlatformUtilities::requestMicrophonePermission( std::function<void( Qt::Per
 {
   QMicrophonePermission microphonePermission;
   qApp->requestPermission( microphonePermission, [=]( const QPermission &permission ) { func( permission.status() ); } );
+}
+
+QVariantMap PlatformUtilities::getFileInfo(const QString &filePath) const
+{
+  QVariantMap result;
+  QFileInfo fileInfo(filePath);
+  
+  result["exists"] = fileInfo.exists();
+  result["isFile"] = fileInfo.isFile();
+  result["isDir"] = fileInfo.isDir();
+  result["size"] = fileInfo.size();
+  result["lastModified"] = fileInfo.lastModified();
+  
+  return result;
 }

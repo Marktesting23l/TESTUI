@@ -1753,9 +1753,15 @@ void QgisMobileapp::readProjectFile()
   dataCollectionGroup->addLayer(datosPuntoLayer);
   dataCollectionGroup->addLayer(datosRasterLayer);
   
-  // Add Cultivo Declarado layer to the project and to the Spain GIS Base Layers group
+  // Add Spain GIS Services layers to the project and to the Spain GIS Base Layers group
   mProject->addMapLayer(cultivoDeclarado2024Layer, false);
+  mProject->addMapLayer(sigpacLayer, false);
+  mProject->addMapLayer(catastroLayer, false);
+  
+  // Add Cultivo Declarado as the first layer in Spain GIS Base Layers
   spainGisBaseLayersGroup->addLayer(cultivoDeclarado2024Layer);
+  spainGisBaseLayersGroup->addLayer(sigpacLayer);
+  spainGisBaseLayersGroup->addLayer(catastroLayer);
   
   // Set TeselaRecintos FEGA opacity to 50%
   teselaRecintosLayer->setOpacity(0.5);

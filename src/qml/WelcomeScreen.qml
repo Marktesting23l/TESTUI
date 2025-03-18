@@ -4,7 +4,7 @@ import QtQuick.Controls.Material.impl
 import QtQuick.Layouts
 import QtQuick.Particles
 import QtCore
-import org.qfield
+import org.qfield 1.0
 import Theme
 
 /**
@@ -14,7 +14,7 @@ Page {
   id: welcomeScreen
 
   property bool firstShown: false
-  property string mainProjectPath: "/path/to/main/project.qgs" // Path to main project file
+  property string mainProjectPath: platformUtilities.systemLocalDataLocation("sigpacgo_base") + "/SIGPAC_BASE.qgz" // Path to main project file
   property string mainProjectTitle: qsTr("SIGPAC-Go Base Map") // Title of main project
 
   property alias model: table.model
@@ -431,7 +431,21 @@ Page {
                   Layout.preferredWidth: 120
                   text: qsTr("Open")
                   onClicked: {
-                    iface.loadFile(mainProjectPath, mainProjectTitle);
+                    let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+                    if (fileInfo && fileInfo.exists) {
+                      iface.loadFile(mainProjectPath, mainProjectTitle);
+                    } else {
+                      // Try to copy the base map if not exists
+                      platformUtilities.copySigpacBaseMap();
+                      
+                      // Check again
+                      fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+                      if (fileInfo && fileInfo.exists) {
+                        iface.loadFile(mainProjectPath, mainProjectTitle);
+                      } else {
+                        displayToast(qsTr("Base map project not found. Please reinstall the app."));
+                      }
+                    }
                   }
                 }
               }
@@ -905,11 +919,26 @@ Page {
     if (!visible) {
       firstShown = true;
     } else {
+      // Check if the base map exists
+      checkBaseMapExists();
+      
       // Debug model info when screen becomes visible
       console.log("Welcome screen visible, model count: " + (model ? model.count : "null"));
       if (model && model.count > 0) {
         console.log("First project: " + model.get(0).ProjectTitle);
       }
+    }
+  }
+
+  // Function to check if the base map exists and copy it if needed
+  function checkBaseMapExists() {
+    let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+    if (!fileInfo || !fileInfo.exists) {
+      console.log("Base map not found at: " + mainProjectPath);
+      console.log("Trying to copy it from resources...");
+      platformUtilities.copySigpacBaseMap();
+    } else {
+      console.log("Base map found at: " + mainProjectPath);
     }
   }
 

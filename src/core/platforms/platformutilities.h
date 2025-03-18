@@ -327,6 +327,18 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     virtual void requestMicrophonePermission( std::function<void( Qt::PermissionStatus )> func );
     virtual void requestBackgroundPositioningPermissions() {};
 
+    /**
+     * Gets information about a file
+     * @param filePath The path to the file
+     * @return A QVariantMap with file information, including 'exists' (boolean)
+     */
+    Q_INVOKABLE QVariantMap getFileInfo(const QString &filePath) const;
+
+    /**
+     * Copies the SIGPAC base map project to the app's data location
+     */
+    Q_INVOKABLE void copySigpacBaseMap();
+
     static PlatformUtilities *instance();
 
   signals:

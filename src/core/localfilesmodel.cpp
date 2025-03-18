@@ -84,6 +84,20 @@ void LocalFilesModel::resetToPath( const QString &path )
   }
 }
 
+void LocalFilesModel::resetToProjectFolder()
+{
+  QString projectFilePath = QgsProject::instance()->fileName();
+  if (!projectFilePath.isEmpty())
+  {
+    QFileInfo fi(projectFilePath);
+    resetToPath(fi.absolutePath());
+  }
+  else
+  {
+    resetToRoot();
+  }
+}
+
 bool LocalFilesModel::isPathFavoriteEditable( const QString &path )
 {
   const QString sampleProjectPath = PlatformUtilities::instance()->systemLocalDataLocation( QLatin1String( "sample_projects" ) );

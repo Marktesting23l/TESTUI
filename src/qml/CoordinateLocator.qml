@@ -198,7 +198,7 @@ Item {
     property real halfWidth: width / 2
     property real arcSpacing: isSnapped ? 0 : 20
 
-    width: isSnapped ? 32 : 48
+    width: isSnapped ? 28 : 40
     height: width
 
     x: displayPosition.x - halfWidth
@@ -242,7 +242,7 @@ Item {
         y: 0
       }
       PathLine {
-        x: crosshairCircle.width * 0.3
+        x: crosshairCircle.width * 0.25
         y: 0
       }
       PathMove {
@@ -251,16 +251,16 @@ Item {
       }
       PathLine {
         x: 0
-        y: crosshairCircle.height * 0.3
+        y: crosshairCircle.height * 0.25
       }
 
-      // Top-right corner (30% of each side)
+      // Top-right corner (25% of each side)
       PathMove {
         x: crosshairCircle.width
         y: 0
       }
       PathLine {
-        x: crosshairCircle.width * 0.7
+        x: crosshairCircle.width * 0.75
         y: 0
       }
       PathMove {
@@ -269,16 +269,16 @@ Item {
       }
       PathLine {
         x: crosshairCircle.width
-        y: crosshairCircle.height * 0.3
+        y: crosshairCircle.height * 0.25
       }
 
-      // Bottom-left corner (30% of each side)
+      // Bottom-left corner (25% of each side)
       PathMove {
         x: 0
         y: crosshairCircle.height
       }
       PathLine {
-        x: crosshairCircle.width * 0.3
+        x: crosshairCircle.width * 0.25
         y: crosshairCircle.height
       }
       PathMove {
@@ -287,16 +287,16 @@ Item {
       }
       PathLine {
         x: 0
-        y: crosshairCircle.height * 0.7
+        y: crosshairCircle.height * 0.75
       }
 
-      // Bottom-right corner (30% of each side)
+      // Bottom-right corner (25% of each side)
       PathMove {
         x: crosshairCircle.width
         y: crosshairCircle.height
       }
       PathLine {
-        x: crosshairCircle.width * 0.7
+        x: crosshairCircle.width * 0.75
         y: crosshairCircle.height
       }
       PathMove {
@@ -305,7 +305,7 @@ Item {
       }
       PathLine {
         x: crosshairCircle.width
-        y: crosshairCircle.height * 0.7
+        y: crosshairCircle.height * 0.75
       }
 
       // Center crosshair

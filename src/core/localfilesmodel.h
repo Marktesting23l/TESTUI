@@ -17,6 +17,7 @@
 #define LOCALFILESMODEL_H
 
 #include <QAbstractListModel>
+#include <qgsproject.h>
 
 /**
  * \ingroup core
@@ -101,6 +102,9 @@ class LocalFilesModel : public QAbstractListModel
 
     //! Resets the model and sets the first navigation history item to the provided \a path
     Q_INVOKABLE void resetToPath( const QString &path );
+
+    //! Resets the model and sets the path to the current project's folder
+    Q_INVOKABLE void resetToProjectFolder();
 
     //! Returns whether \a path's favorite state is editable
     Q_INVOKABLE bool isPathFavoriteEditable( const QString &path );
