@@ -14,8 +14,17 @@ Page {
   id: welcomeScreen
 
   property bool firstShown: false
-  property string mainProjectPath: platformUtilities.systemLocalDataLocation("sigpacgo_base") + "/SIGPAC_BASE.qgz" // Path to main project file
+  property string mainProjectPath: "" // Path to main project file
   property string mainProjectTitle: qsTr("SIGPAC-Go Base Map") // Title of main project
+
+  // Add debug logging for project paths
+  Component.onCompleted: {
+    let localPath = platformUtilities.systemLocalDataLocation("sigpacgo_base");
+    console.log("Main project path calculated from: " + localPath);
+    mainProjectPath = localPath + "/SIGPAC_BASE.qgz";
+    console.log("Updated main project path: " + mainProjectPath);
+    console.log("Main project exists: " + platformUtilities.fileExists(mainProjectPath));
+  }
 
   property alias model: table.model
   signal openLocalDataPicker
@@ -936,7 +945,37 @@ Page {
     if (!fileInfo || !fileInfo.exists) {
       console.log("Base map not found at: " + mainProjectPath);
       console.log("Trying to copy it from resources...");
-      platformUtilities.copySigpacBaseMap();
+      
+      // Create the directory first
+      platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sigpacgo_base");
+      
+      // Try to copy from build output
+      let buildOutputPath = "/home/im/Documents/SIGPACGOEDITS/TESTUI-master/build-x64-linux/output/share/qfield/sigpacgo_base/SIGPAC_BASE.qgz";
+      let copied = false;
+      
+      if (platformUtilities.fileExists(buildOutputPath)) {
+        console.log("Found SIGPAC_BASE.qgz in build output path");
+        copied = platformUtilities.copyFile(buildOutputPath, mainProjectPath);
+      } 
+      
+      if (!copied) {
+        // Try resources location
+        let resourcePath = "/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/sigpacgo_base/SIGPAC_BASE.qgz";
+        if (platformUtilities.fileExists(resourcePath)) {
+          console.log("Found SIGPAC_BASE.qgz in resources path");
+          copied = platformUtilities.copyFile(resourcePath, mainProjectPath);
+        }
+      }
+      
+      console.log("Base map copy result: " + copied);
+      
+      // Check again after copying
+      fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+      if (fileInfo && fileInfo.exists) {
+        console.log("Base map successfully copied to: " + mainProjectPath);
+      } else {
+        console.log("Failed to copy base map to: " + mainProjectPath);
+      }
     } else {
       console.log("Base map found at: " + mainProjectPath);
     }

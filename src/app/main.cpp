@@ -79,8 +79,8 @@ int main( int argc, char **argv )
   {
     if ( strcmp( argv[1], "--positioningservice" ) == 0 )
     {
-      QCoreApplication::setOrganizationName( "OPENGIS.ch" );
-      QCoreApplication::setOrganizationDomain( "opengis.ch" );
+      QCoreApplication::setOrganizationName( "IMAGRITOOLS" );
+      QCoreApplication::setOrganizationDomain( "imagritools.com" );
       QCoreApplication::setApplicationName( qfield::appName );
 
       QFieldPositioningService app( argc, argv );
@@ -93,8 +93,8 @@ int main( int argc, char **argv )
 
   // Read settings, use a dummy app to get access to QSettings
   QCoreApplication *dummyApp = new QCoreApplication( argc, argv );
-  QCoreApplication::setOrganizationName( "OPENGIS.ch" );
-  QCoreApplication::setOrganizationDomain( "opengis.ch" );
+  QCoreApplication::setOrganizationName( "IMAGRITOOLS" );
+  QCoreApplication::setOrganizationDomain( "imagritools.com" );
   QCoreApplication::setApplicationName( qfield::appName );
   const QSettings settings;
   const QString customLanguage = settings.value( "/customLanguage", QString() ).toString();
@@ -266,8 +266,8 @@ int main( int argc, char **argv )
   QSettings::setDefaultFormat( QSettings::NativeFormat );
 
   // Set up the QSettings environment must be done after qapp is created
-  QCoreApplication::setOrganizationName( "OPENGIS.ch" );
-  QCoreApplication::setOrganizationDomain( "opengis.ch" );
+  QCoreApplication::setOrganizationName( "IMAGRITOOLS" );
+  QCoreApplication::setOrganizationDomain( "imagritools.com" );
   QCoreApplication::setApplicationName( qfield::appName );
 
   app.installTranslator( &qtTranslator );

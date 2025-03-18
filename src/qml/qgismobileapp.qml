@@ -6262,19 +6262,67 @@ ApplicationWindow {
   // Function to ensure SIGPAC_BASE project is available
   function ensureSigpacBaseProject() {
     // Force copy SIGPAC_BASE project
+    // Use proper function calls with parentheses
     let sourceDir = platformUtilities.systemSharedDataLocation() + "/sigpacgo/sigpacgo_base";
     let targetDir = platformUtilities.systemLocalDataLocation("sigpacgo_base");
     
+    console.log("Source SIGPAC_BASE directory: " + sourceDir);
+    console.log("Target SIGPAC_BASE directory: " + targetDir);
+    
+    // Create target directory if it doesn't exist
+    platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sigpacgo_base");
+    
+    // Check if source exists
+    let sourceDirExists = platformUtilities.fileExists(sourceDir);
+    console.log("Source directory exists: " + sourceDirExists);
+    
     // Create the directory if it doesn't exist
-    platformUtilities.copyRecursively(sourceDir, targetDir);
+    let copyResult = false;
+    if (sourceDirExists) {
+      copyResult = platformUtilities.copyRecursively(sourceDir, targetDir);
+      console.log("Copy SIGPAC_BASE directory result: " + copyResult);
+    }
+    
+    // Check if SIGPAC_BASE.qgz exists in the target directory
+    let projectFile = targetDir + "/SIGPAC_BASE.qgz";
+    let projectExists = platformUtilities.fileExists(projectFile);
+    console.log("SIGPAC_BASE.qgz exists in target: " + projectExists);
+    
+    if (!projectExists) {
+      console.log("SIGPAC_BASE.qgz not found in target, trying alternative locations");
+      
+      // Try to copy from build output location
+      let buildOutputPath = "/home/im/Documents/SIGPACGOEDITS/TESTUI-master/build-x64-linux/output/share/qfield/sigpacgo_base/SIGPAC_BASE.qgz";
+      if (platformUtilities.fileExists(buildOutputPath)) {
+        console.log("Found SIGPAC_BASE.qgz in build output path");
+        platformUtilities.copyFile(buildOutputPath, projectFile);
+      } else {
+        // Try resources location
+        let resourcePath = "/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/sigpacgo_base/SIGPAC_BASE.qgz";
+        if (platformUtilities.fileExists(resourcePath)) {
+          console.log("Found SIGPAC_BASE.qgz in resources path");
+          platformUtilities.copyFile(resourcePath, projectFile);
+        }
+      }
+      
+      // Check again after copy attempt
+      projectExists = platformUtilities.fileExists(projectFile);
+      console.log("SIGPAC_BASE.qgz exists after copy attempt: " + projectExists);
+    }
     
     // Display a toast
-    displayToast(qsTr("SIGPAC_BASE project folder created"))
+    displayToast(qsTr("SIGPAC_BASE project folder setup: ") + (projectExists ? "OK" : "Failed"));
+    
+    return projectExists;
   }
   
-  // Call the function when the application starts
+  // Make sure Component.onCompleted exists and calls our function
   Component.onCompleted: {
-    ensureSigpacBaseProject();
+    // Call with a slight delay to ensure UI is fully loaded
+    Qt.callLater(function() {
+      let result = ensureSigpacBaseProject();
+      console.log("SIGPAC_BASE project setup result: " + result);
+    });
   }
   
   // Cascade Search Panel

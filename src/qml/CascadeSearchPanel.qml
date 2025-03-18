@@ -9862,7 +9862,7 @@ Drawer {
                         Text {
                             Layout.fillWidth: true
                             visible: !selectedParcel && parcelModel.count > maxVisibleItems
-                            text: qsTr("Scroll for more options (%1 total)").arg(parcelModel.count)
+                            text: qsTr("Desplázate para más opciones (%1 total)").arg(parcelModel.count)
                             font.italic: true
                             font.pointSize: Theme.tipFont.pointSize
                             color: Theme.secondaryTextColor
@@ -9876,7 +9876,7 @@ Drawer {
                     id: resultsView
                     Layout.fillWidth: true
                     Layout.margins: 5
-                    title: qsTr("Results")
+                    title: qsTr("Resultados")
                     visible: false
                     padding: 5
                     
@@ -9888,7 +9888,7 @@ Drawer {
                             id: resultsCountLabel
                             Layout.fillWidth: true
                             font.bold: true
-                            text: qsTr("0 features found")
+                            text: qsTr("0 elementos encontrados")
                         }
                         
                         ListView {
@@ -9918,7 +9918,7 @@ Drawer {
                                     
                                     Text {
                                         Layout.fillWidth: true
-                                        text: qsTr("Use: %1 - Area: %2 m²").arg(model.uso).arg(model.area)
+                                        text: qsTr("Uso: %1 - Área: %2 m²").arg(model.uso).arg(model.area)
                                         color: Theme.secondaryTextColor
                                         elide: Text.ElideRight
                                         font.pointSize: Theme.defaultFont.pointSize * 0.8
@@ -9933,7 +9933,7 @@ Drawer {
                         
                         Button {
                             Layout.fillWidth: true
-                            text: qsTr("Zoom to all results")
+                            text: qsTr("Ampliar a todos los resultados")
                             enabled: filteredFeatures.length > 0
                             
                             onClicked: {

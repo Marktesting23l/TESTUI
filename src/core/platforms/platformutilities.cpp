@@ -77,8 +77,6 @@ void PlatformUtilities::copySampleProjects()
 
 void PlatformUtilities::copySigpacBaseMap()
 {
-  // Source is from resources directory
-  QString sourceDir = systemSharedDataLocation() + QLatin1String( "/sigpacgo/sigpacgo_base" );
   // Target is directly in app data location for easy access
   QString targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_base" ) );
   
@@ -89,9 +87,70 @@ void PlatformUtilities::copySigpacBaseMap()
     targetDirObj.mkpath(".");
   }
   
-  // Copy the base map project
-  const bool success = FileUtils::copyRecursively(sourceDir, targetDir);
-  qDebug() << "Copying SIGPAC base map from" << sourceDir << "to" << targetDir << (success ? "succeeded" : "failed");
+  // Check if the target already has the file
+  QString targetFile = targetDir + QStringLiteral("/SIGPAC_BASE.qgz");
+  if (QFile::exists(targetFile))
+  {
+    qDebug() << "SIGPAC_BASE.qgz already exists at" << targetFile;
+    return;
+  }
+  
+  // Try different source locations
+  QStringList sourceDirs;
+  // Original source directory
+  sourceDirs << systemSharedDataLocation() + QLatin1String("/sigpacgo/sigpacgo_base");
+  // Resources directory (development)
+  sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/sigpacgo_base");
+  // Build output directory (development)
+  sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/build-x64-linux/output/share/qfield/sigpacgo_base");
+  
+  bool success = false;
+  
+  // Try each source directory
+  for (const QString &sourceDir : sourceDirs)
+  {
+    QString sourceFile = sourceDir + QStringLiteral("/SIGPAC_BASE.qgz");
+    if (QFile::exists(sourceFile))
+    {
+      success = QFile::copy(sourceFile, targetFile);
+      if (success)
+      {
+        qDebug() << "Copied SIGPAC_BASE.qgz from" << sourceFile << "to" << targetFile;
+        break;
+      }
+      else
+      {
+        qWarning() << "Failed to copy SIGPAC_BASE.qgz from" << sourceFile << "to" << targetFile;
+      }
+    }
+    else
+    {
+      qDebug() << "Source file does not exist:" << sourceFile;
+    }
+  }
+  
+  // If direct file copy failed, try directory copy
+  if (!success)
+  {
+    for (const QString &sourceDir : sourceDirs)
+    {
+      if (QDir(sourceDir).exists())
+      {
+        success = FileUtils::copyRecursively(sourceDir, targetDir);
+        if (success)
+        {
+          qDebug() << "Copying SIGPAC base map directory from" << sourceDir << "to" << targetDir << "succeeded";
+          break;
+        }
+        else
+        {
+          qWarning() << "Copying SIGPAC base map directory from" << sourceDir << "to" << targetDir << "failed";
+        }
+      }
+    }
+  }
+  
+  qDebug() << "Copying SIGPAC base map to" << targetDir << (success ? "succeeded" : "failed");
 }
 
 void PlatformUtilities::initSystem()
