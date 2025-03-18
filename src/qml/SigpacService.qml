@@ -378,7 +378,7 @@ QtObject {
         
         for (var i = 0; i < data.length; i++) {
             var item = data[i];
-            result += "Recinto " + (i + 1) + ":\n";
+            result += "Resultado " + (i + 1) + ":\n";
             result += "  Provincia: " + item.provincia + "\n";
             result += "  Municipio: " + item.municipio + "\n";
             result += "  Polígono: " + item.poligono + "\n";

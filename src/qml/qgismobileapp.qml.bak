@@ -2250,6 +2250,66 @@ ApplicationWindow {
         ToolTip.text: qsTr("Crear carpeta DCIM")
       }
       
+      Item {
+        id: compassIndicator2
+        width: 30
+        height: 30
+        visible: false
+        
+        Rectangle {
+          id: compassCircle2
+          anchors.centerIn: parent
+          width: 36
+          height: 36
+          radius: width / 2
+          color: "#40FFFFFF"
+          border.color: "white"
+          border.width: 1
+          
+          Text {
+            anchors.centerIn: parent
+            text: "N"
+            color: "white"
+            font.pixelSize: 10
+            font.bold: true
+          }
+          
+          Rectangle {
+            id: compassNeedle2
+            anchors.centerIn: parent
+            width: 2
+            height: parent.height * 0.8
+            color: Theme.mainColor
+            antialiasing: true
+            transform: Rotation {
+              origin.x: compassNeedle2.width / 2
+              origin.y: compassNeedle2.height / 2
+              angle: positionSource.positionInformation.orientationValid ? positionSource.positionInformation.orientation : 0
+            }
+          }
+        }
+        
+        Text {
+          anchors.horizontalCenter: parent.horizontalCenter
+          anchors.top: compassCircle2.bottom
+          anchors.topMargin: -2
+          text: positionSource.positionInformation.orientationValid ? Math.round(positionSource.positionInformation.orientation) + "°" : ""
+          color: "white"
+          font.pixelSize: 8
+          font.bold: true
+        }
+        
+        Timer {
+          interval: 1000
+          running: compassIndicator2.visible
+          repeat: true
+          onTriggered: {
+            if (compassIndicator2.visible) {
+              compassNeedle2.rotation = positionSource.positionInformation.orientation
+            }
+          }
+        }
+      }
       
       QfToolButton {
         id: gnssLockButtonToolbar

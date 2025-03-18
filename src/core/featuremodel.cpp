@@ -357,7 +357,7 @@ bool FeatureModel::setData( const QModelIndex &index, const QVariant &value, int
 
       if ( !fld.convertCompatible( val ) )
       {
-        QgsMessageLog::logMessage( tr( "Value \"%1\" %4 could not be converted to a compatible value for field %2(%3)." ).arg( value.toString(), fld.name(), fld.typeName(), value.isNull() ? "NULL" : "NOT NULL" ) );
+        QgsMessageLog::logMessage( tr( "Value \"%1\" %4 could not be converted to a compatible value for field %2(%3)." ).arg( value.toString(), fld.name(), fld.typeName(), value.isNull() ? "NULL" : "NOT NULL" ), QStringLiteral( "SIGPACGO" ) );
         return false;
       }
 
@@ -436,11 +436,11 @@ void FeatureModel::updateDefaultValues()
       QgsExpression exp( fields.at( i ).defaultValueDefinition().expression() );
       exp.prepare( &expressionContext );
       if ( exp.hasParserError() )
-        QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has parser error: %3" ).arg( mLayer->name(), fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "QField" ) );
+        QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has parser error: %3" ).arg( mLayer->name(), fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "SIGPACGO" ) );
 
       QVariant value = exp.evaluate( &expressionContext );
       if ( exp.hasEvalError() )
-        QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has evaluation error: %3" ).arg( mLayer->name(), fields.at( i ).name(), exp.evalErrorString() ), QStringLiteral( "QField" ) );
+        QgsMessageLog::logMessage( tr( "Default value expression for %1:%2 has evaluation error: %3" ).arg( mLayer->name(), fields.at( i ).name(), exp.evalErrorString() ), QStringLiteral( "SIGPACGO" ) );
 
       mFeature.setAttribute( i, value );
     }
@@ -503,7 +503,7 @@ bool FeatureModel::save()
 
         QgsFeature temporaryFeature = mFeature;
         if ( !mLayer->updateFeature( temporaryFeature, true ) )
-          QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "QField" ), Qgis::Warning );
+          QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
 
         if ( mProject && mProject->topologicalEditing() )
         {
@@ -527,7 +527,7 @@ bool FeatureModel::save()
           }
           else
           {
-            QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), QStringLiteral( "QField" ), Qgis::Warning );
+            QgsMessageLog::logMessage( tr( "Feature %1 could not be fetched after commit" ).arg( mFeature.id() ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
           }
         }
         break;
@@ -550,7 +550,7 @@ bool FeatureModel::save()
           }
           if ( !mLayer->updateFeature( feature ) )
           {
-            QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "QField" ), Qgis::Warning );
+            QgsMessageLog::logMessage( tr( "Cannot update feature" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
           }
         }
         isSuccess &= commit();
@@ -825,7 +825,7 @@ bool FeatureModel::create()
   {
     if ( !startEditing() )
     {
-      QgsMessageLog::logMessage( tr( "Cannot start editing on layer \"%1\" to create feature %2" ).arg( mLayer->name() ).arg( mFeature.id() ), QStringLiteral( "QField" ), Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot start editing on layer \"%1\" to create feature %2" ).arg( mLayer->name() ).arg( mFeature.id() ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
       return false;
     }
 
@@ -895,20 +895,20 @@ bool FeatureModel::create()
         }
         else
         {
-          QgsMessageLog::logMessage( tr( "Layer \"%1\" has been commited but the newly created feature %2 could not be fetched" ).arg( mLayer->name() ).arg( mFeature.id() ), QStringLiteral( "QField" ), Qgis::Critical );
+          QgsMessageLog::logMessage( tr( "Layer \"%1\" has been commited but the newly created feature %2 could not be fetched" ).arg( mLayer->name() ).arg( mFeature.id() ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
           isSuccess = false;
         }
       }
       else
       {
         const QString msgs = mLayer->commitErrors().join( QStringLiteral( "\n" ) );
-        QgsMessageLog::logMessage( tr( "Layer \"%1\" cannot be commited with the newly created feature %2. Reason:\n%3" ).arg( mLayer->name() ).arg( mFeature.id() ).arg( msgs ), QStringLiteral( "QField" ), Qgis::Critical );
+        QgsMessageLog::logMessage( tr( "Layer \"%1\" cannot be commited with the newly created feature %2. Reason:\n%3" ).arg( mLayer->name() ).arg( mFeature.id() ).arg( msgs ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
         isSuccess = false;
       }
     }
     else
     {
-      QgsMessageLog::logMessage( tr( "Feature %2 could not be added in layer \"%1\"" ).arg( mLayer->name() ).arg( mFeature.id() ), QStringLiteral( "QField" ), Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Feature %2 could not be added in layer \"%1\"" ).arg( mLayer->name() ).arg( mFeature.id() ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
       isSuccess = false;
     }
 
@@ -934,7 +934,7 @@ bool FeatureModel::commit()
 {
   if ( !mLayer->commitChanges() )
   {
-    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), QStringLiteral( "QField" ), Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
     mLayer->rollBack();
     return false;
   }
@@ -952,7 +952,7 @@ bool FeatureModel::startEditing()
 
   if ( !mLayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), QStringLiteral( "QField" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     return false;
   }
 

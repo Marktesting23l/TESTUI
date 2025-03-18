@@ -69,7 +69,7 @@ DeltaFileWrapper::DeltaFileWrapper( const QgsProject *project, const QString &fi
   {
     QJsonParseError jsonError;
 
-    QgsLogger::debug( QStringLiteral( "Loading deltas from %1" ).arg( mFileName ) );
+    // QgsLogger::debug( QStringLiteral( "Loading deltas from %1" ).arg( mFileName ) );
 
     if ( mErrorType == DeltaFileWrapper::ErrorTypes::NoError && !deltaFile.open( QIODevice::ReadWrite ) )
     {
@@ -271,8 +271,7 @@ bool DeltaFileWrapper::toFile()
   {
     mErrorType = DeltaFileWrapper::ErrorTypes::IOError;
     mErrorDetails = deltaFile.errorString();
-    QgsMessageLog::logMessage( QStringLiteral( "File %1 cannot be open for writing. Reason: %2" ).arg( mFileName ).arg( mErrorDetails ) );
-
+    // QgsMessageLog::logMessage( QStringLiteral( "File %1 cannot be open for writing. Reason: %2" ).arg( mFileName ).arg( mErrorDetails ) );
     return false;
   }
 
@@ -280,7 +279,7 @@ bool DeltaFileWrapper::toFile()
   {
     mErrorType = DeltaFileWrapper::ErrorTypes::IOError;
     mErrorDetails = deltaFile.errorString();
-    QgsMessageLog::logMessage( QStringLiteral( "Contents of the file %1 has not been written. Reason %2" ).arg( mFileName ).arg( mErrorDetails ) );
+    // QgsMessageLog::logMessage( QStringLiteral( "Contents of the file %1 has not been written. Reason %2" ).arg( mFileName ).arg( mErrorDetails ) );
     return false;
   }
 
@@ -464,7 +463,7 @@ QMap<QString, QString> DeltaFileWrapper::attachmentFileNames() const
 
     if ( method != QStringLiteral( "create" ) && method != QStringLiteral( "delete" ) && method != QStringLiteral( "patch" ) )
     {
-      QgsLogger::debug( QStringLiteral( "File `%1` contains unknown method `%2`" ).arg( mFileName, method ) );
+      // QgsLogger::debug( QStringLiteral( "File `%1` contains unknown method `%2`" ).arg( mFileName, method ) );
       Q_ASSERT( 0 );
     }
   }
@@ -555,7 +554,7 @@ void DeltaFileWrapper::addPatch( const QString &localLayerId, const QString &sou
     // This would happen when there are calculated or joined fields. However, they should be already filtered out.
     if ( oldFieldIdx == -1 )
     {
-      QgsLogger::warning( QStringLiteral( "Unable to find field \"%1\" in the fields of the old feature." ).arg( newField.name() ) );
+      // QgsLogger::warning( QStringLiteral( "Unable to find field \"%1\" in the fields of the old feature." ).arg( newField.name() ) );
       ignoredFields++;
       continue;
     }
@@ -566,7 +565,7 @@ void DeltaFileWrapper::addPatch( const QString &localLayerId, const QString &sou
     // NOTE there is no known situation when it is expected to happen.
     if ( oldField.type() != newField.type() )
     {
-      QgsLogger::warning( QStringLiteral( "Field \"%1\" has field types mismatch: %2 and %3." ).arg( oldField.name() ).arg( oldField.type() ).arg( newField.type() ) );
+      // QgsLogger::warning( QStringLiteral( "Field \"%1\" has field types mismatch: %2 and %3." ).arg( oldField.name() ).arg( oldField.type() ).arg( newField.type() ) );
     }
 
     fields.append( newField );
@@ -818,7 +817,6 @@ void DeltaFileWrapper::mergeCreateDelta( const QJsonObject &delta )
   mDeltas.append( delta );
   mIsDirty = true;
 
-  qInfo() << "DeltaFileWrapper::addCreate: Added a new create delta: " << delta;
   emit countChanged();
 }
 
@@ -840,7 +838,6 @@ void DeltaFileWrapper::mergeDeleteDelta( const QJsonObject &delta )
   mDeltas.append( delta );
   mIsDirty = true;
 
-  qInfo() << "DeltaFileWrapper::addDelete: Added a new delete delta: " << delta;
   emit countChanged();
 }
 
@@ -874,8 +871,6 @@ void DeltaFileWrapper::mergePatchDelta( const QJsonObject &delta )
   const QString localLayerId = delta.value( QStringLiteral( "localLayerId" ) ).toString();
   QMap<QString, int> layerPkDeltaIdx = mLocalPkDeltaIdx.value( localLayerId );
 
-  qInfo() << "DeltaFileWrapper::addPatch: localPk=" << localPk << " layerPkDeltaIdx=" << layerPkDeltaIdx;
-
   if ( layerPkDeltaIdx.contains( localPk ) )
   {
     int deltaIdx = layerPkDeltaIdx.take( localPk );
@@ -885,8 +880,6 @@ void DeltaFileWrapper::mergePatchDelta( const QJsonObject &delta )
 
     QJsonObject newCreate = deltaCreate.value( QStringLiteral( "new" ) ).toObject();
     QJsonObject attributesCreate = newCreate.value( QStringLiteral( "attributes" ) ).toObject();
-
-    qInfo() << "DeltaFileWrapper::addPatch: replacing an existing create delta: " << deltaCreate << "at" << deltaIdx;
 
     if ( !newData.value( QStringLiteral( "geometry" ) ).isUndefined() )
     {
@@ -917,8 +910,6 @@ void DeltaFileWrapper::mergePatchDelta( const QJsonObject &delta )
     deltaCreate.insert( QStringLiteral( "sourcePk" ), delta.value( QStringLiteral( "sourcePk" ) ) );
 
     mDeltas.replace( deltaIdx, deltaCreate );
-
-    qInfo() << "DeltaFileWrapper::addPatch: replaced an existing create delta: " << deltaCreate;
 
     return;
   }
@@ -977,15 +968,11 @@ void DeltaFileWrapper::mergePatchDelta( const QJsonObject &delta )
 
         mDeltas.replace( i, existingDelta );
 
-        qInfo() << "DeltaFileWrapper::addPatch: replaced an existing patch delta: " << existingDelta;
-
         return;
       }
     }
 
     mDeltas.append( delta );
-
-    qInfo() << "DeltaFileWrapper::addPatch: Added a new patch delta: " << delta;
 
     emit countChanged();
   }
@@ -1009,6 +996,7 @@ void DeltaFileWrapper::mergeDelta( const QJsonObject &delta )
   else
   {
     qWarning() << QStringLiteral( "Unknown delta method: %s" ).arg( deltaMethod );
+    // QgsLogger::debug( QStringLiteral( "File `%1` contains unknown method `%2`" ).arg( mFileName, method ) );
     Q_ASSERT( 0 );
   }
 }
@@ -1120,12 +1108,12 @@ bool DeltaFileWrapper::applyInternal( bool shouldApplyInReverse )
   {
     for ( auto [layerId, vl] : qfield::asKeyValueRange( vectorLayers ) )
     {
-      // despite the error, try to rollback all the changes so far
+      // commit the changes for this layer
       if ( vl->commitChanges() )
         vectorLayers[layerId] = nullptr;
       else
       {
-        QgsMessageLog::logMessage( QStringLiteral( "Failed to commit layer with id \"%1\", all the rest layers will be rolled back" ).arg( layerId ) );
+        // QgsMessageLog::logMessage( QStringLiteral( "Failed to commit layer with id \"%1\", all the rest layers will be rolled back" ).arg( layerId ) );
         isSuccess = false;
         break;
       }
@@ -1143,7 +1131,8 @@ bool DeltaFileWrapper::applyInternal( bool shouldApplyInReverse )
 
       // despite the error, try to rollback all the changes so far
       if ( !vl->rollBack() )
-        QgsMessageLog::logMessage( QStringLiteral( "Failed to rollback layer with id \"%1\"" ).arg( layerId ) );
+        // QgsMessageLog::logMessage( QStringLiteral( "Failed to rollback layer with id \"%1\"" ).arg( layerId ) );
+        ;
     }
   }
 
@@ -1315,14 +1304,10 @@ QPair<int, QString> DeltaFileWrapper::getLocalPkAttribute( const QgsVectorLayer 
   // we assume the first index to be the primary key index... kinda stupid, but memory layers don't have primary key at all, but we use it on geopackages, but... snap!
   const int pkAttrIdx = pkAttrs[0];
 
-  qInfo() << "DeltaFileWrapper::getLocalPkAttribute: vl->primaryKeyglAttributes()=" << vl->primaryKeyAttributes() << " pkAttrs=" << pkAttrs;
-
   if ( pkAttrIdx == -1 )
     return QPair<int, QString>( -1, QString() );
 
   const QString pkAttrName = fields.at( pkAttrIdx ).name();
-
-  qInfo() << "DeltaFileWrapper::getLocalPkAttribute: pkAttrName=" << pkAttrName << " pkAttrIdx=" << pkAttrIdx;
 
   return QPair<int, QString>( pkAttrIdx, pkAttrName );
 }
@@ -1332,18 +1317,12 @@ QPair<int, QString> DeltaFileWrapper::getSourcePkAttribute( const QgsVectorLayer
 {
   QString pkAttrNamesAggr = vl->customProperty( QStringLiteral( "QFieldSync/sourceDataPrimaryKeys" ) ).toString();
 
-  qInfo() << "DeltaFileWrapper::getSourcePkAttribute: getting pkAttrNamesAggr=" << pkAttrNamesAggr << " with type=" << vl->customProperty( QStringLiteral( "QFieldSync/sourceDataPrimaryKeys" ) ).typeName();
-
   if ( pkAttrNamesAggr.isEmpty() )
   {
-    qInfo() << "DeltaFileWrapper::getSourcePkAttribute: empty pkAttrNamesAggr, gotcha!";
-
     return getLocalPkAttribute( vl );
   }
 
   QStringList pkAttrNames = pkAttrNamesAggr.split( QStringLiteral( "," ) );
-
-  qInfo() << "DeltaFileWrapper::getSourcePkAttribute: pk attrs pkAttrNames=" << pkAttrNames.size();
 
   if ( pkAttrNames.size() > 1 )
     return QPair<int, QString>( -1, QString() );
@@ -1351,8 +1330,6 @@ QPair<int, QString> DeltaFileWrapper::getSourcePkAttribute( const QgsVectorLayer
   const QString pkAttrName = pkAttrNames[0];
   const QgsFields fields = vl->fields();
   const int pkAttrIdx = fields.indexFromName( pkAttrName );
-
-  qInfo() << "DeltaFileWrapper::getSourcePkAttribute: pk pkAttrName=" << pkAttrName << " with index=" << pkAttrIdx;
 
   if ( pkAttrIdx == -1 )
     return QPair<int, QString>( -1, QString() );
@@ -1362,7 +1339,5 @@ QPair<int, QString> DeltaFileWrapper::getSourcePkAttribute( const QgsVectorLayer
 
 QString DeltaFileWrapper::getSourceLayerId( const QgsVectorLayer *vl )
 {
-  qInfo() << "DeltaFileWrapper::getSourceLayerId: remoteLayerId=" << ( vl ? vl->customProperty( QStringLiteral( "remoteLayerId" ) ).toString() : QString() );
-
   return vl ? vl->customProperty( QStringLiteral( "remoteLayerId" ) ).toString() : QString();
 }

@@ -26,7 +26,7 @@ Page {
   }
 
   header: QfPageHeader {
-    title: projectFolderView ? qsTr("Project Folder") : qsTr("Local Projects & Datasets")
+    title: projectFolderView ? qsTr("Carpeta del proyecto") : qsTr("Proyectos y conjuntos de datos locales")
 
     showBackButton: true
     showApplyButton: false
@@ -120,15 +120,15 @@ Page {
               text: {
                 switch (parseInt(section)) {
                 case LocalFilesModel.Folder:
-                  return qsTr('Folders');
+                  return qsTr('Carpetas');
                 case LocalFilesModel.Project:
-                  return qsTr('Projects');
+                  return qsTr('Proyectos');
                 case LocalFilesModel.Dataset:
-                  return qsTr('Datasets');
+                  return qsTr('Conjuntos de datos');
                 case LocalFilesModel.File:
-                  return qsTr('Files');
+                  return qsTr('Archivos');
                 case LocalFilesModel.Favorite:
-                  return qsTr('Favorites');
+                  return qsTr('Favoritos');
                 }
                 return '';
               }
@@ -172,7 +172,7 @@ Page {
                 } else {
                   switch (ItemType) {
                   case LocalFilesModel.ApplicationFolder:
-                    return Theme.getThemeVectorIcon('ic_folder_qfield_gray_48dp');
+                    return Theme.getThemeVectorIcon('ic_folder_sigpacgo_gray_48dp');
                   case LocalFilesModel.ExternalStorage:
                     return Theme.getThemeVectorIcon('ic_sd_card_gray_48dp');
                   case LocalFilesModel.SimpleFolder:
@@ -224,13 +224,13 @@ Page {
                   var info = '';
                   switch (ItemType) {
                   case LocalFilesModel.ProjectFile:
-                    info = qsTr('Project file');
+                    info = qsTr('Archivo de proyecto');
                     break;
                   case LocalFilesModel.VectorDataset:
-                    info = qsTr('Vector dataset') + ' (' + FileUtils.representFileSize(ItemSize) + ')';
+                    info = qsTr('Conjunto de datos vectorial') + ' (' + FileUtils.representFileSize(ItemSize) + ')';
                     break;
                   case LocalFilesModel.RasterDataset:
-                    info = qsTr('Raster dataset') + ' (' + FileUtils.representFileSize(ItemSize) + ')';
+                    info = qsTr('Conjunto de datos ráster') + ' (' + FileUtils.representFileSize(ItemSize) + ')';
                     break;
                   }
                   return info;
@@ -395,7 +395,7 @@ Page {
       property bool itemIsFavorite: false
       property bool itemHasWebdavConfiguration: false
 
-      title: qsTr('Item Actions')
+      title: qsTr('Acciones del elemento')
 
       width: {
         let result = 50;
@@ -422,29 +422,13 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Send to...")
+        text: qsTr("Enviar a...")
         onTriggered: {
           platformUtilities.sendDatasetTo(itemMenu.itemPath);
         }
       }
 
-      MenuItem {
-        id: pushDatasetToCloud
-        enabled: itemMenu.itemMetaType == LocalFilesModel.Dataset && itemMenu.itemType == LocalFilesModel.RasterDataset && cloudProjectsModel.currentProjectId
-        visible: enabled
 
-        font: Theme.defaultFont
-        width: parent.width
-        height: enabled ? 48 : 0
-        leftPadding: Theme.menuItemLeftPadding
-
-        text: qsTr("Push to QFieldCloud")
-        onTriggered: {
-          QFieldCloudUtils.addPendingAttachment(cloudProjectsModel.currentProjectId, itemMenu.itemPath);
-          platformUtilities.uploadPendingAttachments(cloudConnection);
-          displayToast(qsTr("‘%1’ is being uploaded to QFieldCloud").arg(FileUtils.fileName(itemMenu.itemPath)));
-        }
-      }
 
       MenuItem {
         id: exportDatasetTo
@@ -456,7 +440,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Export to folder...")
+        text: qsTr("Exportar a la carpeta...")
         onTriggered: {
           platformUtilities.exportDatasetTo(itemMenu.itemPath);
         }
@@ -473,7 +457,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: !itemMenu.itemIsFavorite ? qsTr("Add to favorites") : qsTr("Remove from favorites")
+        text: !itemMenu.itemIsFavorite ? qsTr("Añadir a favoritos") : qsTr("Eliminar de favoritos")
         onTriggered: {
           if (!itemMenu.itemIsFavorite) {
             localFilesModel.addToFavorites(itemMenu.itemPath);
@@ -500,7 +484,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Export to folder...")
+        text: qsTr("Exportar a la carpeta...")
         onTriggered: {
           platformUtilities.exportFolderTo(itemMenu.itemPath);
         }
@@ -516,7 +500,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Send compressed folder to...")
+        text: qsTr("Enviar carpeta comprimida a...")
         onTriggered: {
           platformUtilities.sendCompressedFolderTo(itemMenu.itemPath);
         }
@@ -532,7 +516,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Upload folder to WebDAV server")
+        text: qsTr("Subir carpeta al servidor WebDAV")
         onTriggered: {
           if (webdavConnectionLoader.item) {
             webdavConnectionLoader.item.uploadPath(itemMenu.itemPath);
@@ -550,7 +534,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Download folder from WebDAV server")
+        text: qsTr("Descargar carpeta del servidor WebDAV")
         onTriggered: {
           if (webdavConnectionLoader.item) {
             webdavConnectionLoader.item.downloadPath(itemMenu.itemPath);
@@ -575,7 +559,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Remove dataset")
+        text: qsTr("Eliminar conjunto de datos")
         onTriggered: {
           platformUtilities.removeDataset(itemMenu.itemPath);
           table.model.resetToPath(table.model.currentPath);
@@ -592,7 +576,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Remove folder")
+        text: qsTr("Eliminar carpeta")
         onTriggered: {
           platformUtilities.removeFolder(itemMenu.itemPath);
           table.model.resetToPath(table.model.currentPath);
@@ -603,7 +587,7 @@ Page {
     Menu {
       id: importMenu
 
-      title: qsTr('Import Actions')
+      title: qsTr('Acciones de importación')
 
       width: {
         let result = 50;
@@ -629,7 +613,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Import project from folder")
+        text: qsTr("Importar proyecto desde la carpeta")
         onTriggered: {
           platformUtilities.importProjectFolder();
         }
@@ -645,7 +629,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Import project from ZIP")
+        text: qsTr("Importar proyecto desde ZIP")
         onTriggered: {
           platformUtilities.importProjectArchive();
         }
@@ -661,7 +645,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Import dataset(s)")
+        text: qsTr("Importar conjunto(s) de datos")
         onTriggered: {
           platformUtilities.importDatasets();
         }
@@ -682,7 +666,7 @@ Page {
         height: 48
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Import URL")
+        text: qsTr("Importar URL")
         onTriggered: {
           importUrlDialog.open();
           importUrlInput.focus = true;
@@ -697,7 +681,7 @@ Page {
         height: 48
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Import WebDAV folder")
+        text: qsTr("Importar carpeta WebDAV")
         onTriggered: {
           importWebdavDialog.open();
           importWebdavUrlInput.focus = true;
@@ -712,7 +696,7 @@ Page {
     Menu {
       id: projectMenu
 
-      title: qsTr('Project Actions')
+      title: qsTr('Acciones del proyecto')
 
       width: {
         let result = 50;
@@ -738,7 +722,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Update project from ZIP")
+        text: qsTr("Actualizar proyecto desde ZIP")
         onTriggered: {
           platformUtilities.updateProjectFromArchive(projectInfo.filePath);
         }
@@ -754,7 +738,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Upload project to WebDAV")
+        text: qsTr("Subir proyecto a WebDAV")
         onTriggered: {
           if (webdavConnectionLoader.item) {
             webdavConnectionLoader.item.uploadPath(FileUtils.absolutePath(projectInfo.filePath));
@@ -772,7 +756,7 @@ Page {
         height: enabled ? 48 : 0
         leftPadding: Theme.menuItemLeftPadding
 
-        text: qsTr("Download project from WebDAV")
+        text: qsTr("Descargar proyecto desde WebDAV")
         onTriggered: {
           if (webdavConnectionLoader.item) {
             webdavConnectionLoader.item.openedProjectPath = projectInfo.filePath;
@@ -786,7 +770,7 @@ Page {
 
   QfDialog {
     id: importUrlDialog
-    title: qsTr("Import URL")
+    title: qsTr("Importar URL")
     focus: visible
     parent: mainWindow.contentItem
 
@@ -808,7 +792,7 @@ Page {
       Label {
         id: importUrlLabel
         width: mainWindow.width - 60 < importUrlLabelMetrics.width ? mainWindow.width - 60 : importUrlLabelMetrics.width
-        text: qsTr("Type a URL below to download and import the project or dataset:")
+        text: qsTr("Escriba una URL a continuación para descargar e importar el proyecto o el conjunto de datos:")
         wrapMode: Text.WordWrap
         font: Theme.defaultFont
         color: Theme.mainTextColor
@@ -836,7 +820,7 @@ Page {
 
         onIsImportingPathChanged: {
           if (isImportingPath) {
-            busyOverlay.text = qsTr("Importing WebDAV folder");
+            busyOverlay.text = qsTr("Importando carpeta WebDAV");
             busyOverlay.progress = 0;
             busyOverlay.state = "visible";
           } else {
@@ -846,7 +830,7 @@ Page {
 
         onIsDownloadingPathChanged: {
           if (isDownloadingPath) {
-            busyOverlay.text = qsTr("Downloading WebDAV folder");
+            busyOverlay.text = qsTr("Descargando carpeta WebDAV");
             busyOverlay.progress = 0;
             busyOverlay.state = "visible";
           } else {
@@ -860,7 +844,7 @@ Page {
 
         onIsUploadingPathChanged: {
           if (isUploadingPath) {
-            busyOverlay.text = qsTr("Uploading WebDAV folder");
+            busyOverlay.text = qsTr("Subiendo carpeta WebDAV");
             busyOverlay.progress = 0;
             busyOverlay.state = "visible";
           } else {
@@ -875,7 +859,7 @@ Page {
         }
 
         onLastErrorChanged: {
-          displayToast(qsTr("WebDAV error: ") + lastError);
+          displayToast(qsTr("Error de WebDAV: ") + lastError);
         }
 
         onConfirmationRequested: (host, username) => {
@@ -902,7 +886,7 @@ Page {
 
   QfDialog {
     id: downloadUploadWebdavDialog
-    title: isUploadingPath ? qsTr("WebDAV upload") : qsTr("WebDAV download")
+    title: isUploadingPath ? qsTr("Subida WebDAV") : qsTr("Descarga WebDAV")
     focus: visible
     parent: mainWindow.contentItem
 
@@ -931,7 +915,7 @@ Page {
       Label {
         id: downloadUploadWebdavIntroLabel
         width: mainWindow.width - 60 < downloadUploadWebdavIntroMetrics.width ? mainWindow.width - 60 : downloadUploadWebdavIntroMetrics.width
-        text: downloadUploadWebdavDialog.isUploadingPath ? qsTr("You are about to upload modified content into <b>%1</b> using user <b>%2</b>.<br><br>This operation will overwrite data stored remotely, make sure this is what you want to do.").arg(downloadUploadWebdavDialog.host).arg(downloadUploadWebdavDialog.username) : qsTr("You are about to download modified content from <b>%1</b> using user <b>%2</b>.<br><br>This operation will overwrite data stored locally, make sure this is what you want to do.").arg(downloadUploadWebdavDialog.host).arg(downloadUploadWebdavDialog.username)
+        text: downloadUploadWebdavDialog.isUploadingPath ? qsTr("Está a punto de subir contenido modificado a <b>%1</b> utilizando el usuario <b>%2</b>.<br><br>Esta operación sobrescribirá los datos almacenados de forma remota, asegúrese de que esto es lo que quiere hacer.").arg(downloadUploadWebdavDialog.host).arg(downloadUploadWebdavDialog.username) : qsTr("Está a punto de descargar contenido modificado de <b>%1</b> utilizando el usuario <b>%2</b>.<br><br>Esta operación sobrescribirá los datos almacenados localmente, asegúrese de que esto es lo que quiere hacer.").arg(downloadUploadWebdavDialog.host).arg(downloadUploadWebdavDialog.username)
         wrapMode: Text.WordWrap
         font: Theme.defaultFont
         color: Theme.mainTextColor
@@ -942,7 +926,7 @@ Page {
         enabled: !webdavConnectionLoader.item || !webdavConnectionLoader.item.isFetchingAvailablePaths
         width: downloadUploadWebdavIntroLabel.width
         rightPadding: leftPadding + (downloadUploadWebdavShowPasswordInput.width - leftPadding)
-        placeholderText: text === "" && webdavConnectionLoader.item && webdavConnectionLoader.item.isPasswordStored ? qsTr("Password (leave empty to use remembered)") : qsTr("Password")
+        placeholderText: text === "" && webdavConnectionLoader.item && webdavConnectionLoader.item.isPasswordStored ? qsTr("Contraseña (dejar vacío para usar la recordada)") : qsTr("Contraseña")
         echoMode: TextInput.Password
 
         onDisplayTextChanged: {
@@ -979,7 +963,7 @@ Page {
         id: downloadUploadWebdavPasswordCheck
         width: downloadUploadWebdavIntroLabel.width
         enabled: !webdavConnectionLoader.item || !webdavConnectionLoader.item.isFetchingAvailablePaths
-        text: qsTr('Remember password')
+        text: qsTr("Recordar la contraseña")
         font: Theme.defaultFont
         checked: true
       }
@@ -1000,7 +984,7 @@ Page {
 
   QfDialog {
     id: importWebdavDialog
-    title: qsTr("Import WebDAV folder")
+    title: qsTr("Importar carpeta WebDAV")
     focus: visible
     parent: mainWindow.contentItem
 
@@ -1045,7 +1029,7 @@ Page {
         Label {
           id: importWebdavUrlLabel
           width: mainWindow.width - 60 < importWebdavUrlLabelMetrics.width ? mainWindow.width - 60 : importWebdavUrlLabelMetrics.width
-          text: qsTr("Type the WebDAV details below to import a remote folder:")
+          text: qsTr("Escriba los detalles de WebDAV a continuación para importar una carpeta remota:")
           wrapMode: Text.WordWrap
           font: Theme.defaultFont
           color: Theme.mainTextColor
@@ -1053,7 +1037,7 @@ Page {
 
         Label {
           width: importWebdavUrlLabel.width
-          text: qsTr("WebDAV server URL")
+          text: qsTr("URL del servidor WebDAV")
           wrapMode: Text.WordWrap
           font: Theme.defaultFont
           color: Theme.secondaryTextColor
@@ -1085,7 +1069,7 @@ Page {
 
         Label {
           width: importWebdavUrlLabel.width
-          text: qsTr("User and password")
+          text: qsTr("Usuario y contraseña")
           wrapMode: Text.WordWrap
           font: Theme.defaultFont
           color: Theme.secondaryTextColor
@@ -1114,7 +1098,7 @@ Page {
           enabled: !webdavConnectionLoader.item || !webdavConnectionLoader.item.isFetchingAvailablePaths
           width: importWebdavUrlLabel.width
           rightPadding: leftPadding + (importWebdavShowPasswordInput.width - leftPadding)
-          placeholderText: text === "" && webdavConnectionLoader.item && webdavConnectionLoader.item.isPasswordStored ? qsTr("leave empty to use remembered") : ""
+          placeholderText: text === "" && webdavConnectionLoader.item && webdavConnectionLoader.item.isPasswordStored ? qsTr("dejar vacío para usar la recordada") : ""
           echoMode: TextInput.Password
 
           onDisplayTextChanged: {
@@ -1162,7 +1146,7 @@ Page {
             anchors.verticalCenter: importWebdavFetchFoldersIndicator.verticalCenter
             enabled: !webdavConnectionLoader.item || !webdavConnectionLoader.item.isFetchingAvailablePaths
             width: importWebdavUrlLabel.width - (importWebdavFetchFoldersIndicator.visible ? importWebdavFetchFoldersIndicator.width : 0)
-            text: !enabled ? qsTr("Fetching remote folders") : qsTr("Fetch remote folders")
+            text: !enabled ? qsTr("Buscando carpetas remotas") : qsTr("Buscar carpetas remotas")
 
             onClicked: {
               webdavConnectionLoader.item.fetchAvailablePaths();
@@ -1184,7 +1168,7 @@ Page {
         Label {
           width: importWebdavUrlLabel.width
           visible: importWebdavPathInput.visible
-          text: qsTr("Select the remote folder to import:")
+          text: qsTr("Seleccione la carpeta remota para importar:")
           wrapMode: Text.WordWrap
           font: Theme.defaultFont
           color: Theme.mainTextColor
@@ -1296,7 +1280,7 @@ Page {
                     elide: Text.ElideRight
                     wrapMode: Text.WordWrap
                     color: !lineDialog.isImported ? Theme.mainTextColor : Theme.secondaryTextColor
-                    text: lineDialog.label !== "" ? lineDialog.label : qsTr("(root folder)")
+                    text: lineDialog.label !== "" ? lineDialog.label : qsTr("(carpeta raíz)")
                   }
                   Text {
                     id: noteTextDialog
@@ -1307,7 +1291,7 @@ Page {
                     elide: Text.ElideRight
                     wrapMode: Text.WordWrap
                     color: Theme.secondaryTextColor
-                    text: qsTr("Imported and available locally")
+                    text: qsTr("Importado y disponible localmente")
                   }
                 }
               }
@@ -1350,7 +1334,7 @@ Page {
             width: importWebdavUrlLabel.width - (importWebdavRefreshFoldersIndicator.visible ? importWebdavRefreshFoldersIndicator.width : 0)
             enabled: !webdavConnectionLoader.item || !webdavConnectionLoader.item.isFetchingAvailablePaths
             bgcolor: "transparent"
-            text: !enabled ? qsTr("Refreshing remote folders") : qsTr("Refresh remote folders")
+            text: !enabled ? qsTr("Actualizando carpetas remotas") : qsTr("Actualizar carpetas remotas")
 
             onClicked: {
               importWebdavPathInput.currentIndex = -1;

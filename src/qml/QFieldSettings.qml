@@ -104,20 +104,20 @@ Page {
   ListModel {
     id: canvasSettingsModel
     ListElement {
-      title: qsTr("Show scale bar")
+      title: qsTr("Mostrar barra de escala")
       description: ''
       settingAlias: "showScaleBar"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Show bookmarks")
-      description: qsTr("Shows saved and project bookmarks on the map.")
+      title: qsTr("Mostrar marcadores")
+      description: qsTr("Muestra los marcadores guardados y del proyecto en el mapa.")
       settingAlias: "showBookmarks"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Enable map rotation")
-      description: qsTr("Allows rotating the map.")
+      title: qsTr("Habilitar rotación del mapa")
+      description: qsTr("Permite rotar el mapa.")
       settingAlias: "enableMapRotation"
       isVisible: true
     }
@@ -126,32 +126,32 @@ Page {
   ListModel {
     id: digitizingEditingSettingsModel
     ListElement {
-      title: qsTr("Show digitizing information")
-      description: qsTr("Shows coordinates on the map while digitizing or measuring.")
+      title: qsTr("Mostrar información de digitalización")
+      description: qsTr("Muestra las coordenadas en el mapa mientras se digitaliza o mide.")
       settingAlias: "numericalDigitizingInformation"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Fast editing mode")
-      description: qsTr("Auto-saves features when geometry is valid and constraints are met.")
+      title: qsTr("Modo de edición rápida")
+      description: qsTr("Guarda automáticamente las entidades cuando la geometría es válida y se cumplen las restricciones.")
       settingAlias: "autoSave"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Use volume keys to digitize")
-      description: qsTr("Volume up adds vertex, volume down removes last vertex.")
+      title: qsTr("Usar las teclas de volumen para digitalizar")
+      description: qsTr("Subir volumen añade un vértice, bajar volumen elimina el último vértice.")
       settingAlias: "digitizingVolumeKeys"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Allow finger tap on canvas to add vertices")
-      description: qsTr("Tap on map to add vertex.")
+      title: qsTr("Permitir tocar la pantalla para añadir vértices")
+      description: qsTr("Tocar en el mapa para añadir un vértice.")
       settingAlias: "fingerTapDigitizing"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Consider mouse as a touchscreen device")
-      description: qsTr("Mouse acts like finger. When off, mouse acts like stylus.")
+      title: qsTr("Considerar el ratón como un dispositivo de pantalla táctil")
+      description: qsTr("El ratón actúa como un dedo. Cuando está desactivado, el ratón actúa como un lápiz.")
       settingAlias: "mouseAsTouchScreen"
       isVisible: true
     }
@@ -169,14 +169,14 @@ Page {
   ListModel {
     id: interfaceSettingsModel
     ListElement {
-      title: qsTr("Maximized attribute form")
+      title: qsTr("Formulario de atributos maximizado")
       description: ''
       settingAlias: "fullScreenIdentifyView"
       isVisible: true
     }
     ListElement {
-      title: qsTr("Fixed scale navigation")
-      description: qsTr("Search results only pan to feature without zooming.")
+      title: qsTr("Navegación a escala fija")
+      description: qsTr("Los resultados de búsqueda solo se desplazan a la entidad sin hacer zoom.")
       settingAlias: "locatorKeepScale"
       isVisible: true
     }
@@ -184,8 +184,8 @@ Page {
   ListModel {
     id: advancedSettingsModel
     ListElement {
-      title: qsTr("Use native camera")
-      description: qsTr("Uses device camera app instead of built-in camera. Good for geo-tagged photos.")
+      title: qsTr("Usar cámara nativa")
+      description: qsTr("Usa la aplicación de cámara del dispositivo en lugar de la cámara integrada. Bueno para fotos geoetiquetadas.")
       settingAlias: "nativeCamera2"
       isVisible: true
     }
@@ -201,8 +201,8 @@ Page {
   ListModel {
     id: sentinelSettingsModel
     ListElement {
-      title: qsTr("Enable Sentinel WMS Layers")
-      description: qsTr("Add Sentinel satellite imagery layers to all projects.")
+      title: qsTr("Habilitar capas WMS de Sentinel")
+      description: qsTr("Añadir capas de imágenes de satélite Sentinel a todos los proyectos.")
       settingAlias: "enableSentinelLayers"
       isVisible: true
     }
@@ -223,11 +223,11 @@ Page {
     }
 
     QfTabBar {
-      id: bar
-      model: [qsTr("General"), qsTr("Positioning"), qsTr("Variables")]
-      Layout.fillWidth: true
-      Layout.preferredHeight: defaultHeight
-    }
+          id: bar
+          model: [qsTr("General"), qsTr("Posicionamiento"), qsTr("Variables")]
+          Layout.fillWidth: true
+          Layout.preferredHeight: defaultHeight
+        }
 
     Component {
       id: listItem
@@ -318,7 +318,7 @@ Page {
               rowSpacing: 5
 
               Label {
-                text: qsTr('Map Canvas')
+                text: qsTr('Lienzo del mapa')
                 font: Theme.strongFont
                 color: Theme.mainColor
                 wrapMode: Text.WordWrap
@@ -357,7 +357,7 @@ Page {
               Label {
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                text: qsTr("Map canvas rendering quality:")
+                text: qsTr("Calidad de renderizado del lienzo del mapa:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -378,15 +378,15 @@ Page {
 
                 model: ListModel {
                   ListElement {
-                    name: qsTr('Best quality')
+                    name: qsTr('Mejor calidad')
                     value: 1.0
                   }
                   ListElement {
-                    name: qsTr('Lower quality')
+                    name: qsTr('Menor calidad')
                     value: 0.75
                   }
                   ListElement {
-                    name: qsTr('Lowest quality')
+                    name: qsTr('Calidad más baja')
                     value: 0.5
                   }
                 }
@@ -408,7 +408,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Lower quality reduces memory usage and improves performance.")
+                text: qsTr("Una calidad más baja reduce el uso de memoria y mejora el rendimiento.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 textFormat: Qt.RichText
@@ -422,7 +422,7 @@ Page {
               }
 
               Label {
-                text: qsTr('Digitizing & Editing')
+                text: qsTr('Digitalización y edición')
                 font: Theme.strongFont
                 color: Theme.mainColor
                 wrapMode: Text.WordWrap
@@ -459,7 +459,7 @@ Page {
               rowSpacing: 5
 
               Label {
-                text: qsTr('User Interface')
+                text: qsTr('Interfaz de usuario')
                 font: Theme.strongFont
                 color: Theme.mainColor
                 wrapMode: Text.WordWrap
@@ -476,7 +476,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Customize search bar")
+                text: qsTr("Personalizar la barra de búsqueda")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -507,7 +507,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Manage plugins")
+                text: qsTr("Administrar plugins")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -562,7 +562,7 @@ Page {
               Label {
                 Layout.fillWidth: true
 
-                text: qsTr('Dim screen when idle')
+                text: qsTr('Atenuar la pantalla cuando esté inactiva')
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -586,7 +586,7 @@ Page {
 
               Label {
                 Layout.fillWidth: true
-                text: qsTr('Seconds of inactivity before dimming screen to save battery.')
+                text: qsTr('Segundos de inactividad antes de atenuar la pantalla para ahorrar batería.')
 
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
@@ -607,7 +607,7 @@ Page {
 
               Label {
                 Layout.fillWidth: true
-                text: qsTr("Appearance:")
+                text: qsTr("Apariencia:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -627,15 +627,15 @@ Page {
 
                 model: ListModel {
                   ListElement {
-                    name: qsTr('Follow system appearance')
+                    name: qsTr('Seguir la apariencia del sistema')
                     value: 'system'
                   }
                   ListElement {
-                    name: qsTr('Light theme')
+                    name: qsTr('Tema claro')
                     value: 'light'
                   }
                   ListElement {
-                    name: qsTr('Dark theme')
+                    name: qsTr('Tema oscuro')
                     value: 'dark'
                   }
                 }
@@ -660,7 +660,7 @@ Page {
 
               Label {
                 Layout.fillWidth: true
-                text: qsTr("Font size:")
+                text: qsTr("Tamaño de fuente:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -680,7 +680,7 @@ Page {
 
                 model: ListModel {
                   ListElement {
-                    name: qsTr('Tiny')
+                    name: qsTr('Diminuto')
                     value: 0.75
                   }
                   ListElement {
@@ -688,11 +688,11 @@ Page {
                     value: 1.0
                   }
                   ListElement {
-                    name: qsTr('Large')
+                    name: qsTr('Grande')
                     value: 1.5
                   }
                   ListElement {
-                    name: qsTr('Extra-large')
+                    name: qsTr('Extragrande')
                     value: 2.0
                   }
                 }
@@ -717,7 +717,7 @@ Page {
 
               Label {
                 Layout.fillWidth: true
-                text: qsTr("Language:")
+                text: qsTr("Idioma:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -729,7 +729,7 @@ Page {
                 visible: false
 
                 Layout.fillWidth: true
-                text: qsTr("Restart SIGPAC-Go to apply language change.")
+                text: qsTr("Reinicie SIGPAC-Go para aplicar el cambio de idioma.")
                 font: Theme.tipFont
                 color: Theme.warningColor
 
@@ -761,7 +761,7 @@ Page {
                   var customLanguageCode = settings.value('customLanguage', '');
                   var languages = iface.availableLanguages();
                   languageCodes = [""].concat(Object.keys(languages));
-                  var systemLanguage = qsTr("system");
+                  var systemLanguage = qsTr("sistema");
                   var systemLanguageSuffix = systemLanguage !== 'system' ? ' (system)' : '';
                   var items = [systemLanguage + systemLanguageSuffix];
                   languageComboBox.model = items.concat(Object.values(languages));
@@ -772,7 +772,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Spanish and English available")
+                text: qsTr("Español e inglés disponibles")
                 font: Theme.tipFont
                 color: Theme.mainTextColor
                 textFormat: Qt.RichText
@@ -797,7 +797,7 @@ Page {
               visible: platformUtilities.capabilities & PlatformUtilities.NativeCamera || platformUtilities.capabilities & PlatformUtilities.SentryFramework
 
               Label {
-                text: qsTr('Advanced')
+                text: qsTr('Avanzado')
                 font: Theme.strongFont
                 color: Theme.mainColor
                 wrapMode: Text.WordWrap
@@ -834,7 +834,7 @@ Page {
               rowSpacing: 5
 
               Label {
-                text: qsTr('Sentinel WMS Settings')
+                text: qsTr('Configuración de Sentinel WMS')
                 font: Theme.strongFont
                 color: Theme.mainColor
                 wrapMode: Text.WordWrap
@@ -859,7 +859,7 @@ Page {
                 Layout.columnSpan: 2
                 Layout.fillWidth: true
                 
-                text: qsTr("Advanced Sentinel Configuration")
+                text: qsTr("Configuración avanzada de Sentinel")
                 iconSource: Theme.getThemeVectorIcon("ic_settings_white_24dp")
                 iconColor: Theme.mainColor
                 bgcolor: Theme.toolButtonBackgroundColor
@@ -868,7 +868,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Configure Sentinel Hub WMS layers and parameters")
+                text: qsTr("Configurar capas y parámetros de Sentinel Hub WMS")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap
@@ -877,7 +877,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Note: You need to restart QField or reload your project for Sentinel settings to take effect.")
+                text: qsTr("Nota: Debe reiniciar QField o volver a cargar su proyecto para que la configuración de Sentinel surta efecto.")
                 font: Theme.tipFont
                 color: Theme.warningColor
                 wrapMode: Text.WordWrap
@@ -935,7 +935,7 @@ Page {
               Label {
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                text: qsTr("Positioning device in use:")
+                text: qsTr("Dispositivo de posicionamiento en uso:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -1039,7 +1039,7 @@ Page {
                 QfButton {
                   leftPadding: 10
                   rightPadding: 10
-                  text: qsTr('Add')
+                  text: qsTr('Añadir')
 
                   onClicked: {
                     positioningDeviceSettings.originalName = '';
@@ -1056,7 +1056,7 @@ Page {
                 QfButton {
                   leftPadding: 10
                   rightPadding: 10
-                  text: qsTr('Edit')
+                  text: qsTr('Editar')
                   enabled: positioningDeviceComboBox.currentIndex > 0
 
                   onClicked: {
@@ -1073,7 +1073,7 @@ Page {
                 QfButton {
                   leftPadding: 10
                   rightPadding: 10
-                  text: qsTr('Remove')
+                  text: qsTr('Eliminar')
                   enabled: positioningDeviceComboBox.currentIndex > 0
 
                   onClicked: {
@@ -1093,7 +1093,7 @@ Page {
                   switch (positionSource.deviceSocketState) {
                   case QAbstractSocket.ConnectedState:
                   case QAbstractSocket.BoundState:
-                    return qsTr('Connected to %1').arg(positioningSettings.positioningDeviceName);
+                    return qsTr('Conectado a %1').arg(positioningSettings.positioningDeviceName);
                   case QAbstractSocket.UnconnectedState:
                     return qsTr('Connect to %1').arg(positioningSettings.positioningDeviceName);
                   default:
@@ -1774,4 +1774,5 @@ Page {
     }
   }
 }
+
 

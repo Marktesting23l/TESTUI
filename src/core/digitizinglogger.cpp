@@ -184,11 +184,11 @@ void DigitizingLogger::addCoordinate( const QgsPoint &point )
       QgsExpression exp( fields.at( i ).defaultValueDefinition().expression() );
       exp.prepare( &expressionContext );
       if ( exp.hasParserError() )
-        QgsMessageLog::logMessage( tr( "Default value expression for the digitizing logger's %2 field has a parser error: %3" ).arg( mLogsLayer->name(), fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "QField" ) );
+        QgsMessageLog::logMessage( tr( "Default value expression for the digitizing logger's %2 field has a parser error: %3" ).arg( mLogsLayer->name(), fields.at( i ).name(), exp.parserErrorString() ), QStringLiteral( "SIGPACGO" ) );
 
       QVariant value = exp.evaluate( &expressionContext );
       if ( exp.hasEvalError() )
-        QgsMessageLog::logMessage( tr( "Default value expression for the digitizing logger's %2 field has an evaluation error: %3" ).arg( mLogsLayer->name(), fields.at( i ).name(), exp.evalErrorString() ), QStringLiteral( "QField" ) );
+        QgsMessageLog::logMessage( tr( "Default value expression for the digitizing logger's %2 field has an evaluation error: %3" ).arg( mLogsLayer->name(), fields.at( i ).name(), exp.evalErrorString() ), QStringLiteral( "SIGPACGO" ) );
 
       feature.setAttribute( i, value );
     }
@@ -219,13 +219,13 @@ void DigitizingLogger::writeCoordinates()
       QgsFeature createdFeature = QgsVectorLayerUtils::createFeature( mLogsLayer, pointFeature.geometry(), pointFeature.attributes().toMap() );
       if ( !mLogsLayer->addFeature( createdFeature ) )
       {
-        QgsMessageLog::logMessage( tr( "Digitizing logs layer feature addition failed" ), QStringLiteral( "QField" ) );
+        QgsMessageLog::logMessage( tr( "Digitizing logs layer feature addition failed" ), QStringLiteral( "SIGPACGO" ) );
       }
     }
 
     if ( !mLogsLayer->commitChanges( true ) )
     {
-      QgsMessageLog::logMessage( tr( "Digitizing logs layer change commits failed" ), QStringLiteral( "QField" ) );
+      QgsMessageLog::logMessage( tr( "Digitizing logs layer change commits failed" ), QStringLiteral( "SIGPACGO" ) );
     }
     else
     {
@@ -234,7 +234,7 @@ void DigitizingLogger::writeCoordinates()
   }
   else
   {
-    QgsMessageLog::logMessage( tr( "Digitizing logs layer editing failed" ), QStringLiteral( "QField" ) );
+    QgsMessageLog::logMessage( tr( "Digitizing logs layer editing failed" ), QStringLiteral( "SIGPACGO" ) );
   }
 }
 

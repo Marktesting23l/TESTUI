@@ -839,7 +839,6 @@ Drawer {
                 }
             }
             
-            // Location input - Simplified
             GroupBox {
                 id: locationBox
                 title: "Ubicación"

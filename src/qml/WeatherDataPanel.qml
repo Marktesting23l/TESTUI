@@ -960,18 +960,12 @@ Drawer {
             spacing: 1
             
             Image {
-                source: "qrc:///icons/Flag_of_Andalucía.svg.svg"
+                source: "qrc:/images/andalucia-logo.svg"
                 width: 24
                 height: 24
                 Layout.leftMargin: 4
                 Layout.alignment: Qt.AlignVCenter
                 
-                // If the weather icon is not available, use a fallback
-                onStatusChanged: {
-                    if (status === Image.Error) {
-                        source = "qrc:///icons/mActionMetadata.svg" // Fallback icon
-                    }
-                }
             }
             
             ColumnLayout {
@@ -980,8 +974,8 @@ Drawer {
                 Layout.leftMargin: 4
             
                 Label {
-                    text: "Datos Meteorológicos RIA"
-                    font.pixelSize: isSmallScreen ? 12 : 16
+                    text: "Estaciones RIA"
+                    font.pixelSize: 11
                     font.bold: true
                     Layout.fillWidth: true
                     color: AppTheme.Theme.mainTextColor
@@ -998,15 +992,13 @@ Drawer {
             
             // Nearest station button
             Button {
-                text: isSmallScreen ? "" : "Cargar estación más cercana"
-                icon.source: "qrc:///icons/mActionGps.svg"
+                text: "Más cercana"
                 Material.background: AppTheme.Theme.accentColor
                 Material.foreground: AppTheme.Theme.buttonTextColor
-                implicitWidth: isSmallScreen ? 70 : undefined
-                implicitHeight: isSmallScreen ? 40 : undefined
-                padding: isSmallScreen ? 0 : 4
+                implicitWidth: 120
+                implicitHeight: 40
+                padding: 0
                 onClicked: {
-                    // Activate position source and find nearest station
                     positionSource.active = true
                     findNearestStation()
                 }
@@ -1017,13 +1009,12 @@ Drawer {
 
             
             Button {
-                text: isSmallScreen ? "" : "Cerrar"
-                icon.source: "qrc:///icons/mActionRemove.svg"
+                text: "Cerrar"
                 Material.background: AppTheme.Theme.mainColor
                 Material.foreground: AppTheme.Theme.buttonTextColor
-                implicitWidth: isSmallScreen ? 70 : undefined
-                implicitHeight: isSmallScreen ? 40 : undefined
-                padding: isSmallScreen ? 0 : 4
+                implicitWidth: 70
+                implicitHeight: 40
+                padding: 0
                 onClicked: weatherDataPanel.visible = false
             }
         }
@@ -1049,21 +1040,19 @@ Drawer {
             }
         }
         
-        // Loading indicator
         BusyIndicator {
             visible: isLoading
             running: isLoading
             Layout.alignment: Qt.AlignHCenter
         }
         
-        // Selection controls - Always visible by default
         GroupBox {
             id: selectionGroupBox
             title: "Selección"
             Layout.fillWidth: true
             padding: 0
             
-            property bool expanded: true // Always expanded by default
+            property bool expanded: true 
             
             background: Rectangle {
                 color: AppTheme.Theme.controlBackgroundColor
@@ -1153,12 +1142,12 @@ Drawer {
         // Date selection - Always visible by default
         GroupBox {
             id: periodGroupBox
-            title: "Periodo"
+            title: "Periodo (otras comunidades próximamente)"
             Layout.fillWidth: true
             enabled: selectedStation !== null
             padding: 0
             
-            property bool expanded: true // Always expanded by default
+            property bool expanded: true 
             
             background: Rectangle {
                 color: AppTheme.Theme.controlBackgroundColor

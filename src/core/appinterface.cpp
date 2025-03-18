@@ -249,15 +249,15 @@ bool AppInterface::isFileExtensionSupported( const QString &filename ) const
 
 void AppInterface::logMessage( const QString &message )
 {
-  QgsMessageLog::logMessage( message, QStringLiteral( "QField" ) );
+  QgsMessageLog::logMessage( message, QStringLiteral( "SIGPACGO" ) );
 }
 
 void AppInterface::logRuntimeProfiler()
 {
 #if _QGIS_VERSION_INT >= 33299
-  QgsMessageLog::logMessage( QgsApplication::profiler()->asText(), QStringLiteral( "QField" ) );
+  QgsMessageLog::logMessage( QgsApplication::profiler()->asText(), QStringLiteral( "SIGPACGO" ) );
 #else
-  QgsMessageLog::logMessage( QStringLiteral( "QField must be compiled against QGIS >= 3.34 to support logging of the runtime profiler" ), QStringLiteral( "QField" ) );
+  QgsMessageLog::logMessage( QStringLiteral( "SIGPACGO must be compiled against QGIS >= 3.34 to support logging of the runtime profiler" ), QStringLiteral( "SIGPACGO" ) );
 #endif
 }
 

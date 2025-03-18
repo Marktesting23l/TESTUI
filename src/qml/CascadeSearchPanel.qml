@@ -1,17 +1,3 @@
-/*
- * SIGPAC Search Panel Component
- * 
- * To use this component, you need to register it in your main QML file:
- * 
- * 1. Import the component in qgismobileapp.qml:
- *    import "CascadeSearchPanel.qml" as CascadeSearchPanelComponent
- * 
- * 2. Create an instance of the component:
- *    CascadeSearchPanelComponent { id: cascadeSearchPanel }
- * 
- * 3. Call cascadeSearchPanel.open() to show the panel
- */
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts

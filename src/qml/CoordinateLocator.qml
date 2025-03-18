@@ -237,52 +237,92 @@ Item {
       strokeWidth: 2
       fillColor: "transparent"
 
-      PathAngleArc {
-        centerX: crosshairCircle.halfWidth
-        centerY: crosshairCircle.halfWidth
-        radiusX: crosshairCircle.halfWidth
-        radiusY: crosshairCircle.halfWidth
-        startAngle: 0 + crosshairCircle.arcSpacing
-        sweepAngle: 90 - crosshairCircle.arcSpacing * 2
+      PathMove {
+        x: 0
+        y: 0
       }
-      PathAngleArc {
-        centerX: crosshairCircle.halfWidth
-        centerY: crosshairCircle.halfWidth
-        radiusX: crosshairCircle.halfWidth
-        radiusY: crosshairCircle.halfWidth
-        startAngle: 90 + crosshairCircle.arcSpacing
-        sweepAngle: 90 - crosshairCircle.arcSpacing * 2
-      }
-      PathAngleArc {
-        centerX: crosshairCircle.halfWidth
-        centerY: crosshairCircle.halfWidth
-        radiusX: crosshairCircle.halfWidth
-        radiusY: crosshairCircle.halfWidth
-        startAngle: 180 + crosshairCircle.arcSpacing
-        sweepAngle: 90 - crosshairCircle.arcSpacing * 2
-      }
-      PathAngleArc {
-        centerX: crosshairCircle.halfWidth
-        centerY: crosshairCircle.halfWidth
-        radiusX: crosshairCircle.halfWidth
-        radiusY: crosshairCircle.halfWidth
-        startAngle: 270 + crosshairCircle.arcSpacing
-        sweepAngle: 90 - crosshairCircle.arcSpacing * 2
+      PathLine {
+        x: crosshairCircle.width * 0.3
+        y: 0
       }
       PathMove {
+        x: 0
+        y: 0
+      }
+      PathLine {
+        x: 0
+        y: crosshairCircle.height * 0.3
+      }
+
+      // Top-right corner (30% of each side)
+      PathMove {
+        x: crosshairCircle.width
+        y: 0
+      }
+      PathLine {
+        x: crosshairCircle.width * 0.7
+        y: 0
+      }
+      PathMove {
+        x: crosshairCircle.width
+        y: 0
+      }
+      PathLine {
+        x: crosshairCircle.width
+        y: crosshairCircle.height * 0.3
+      }
+
+      // Bottom-left corner (30% of each side)
+      PathMove {
+        x: 0
+        y: crosshairCircle.height
+      }
+      PathLine {
+        x: crosshairCircle.width * 0.3
+        y: crosshairCircle.height
+      }
+      PathMove {
+        x: 0
+        y: crosshairCircle.height
+      }
+      PathLine {
+        x: 0
+        y: crosshairCircle.height * 0.7
+      }
+
+      // Bottom-right corner (30% of each side)
+      PathMove {
+        x: crosshairCircle.width
+        y: crosshairCircle.height
+      }
+      PathLine {
+        x: crosshairCircle.width * 0.7
+        y: crosshairCircle.height
+      }
+      PathMove {
+        x: crosshairCircle.width
+        y: crosshairCircle.height
+      }
+      PathLine {
+        x: crosshairCircle.width
+        y: crosshairCircle.height * 0.7
+      }
+
+      // Center crosshair
+      PathMove {
         x: crosshairCircle.halfWidth
-        y: crosshairCircle.halfWidth - 8
+        y: crosshairCircle.halfWidth - 12
       }
       PathLine {
         x: crosshairCircle.halfWidth
-        y: crosshairCircle.halfWidth + 8
+        y: crosshairCircle.halfWidth + 12
       }
       PathMove {
-        x: crosshairCircle.halfWidth - 8
+        x: crosshairCircle.halfWidth - 12
         y: crosshairCircle.halfWidth
       }
       PathLine {
-        x: crosshairCircle.halfWidth + 8
+        x: crosshairCircle.halfWidth + 12
         y: crosshairCircle.halfWidth
       }
     }

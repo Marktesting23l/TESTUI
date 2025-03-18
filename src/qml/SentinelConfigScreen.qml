@@ -184,20 +184,6 @@ Popup {
               settings.setValue("QField/Sentinel/RateLimitDelay", rateLimitDelayField.text)
             }
             
-            // Save custom script settings - commented out as they don't work
-            /*
-            settings.setValue("QField/Sentinel/CustomScriptEnabled", enableCustomScript.checked)
-            if (enableCustomScript.checked) {
-              settings.setValue("QField/Sentinel/ScriptUrl", scriptUrlField.text)
-              settings.setValue("QField/Sentinel/CustomScript", customScriptField.text)
-            }
-            
-            // Save custom layer script settings
-            settings.setValue("QField/Sentinel/EvalScriptUrl", customEvalScriptUrlField.text)
-            settings.setValue("QField/Sentinel/EvalScript", customEvalScriptField.text)
-            */
-            
-            // Set a flag to force reload of layers
             settings.setValue("QField/Sentinel/SettingsChanged", true)
             
             mainWindow.displayToast(qsTr("Sentinel settings saved. Restart QField or reload your project for changes to take effect."))
@@ -214,7 +200,7 @@ Popup {
       id: tabBar
       Layout.fillWidth: true
       Layout.preferredHeight: defaultHeight
-      model: [qsTr("Básico"), qsTr("Capas"), qsTr("Constructor de Consultas")]
+      model: [qsTr("Básico"), qsTr("Capas"), qsTr("Personalizador")]
     }
     
     // Tab Content
@@ -1732,8 +1718,6 @@ Popup {
           layerStyles[enabledLayersList[i]] = defaultStyle
         }
         
-        // Log the loaded style for debugging
-        console.log("Loaded style for " + enabledLayersList[i] + ": " + layerStyles[enabledLayersList[i]])
       }
     }
     

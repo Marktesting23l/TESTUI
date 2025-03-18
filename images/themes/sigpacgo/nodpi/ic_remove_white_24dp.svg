@@ -1,4 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
 
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
-<path fill-rule="nonzero" fill="rgb(100%, 100%, 100%)" fill-opacity="1" d="M 5 13 L 5 11 L 19 11 L 19 13 Z M 5 13 "/>
+<svg
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="ic_add_white_24dp (copy).svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="47.625"
+     inkscape:cx="12.010499"
+     inkscape:cy="12"
+     inkscape:window-width="2560"
+     inkscape:window-height="1360"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     fill="none"
+     stroke-width="2"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke="#ffffff"
+     stroke-opacity="1"
+     stroke-miterlimit="4"
+     d="m 8,12 h 4 m 0,0 h 4 m -4,0 v 0.0315 M 12,12 11.874016,12.052493 M 4,16.800781 V 7.199219 C 4,6.082031 4,5.519531 4.21875,5.09375 4.410156,4.714844 4.714844,4.410156 5.09375,4.21875 5.519531,4 6.082031,4 7.199219,4 h 9.601562 c 1.121094,0 1.679688,0 2.105469,0.21875 0.378906,0.191406 0.683594,0.496094 0.875,0.875 C 20,5.519531 20,6.078125 20,7.199219 v 9.601562 c 0,1.117188 0,1.679688 -0.21875,2.105469 -0.191406,0.378906 -0.496094,0.683594 -0.875,0.875 C 18.480469,20 17.921875,20 16.804688,20 H 7.195312 C 6.078125,20 5.519531,20 5.09375,19.78125 4.714844,19.589844 4.410156,19.285156 4.21875,18.90625 4,18.480469 4,17.921875 4,16.800781 Z"
+     id="path1"
+     sodipodi:nodetypes="ccccccccssccssccssccssccs" />
 </svg>

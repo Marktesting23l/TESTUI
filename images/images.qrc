@@ -2,9 +2,10 @@
     <qresource prefix="/images">
         <file alias="imagr-logo.svg">icons/Logo_imagr.svg</file>
         <file alias="intecnatur-logo.svg">icons/InTecnatur_logo.svg</file>
+        <file alias="andalucia-logo.svg">icons/Flag_of_Andalucia.svg</file>
         </qresource>
     <qresource prefix="/pictures">
-        <file alias="qfield-love.png">pictures/qfield-love.png</file>
+        
     </qresource>
     <qresource prefix="/">
         <file>themes/sigpacgo/nodpi/ic_text_black_24dp.svg</file>
@@ -55,7 +56,7 @@
         <file>themes/sigpacgo/nodpi/ic_file_black_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_folder_gray_48dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_folder_favorite_gray_48dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_folder_qfield_gray_48dp.svg</file>
+        <file>themes/sigpacgo/nodpi/ic_folder_sigpacgo_gray_48dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_sd_card_gray_48dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_sensor_on_black_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_sensor_off_black_24dp.svg</file>
@@ -88,8 +89,6 @@
         <file>themes/sigpacgo/nodpi/ic_alert_black_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_speaker_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_sponsor_white_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_satisfied_white_24dp.svg</file>
-        <file>themes/sigpacgo/nodpi/ic_dissatisfied_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_star_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_settings_white_24dp.svg</file>
         <file>themes/sigpacgo/nodpi/ic_temporal_black_24dp.svg</file>
@@ -183,6 +182,6 @@
         <file>themes/sigpacgo/nodpi/weather/showers.svg</file>
         <file>themes/sigpacgo/nodpi/weather/snow_showers.svg</file>
         <file>themes/sigpacgo/nodpi/weather/thunderstorm.svg</file>
-        <file>themes/sigpacgo/nodpi/Flag_of_Andalucía.svg</file>
+        <file>themes/sigpacgo/nodpi/ic_photoatributes.svg</file>
     </qresource>
 </RCC>

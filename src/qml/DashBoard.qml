@@ -333,7 +333,7 @@ Drawer {
         height: 75
         icon.source: Theme.getThemeVectorIcon("ic_home_black_24dp")
         font: Theme.defaultFont
-        text: "Return"
+        text: "Volver"
 
         onClicked: returnHome()
       }
@@ -409,29 +409,24 @@ Drawer {
     mapSettings: dashBoard.mapSettings
   }
 
-  // Function to ensure an editable layer is selected
   function ensureEditableLayerSelected() {
     if (!activeLayer || activeLayer.readOnly) {
-      // Find the first editable layer
       var editableLayers = []
       
-      // Iterate through the layer tree to find editable layers
       for (var i = 0; i < layerTree.rowCount(); i++) {
         var index = layerTree.index(i, 0)
         var layer = layerTree.data(index, 0)
         
-        // Check if it's a valid vector layer and not read-only
         if (layer && layer.isValid && !layer.readOnly && layer.type === 0) { // type 0 is VectorLayer
           editableLayers.push(layer)
         }
       }
       
       if (editableLayers.length > 0) {
-        // Set the first editable layer as active
         legend.activeLayer = editableLayers[0]
         return true
       } else {
-        console.log("No editable layers found")
+        console.log("No se han encontrado capas editables vectoriales")
         return false
       }
     }

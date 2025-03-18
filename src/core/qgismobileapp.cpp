@@ -733,7 +733,7 @@ bool QgisMobileapp::loadProjectFile( const QString &path, const QString &name )
   QFileInfo fi( path );
   if ( !fi.exists() )
   {
-    QgsMessageLog::logMessage( tr( "Can't load project, file \"%1\" does not exist" ).arg( path ), QStringLiteral( "QField" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Can't load project, file \"%1\" does not exist" ).arg( path ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     return false;
   }
 
@@ -761,7 +761,7 @@ bool QgisMobileapp::loadProjectFile( const QString &path, const QString &name )
 void QgisMobileapp::reloadProjectFile()
 {
   if ( mProjectFilePath.isEmpty() )
-    QgsMessageLog::logMessage( tr( "No project file currently opened" ), QStringLiteral( "QField" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "No project file currently opened" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
 
   emit loadProjectTriggered( mProjectFilePath, mProjectFileName );
 }
@@ -770,7 +770,7 @@ void QgisMobileapp::readProjectFile()
 {
   QFileInfo fi( mProjectFilePath );
   if ( !fi.exists() )
-    QgsMessageLog::logMessage( tr( "Can't read project, file \"%1\" does not exist" ).arg( mProjectFilePath ), QStringLiteral( "QField" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Can't read project, file \"%1\" does not exist" ).arg( mProjectFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
 
   QSettings().setValue( QStringLiteral( "QField/lastProjectFilePath" ), mProjectFilePath );
 
@@ -1109,15 +1109,15 @@ void QgisMobileapp::readProjectFile()
   bool settingsUpdated = sentinelSettings.value(QStringLiteral("QField/Sentinel/SettingsUpdated"), false).toBool();
   
   // Log the layer configuration for debugging
-  QgsMessageLog::logMessage(QStringLiteral("Sentinel enabled layers: %1").arg(enabledLayersStr), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("NDVI style: %1").arg(ndviStyle), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("FALSE_COLOR style: %1").arg(falseColorStyle), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("TRUE_COLOR style: %1").arg(trueColorStyle), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("CUSTOM1 style: %1").arg(custom1Style), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("CUSTOM2 style: %1").arg(custom2Style), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("TRUE_COLOR layer ID: %1").arg(trueColorLayerId), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("FALSE_COLOR layer ID: %1").arg(falseColorLayerId), "QField", Qgis::Info);
-  QgsMessageLog::logMessage(QStringLiteral("NDVI layer ID: %1").arg(ndviLayerId), "QField", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("Sentinel enabled layers: %1").arg(enabledLayersStr), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("NDVI style: %1").arg(ndviStyle), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("FALSE_COLOR style: %1").arg(falseColorStyle), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("TRUE_COLOR style: %1").arg(trueColorStyle), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("CUSTOM1 style: %1").arg(custom1Style), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("CUSTOM2 style: %1").arg(custom2Style), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("TRUE_COLOR layer ID: %1").arg(trueColorLayerId), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("FALSE_COLOR layer ID: %1").arg(falseColorLayerId), "SIGPACGO", Qgis::Info);
+  QgsMessageLog::logMessage(QStringLiteral("NDVI layer ID: %1").arg(ndviLayerId), "SIGPACGO", Qgis::Info);
   
   // Read custom layer script parameters
   QString evalScriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScriptUrl"), "").toString();
@@ -1208,7 +1208,7 @@ void QgisMobileapp::readProjectFile()
     WmsRateLimiter::instance()->setDelay(delayMs);
     
     // Log that rate limiting is enabled
-    QgsMessageLog::logMessage(QStringLiteral("Sentinel WMS rate limiting enabled with %1ms delay").arg(delayMs), "QField", Qgis::Info);
+    QgsMessageLog::logMessage(QStringLiteral("Sentinel WMS rate limiting enabled with %1ms delay").arg(delayMs), "SIGPACGO", Qgis::Info);
   } else {
     WmsRateLimiter::instance()->setEnabled(false);
   }
@@ -1218,8 +1218,8 @@ void QgisMobileapp::readProjectFile()
   
   if (!sentinelInstanceId.isEmpty() && enableSentinelLayers && !enabledLayers.isEmpty())
   {
-    QgsMessageLog::logMessage(QStringLiteral("Creating Sentinel layers with instance ID: %1").arg(sentinelInstanceId), "QField", Qgis::Info);
-    QgsMessageLog::logMessage(QStringLiteral("Enabled layers: %1").arg(enabledLayersStr), "QField", Qgis::Info);
+    QgsMessageLog::logMessage(QStringLiteral("Creating Sentinel layers with instance ID: %1").arg(sentinelInstanceId), "SIGPACGO", Qgis::Info);
+    QgsMessageLog::logMessage(QStringLiteral("Enabled layers: %1").arg(enabledLayersStr), "SIGPACGO", Qgis::Info);
     
     sentinelGroup = mProject->layerTreeRoot()->addGroup("Sentinel Imagery");
     
