@@ -77,18 +77,17 @@ void PlatformUtilities::copySampleProjects()
 
 void PlatformUtilities::copySigpacBaseMap()
 {
-  // For Android and iOS, we should place the file in application directory
+  // For Android and iOS, file copying is already handled by the Java copyAssets method
+  // We just need to check if the file exists and create the directory if it doesn't
   QString targetDir;
 #if defined( Q_OS_ANDROID ) || defined( Q_OS_IOS )
   // Use the same directory structure as sample_projects but with sigpacgo_base folder
-  // We're using applicationDirectory() + "SIGPACGO" to ensure it's in storage/emulated/0/Android/data/com.imagritools.sigpacgo/files
   targetDir = appDataDirs().first() + QStringLiteral( "sigpacgo_base" );
   qDebug() << "Using Android/iOS app data directory for SIGPAC_BASE:" << targetDir;
 #else
   // For desktop, keep using the system local data location
   targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_base" ) );
   qDebug() << "Using desktop app data directory for SIGPAC_BASE:" << targetDir;
-#endif
   
   // Create the directory if it doesn't exist
   QDir targetDirObj(targetDir);
@@ -114,8 +113,6 @@ void PlatformUtilities::copySigpacBaseMap()
     sourceDirs << systemSharedDataLocation() + QLatin1String("/resources/sigpacgo_base");
     // Resources directory (development)
     sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/sigpacgo_base");
-    // Build output directory (development)
-    sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/build-x64-linux/output/share/qfield/sigpacgo_base");
     
     bool success = false;
     
@@ -165,6 +162,7 @@ void PlatformUtilities::copySigpacBaseMap()
     
     qDebug() << "Copying SIGPAC base map to" << targetDir << (success ? "succeeded" : "failed");
   }
+#endif
   
   // Now handle the SIGPACGO Main Map
   copyMainMapProject();
@@ -172,17 +170,13 @@ void PlatformUtilities::copySigpacBaseMap()
 
 void PlatformUtilities::copyMainMapProject()
 {
-  // For Android and iOS, we should place the file in application directory
+  // For Android and iOS, file copying is already handled by the Java copyAssets method
+  // We just need to check if the file exists and create the directory if it doesn't
   QString targetDir;
 #if defined( Q_OS_ANDROID ) || defined( Q_OS_IOS )
-  // Use the same directory structure as sigpacgo_base but with main_project folder
+  // Use the same directory structure as sigpacgo_base but with sigpacgo_main folder
   targetDir = appDataDirs().first() + QStringLiteral( "sigpacgo_main" );
   qDebug() << "Using Android/iOS app data directory for SIGPACGO Main Map:" << targetDir;
-#else
-  // For desktop, keep using the system local data location
-  targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_main" ) );
-  qDebug() << "Using desktop app data directory for SIGPACGO Main Map:" << targetDir;
-#endif
   
   // Create the directory if it doesn't exist
   QDir targetDirObj(targetDir);
@@ -192,40 +186,107 @@ void PlatformUtilities::copyMainMapProject()
     qDebug() << "Created directory:" << targetDir;
   }
   
-  // Check if the target already has the file
+  // Define target file name
   QString targetFile = targetDir + QStringLiteral("/SIGPACGO_Mapa_Principal.qgz");
+  
+  // Check if the target already has the file
+  if (QFile::exists(targetFile))
+  {
+    qDebug() << "SIGPACGO_Mapa_Principal.qgz already exists at" << targetFile;
+  }
+  else
+  {
+    qDebug() << "SIGPACGO_Mapa_Principal.qgz does not exist at" << targetFile;
+    qDebug() << "Copying should be handled by the Java copyAssets method";
+    
+    // Verify copy was successful by checking again
+    if (QFile::exists(targetFile))
+    {
+      qDebug() << "Verified SIGPACGO_Mapa_Principal.qgz now exists at" << targetFile;
+    }
+    else
+    {
+      qWarning() << "SIGPACGO_Mapa_Principal.qgz still does not exist at" << targetFile;
+      // If no file exists after Java tried to copy it, create an empty README file to indicate the issue
+      QString noteFile = targetDir + QStringLiteral("/README.txt");
+      QFile file(noteFile);
+      if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << "SIGPACGO main map file could not be copied.\n";
+        out << "Please reinstall the application or contact support.\n";
+        file.close();
+        qDebug() << "Created README.txt in" << targetDir << "to document the copy failure";
+      }
+    }
+  }
+#else
+  // For desktop, keep using the system local data location
+  targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_main" ) );
+  qDebug() << "Using desktop app data directory for SIGPACGO Main Map:" << targetDir;
+  
+  // Create the directory if it doesn't exist
+  QDir targetDirObj(targetDir);
+  if (!targetDirObj.exists())
+  {
+    targetDirObj.mkpath(".");
+    qDebug() << "Created directory:" << targetDir;
+  }
+  
+  // Define target file name
+  QString targetFile = targetDir + QStringLiteral("/SIGPACGO_Mapa_Principal.qgz");
+  
+  // Check if the target already has the file
   if (QFile::exists(targetFile))
   {
     qDebug() << "SIGPACGO_Mapa_Principal.qgz already exists at" << targetFile;
     return;
   }
   
-  // Try different source locations
+  // Define all possible source directories
   QStringList sourceDirs;
-  // Resources directory (Android assets)
+  // Resources directory (standard location)
+  sourceDirs << systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO Principal");
+  // Resources directory (alternative name)
   sourceDirs << systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO Mapa Principal");
   // Original source directory
   sourceDirs << systemSharedDataLocation() + QLatin1String("/sigpacgo/main_project");
   // Resources directory (development)
+  sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/SIGPACGO Principal");
+  // Alternative development path
   sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/SIGPACGO Mapa Principal");
-  // Build output directory (development)
-  sourceDirs << QStringLiteral("/home/im/Documents/SIGPACGOEDITS/TESTUI-master/build-x64-linux/output/share/qfield/main_project");
+  
+  // Log all source directories being checked
+  qDebug() << "Checking source directories for SIGPACGO Main Map:";
+  for (const QString &dir : sourceDirs) {
+    qDebug() << " - " << dir << (QDir(dir).exists() ? "(exists)" : "(not found)");
+  }
   
   bool success = false;
   
-  // Try each source directory
+  // Define all possible file names to look for
+  QStringList possibleFiles;
+  possibleFiles << QStringLiteral("/SIGPACGO_Principal.qgz");            // Actual file name
+  possibleFiles << QStringLiteral("/SIGPACGO_Mapa_Principal.qgz");       // Target file name
+  possibleFiles << QStringLiteral("/SIGPACGO Mapa Principal.qgz");       // Alternative with spaces
+  possibleFiles << QStringLiteral("/SIGPACGO Principal.qgz");            // Alternative with spaces
+  possibleFiles << QStringLiteral("/SIGPACGO Mapa Pincipal.qgz");        // Typo variant
+  
+  // Try each source directory and file combination
   for (const QString &sourceDir : sourceDirs)
   {
-    QStringList possibleFiles;
-    possibleFiles << QStringLiteral("/SIGPACGO_Mapa_Principal.qgz");
-    possibleFiles << QStringLiteral("/SIGPACGO Mapa Principal.qgz");
-    possibleFiles << QStringLiteral("/SIGPACGO Mapa Pincipal.qgz"); // Check for typo variant too
+    if (!QDir(sourceDir).exists())
+    {
+      continue; // Skip non-existent directories
+    }
     
     for (const QString &fileName : possibleFiles)
     {
       QString sourceFile = sourceDir + fileName;
       if (QFile::exists(sourceFile))
       {
+        qDebug() << "Found source file:" << sourceFile;
+        
+        // Try to copy the file
         success = QFile::copy(sourceFile, targetFile);
         if (success)
         {
@@ -234,55 +295,110 @@ void PlatformUtilities::copyMainMapProject()
         }
         else
         {
-          qWarning() << "Failed to copy SIGPACGO Main Map from" << sourceFile << "to" << targetFile;
+          qWarning() << "Failed to copy SIGPACGO Main Map from" << sourceFile << "to" << targetFile 
+                    << "- Error:" << strerror(errno);
         }
       }
-      else
+    }
+    
+    // If file copy failed, try to copy entire directory
+    success = FileUtils::copyRecursively(sourceDir, targetDir);
+    if (success)
+    {
+      qDebug() << "Copying SIGPACGO Main Map directory from" << sourceDir << "to" << targetDir << "succeeded";
+      
+      // Ensure the file is properly named in the target directory
+      QDir dir(targetDir);
+      QStringList files = dir.entryList(QDir::Files);
+      qDebug() << "Files in target directory:" << files;
+      
+      bool fileRenamed = false;
+      for (const QString &file : files)
       {
-        qDebug() << "Source file does not exist:" << sourceFile;
+        // Look for project files and rename to the standard name if needed
+        if (file.contains("Principal", Qt::CaseInsensitive))
+        {
+          if (file != "SIGPACGO_Mapa_Principal.qgz")
+          {
+            bool renameSuccess = dir.rename(file, "SIGPACGO_Mapa_Principal.qgz");
+            qDebug() << "Renamed" << file << "to SIGPACGO_Mapa_Principal.qgz" << (renameSuccess ? "succeeded" : "failed");
+            if (renameSuccess) {
+              fileRenamed = true;
+            }
+          }
+          else
+          {
+            fileRenamed = true; // File already has the correct name
+          }
+          break;
+        }
       }
+      
+      // If we couldn't find a file to rename, we need to handle this special case
+      if (!fileRenamed && !files.isEmpty())
+      {
+        // Just take the first project file and rename it
+        for (const QString &file : files)
+        {
+          if (file.endsWith(".qgz"))
+          {
+            bool renameSuccess = dir.rename(file, "SIGPACGO_Mapa_Principal.qgz");
+            qDebug() << "Renamed alternate file" << file << "to SIGPACGO_Mapa_Principal.qgz" 
+                     << (renameSuccess ? "succeeded" : "failed");
+            break;
+          }
+        }
+      }
+      
+      // Check if the target file now exists
+      if (QFile::exists(targetFile))
+      {
+        return;
+      }
+    }
+    else
+    {
+      qWarning() << "Copying SIGPACGO Main Map directory from" << sourceDir << "to" << targetDir << "failed";
     }
   }
   
-  // If direct file copy failed, try directory copy
-  if (!success)
+  // Last resort: try to manually copy the file from sample_projects if available
+  QString sampleProjectsDir = systemLocalDataLocation( QLatin1String( "sample_projects" ) );
+  if (QDir(sampleProjectsDir).exists())
   {
-    for (const QString &sourceDir : sourceDirs)
+    qDebug() << "Trying to find a suitable project file in sample_projects...";
+    QStringList sampleProjects = QDir(sampleProjectsDir).entryList(QStringList() << "*.qgz", QDir::Files);
+    if (!sampleProjects.isEmpty())
     {
-      if (QDir(sourceDir).exists())
+      QString sourceSample = sampleProjectsDir + "/" + sampleProjects.first();
+      success = QFile::copy(sourceSample, targetFile);
+      if (success)
       {
-        success = FileUtils::copyRecursively(sourceDir, targetDir);
-        if (success)
-        {
-          qDebug() << "Copying SIGPACGO Main Map directory from" << sourceDir << "to" << targetDir << "succeeded";
-          
-          // Ensure the file is properly named in the target directory
-          QDir dir(targetDir);
-          QStringList files = dir.entryList(QDir::Files);
-          for (const QString &file : files)
-          {
-            if (file.contains("Mapa Principal", Qt::CaseInsensitive) || file.contains("Mapa Pincipal", Qt::CaseInsensitive))
-            {
-              if (file != "SIGPACGO_Mapa_Principal.qgz")
-              {
-                dir.rename(file, "SIGPACGO_Mapa_Principal.qgz");
-                qDebug() << "Renamed" << file << "to SIGPACGO_Mapa_Principal.qgz";
-              }
-              break;
-            }
-          }
-          
-          break;
-        }
-        else
-        {
-          qWarning() << "Copying SIGPACGO Main Map directory from" << sourceDir << "to" << targetDir << "failed";
-        }
+        qDebug() << "Copied sample project" << sourceSample << "as main map to" << targetFile;
+        return;
       }
     }
   }
   
   qDebug() << "Copying SIGPACGO Main Map to" << targetDir << (success ? "succeeded" : "failed");
+  
+  // If all else failed, create a simple text file to indicate the problem
+  if (!success) {
+    QString noteFile = targetDir + QStringLiteral("/README.txt");
+    QFile file(noteFile);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+      QTextStream out(&file);
+      out << "Failed to copy the SIGPACGO Main Map.\n";
+      out << "Please reinstall the application or contact support.\n";
+      out << "Checked directories:\n";
+      for (const QString &dir : sourceDirs) {
+        out << " - " << dir << "\n";
+      }
+      file.close();
+      qDebug() << "Created README.txt in" << targetDir << "to document the copy failure";
+    }
+  }
+#endif
 }
 
 void PlatformUtilities::initSystem()

@@ -224,6 +224,20 @@ public class QFieldActivity extends QtActivity {
             Log.i("SIGPACGO", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
         }
         
+        // Create sigpacgo_base directory in internal storage
+        File sigpacgoBaseDir = new File(internalAppDir, "sigpacgo_base");
+        if (!sigpacgoBaseDir.exists()) {
+            sigpacgoBaseDir.mkdirs();
+            Log.i("SIGPACGO", "Created sigpacgo_base directory: " + sigpacgoBaseDir.getAbsolutePath());
+        }
+        
+        // Create sigpacgo_main directory in internal storage
+        File sigpacgoMainDir = new File(internalAppDir, "sigpacgo_main");
+        if (!sigpacgoMainDir.exists()) {
+            sigpacgoMainDir.mkdirs();
+            Log.i("SIGPACGO", "Created sigpacgo_main directory: " + sigpacgoMainDir.getAbsolutePath());
+        }
+        
         // Copy sample projects if they exist
         try {
             // Create qfield directory for backward compatibility with C++ code
@@ -280,8 +294,81 @@ public class QFieldActivity extends QtActivity {
                     Log.w("SIGPACGO", "No sample projects found in " + path + ": " + e.getMessage());
                 }
             }
+            
+            // Copy SIGPACGO base map files
+            String[] sigpacgoBasePaths = {"resources/sigpacgo_base", "resources/SIGPAC Base"};
+            for (String path : sigpacgoBasePaths) {
+                try {
+                    String[] baseFiles = assetManager.list(path);
+                    if (baseFiles != null && baseFiles.length > 0) {
+                        Log.i("SIGPACGO", "Found " + baseFiles.length + " base map files in " + path);
+                        
+                        for (String item : baseFiles) {
+                            String sourcePath = path + "/" + item;
+                            String targetPath = sigpacgoBaseDir.getAbsolutePath() + "/" + item;
+                            
+                            // Rename to standard filename if needed
+                            if (item.contains("BASE") || item.contains("Base")) {
+                                targetPath = sigpacgoBaseDir.getAbsolutePath() + "/SIGPAC_BASE.qgz";
+                                Log.i("SIGPACGO", "Standardizing base map filename to SIGPAC_BASE.qgz");
+                            }
+                            
+                            try {
+                                copyAssetFolder(sourcePath, targetPath);
+                                Log.i("SIGPACGO", "Copied base map file: " + item);
+                            } catch (IOException e) {
+                                Log.e("SIGPACGO", "Error copying base map file " + item + ": " + e.getMessage());
+                            }
+                        }
+                        
+                        Log.i("SIGPACGO", "SIGPACGO base map files copied successfully from " + path);
+                        break;
+                    }
+                } catch (IOException e) {
+                    Log.w("SIGPACGO", "No base map files found in " + path + ": " + e.getMessage());
+                }
+            }
+            
+            // Copy SIGPACGO main map files
+            String[] sigpacgoMainPaths = {
+                "resources/SIGPACGO Principal", 
+                "resources/SIGPACGO Mapa Principal",
+                "sigpacgo/main_project"
+            };
+            
+            for (String path : sigpacgoMainPaths) {
+                try {
+                    String[] mainFiles = assetManager.list(path);
+                    if (mainFiles != null && mainFiles.length > 0) {
+                        Log.i("SIGPACGO", "Found " + mainFiles.length + " main map files in " + path);
+                        
+                        for (String item : mainFiles) {
+                            String sourcePath = path + "/" + item;
+                            String targetPath = sigpacgoMainDir.getAbsolutePath() + "/" + item;
+                            
+                            // Standardize the filename for the main map
+                            if (item.endsWith(".qgz") || item.endsWith(".qgs")) {
+                                targetPath = sigpacgoMainDir.getAbsolutePath() + "/SIGPACGO_Mapa_Principal.qgz";
+                                Log.i("SIGPACGO", "Standardizing main map filename to SIGPACGO_Mapa_Principal.qgz");
+                            }
+                            
+                            try {
+                                copyAssetFolder(sourcePath, targetPath);
+                                Log.i("SIGPACGO", "Copied main map file: " + item);
+                            } catch (IOException e) {
+                                Log.e("SIGPACGO", "Error copying main map file " + item + ": " + e.getMessage());
+                            }
+                        }
+                        
+                        Log.i("SIGPACGO", "SIGPACGO main map files copied successfully from " + path);
+                        break;
+                    }
+                } catch (IOException e) {
+                    Log.w("SIGPACGO", "No main map files found in " + path + ": " + e.getMessage());
+                }
+            }
         } catch (Exception e) {
-            Log.e("SIGPACGO", "Error in sample projects processing: " + e.getMessage());
+            Log.e("SIGPACGO", "Error in projects processing: " + e.getMessage());
         }
         
         // Also copy to external storage for compatibility
