@@ -77,7 +77,6 @@ void QgsGpkgFlusher::onLayersAdded( const QList<QgsMapLayer *> &layers )
         
         // Schedule to start the flusher after some time to allow the database to initialize
         QTimer::singleShot(2000, this, [this, filePath]() {
-          QgsMessageLog::logMessage( QStringLiteral( "Starting flusher for: %1" ).arg( filePath ) );
           start( filePath );
         });
       }

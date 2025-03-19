@@ -779,17 +779,15 @@ void QgisMobileapp::readProjectFile()
 
   const QString suffix = fi.suffix().toLower();
 
-  // Temporarily disable GPKG flushing before loading the project to prevent crashes
-  // We'll track projects we've already loaded to avoid disabling flushing on subsequent loads
   static QSet<QString> loadedProjects;
   const bool isFirstLoad = !loadedProjects.contains(mProjectFilePath);
   
   if (isFirstLoad) {
-    QgsMessageLog::logMessage( tr( "First time loading project %1, temporarily disabling GPKG flushing" ).arg( mProjectFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    // Removed flusher log message to reduce log spam
     
     // Also disable flushing for the project file itself if it's a GPKG
     if (suffix == QStringLiteral( "gpkg" )) {
-      QgsMessageLog::logMessage( tr( "Temporarily disabling flushing for project file %1" ).arg( mProjectFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      // Removed flusher log message to reduce log spam
       if (mGpkgFlusher) {
         mGpkgFlusher->stop(mProjectFilePath);
       }
@@ -801,7 +799,7 @@ void QgisMobileapp::readProjectFile()
     for (const QString &gpkgFile : gpkgFiles) {
       QString fullPath = projectDir.filePath(gpkgFile);
       if (fullPath != mProjectFilePath) { // Don't double-process the project file
-        QgsMessageLog::logMessage( tr( "Temporarily disabling flushing for %1" ).arg( fullPath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+        // Removed flusher log message to reduce log spam
         
         // If we have a GPKG flusher, disable it for this file
         if (mGpkgFlusher) {
@@ -2020,7 +2018,7 @@ void QgisMobileapp::readProjectFile()
     QTimer::singleShot(5000, [this, gpkgFiles, projectDir]() {
       for (const QString &gpkgFile : gpkgFiles) {
         QString fullPath = projectDir.filePath(gpkgFile);
-        QgsMessageLog::logMessage( tr( "Re-enabling flushing for %1" ).arg( fullPath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+        // Removed log message to reduce log spam
         
         if (mGpkgFlusher) {
           mGpkgFlusher->start(fullPath);
@@ -2069,27 +2067,81 @@ bool QgisMobileapp::print( const QString &layoutName )
   std::unique_ptr<QgsPrintLayout> templateLayout;
   if ( layoutName.isEmpty() && printLayouts.isEmpty() )
   {
-    QFile templateFile( QStringLiteral( "%1/sigpacgo/templates/layout.qpt" ).arg( PlatformUtilities::instance()->systemSharedDataLocation() ) );
-    QDomDocument templateDoc;
-    templateDoc.setContent( &templateFile );
-
-    templateLayout = std::make_unique<QgsPrintLayout>( QgsProject::instance() );
-    bool loadedOK = false;
-    QList<QgsLayoutItem *> items = templateLayout->loadFromTemplate( templateDoc, QgsReadWriteContext(), true, &loadedOK );
-    if ( !loadedOK )
-    {
-      return false;
+    // Log information about the template path
+    QString templatePath = QStringLiteral( "%1/sigpacgo/templates/layout.qpt" ).arg( PlatformUtilities::instance()->systemSharedDataLocation() );
+    QgsMessageLog::logMessage( QStringLiteral( "Looking for template at: %1" ).arg( templatePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    
+    // Make sure the template directory exists
+    QDir templateDir(QFileInfo(templatePath).absolutePath());
+    if (!templateDir.exists()) {
+      bool created = templateDir.mkpath(".");
+      QgsMessageLog::logMessage( QStringLiteral( "Template directory did not exist. Created: %1" ).arg( created ? "yes" : "no" ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
     }
-
-    for ( QgsLayoutItem *item : items )
-    {
-      if ( item->type() == QgsLayoutItemRegistry::LayoutLabel && item->id() == QStringLiteral( "Title" ) )
-      {
-        QgsLayoutItemLabel *labelItem = qobject_cast<QgsLayoutItemLabel *>( item );
-        labelItem->setText( tr( "Map printed on %1 using QField" ).arg( "[%format_date(now(), 'yyyy-MM-dd @ hh:mm')%]" ) );
+    
+    QFile templateFile(templatePath);
+    if (!templateFile.exists()) {
+      QgsMessageLog::logMessage( QStringLiteral( "Template file does not exist at: %1" ).arg( templatePath ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+      
+      // Create a simple default template if the file doesn't exist
+      QgsMessageLog::logMessage( QStringLiteral( "Creating default template" ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      templateLayout = std::make_unique<QgsPrintLayout>( QgsProject::instance() );
+      
+      // Create a map item that takes up most of the page
+      QgsLayoutItemMap *map = new QgsLayoutItemMap(templateLayout.get());
+      map->attemptSetSceneRect(QRectF(10, 10, 180, 180));
+      map->setFrameEnabled(true);
+      
+      // Use the correct method to get the map canvas extent
+      QgsRectangle extent = mMapCanvas->mapSettings()->visibleExtent();
+      map->setExtent(extent);
+      
+      templateLayout->addLayoutItem(map);
+      
+      // Add a title
+      QgsLayoutItemLabel *titleLabel = new QgsLayoutItemLabel(templateLayout.get());
+      titleLabel->setText(tr("Map printed on %1 using SIGPACGO").arg("[%format_date(now(), 'yyyy-MM-dd @ hh:mm')%]"));
+      titleLabel->setId("Title");
+      titleLabel->setFont(QFont("Arial", 16));
+      titleLabel->adjustSizeToText();
+      titleLabel->attemptSetSceneRect(QRectF(10, 5, 180, 10));
+      templateLayout->addLayoutItem(titleLabel);
+      
+      layoutToPrint = templateLayout.get();
+    }
+    else {
+      QgsMessageLog::logMessage( QStringLiteral( "Found template file" ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      QDomDocument templateDoc;
+      if (!templateFile.open(QIODevice::ReadOnly)) {
+        QgsMessageLog::logMessage( QStringLiteral( "Failed to open template file" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+        return false;
       }
+      
+      if (!templateDoc.setContent(&templateFile)) {
+        templateFile.close();
+        QgsMessageLog::logMessage( QStringLiteral( "Failed to parse template file" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+        return false;
+      }
+      templateFile.close();
+
+      templateLayout = std::make_unique<QgsPrintLayout>( QgsProject::instance() );
+      bool loadedOK = false;
+      QList<QgsLayoutItem *> items = templateLayout->loadFromTemplate( templateDoc, QgsReadWriteContext(), true, &loadedOK );
+      if ( !loadedOK )
+      {
+        QgsMessageLog::logMessage( QStringLiteral( "Failed to load template" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+        return false;
+      }
+
+      for ( QgsLayoutItem *item : items )
+      {
+        if ( item->type() == QgsLayoutItemRegistry::LayoutLabel && item->id() == QStringLiteral( "Title" ) )
+        {
+          QgsLayoutItemLabel *labelItem = qobject_cast<QgsLayoutItemLabel *>( item );
+          labelItem->setText( tr( "Map printed on %1 using SIGPACGO" ).arg( "[%format_date(now(), 'yyyy-MM-dd @ hh:mm')%]" ) );
+        }
+      }
+      layoutToPrint = templateLayout.get();
     }
-    layoutToPrint = templateLayout.get();
   }
   else
   {
@@ -2103,48 +2155,38 @@ bool QgisMobileapp::print( const QString &layoutName )
     }
   }
 
-  if ( !layoutToPrint || layoutToPrint->pageCollection()->pageCount() == 0 )
+  if ( !layoutToPrint )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "No layout found to print" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     return false;
-
-  const QString destination = QStringLiteral( "%1/layouts/%2-%3.pdf" ).arg( mProject->homePath(), layoutToPrint->name(), QDateTime::currentDateTime().toString( QStringLiteral( "ddMMyyyy_HHmmss" ) ) );
-
-  if ( !layoutToPrint->atlas() || !layoutToPrint->atlas()->enabled() )
-  {
-    if ( layoutToPrint->referenceMap() )
-      layoutToPrint->referenceMap()->zoomToExtent( mMapCanvas->mapSettings()->visibleExtent() );
-    layoutToPrint->refresh();
-
-    QgsLayoutExporter exporter = QgsLayoutExporter( layoutToPrint );
-
-    QgsLayoutExporter::PdfExportSettings pdfSettings;
-    pdfSettings.rasterizeWholeImage = layoutToPrint->customProperty( QStringLiteral( "rasterize" ), false ).toBool();
-    pdfSettings.dpi = layoutToPrint->renderContext().dpi();
-    pdfSettings.appendGeoreference = true;
-    pdfSettings.exportMetadata = true;
-    pdfSettings.simplifyGeometries = true;
-    QgsLayoutExporter::ExportResult result = exporter.exportToPdf( destination, pdfSettings );
-
-    if ( result == QgsLayoutExporter::Success )
-      PlatformUtilities::instance()->open( destination );
-
-    return result == QgsLayoutExporter::Success ? true : false;
   }
-  else
-  {
-    bool success = printAtlas( layoutToPrint, destination );
-    if ( success )
-    {
-      if ( layoutToPrint->customProperty( QStringLiteral( "singleFile" ), true ).toBool() )
-      {
-        PlatformUtilities::instance()->open( destination );
-      }
-      else
-      {
-        PlatformUtilities::instance()->open( mProject->homePath() );
-      }
-    }
-    return success;
+
+  const QString outputPath = QStringLiteral( "%1/%2.pdf" ).arg( mProject->homePath(), layoutToPrint->name().isEmpty() ? QStringLiteral( "SIGPACGO_Print_%1" ).arg( QDateTime::currentDateTime().toString( "yyyyMMdd_hhmmss" ) ) : layoutToPrint->name() );
+  
+  QgsMessageLog::logMessage( QStringLiteral( "Exporting print to: %1" ).arg( outputPath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  
+  std::unique_ptr<QgsLayoutExporter> exporter = std::make_unique<QgsLayoutExporter>( layoutToPrint );
+  QgsLayoutExporter::PdfExportSettings pdfSettings;
+  pdfSettings.rasterizeWholeImage = false;
+  
+  // Make sure the output directory exists
+  QDir outputDir = QFileInfo(outputPath).absoluteDir();
+  if (!outputDir.exists()) {
+    bool created = outputDir.mkpath(".");
+    QgsMessageLog::logMessage( QStringLiteral( "Output directory did not exist. Created: %1" ).arg( created ? "yes" : "no" ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
   }
+  
+  QgsLayoutExporter::ExportResult result = exporter->exportToPdf( outputPath, pdfSettings );
+
+  if ( result != QgsLayoutExporter::Success )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "Failed to export print to PDF: %1" ).arg( result ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    return false;
+  }
+
+  // Call open with the correct parameter signature - viewing only (not editing)
+  PlatformUtilities::instance()->open( outputPath, false );
+  return true;
 }
 
 bool QgisMobileapp::printAtlasFeatures( const QString &layoutName, const QList<long long> &featureIds )

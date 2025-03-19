@@ -209,19 +209,19 @@ public class QFieldActivity extends QtActivity {
      * Copies the assets from the APK to the application's data directory
      */
     public void copyAssets() {
-        Log.i("QField", "Copying assets to application directory");
+        Log.i("SIGPACGO", "Copying assets to application directory");
         
         AssetManager assetManager = getAssets();
         
         // Get the internal app storage path
         String internalAppDir = getFilesDir().getAbsolutePath();
-        Log.i("QField", "Internal app directory: " + internalAppDir);
+        Log.i("SIGPACGO", "Internal app directory: " + internalAppDir);
         
         // Create sample_projects directory in internal storage
         File sampleProjectsDir = new File(internalAppDir, "sample_projects");
         if (!sampleProjectsDir.exists()) {
             sampleProjectsDir.mkdirs();
-            Log.i("QField", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
+            Log.i("SIGPACGO", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
         }
         
         // Copy sample projects if they exist
@@ -230,13 +230,13 @@ public class QFieldActivity extends QtActivity {
             File qfieldDir = new File(internalAppDir, "qfield");
             if (!qfieldDir.exists()) {
                 qfieldDir.mkdirs();
-                Log.i("QField", "Created qfield directory: " + qfieldDir.getAbsolutePath());
+                Log.i("SIGPACGO", "Created qfield directory: " + qfieldDir.getAbsolutePath());
             }
             
             File qfieldSampleProjectsDir = new File(qfieldDir, "sample_projects");
             if (!qfieldSampleProjectsDir.exists()) {
                 qfieldSampleProjectsDir.mkdirs();
-                Log.i("QField", "Created qfield/sample_projects directory: " + qfieldSampleProjectsDir.getAbsolutePath());
+                Log.i("SIGPACGO", "Created qfield/sample_projects directory: " + qfieldSampleProjectsDir.getAbsolutePath());
             }
             
             // Try both resources/sample_projects and qfield/sample_projects paths for maximum compatibility
@@ -246,15 +246,21 @@ public class QFieldActivity extends QtActivity {
                 try {
                     String[] sampleProjects = assetManager.list(path);
                     if (sampleProjects != null && sampleProjects.length > 0) {
-                        Log.i("QField", "Found " + sampleProjects.length + " sample projects in " + path);
+                        Log.i("SIGPACGO", "Found " + sampleProjects.length + " sample projects in " + path);
                         
                         // First, handle all items (files and directories) in the sample_projects directory
                         for (String item : sampleProjects) {
                             String sourcePath = path + "/" + item;
                             String targetPath = sampleProjectsDir.getAbsolutePath() + "/" + item;
-                            Log.i("QField", "Copying sample project item: " + item);
+                            Log.i("SIGPACGO", "Copying sample project item: " + item);
                             
                             try {
+                                // Check if this is a .qgz or .qgs file (project file)
+                                if (item.endsWith(".qgz") || item.endsWith(".qgs") || 
+                                    item.endsWith(".qgz.jpg") || item.endsWith(".qgs.jpg")) {
+                                    Log.i("SIGPACGO", "Detected project file: " + item);
+                                }
+                                
                                 // This will check if it's a file or folder and copy appropriately
                                 copyAssetFolder(sourcePath, targetPath);
                                 
@@ -263,19 +269,19 @@ public class QFieldActivity extends QtActivity {
                                     copyAssetFolder(sourcePath, qfieldSampleProjectsDir.getAbsolutePath() + "/" + item);
                                 }
                             } catch (IOException e) {
-                                Log.e("QField", "Error copying project item " + item + ": " + e.getMessage());
+                                Log.e("SIGPACGO", "Error copying project item " + item + ": " + e.getMessage());
                             }
                         }
                         
-                        Log.i("QField", "Sample projects copied successfully from " + path);
+                        Log.i("SIGPACGO", "Sample projects copied successfully from " + path);
                         break; // Exit the loop if we found and copied projects
                     }
                 } catch (IOException e) {
-                    Log.w("QField", "No sample projects found in " + path + ": " + e.getMessage());
+                    Log.w("SIGPACGO", "No sample projects found in " + path + ": " + e.getMessage());
                 }
             }
         } catch (Exception e) {
-            Log.e("QField", "Error in sample projects processing: " + e.getMessage());
+            Log.e("SIGPACGO", "Error in sample projects processing: " + e.getMessage());
         }
         
         // Also copy to external storage for compatibility
@@ -284,7 +290,7 @@ public class QFieldActivity extends QtActivity {
             File externalSampleProjectsDir = new File(externalFilesDir, "sample_projects");
             if (!externalSampleProjectsDir.exists()) {
                 externalSampleProjectsDir.mkdirs();
-                Log.i("QField", "Created external sample_projects directory: " + externalSampleProjectsDir.getAbsolutePath());
+                Log.i("SIGPACGO", "Created external sample_projects directory: " + externalSampleProjectsDir.getAbsolutePath());
                 
                 // Copy from internal to external
                 if (sampleProjectsDir.exists() && sampleProjectsDir.isDirectory()) {
@@ -292,12 +298,29 @@ public class QFieldActivity extends QtActivity {
                     if (projects != null) {
                         for (File project : projects) {
                             if (project.isDirectory()) {
+                                // Copy directories
                                 File destDir = new File(externalSampleProjectsDir, project.getName());
                                 try {
                                     copyDirectory(project, destDir);
-                                    Log.i("QField", "Copied project to external storage: " + project.getName());
+                                    Log.i("SIGPACGO", "Copied project directory to external storage: " + project.getName());
                                 } catch (IOException e) {
-                                    Log.e("QField", "Error copying project to external storage: " + e.getMessage());
+                                    Log.e("SIGPACGO", "Error copying project directory to external storage: " + e.getMessage());
+                                }
+                            } else {
+                                // Copy individual files (like *.qgz and *.qgs at the root level)
+                                File destFile = new File(externalSampleProjectsDir, project.getName());
+                                try {
+                                    try (FileInputStream in = new FileInputStream(project);
+                                         FileOutputStream out = new FileOutputStream(destFile)) {
+                                        byte[] buf = new byte[1024];
+                                        int len;
+                                        while ((len = in.read(buf)) > 0) {
+                                            out.write(buf, 0, len);
+                                        }
+                                    }
+                                    Log.i("SIGPACGO", "Copied project file to external storage: " + project.getName());
+                                } catch (IOException e) {
+                                    Log.e("SIGPACGO", "Error copying project file to external storage: " + e.getMessage());
                                 }
                             }
                         }
@@ -306,7 +329,50 @@ public class QFieldActivity extends QtActivity {
             }
         }
         
-        Log.i("QField", "Assets copied successfully");
+        // Final verification - check if project files exist at the root level and force copy if not
+        String[] projectFiles = {"bees.qgz", "bees.qgz.jpg", "live_qfield_users_survey.qgs", 
+                               "live_qfield_users_survey.qgs.jpg", "wastewater.qgz", "wastewater.qgz.jpg"};
+        
+        for (String projectFile : projectFiles) {
+            // Check internal storage
+            File internalProjectFile = new File(sampleProjectsDir, projectFile);
+            if (!internalProjectFile.exists()) {
+                Log.i("SIGPACGO", "Project file " + projectFile + " missing from internal storage, force copying");
+                try {
+                    copyAssetFile("resources/sample_projects/" + projectFile, internalProjectFile.getAbsolutePath());
+                } catch (IOException e) {
+                    Log.e("SIGPACGO", "Error force copying project file to internal storage: " + e.getMessage());
+                }
+            } else {
+                Log.i("SIGPACGO", "Project file exists in internal storage: " + projectFile);
+            }
+            
+            // Check external storage if available
+            if (externalFilesDir != null) {
+                File externalSampleProjectsDir = new File(externalFilesDir, "sample_projects");
+                File externalProjectFile = new File(externalSampleProjectsDir, projectFile);
+                if (!externalProjectFile.exists() && internalProjectFile.exists()) {
+                    Log.i("SIGPACGO", "Project file " + projectFile + " missing from external storage, force copying");
+                    try {
+                        try (FileInputStream in = new FileInputStream(internalProjectFile);
+                             FileOutputStream out = new FileOutputStream(externalProjectFile)) {
+                            byte[] buf = new byte[1024];
+                            int len;
+                            while ((len = in.read(buf)) > 0) {
+                                out.write(buf, 0, len);
+                            }
+                        }
+                        Log.i("SIGPACGO", "Force copied project file to external storage: " + projectFile);
+                    } catch (IOException e) {
+                        Log.e("SIGPACGO", "Error force copying project file to external storage: " + e.getMessage());
+                    }
+                } else if (externalProjectFile.exists()) {
+                    Log.i("SIGPACGO", "Project file exists in external storage: " + projectFile);
+                }
+            }
+        }
+        
+        Log.i("SIGPACGO", "Assets copied successfully");
     }
     
     /**
@@ -359,7 +425,7 @@ public class QFieldActivity extends QtActivity {
         out.flush();
         out.close();
         
-        Log.d("QField", "Copied asset file: " + assetPath + " to " + destPath);
+        Log.d("SIGPACGO", "Copied asset file: " + assetPath + " to " + destPath);
     }
     
     /**
@@ -369,17 +435,23 @@ public class QFieldActivity extends QtActivity {
         AssetManager assetManager = getAssets();
         String[] assets = assetManager.list(assetPath);
         
+        Log.d("SIGPACGO", "copyAssetFolder: Path " + assetPath + " has " + assets.length + " items");
+        
         if (assets.length == 0) {
             // It's a file, copy it
+            Log.d("SIGPACGO", "copyAssetFolder: Path " + assetPath + " is a file, copying directly");
             copyAssetFile(assetPath, destPath);
         } else {
             // It's a folder, create it and copy its contents
+            Log.d("SIGPACGO", "copyAssetFolder: Path " + assetPath + " is a directory with " + assets.length + " items");
             File dir = new File(destPath);
             if (!dir.exists()) {
                 dir.mkdirs();
+                Log.d("SIGPACGO", "copyAssetFolder: Created directory " + destPath);
             }
             
             for (String asset : assets) {
+                Log.d("SIGPACGO", "copyAssetFolder: Processing item " + asset + " in directory " + assetPath);
                 copyAssetFolder(assetPath + "/" + asset, destPath + "/" + asset);
             }
         }
@@ -475,7 +547,7 @@ public class QFieldActivity extends QtActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                Log.v("QField",
+                                Log.v("SIGPACGO",
                                       "Opening decompressed project: " +
                                           projectPath + projectName);
                                 dismissBlockingProgressDialog();
@@ -488,7 +560,7 @@ public class QFieldActivity extends QtActivity {
                                                ? new File(filePath).canWrite()
                                                : false;
                         if (!canWrite) {
-                            Log.v("QField",
+                            Log.v("SIGPACGO",
                                   "Content intent detected: " + action + " : " +
                                       projectIntent.getDataString() + " : " +
                                       type + " : " + fileName);
@@ -501,7 +573,7 @@ public class QFieldActivity extends QtActivity {
                                                  fileExtension;
                                 i++;
                             }
-                            Log.v("QField",
+                            Log.v("SIGPACGO",
                                   "Importing document to file path: " +
                                       importFilePath);
                             try {
@@ -519,7 +591,7 @@ public class QFieldActivity extends QtActivity {
                     }
                 }
 
-                Log.v("QField", "Opening document file path: " + filePath);
+                Log.v("SIGPACGO", "Opening document file path: " + filePath);
                 dismissBlockingProgressDialog();
                 openProject(filePath);
             }
@@ -825,7 +897,7 @@ public class QFieldActivity extends QtActivity {
             displayAlertDialog(
                 getString(R.string.operation_unsupported),
                 getString(R.string.import_operation_unsupported));
-            Log.w("QField", "No activity found for ACTION_OPEN_DOCUMENT.");
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT.");
         }
         return;
     }
@@ -842,7 +914,7 @@ public class QFieldActivity extends QtActivity {
             displayAlertDialog(
                 getString(R.string.operation_unsupported),
                 getString(R.string.import_operation_unsupported));
-            Log.w("QField", "No activity found for ACTION_OPEN_DOCUMENT_TREE.");
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT_TREE.");
         }
         return;
     }
@@ -860,7 +932,7 @@ public class QFieldActivity extends QtActivity {
             displayAlertDialog(
                 getString(R.string.operation_unsupported),
                 getString(R.string.import_operation_unsupported));
-            Log.w("QField", "No activity found for ACTION_OPEN_DOCUMENT.");
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT.");
         }
         return;
     }
@@ -879,7 +951,7 @@ public class QFieldActivity extends QtActivity {
             displayAlertDialog(
                 getString(R.string.operation_unsupported),
                 getString(R.string.import_operation_unsupported));
-            Log.w("QField", "No activity found for ACTION_OPEN_DOCUMENT.");
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT.");
         }
         return;
     }
@@ -945,7 +1017,7 @@ public class QFieldActivity extends QtActivity {
             displayAlertDialog(
                 getString(R.string.operation_unsupported),
                 getString(R.string.export_operation_unsupported));
-            Log.w("QField", "No activity found for ACTION_OPEN_DOCUMENT_TREE.");
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT_TREE.");
         }
         return;
     }
@@ -1049,7 +1121,7 @@ public class QFieldActivity extends QtActivity {
         Intent intent = isVideo ? new Intent(MediaStore.ACTION_VIDEO_CAPTURE)
                                 : new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
-            Log.d("QField", "Camera intent resolved");
+            Log.d("SIGPACGO", "Camera intent resolved");
             File storageDir =
                 getExternalFilesDir(Environment.DIRECTORY_PICTURES);
             try {
@@ -1057,10 +1129,10 @@ public class QFieldActivity extends QtActivity {
                                                     suffix, storageDir);
 
                 if (tempFile != null) {
-                    Log.d("QField", "Temporary camera file created");
+                    Log.d("SIGPACGO", "Temporary camera file created");
                     if (tempFile.exists()) {
                         Log.d(
-                            "QField",
+                            "SIGPACGO",
                             "Temporary camera file exists already, it will be overwritten");
                     }
 
@@ -1069,18 +1141,18 @@ public class QFieldActivity extends QtActivity {
                     Uri fileURI = FileProvider.getUriForFile(
                         this, "com.imagritools.sigpacgo.fileprovider", tempFile);
 
-                    Log.d("QField",
+                    Log.d("SIGPACGO",
                           "Camera temporary file uri: " + fileURI.toString());
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, fileURI);
-                    Log.d("QField", "Camera intent starting");
+                    Log.d("SIGPACGO", "Camera intent starting");
                     startActivityForResult(intent, CAMERA_RESOURCE);
                 }
             } catch (IOException e) {
-                Log.d("QField", e.getMessage());
+                Log.d("SIGPACGO", e.getMessage());
                 resourceCanceled("");
             }
         } else {
-            Log.d("QField", "Could not resolve camera intent");
+            Log.d("SIGPACGO", "Could not resolve camera intent");
             resourceCanceled("");
         }
         return;
@@ -1093,7 +1165,7 @@ public class QFieldActivity extends QtActivity {
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType(mimeType);
-        Log.d("QField", "Gallery intent starting");
+        Log.d("SIGPACGO", "Gallery intent starting");
         startActivityForResult(intent, GALLERY_RESOURCE);
         return;
     }
@@ -1110,7 +1182,7 @@ public class QFieldActivity extends QtActivity {
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
         intent.setType(mimeType);
-        Log.d("QField", "File picker intent starting");
+        Log.d("SIGPACGO", "File picker intent starting");
         startActivityForResult(intent, FILE_PICKER_RESOURCE);
         return;
     }
@@ -1147,13 +1219,13 @@ public class QFieldActivity extends QtActivity {
                 intent.setDataAndType(contentUri, mimeType);
             }
             try {
-                Log.d("QField", "Open intent starting");
+                Log.d("SIGPACGO", "Open intent starting");
                 startActivityForResult(intent, OPEN_RESOURCE);
             } catch (IllegalArgumentException e) {
-                Log.d("QField", e.getMessage());
+                Log.d("SIGPACGO", e.getMessage());
                 resourceCanceled("");
             } catch (Exception e) {
-                Log.d("QField", e.getMessage());
+                Log.d("SIGPACGO", e.getMessage());
                 resourceCanceled("");
             }
         } else {
@@ -1504,7 +1576,7 @@ public class QFieldActivity extends QtActivity {
                 String finalFilePath = QFieldUtils.replaceFilenameTags(
                     resourceFilePath, file.getName());
                 File result = new File(resourcePrefix + finalFilePath);
-                Log.d("QField",
+                Log.d("SIGPACGO",
                       "Taken camera picture: " + file.getAbsolutePath());
                 try {
                     InputStream in = new FileInputStream(file);
@@ -1534,14 +1606,14 @@ public class QFieldActivity extends QtActivity {
                 String finalFilePath = QFieldUtils.replaceFilenameTags(
                     resourceFilePath, documentFile.getName());
                 File result = new File(resourcePrefix + finalFilePath);
-                Log.d("QField",
+                Log.d("SIGPACGO",
                       "Selected gallery file: " + data.getData().toString());
                 try {
                     InputStream in = getContentResolver().openInputStream(uri);
                     QFieldUtils.inputStreamToFile(in, result.getPath(),
                                                   documentFile.length());
                 } catch (Exception e) {
-                    Log.d("QField", e.getMessage());
+                    Log.d("SIGPACGO", e.getMessage());
                 }
 
                 // Let the android scan new media folders/files to make them
@@ -1563,14 +1635,14 @@ public class QFieldActivity extends QtActivity {
                 String finalFilePath = QFieldUtils.replaceFilenameTags(
                     resourceFilePath, documentFile.getName());
                 File result = new File(resourcePrefix + finalFilePath);
-                Log.d("QField", "Selected file picker file: " +
+                Log.d("SIGPACGO", "Selected file picker file: " +
                                     data.getData().toString());
                 try {
                     InputStream in = getContentResolver().openInputStream(uri);
                     QFieldUtils.inputStreamToFile(in, result.getPath(),
                                                   documentFile.length());
                 } catch (Exception e) {
-                    Log.d("QField", e.getMessage());
+                    Log.d("SIGPACGO", e.getMessage());
                 }
 
                 resourceReceived(finalFilePath);
@@ -1582,7 +1654,7 @@ public class QFieldActivity extends QtActivity {
                 try {
                     if (resourceIsEditing) {
                         Log.d(
-                            "QField",
+                            "SIGPACGO",
                             "Copy file back from uri " + data.getDataString() +
                                 " to file: " + resourceFile.getAbsolutePath());
                         InputStream in = getContentResolver().openInputStream(
@@ -1607,7 +1679,7 @@ public class QFieldActivity extends QtActivity {
             }
         } else if (requestCode == IMPORT_DATASET &&
                    resultCode == Activity.RESULT_OK) {
-            Log.d("QField", "handling import dataset(s)");
+            Log.d("SIGPACGO", "handling import dataset(s)");
             File externalFilesDir = getExternalFilesDir(null);
             if (externalFilesDir == null || data == null) {
                 return;
@@ -1673,7 +1745,7 @@ public class QFieldActivity extends QtActivity {
             }
         } else if (requestCode == IMPORT_PROJECT_FOLDER &&
                    resultCode == Activity.RESULT_OK) {
-            Log.d("QField", "handling import project folder");
+            Log.d("SIGPACGO", "handling import project folder");
             File externalFilesDir = getExternalFilesDir(null);
             if (externalFilesDir == null || data == null) {
                 return;
@@ -1713,7 +1785,7 @@ public class QFieldActivity extends QtActivity {
             }
         } else if (requestCode == IMPORT_PROJECT_ARCHIVE &&
                    resultCode == Activity.RESULT_OK) {
-            Log.d("QField", "handling import project archive");
+            Log.d("SIGPACGO", "handling import project archive");
             File externalFilesDir = getExternalFilesDir(null);
             if (externalFilesDir == null || data == null) {
                 return;
@@ -1762,7 +1834,7 @@ public class QFieldActivity extends QtActivity {
             }
         } else if (requestCode == UPDATE_PROJECT_FROM_ARCHIVE &&
                    resultCode == Activity.RESULT_OK) {
-            Log.d("QField", "handling updating project from archive");
+            Log.d("SIGPACGO", "handling updating project from archive");
             File externalFilesDir = getExternalFilesDir(null);
             if (externalFilesDir == null || data == null) {
                 return;
@@ -1778,7 +1850,7 @@ public class QFieldActivity extends QtActivity {
             updateProjectFromArchive(uri);
         } else if (requestCode == EXPORT_TO_FOLDER &&
                    resultCode == Activity.RESULT_OK) {
-            Log.d("QField", "handling export to folder");
+            Log.d("SIGPACGO", "handling export to folder");
 
             String[] paths = pathsToExport.split("--;--");
             Uri uri = data.getData();

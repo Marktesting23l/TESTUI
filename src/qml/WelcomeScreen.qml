@@ -155,6 +155,8 @@ Page {
             Layout.fillWidth: true
             text: qsTr("Abrir archivo local")
             font.bold: true
+            icon.source: Theme.getThemeIcon("ic_folder_open_black_24dp")
+            icon.color: Theme.mainColor
             onClicked: {
               platformUtilities.requestStoragePermission();
               openLocalDataPicker();
@@ -555,8 +557,7 @@ Page {
                       // Different colors based on project type
                       switch (type) {
                         case 0: return Qt.hsla(0.33, 0.2, 0.9, 1.0); // Light green tint for local
-                        case 1: return Qt.hsla(0.6, 0.2, 0.9, 1.0);  // Light blue tint for cloud
-                        case 2: return Qt.hsla(0.1, 0.2, 0.9, 1.0);  // Light orange tint for dataset
+                        case 1: return Qt.hsla(0.1, 0.2, 0.9, 1.0);  // Light orange tint for dataset
                         default: return Qt.hsla(0.0, 0.0, 0.9, 1.0); // Light grey for unknown
                       }
                     }
@@ -564,8 +565,7 @@ Page {
                       // Matching border colors
                       switch (type) {
                         case 0: return "#4CAF50"; // Green for local
-                        case 1: return "#2196F3"; // Blue for cloud
-                        case 2: return "#FF9800"; // Orange for dataset
+                        case 1: return "#FF9800"; // Orange for dataset
                         default: return "#9E9E9E"; // Grey for unknown
                       }
                     }
@@ -656,10 +656,9 @@ Page {
                           height: 40
                           source: {
                             switch (type) {
-                              case 0: return Theme.getThemeVectorIcon('ic_map_green_48dp');     // local project
-                              case 1: return Theme.getThemeVectorIcon('ic_file_cloud_48dp');    // cloud dataset (fixed name)
-                              case 2: return Theme.getThemeVectorIcon('ic_dataset_green_48dp'); // local dataset (fixed name)
-                              default: return Theme.getThemeVectorIcon('ic_map_green_48dp');    // fallback to map icon
+                              case 0: return Theme.getThemeVectorIcon('ic_map_green_48dp');     
+                              case 1: return Theme.getThemeVectorIcon('ic_file_48dp');
+                              default: return Theme.getThemeVectorIcon('ic_map_green_48dp');    
                             }
                           }
                           sourceSize.width: 80
@@ -808,7 +807,9 @@ Page {
 
             MenuItem {
               id: defaultProject
-              visible: recentProjectActions.recentProjectType != 2
+              // Updated: no longer check for type 2 as it doesn't exist anymore
+              // Show this menu item for all project types except non-existent ones
+              visible: true
 
               font: Theme.defaultFont
               width: parent.width
@@ -825,7 +826,9 @@ Page {
 
             MenuItem {
               id: baseMapProject
-              visible: recentProjectActions.recentProjectType != 2
+              // Updated: no longer check for type 2 as it doesn't exist anymore
+              // Show this menu item for all project types except non-existent ones
+              visible: true
 
               font: Theme.defaultFont
               width: parent.width

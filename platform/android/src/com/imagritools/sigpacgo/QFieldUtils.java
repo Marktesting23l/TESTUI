@@ -271,7 +271,7 @@ public class QFieldUtils {
             zip.close();
             return success;
         } catch (Exception e) {
-            Log.e("QField",
+            Log.e("SIGPACGO",
                   "inputStreamToOutputStream exception: " + e.getMessage());
         }
         return false;
@@ -316,7 +316,7 @@ public class QFieldUtils {
                     inputStreamToOutputStream(input, zip, file.length());
                     zip.closeEntry();
                 } catch (Exception e) {
-                    Log.e("QField", "inputStreamToOutputStream exception: " +
+                    Log.e("SIGPACGO", "inputStreamToOutputStream exception: " +
                                         e.getMessage());
                     return false;
                 }
@@ -355,7 +355,7 @@ public class QFieldUtils {
                 }
             }
         } catch (Exception e) {
-            Log.e("QField",
+            Log.e("SIGPACGO",
                   "inputStreamToOutputStream exception: " + e.getMessage());
             return false;
         }
@@ -394,7 +394,7 @@ public class QFieldUtils {
 
             out.close();
         } catch (Exception e) {
-            Log.e("QField", "inputStreamToFile exception: " + e.getMessage());
+            Log.e("SIGPACGO", "inputStreamToFile exception: " + e.getMessage());
             return false;
         }
         return true;
@@ -412,7 +412,7 @@ public class QFieldUtils {
             }
             out.close();
         } catch (Exception e) {
-            Log.e("QField", "copyFile exception: " + e.getMessage());
+            Log.e("SIGPACGO", "copyFile exception: " + e.getMessage());
             return false;
         }
         return true;

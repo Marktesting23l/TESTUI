@@ -40,7 +40,8 @@ void Flusher::flush( const QString &filename )
   QFileInfo fileInfo(filename);
   if (!fileInfo.exists() || !fileInfo.isReadable() || !fileInfo.isWritable()) 
   {
-    QgsMessageLog::logMessage( QObject::tr( "Cannot flush database - file not accessible: %1" ).arg( filename ) );
+    // Only log critical errors with Qgis::Critical level
+    QgsMessageLog::logMessage( QObject::tr( "Cannot flush database - file not accessible: %1" ).arg( filename ), QString(), Qgis::Critical );
     if ( mScheduledFlushes.contains(filename) )
     {
       // Re-schedule for later if file might become available
@@ -56,7 +57,8 @@ void Flusher::flush( const QString &filename )
     int status = db.open_v2( filename, SQLITE_OPEN_READWRITE, nullptr );
     if ( status != SQLITE_OK )
     {
-      QgsMessageLog::logMessage( QObject::tr( "There was an error opening the database <b>%1</b>: %2" ).arg( filename, db.errorMessage() ) );
+      // Only log critical errors with Qgis::Critical level
+      QgsMessageLog::logMessage( QObject::tr( "There was an error opening the database <b>%1</b>: %2" ).arg( filename, db.errorMessage() ), QString(), Qgis::Critical );
       
       // If we can't open the database, try again later rather than crashing
       if ( mScheduledFlushes.contains(filename) )
@@ -82,7 +84,8 @@ void Flusher::flush( const QString &filename )
     }
     else
     {
-      QgsMessageLog::logMessage( QObject::tr( "Could not flush database %1 (%2) " ).arg( filename, error ) );
+      // Only log critical errors with Qgis::Critical level
+      QgsMessageLog::logMessage( QObject::tr( "Could not flush database %1 (%2) " ).arg( filename, error ), QString(), Qgis::Critical );
       if ( mScheduledFlushes.contains(filename) )
       {
         mScheduledFlushes[filename]->start( 1000 );
@@ -91,7 +94,8 @@ void Flusher::flush( const QString &filename )
   }
   catch (const std::exception& e)
   {
-    QgsMessageLog::logMessage( QObject::tr( "Exception while flushing database %1: %2" ).arg( filename, e.what() ) );
+    // Only log critical errors with Qgis::Critical level
+    QgsMessageLog::logMessage( QObject::tr( "Exception while flushing database %1: %2" ).arg( filename, e.what() ), QString(), Qgis::Critical );
     // Try again later
     if ( mScheduledFlushes.contains(filename) )
     {
@@ -100,7 +104,8 @@ void Flusher::flush( const QString &filename )
   }
   catch (...)
   {
-    QgsMessageLog::logMessage( QObject::tr( "Unknown exception while flushing database %1" ).arg( filename ) );
+    // Only log critical errors with Qgis::Critical level
+    QgsMessageLog::logMessage( QObject::tr( "Unknown exception while flushing database %1" ).arg( filename ), QString(), Qgis::Critical );
     // Try again later with an increased delay
     if ( mScheduledFlushes.contains(filename) )
     {

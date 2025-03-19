@@ -29,7 +29,6 @@ class RecentProjectListModel : public QAbstractListModel
     enum ProjectType
     {
       LocalProject,
-      CloudProject,
       LocalDataset,
     };
 

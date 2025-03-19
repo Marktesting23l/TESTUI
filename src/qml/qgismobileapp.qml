@@ -3851,6 +3851,23 @@ ApplicationWindow {
       return mainWindow.width > 0 ? Math.min(result + padding, mainWindow.width - 20) : result + padding;
     }
 
+    MenuItem {
+      id: defaultPrintItem
+      text: qsTr("Default Map Print")
+      font: Theme.defaultFont
+      leftPadding: Theme.menuItemLeftPadding
+      height: 48
+      // Only show this option if no other layouts are available
+      visible: printLayoutListModel.rowCount() === 0
+
+      onClicked: {
+        printLayoutsMenu.close();
+        displayToast(qsTr('Generando PDF...'));
+        // Call print with empty layout name to use default template
+        iface.print("");
+      }
+    }
+
     Instantiator {
       model: printLayoutListModel
 
@@ -3863,11 +3880,12 @@ ApplicationWindow {
 
         onClicked: {
           printLayoutsMenu.close();
+          displayToast(qsTr('Imprimiendo layout: ') + Title);
           iface.print(Title);
         }
       }
 
-      onObjectAdded: (index, object) => printLayoutsMenu.insertItem(index, object)
+      onObjectAdded: (index, object) => printLayoutsMenu.insertItem(index + 1, object) // +1 to account for default item
       onObjectRemoved: (index, object) => printLayoutsMenu.removeItem(object)
     }
   }
@@ -6299,13 +6317,24 @@ ApplicationWindow {
   property var sigpacDialog: null
 
   // Global accuracy indicator
-  Rectangle {
+  QfToolButton {
     id: accuracyIndicator
-    visible: positioningSettings.accuracyIndicator && positionSource.active
-    width: 18  // Adjusted size
-    height: 18 // Adjusted size
-    radius: 3
-    color: {
+    visible: positioningSettings.accuracyIndicator && positionSource.active && 
+             !welcomeScreen.visible && !qfieldSettings.visible && !aboutDialog.visible && 
+             !qfieldLocalDataPickerScreen.visible && !overlayFeatureFormDrawer.visible && 
+             !informationPanel.visible
+    width: 30
+    height: 30
+    radius: 15
+    round: true
+    
+    // Force correct position by setting it immediately after the information button
+    anchors.right: informationButton.right
+    anchors.top: informationButton.bottom 
+    anchors.topMargin: 4
+    
+    // Use the bgcolor property for the indicator color
+    bgcolor: {
       if (!positionSource.positionInformation || 
           !positionSource.positionInformation.haccValid || 
           positionSource.positionInformation.hacc > positioningSettings.accuracyBad)
@@ -6315,37 +6344,14 @@ ApplicationWindow {
       else
         return Theme.accuracyExcellent
     }
-    border.color: Theme.light
-    border.width: 1
     
-    // Position the indicator above the GNSS button
-    parent: locationToolbar
-    anchors.horizontalCenter: gnssButton.horizontalCenter
-    anchors.bottom: gnssButton.top
-    anchors.bottomMargin: 3
-    
-    // Add a subtle shadow for better visibility
-    Rectangle {
-      anchors.fill: parent
-      anchors.margins: -1
-      radius: parent.radius + 1
-      color: "transparent"
-      border.color: "#80000000"
-      border.width: 1
-      z: -1
-    }
+    // Set text content
+    text: "GPS"
+    font.pixelSize: 9
+    font.bold: true
+    Material.foreground: "white"  // Use Material.foreground instead of textColor
     
     z: 1000
-    
-    // Add a small text label to the accuracy indicator
-    Text {
-      id: accuracyText
-      anchors.centerIn: parent
-      text: "GPS"
-      color: "white"
-      font.pixelSize: 8  // Slightly larger
-      font.bold: true
-    }
     
     // Add tooltip for the accuracy indicator
     ToolTip {
@@ -6355,7 +6361,7 @@ ApplicationWindow {
           return qsTr("Precisión: Desconocida")
         }
         let accuracy = positionSource.positionInformation.hacc.toFixed(1)
-        return qsTr("Precisión: %1 m").arg(accuracy)
+        return qsTr("Precisión: ") + accuracy + " m"
       }
     }
     
@@ -6364,9 +6370,14 @@ ApplicationWindow {
       id: accuracyMouseArea
       anchors.fill: parent
       hoverEnabled: true
-      // Clicking the indicator will also toggle GNSS
+      // Show position information when clicked instead of toggling GPS
       onClicked: {
-        positionSource.active = !positionSource.active
+        if (positioningSettings.showPositionInformation) {
+          informationPanel.visible = true
+        } else {
+          // If position information panel is not enabled, show a message
+          displayToast(qsTr("Haga clic en el botón de GNSS para activar/desactivar el GPS"))
+        }
       }
     }
   }
@@ -6396,13 +6407,15 @@ ApplicationWindow {
       anchors.centerIn: parent
     }
     
+    // Center dot - perfectly aligned with the cross
     Rectangle {
       id: centerDot
-      width: 4
-      height: 4
+      width: 3  // Odd number for perfect pixel alignment
+      height: 3
       radius: width / 2
       color: Theme.mainColor
       opacity: 0.8
+      // Center dot exactly in the middle of the reticle
       anchors.centerIn: parent
     }
   }

@@ -34,6 +34,10 @@
 #include <qgsruntimeprofiler.h>
 #include <qgsziputils.h>
 
+// Add missing include files for print functionality
+#include <qgslayoutmanager.h>
+#include <qgsprintlayout.h>
+
 AppInterface *AppInterface::sAppInterface = nullptr;
 
 AppInterface::AppInterface( QgisMobileapp *app )
@@ -169,6 +173,23 @@ bool AppInterface::readProjectBoolEntry( const QString &scope, const QString &ke
 
 bool AppInterface::print( const QString &layoutName )
 {
+  QgsMessageLog::logMessage(QStringLiteral("Print request received for layout: %1").arg(layoutName.isEmpty() ? "default" : layoutName), QStringLiteral("SIGPACGO"), Qgis::Info);
+  
+  QgsProject* project = QgsProject::instance();
+  if (!project)
+  {
+    QgsMessageLog::logMessage(QStringLiteral("Cannot print: No active project"), QStringLiteral("SIGPACGO"), Qgis::Warning);
+    return false;
+  }
+  
+  const QList<QgsPrintLayout*> printLayouts = project->layoutManager()->printLayouts();
+  QgsMessageLog::logMessage(QStringLiteral("Available print layouts: %1").arg(printLayouts.size()), QStringLiteral("SIGPACGO"), Qgis::Info);
+  
+  for (const QgsPrintLayout* layout : printLayouts)
+  {
+    QgsMessageLog::logMessage(QStringLiteral("  - Layout: %1").arg(layout->name()), QStringLiteral("SIGPACGO"), Qgis::Info);
+  }
+  
   return mApp->print( layoutName );
 }
 
