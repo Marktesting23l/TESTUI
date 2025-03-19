@@ -226,6 +226,7 @@ public class QFieldActivity extends QtActivity {
         
         // Copy sample projects if they exist
         try {
+            // Create qfield directory for backward compatibility with C++ code
             File qfieldDir = new File(internalAppDir, "qfield");
             if (!qfieldDir.exists()) {
                 qfieldDir.mkdirs();
@@ -238,6 +239,7 @@ public class QFieldActivity extends QtActivity {
                 Log.i("QField", "Created qfield/sample_projects directory: " + qfieldSampleProjectsDir.getAbsolutePath());
             }
             
+            // Try both resources/sample_projects and qfield/sample_projects paths for maximum compatibility
             String[] paths = {"resources/sample_projects", "qfield/sample_projects"};
             
             for (String path : paths) {
@@ -247,23 +249,28 @@ public class QFieldActivity extends QtActivity {
                         Log.i("QField", "Found " + sampleProjects.length + " sample projects in " + path);
                         for (String project : sampleProjects) {
                             Log.i("QField", "Copying sample project: " + project);
-                            copyAssetFolder(path + "/" + project, 
-                                           sampleProjectsDir.getAbsolutePath() + "/" + project);
-                            
-                            if (path.equals("resources/sample_projects")) {
+                            try {
                                 copyAssetFolder(path + "/" + project, 
-                                               qfieldSampleProjectsDir.getAbsolutePath() + "/" + project);
+                                            sampleProjectsDir.getAbsolutePath() + "/" + project);
+                            
+                                // Also copy to qfield directory if we found them in resources/sample_projects
+                                if (path.equals("resources/sample_projects")) {
+                                    copyAssetFolder(path + "/" + project, 
+                                                qfieldSampleProjectsDir.getAbsolutePath() + "/" + project);
+                                }
+                            } catch (IOException e) {
+                                Log.e("QField", "Error copying project " + project + ": " + e.getMessage());
                             }
                         }
                         Log.i("QField", "Sample projects copied successfully from " + path);
-                        break; 
+                        break; // Exit the loop if we found and copied projects
                     }
                 } catch (IOException e) {
                     Log.w("QField", "No sample projects found in " + path + ": " + e.getMessage());
                 }
             }
-        } catch (IOException e) {
-            Log.e("QField", "Error copying sample projects: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e("QField", "Error in sample projects processing: " + e.getMessage());
         }
         
         // Also copy to external storage for compatibility
