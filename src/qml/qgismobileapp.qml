@@ -6302,8 +6302,8 @@ ApplicationWindow {
   Rectangle {
     id: accuracyIndicator
     visible: positioningSettings.accuracyIndicator && positionSource.active
-    width: 24
-    height: 10
+    width: 18  // Adjusted size
+    height: 18 // Adjusted size
     radius: 3
     color: {
       if (!positionSource.positionInformation || 
@@ -6318,11 +6318,22 @@ ApplicationWindow {
     border.color: Theme.light
     border.width: 1
     
-    // Position the indicator near the GNSS button
+    // Position the indicator above the GNSS button
     parent: locationToolbar
-    anchors.left: gnssButton.right
-    anchors.leftMargin: 1
-    anchors.verticalCenter: gnssButton.verticalCenter
+    anchors.horizontalCenter: gnssButton.horizontalCenter
+    anchors.bottom: gnssButton.top
+    anchors.bottomMargin: 3
+    
+    // Add a subtle shadow for better visibility
+    Rectangle {
+      anchors.fill: parent
+      anchors.margins: -1
+      radius: parent.radius + 1
+      color: "transparent"
+      border.color: "#80000000"
+      border.width: 1
+      z: -1
+    }
     
     z: 1000
     
@@ -6332,7 +6343,7 @@ ApplicationWindow {
       anchors.centerIn: parent
       text: "GPS"
       color: "white"
-      font.pixelSize: 7
+      font.pixelSize: 8  // Slightly larger
       font.bold: true
     }
     
@@ -6344,25 +6355,19 @@ ApplicationWindow {
           return qsTr("Precisión: Desconocida")
         }
         let accuracy = positionSource.positionInformation.hacc.toFixed(1)
-        let accuracyText = ""
-        
-        if (positionSource.positionInformation.hacc > positioningSettings.accuracyBad) {
-          accuracyText = qsTr("Baja")
-        } else if (positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent) {
-          accuracyText = qsTr("Media")
-        } else {
-          accuracyText = qsTr("Alta")
-        }
-        
-        return qsTr("Precisión") + ": " + accuracyText + " (" + accuracy + " m)"
+        return qsTr("Precisión: %1 m").arg(accuracy)
       }
     }
     
-    // Mouse area for tooltip
+    // Add mouse area for the tooltip and interaction
     MouseArea {
       id: accuracyMouseArea
       anchors.fill: parent
       hoverEnabled: true
+      // Clicking the indicator will also toggle GNSS
+      onClicked: {
+        positionSource.active = !positionSource.active
+      }
     }
   }
 

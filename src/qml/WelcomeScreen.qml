@@ -15,7 +15,7 @@ Page {
 
   property bool firstShown: false
   property string mainProjectPath: "" // Path to main project file
-  property string mainProjectTitle: qsTr("SIGPAC-Go Base Map") // Title of main project
+  property string mainProjectTitle: qsTr("Mapa Base SIGPAC-Go") // Title of main project
 
   // Add debug logging for project paths
   Component.onCompleted: {
@@ -153,7 +153,8 @@ Page {
           QfButton {
             id: localProjectButton
             Layout.fillWidth: true
-            text: qsTr("Open local file")
+            text: qsTr("Abrir archivo local")
+            font.bold: true
             onClicked: {
               platformUtilities.requestStoragePermission();
               openLocalDataPicker();
@@ -356,7 +357,7 @@ Page {
                   color: reloadOnLaunch.checked ? Theme.mainTextColor : Theme.secondaryTextColor
                   verticalAlignment: Text.AlignVCenter
                   
-                  text: registry.defaultProject != '' ? qsTr('Load default project on launch') : qsTr('Load last opened project on launch')
+                  text: reloadOnLaunch.checked ? qsTr('Cargar proyecto por defecto al iniciar') : qsTr('Cargar último proyecto al iniciar')
                   
                   MouseArea {
                     anchors.fill: parent
@@ -437,7 +438,7 @@ Page {
                 
                 Text {
                   Layout.fillWidth: true
-                  text: qsTr("Official base map for field work")
+                  text: qsTr("Mapa base oficial para trabajo de campo")
                   font.pointSize: Theme.tipFont.pointSize
                   color: Theme.secondaryTextColor
                   elide: Text.ElideRight
@@ -449,7 +450,8 @@ Page {
                 
                 QfButton {
                   Layout.preferredWidth: 120
-                  text: qsTr("Open")
+                  text: qsTr("Abrir")
+                  font.bold: true
                   onClicked: {
                     let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
                     if (fileInfo && fileInfo.exists) {
@@ -463,7 +465,7 @@ Page {
                       if (fileInfo && fileInfo.exists) {
                         iface.loadFile(mainProjectPath, mainProjectTitle);
                       } else {
-                        displayToast(qsTr("Base map project not found. Please reinstall the app."));
+                        displayToast(qsTr("No se encontró el mapa base. Por favor reinstale la aplicación."));
                       }
                     }
                   }
@@ -482,7 +484,7 @@ Page {
 
           Text {
             id: recentText
-            text: qsTr("Recent Projects")
+            text: qsTr("Proyectos Recientes")
             font.pointSize: Theme.tipFont.pointSize
             font.bold: true
             color: Theme.mainTextColor
@@ -499,7 +501,7 @@ Page {
             // Empty state message when no projects
             Text {
               anchors.centerIn: parent
-              text: qsTr("No recent projects")
+              text: qsTr("No hay proyectos recientes")
               font.pointSize: Theme.tipFont.pointSize
               font.italic: true
               color: Theme.secondaryTextColor
@@ -655,12 +657,20 @@ Page {
                           source: {
                             switch (type) {
                               case 0: return Theme.getThemeVectorIcon('ic_map_green_48dp');     // local project
-                              case 1: return Theme.getThemeVectorIcon('ic_file_green_48dp');    // local dataset
-                              default: return '';
+                              case 1: return Theme.getThemeVectorIcon('ic_file_cloud_48dp');    // cloud dataset (fixed name)
+                              case 2: return Theme.getThemeVectorIcon('ic_dataset_green_48dp'); // local dataset (fixed name)
+                              default: return Theme.getThemeVectorIcon('ic_map_green_48dp');    // fallback to map icon
                             }
                           }
                           sourceSize.width: 80
                           sourceSize.height: 80
+                          // Make sure icon is visible even if theme icon fails
+                          onStatusChanged: {
+                            if (status === Image.Error) {
+                              console.log("Failed to load icon for type: " + type);
+                              source = "qrc:/images/sigpacgo_logo.svg"; // Fallback to app logo
+                            }
+                          }
                         }
                         
                         Text {
@@ -683,13 +693,13 @@ Page {
                           if (index == 0) {
                             var firstRun = settings && !settings.value("/QField/FirstRunFlag", false);
                             if (!firstRun && firstShown === false)
-                              notes.push(qsTr("Last session"));
+                              notes.push(qsTr("Última sesión"));
                           }
                           if (path === registry.defaultProject) {
-                            notes.push(qsTr("Default project"));
+                            notes.push(qsTr("Proyecto predeterminado"));
                           }
                           if (path === registry.baseMapProject) {
-                            notes.push(qsTr("Base map"));
+                            notes.push(qsTr("Mapa base"));
                           }
                           if (notes.length > 0) {
                             return notes.join('; ');
@@ -780,7 +790,7 @@ Page {
             property string recentProjectPath: ''
             property int recentProjectType: 0
 
-            title: qsTr('Recent Project Actions')
+            title: qsTr('Acciones del Proyecto Reciente')
 
             width: {
               let result = 50;
@@ -807,7 +817,7 @@ Page {
               checkable: true
               checked: recentProjectActions.recentProjectPath === registry.defaultProject
 
-              text: qsTr("Default Project")
+              text: qsTr("Proyecto Predeterminado")
               onTriggered: {
                 registry.defaultProject = recentProjectActions.recentProjectPath === registry.defaultProject ? '' : recentProjectActions.recentProjectPath;
               }
@@ -824,7 +834,7 @@ Page {
               checkable: true
               checked: recentProjectActions.recentProjectPath === registry.baseMapProject
 
-              text: qsTr("Individual Datasets Base Map")
+              text: qsTr("Mapa Base para Conjuntos de Datos")
               onTriggered: {
                 registry.baseMapProject = recentProjectActions.recentProjectPath === registry.baseMapProject ? '' : recentProjectActions.recentProjectPath;
               }
@@ -844,7 +854,7 @@ Page {
               height: visible ? 48 : 0
               leftPadding: Theme.menuItemIconlessLeftPadding
 
-              text: qsTr("Remove from Recent Projects")
+              text: qsTr("Eliminar de Proyectos Recientes")
               onTriggered: {
                 iface.removeRecentProject(recentProjectActions.recentProjectPath);
                 model.reloadModel();
@@ -869,7 +879,7 @@ Page {
     QfActionButton {
       id: currentProjectButton
       toolImage: Theme.getThemeVectorIcon('ic_arrow_left_white_24dp')
-      toolText: welcomeScreen.width > 420 ? qsTr('Return to map') : ""
+      toolText: welcomeScreen.width > 420 ? qsTr('Volver al mapa') : ""
       visible: qgisProject && !!qgisProject.homePath
       innerActionIcon.visible: false
 
@@ -901,9 +911,22 @@ Page {
       rightMargin: 4
     }
     iconSource: Theme.getThemeVectorIcon('ic_shutdown_24dp')
-    iconColor: Theme.darkRed
-    bgcolor: Theme.toolButtonBackgroundColor
+    iconColor: "white"  // White for better visibility on red background
+    bgcolor: "#e53935"  // Bright red for better visibility
     round: true
+    width: 48  // Increase size
+    height: 48 // Increase size
+    
+    // Add a visible border for better definition
+    Rectangle {
+      anchors.fill: parent
+      anchors.margins: -2
+      radius: parent.width / 2 + 2
+      color: "transparent"
+      border.color: "white"
+      border.width: 1
+      z: -1
+    }
 
     onClicked: {
       mainWindow.closeAlreadyRequested = true;
@@ -919,7 +942,7 @@ Page {
       } else {
         var firstRun = !settings.valueBool("/QField/FirstRunDone", false);
         if (firstRun) {
-          welcomeText.text = qsTr("Welcome to SIGOPAC-Go");
+          welcomeText.text = qsTr("Bienvenido a SIGPAC-Go");
           settings.setValue("/QField/FirstRunDone", true);
           settings.setValue("/QField/showMapCanvasGuide", true);
         } else {

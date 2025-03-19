@@ -1114,15 +1114,20 @@ void QgisMobileapp::readProjectFile()
       QLatin1String( "wms" ) );
   
   // Create layer groups in the desired order - Data Collection first, then Sentinel, then Spain GIS Services, then Utils, then Basemaps
-  QgsLayerTreeGroup *dataCollectionGroup = mProject->layerTreeRoot()->addGroup("Data Collection");
-  QgsLayerTreeGroup *spainGisServicesGroup = mProject->layerTreeRoot()->addGroup("Spain GIS Services");
-  QgsLayerTreeGroup *utilsGroup = mProject->layerTreeRoot()->addGroup("Utils");
+  // COMPLETELY DISABLED: Data Collection group is not needed and causes issues
+  // QgsLayerTreeGroup *dataCollectionGroup = mProject->layerTreeRoot()->addGroup("Recogida de Datos");
+  // dataCollectionGroup->setItemVisibilityChecked(false);
+  // dataCollectionGroup->setExpanded(false);
+  
+  // Translate group names to Spanish
+  QgsLayerTreeGroup *spainGisServicesGroup = mProject->layerTreeRoot()->addGroup("Servicios GIS España");
+  QgsLayerTreeGroup *utilsGroup = mProject->layerTreeRoot()->addGroup("Utilidades");
 
   // Create a Spain GIS Base Layers subgroup for Recintos SIGPAC FEGA and Catastro
-  QgsLayerTreeGroup *spainGisBaseLayersGroup = spainGisServicesGroup->addGroup("Spain GIS Base Layers");
+  QgsLayerTreeGroup *spainGisBaseLayersGroup = spainGisServicesGroup->addGroup("Capas Base GIS España");
   
   // Create a Spain GIS VectorTiles group as a subgroup of Spain GIS Services
-  QgsLayerTreeGroup *spainGisVectorTilesGroup = spainGisServicesGroup->addGroup("Spain GIS VectorTiles");
+  QgsLayerTreeGroup *spainGisVectorTilesGroup = spainGisServicesGroup->addGroup("Teselas Vectoriales GIS España");
   
   // Add Sentinel Imagery group if user has configured an instance ID
   QSettings sentinelSettings;
@@ -1270,7 +1275,7 @@ void QgisMobileapp::readProjectFile()
     QgsMessageLog::logMessage(QStringLiteral("Creating Sentinel layers with instance ID: %1").arg(sentinelInstanceId), "SIGPACGO", Qgis::Info);
     QgsMessageLog::logMessage(QStringLiteral("Enabled layers: %1").arg(enabledLayersStr), "SIGPACGO", Qgis::Info);
     
-    sentinelGroup = mProject->layerTreeRoot()->addGroup("Sentinel Imagery");
+    sentinelGroup = mProject->layerTreeRoot()->addGroup("Imágenes Sentinel");
     
     // Create Sentinel WMS layers using the user's instance ID and configured settings
     if (enabledLayers.contains("NDVI"))
@@ -1542,7 +1547,7 @@ void QgisMobileapp::readProjectFile()
   }
   
   // Now create the basemaps group after Sentinel group
-  QgsLayerTreeGroup *basemapsGroup = mProject->layerTreeRoot()->addGroup("Basemaps");
+  QgsLayerTreeGroup *basemapsGroup = mProject->layerTreeRoot()->addGroup("Mapas Base");
   
   // Add basemap layers to the project and to the Basemaps group in the requested order
   mProject->addMapLayer(ignLayer, false);
@@ -1673,132 +1678,10 @@ void QgisMobileapp::readProjectFile()
   utilsGroup->addLayer(necesidadesRiegoLayer);
   utilsGroup->addLayer(protectedSitesLayer);
   
-  // Create a vector point layer for data collection
-  QString datosLayerDef = QStringLiteral( "Point?crs=EPSG:4326"
-                                         "&field=fid:integer"
-                                         "&field=Nombre:string(255)"
-                                         "&field=Picture:string(255)"
-                                         "&field=Descripcion:string(255)"
-                                         "&field=Valor:integer"
-                                         "&field=Fecha:date"
-                                         "&field=Notas:string(255)" );
-  
-  // Check if there's already a GeoPackage file for data layers
-  QString projectPath = QFileInfo(mProject->fileName()).absolutePath();
-  QString datosGpkgPath = QStringLiteral("%1/datos_collection.gpkg").arg(projectPath);
-  bool createNewLayers = true;
-  
+  // Create empty pointer variables for code that might reference them later
   QgsVectorLayer *datosPuntoLayer = nullptr;
   QgsVectorLayer *datosRasterLayer = nullptr;
-  
-  // Check if the GeoPackage already exists
-  if (QFile::exists(datosGpkgPath)) {
-    // Try to load existing layers
-    datosPuntoLayer = new QgsVectorLayer(QStringLiteral("%1|layername=Datos_Punto").arg(datosGpkgPath), QStringLiteral("Datos Punto"), QStringLiteral("ogr"));
-    datosRasterLayer = new QgsVectorLayer(QStringLiteral("%1|layername=Datos_Raster").arg(datosGpkgPath), QStringLiteral("Datos Raster"), QStringLiteral("ogr"));
-    
-    // Check if the layers are valid
-    if (datosPuntoLayer->isValid() && datosRasterLayer->isValid()) {
-      createNewLayers = false;
-    } else {
-      delete datosPuntoLayer;
-      delete datosRasterLayer;
-      datosPuntoLayer = nullptr;
-      datosRasterLayer = nullptr;
-    }
-  }
-  
-  if (createNewLayers) {
-    // Create memory layers first
-    datosPuntoLayer = new QgsVectorLayer(datosLayerDef, QStringLiteral("Datos Punto"), QStringLiteral("memory"));
-    
-    // Set up field aliases for better usability
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("fid"), "ID");
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("Nombre"), "Nombre");
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("Picture"), "Foto");
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("Descripcion"), "Descripción");
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("Valor"), "Valor");
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("Fecha"), "Fecha");
-    datosPuntoLayer->setFieldAlias(datosPuntoLayer->fields().indexFromName("Notas"), "Notas");
-    
-    // Create a raster layer for data collection with the same fields
-    QString datosRasterLayerDef = QStringLiteral("Polygon?crs=EPSG:4326"
-                                           "&field=fid:integer"
-                                           "&field=Nombre:string(255)"
-                                           "&field=Picture:string(255)"
-                                           "&field=Descripcion:string(255)"
-                                           "&field=Valor:integer"
-                                           "&field=Fecha:date"
-                                           "&field=Notas:string(255)");
-    
-    datosRasterLayer = new QgsVectorLayer(datosRasterLayerDef, QStringLiteral("Datos Raster"), QStringLiteral("memory"));
-    
-    // Set up field aliases for better usability
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("fid"), "ID");
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("Nombre"), "Nombre");
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("Picture"), "Foto");
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("Descripcion"), "Descripción");
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("Valor"), "Valor");
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("Fecha"), "Fecha");
-    datosRasterLayer->setFieldAlias(datosRasterLayer->fields().indexFromName("Notas"), "Notas");
-    
-    // Create a temporary project to save to GeoPackage
-    QgsProject tempProject;
-    
-    // Add memory layers to temporary project
-    tempProject.addMapLayer(datosPuntoLayer);
-    tempProject.addMapLayer(datosRasterLayer);
-    
-    // Create a list of layers to save
-    QStringList layerIds;
-    layerIds << datosPuntoLayer->id() << datosRasterLayer->id();
-    
-    // Set up save options
-    QgsVectorFileWriter::SaveVectorOptions saveOptions;
-    saveOptions.driverName = "GPKG";
-    saveOptions.layerName = "Datos_Punto";
-    
-    // Save the point layer
-    QString errorMessage;
-    QgsVectorFileWriter::WriterError error = QgsVectorFileWriter::writeAsVectorFormatV2(
-        datosPuntoLayer,
-        datosGpkgPath,
-        datosPuntoLayer->transformContext(),
-        saveOptions,
-        &errorMessage
-    );
-    
-    // Save the polygon layer to the same GeoPackage
-    saveOptions.layerName = "Datos_Raster";
-    saveOptions.actionOnExistingFile = QgsVectorFileWriter::CreateOrOverwriteLayer;
-    
-    error = QgsVectorFileWriter::writeAsVectorFormatV2(
-        datosRasterLayer,
-        datosGpkgPath,
-        datosRasterLayer->transformContext(),
-        saveOptions,
-        &errorMessage
-    );
-    
-    // Remove memory layers from project to avoid duplication
-    tempProject.removeMapLayers(layerIds);
-    
-    // Reload the layers from the GeoPackage
-    delete datosPuntoLayer;
-    delete datosRasterLayer;
-    
-    datosPuntoLayer = new QgsVectorLayer(QStringLiteral("%1|layername=Datos_Punto").arg(datosGpkgPath), QStringLiteral("Datos Punto"), QStringLiteral("ogr"));
-    datosRasterLayer = new QgsVectorLayer(QStringLiteral("%1|layername=Datos_Raster").arg(datosGpkgPath), QStringLiteral("Datos Raster"), QStringLiteral("ogr"));
-  }
-  
-  // Add the layers to the project
-  mProject->addMapLayer(datosPuntoLayer, false);
-  mProject->addMapLayer(datosRasterLayer, false);
-  
-  // Add layers to the Data Collection group
-  dataCollectionGroup->addLayer(datosPuntoLayer);
-  dataCollectionGroup->addLayer(datosRasterLayer);
-  
+
   // Add Cultivo Declarado layer to the project and to the Spain GIS Base Layers group
   mProject->addMapLayer(cultivoDeclarado2024Layer, false);
   spainGisBaseLayersGroup->addLayer(cultivoDeclarado2024Layer);
@@ -1808,20 +1691,24 @@ void QgisMobileapp::readProjectFile()
   
   // Make sure all groups are visible by default - using multiple approaches to ensure visibility
   spainGisServicesGroup->setItemVisibilityCheckedParentRecursive(true);
-  spainGisServicesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
+  spainGisServicesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
   spainGisServicesGroup->setItemVisibilityChecked(true);
+  
+  spainGisBaseLayersGroup->setItemVisibilityCheckedParentRecursive(true);
+  spainGisBaseLayersGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
+  spainGisBaseLayersGroup->setItemVisibilityChecked(true);
+  
+  spainGisVectorTilesGroup->setItemVisibilityCheckedParentRecursive(true);
+  spainGisVectorTilesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
+  spainGisVectorTilesGroup->setItemVisibilityChecked(true);
   
   utilsGroup->setItemVisibilityCheckedParentRecursive(true);
   utilsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
   utilsGroup->setItemVisibilityChecked(true);
   
   basemapsGroup->setItemVisibilityCheckedParentRecursive(true);
-  basemapsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
+  basemapsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except satellite
   basemapsGroup->setItemVisibilityChecked(true);
-  
-  dataCollectionGroup->setItemVisibilityCheckedParentRecursive(true);
-  dataCollectionGroup->setItemVisibilityCheckedRecursive(true);
-  dataCollectionGroup->setItemVisibilityChecked(true);
   
   // Set Sentinel group visibility if it exists
   if (sentinelGroup)
@@ -1875,13 +1762,68 @@ void QgisMobileapp::readProjectFile()
   // Then set only the requested layers to be visible
   mProject->layerTreeRoot()->findLayer(satelliteLayer->id())->setItemVisibilityChecked(true); // Google Satellite
   mProject->layerTreeRoot()->findLayer(sigpacLayer->id())->setItemVisibilityChecked(true); // Recintos SIGPAC FEGA
+  mProject->layerTreeRoot()->findLayer(teselaRecintosLayer->id())->setItemVisibilityChecked(true); // TeselaRECINTOS FEGA
   
   // Set groups to be expanded by default
-  dataCollectionGroup->setExpanded(true);
   spainGisServicesGroup->setExpanded(true);
   utilsGroup->setExpanded(true);
   basemapsGroup->setExpanded(true);
-
+  spainGisBaseLayersGroup->setExpanded(true);
+  spainGisVectorTilesGroup->setExpanded(true);
+  
+  // Make sure parent groups are visible too
+  spainGisServicesGroup->setItemVisibilityChecked(true);
+  spainGisBaseLayersGroup->setItemVisibilityChecked(true);
+  spainGisVectorTilesGroup->setItemVisibilityChecked(true);
+  
+  if (sentinelGroup)
+  {
+    // Check if Sentinel layers are enabled at all
+    bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnableLayers"), true).toBool();
+    
+    if (!enableSentinelLayers) {
+      // If Sentinel layers are disabled, hide the entire group
+      sentinelGroup->setItemVisibilityChecked(false);
+    } else {
+      // Otherwise, set visibility based on layer settings
+      sentinelGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
+      
+      for (QgsLayerTreeLayer* layer : sentinelGroup->findLayers())
+      {
+        // Default to hidden
+        layer->setItemVisibilityChecked(false);
+        
+        // Check if this layer should be visible based on its style setting
+        QString layerName;
+        if (layer->name() == "Sentinel True Color") {
+          layerName = "TRUE_COLOR";
+        } else if (layer->name() == "Sentinel False Color") {
+          layerName = "FALSE_COLOR";
+        } else if (layer->name() == "Sentinel NDVI") {
+          layerName = "NDVI";
+        } else if (layer->name() == "Sentinel EVI") {
+          layerName = "EVI";
+        } else if (layer->name().startsWith("Sentinel ")) {
+          layerName = "CUSTOM";
+        }
+        
+        // If the layer is in the enabled layers list and its style is "ON" or "DEFAULT", make it visible
+        if (!layerName.isEmpty() && enabledLayers.contains(layerName)) {
+          QString style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/%1").arg(layerName), "ON").toString();
+          if (style == "ON" || (layerName == "CUSTOM" && style == "DEFAULT")) {
+            layer->setItemVisibilityChecked(false); // Set to false by default
+          } else {
+            // Explicitly set to false if style is "OFF"
+            layer->setItemVisibilityChecked(false);
+          }
+        } else {
+          // Explicitly set to false if not in enabled layers
+          layer->setItemVisibilityChecked(false);
+        }
+      }
+    }
+  }
+  
   if ( vectorLayers.size() > 0 || rasterLayers.size() > 0 )
   {
     mProject->setCrs( crs );
