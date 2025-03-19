@@ -99,8 +99,29 @@ void PlatformUtilities::copySigpacBaseMap()
 
 void PlatformUtilities::copyMainMapProject()
 {
-  // Let this function do nothing - it's now handled in copySampleProjects
-  return;
+  // Actually copy the main map project instead of doing nothing
+  qDebug() << "Copying SIGPACGO Mapa Principal...";
+  
+  // First ensure parent directory exists
+  QString targetDir = systemLocalDataLocation( QLatin1String( "SIGPACGO Mapa Principal" ) );
+  QDir targetDirObj(targetDir);
+  if (!targetDirObj.exists())
+  {
+    targetDirObj.mkpath(".");
+    qDebug() << "Created directory:" << targetDir;
+  }
+  
+  // Copy the main map files
+  const bool success = FileUtils::copyRecursively( 
+    systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO Mapa Principal" ), 
+    targetDir 
+  );
+  
+  if (success) {
+    qDebug() << "Successfully copied SIGPACGO Mapa Principal to" << targetDir;
+  } else {
+    qWarning() << "Failed to copy SIGPACGO Mapa Principal to" << targetDir;
+  }
 }
 
 void PlatformUtilities::initSystem()

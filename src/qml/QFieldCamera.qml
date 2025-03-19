@@ -16,8 +16,6 @@ Popup {
 
   property bool isCapturing: state == "PhotoCapture" || state == "VideoCapture"
   property bool isPortraitMode: mainWindow.height > mainWindow.width
-  // This property identifies when this is the standalone camera (vs. the snap camera in map view)
-  property bool isStandaloneCamera: parent === mainWindow.contentItem
 
   property string currentPath: ''
   property var currentPosition: PositioningUtils.createEmptyGnssPositionInformation()
@@ -110,16 +108,6 @@ Popup {
     // GPS accuracy thresholds (in meters)
     property real accuracyThresholdGood: 5.0
     property real accuracyThresholdModerate: 20.0
-    
-    // Force a refresh of the info text when folder name changes
-    onFolderNameChanged: {
-      if (infoText) {
-        // Force the infoText to update by clearing and resetting
-        let existingBinding = infoText.text
-        infoText.text = ""
-        infoText.text = existingBinding
-      }
-    }
   }
 
   // Dialog for setting folder name
@@ -204,13 +192,6 @@ Popup {
           onClicked: {
             cameraSettings.folderName = folderNameField.text.trim();
             folderNameDialog.close();
-            // Force refresh the overlay to show the new folder name immediately
-            stampExpressionEvaluator.expressionText = "format_date(now(), 'dd-MM-yyyy HH:mm:ss') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
-                " || if(@horizontal_accuracy != 'nan', '\n" + qsTr("Accuracy") + ": ' || format_number(@horizontal_accuracy, 1) || ' m', '')" +
-                " || '\n" + qsTr("Project") + ": ' || @project_title" +
-                " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
-                (cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
-                " || '\nSIGPACGO - Geolocalización para agricultura'";
             displayToast(qsTr("Folder name set to: ") + (cameraSettings.folderName || qsTr("Date-based folder")));
           }
         }
@@ -227,7 +208,7 @@ Popup {
         " || '\n" + qsTr("Project") + ": ' || @project_title" +
         " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
         (cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
-        " || '\nSIGPACGO - Geolocalización para agricultura'"
+        " || '\nSIGPACGO - Agricultural Field Survey'"
 
     project: qgisProject
     positionInformation: currentPosition
@@ -305,46 +286,8 @@ Popup {
 
         onImageSaved: (requestId, path) => {
           currentPath = path;
-          
-          // Different behavior for standalone camera vs snap camera
-          if (cameraItem.isStandaloneCamera) {
-            // In standalone camera, don't change to preview mode, just show a toast 
-            // and stay in camera mode for continuous photo taking
-            displayToast(qsTr("Photo saved to: ") + path);
-            
-            // Process the image with metadata and stamping if needed
-            if (cameraSettings.geoTagging && positionSource.active) {
-              FileUtils.addImageMetadata(path, currentPosition);
-              // Set the Make to SIGPACGO instead of QField
-              platformUtilities.setExifTag(path, "Exif.Image.Make", "SIGPACGO");
-              platformUtilities.setExifTag(path, "Xmp.tiff.Make", "SIGPACGO");
-            }
-            
-            if (cameraSettings.stamping) {
-              // Apply custom styling to the timestamp
-              let stampText = stampExpressionEvaluator.evaluate();
-              let styledStamp = {
-                "text": stampText,
-                "color": cameraSettings.stampTextColor,
-                "backgroundColor": cameraSettings.stampBackgroundColor,
-                "fontSize": cameraSettings.stampFontSize,
-                "padding": 10,
-                "position": "bottomLeft", // Position in the image
-                "marginBottom": 30 // Add margin to move stamp text lower
-              };
-              FileUtils.addImageStamp(path, stampText, styledStamp);
-            }
-            
-            // Signal the photo was taken (needed for other components)
-            cameraItem.finished(path);
-            
-            // Reset the currentPath since we're staying in the camera view
-            currentPath = '';
-          } else {
-            // In snap camera mode, show the preview as before
-            photoPreview.source = UrlUtils.fromString(path);
-            cameraItem.state = "PhotoPreview";
-          }
+          photoPreview.source = UrlUtils.fromString(path);
+          cameraItem.state = "PhotoPreview";
         }
       }
       recorder: MediaRecorder {
@@ -756,18 +699,13 @@ Popup {
         }
         
         Timer {
-          interval: 500 // Faster update interval
+          interval: 1000
           running: infoOverlay.visible
           repeat: true
           onTriggered: {
             // Force update of the bindings
             dateTimeText.text = dateTimeText.text
-            
-            // Always ensure the folder name is current by forcing refresh
-            let updatedText = infoText.text
-            infoText.text = ""
-            infoText.text = updatedText
-            
+            infoText.text = infoText.text
             if (compassIndicator.visible) {
               compassNeedle.rotation = positionSource.positionInformation.orientation
             }
@@ -1014,20 +952,12 @@ Popup {
                         "backgroundColor": cameraSettings.stampBackgroundColor,
                         "fontSize": cameraSettings.stampFontSize,
                         "padding": 10,
-                        "position": "bottomLeft", // Position in the image
-                        "marginBottom": 30 // Add margin to move stamp text lower
+                        "position": "bottomLeft" // Position in the image
                       };
                       FileUtils.addImageStamp(currentPath, stampText, styledStamp);
                     }
                   }
-                  // In standalone mode, we shouldn't reach this point since we're not showing previews
-                  // but we'll keep the code for safety
                   cameraItem.finished(currentPath);
-                  
-                  // If standalone camera, return to photo capture mode instead of closing
-                  if (cameraItem.isStandaloneCamera) {
-                    cameraItem.state = "PhotoCapture";
-                  }
                 }
               }
             }
@@ -1481,11 +1411,6 @@ Popup {
                   
                   // Create the folder if it doesn't exist
                   platformUtilities.createDir(qgisProject.homePath, cameraSettings.folderName)
-                  
-                  // Force the info overlay to refresh immediately
-                  if (infoText) {
-                    infoText.text = infoText.text // Trigger binding refresh
-                  }
                 }
               }
               
@@ -1616,16 +1541,7 @@ Popup {
                     }
                     
                     onAccepted: {
-                      let newPrefix = prefixField.text.trim()
-                      cameraSettings.photoPrefix = newPrefix
-                      // Force refresh the overlay to show the new photo prefix immediately
-                      stampExpressionEvaluator.expressionText = "format_date(now(), 'dd-MM-yyyy HH:mm:ss') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
-                        " || if(@horizontal_accuracy != 'nan', '\n" + qsTr("Accuracy") + ": ' || format_number(@horizontal_accuracy, 1) || ' m', '')" +
-                        " || '\n" + qsTr("Project") + ": ' || @project_title" +
-                        " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
-                        (cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
-                        " || '\nSIGPACGO - Geolocalización para agricultura'";
-                      displayToast(qsTr("Photo series set to: ") + (newPrefix || qsTr("None")))
+                      prefixDialog.accept()
                     }
                   }
                   
@@ -1710,14 +1626,11 @@ Popup {
               onAccepted: {
                 let newPrefix = prefixField.text.trim()
                 cameraSettings.photoPrefix = newPrefix
-                // Force refresh the overlay to show the new photo prefix immediately
-                stampExpressionEvaluator.expressionText = "format_date(now(), 'dd-MM-yyyy HH:mm:ss') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
-                  " || if(@horizontal_accuracy != 'nan', '\n" + qsTr("Accuracy") + ": ' || format_number(@horizontal_accuracy, 1) || ' m', '')" +
-                  " || '\n" + qsTr("Project") + ": ' || @project_title" +
-                  " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
-                  (cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
-                  " || '\nSIGPACGO - Geolocalización para agricultura'";
-                displayToast(qsTr("Photo series set to: ") + (newPrefix || qsTr("None")))
+                if (newPrefix) {
+                  displayToast(qsTr("Photo series set to: ") + newPrefix)
+                } else {
+                  displayToast(qsTr("Photo series prefix cleared"))
+                }
               }
               
               // Hide keyboard when dialog is closed
@@ -1879,7 +1792,6 @@ Popup {
     height: dateStamp.height + 10 // Increased height to fully show the date
     width: parent.width
     anchors.bottom: parent.bottom
-    anchors.bottomMargin: 30 // Move the stamp background lower on the screen
   }
 
   // Improved rectangular accuracy indicator for camera

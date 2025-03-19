@@ -30,6 +30,7 @@ class AndroidPlatformUtilities : public PlatformUtilities
 
     PlatformUtilities::Capabilities capabilities() const override;
     void afterUpdate() override;
+    void copyMainMapProject() override;
     QString systemSharedDataLocation() const override;
 
     bool hasQgsProject() const override;

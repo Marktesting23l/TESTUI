@@ -850,6 +850,46 @@ void AndroidPlatformUtilities::stopPositioningService() const
                                       qtAndroidContext().object() );
 }
 
+void AndroidPlatformUtilities::copyMainMapProject()
+{
+  // For Android, we need to explicitly create the directory and copy the files
+  qDebug() << "Android: Copying SIGPACGO Mapa Principal...";
+  
+  // First ensure parent directory exists
+  const QString mapaDir = systemLocalDataLocation("SIGPACGO Mapa Principal");
+  QDir mapaMainDir(mapaDir);
+  if (!mapaMainDir.exists()) {
+    mapaMainDir.mkpath(".");
+    qDebug() << "Android: Created directory:" << mapaDir;
+  }
+  
+  // Force copy main map using the same pattern as sample projects
+  const bool success = FileUtils::copyRecursively(
+    systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO Mapa Principal"), 
+    mapaDir
+  );
+  
+  if (!success) {
+    qWarning() << "Android: Failed to copy SIGPACGO Mapa Principal to" << mapaDir;
+    
+    // Try to call Java method to copy the files
+    if (mActivity.isValid()) {
+      runOnAndroidMainThread([this] {
+        auto activity = qtAndroidContext();
+        if (activity.isValid()) {
+          qDebug() << "Android: Calling Java copyAssets method to copy SIGPACGO Mapa Principal";
+          activity.callMethod<void>("copyAssets");
+        }
+      });
+    }
+  } else {
+    qDebug() << "Android: Successfully copied SIGPACGO Mapa Principal to" << mapaDir;
+  }
+  
+  // Also call the parent implementation
+  PlatformUtilities::copyMainMapProject();
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif

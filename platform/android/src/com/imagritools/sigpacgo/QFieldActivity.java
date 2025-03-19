@@ -224,6 +224,13 @@ public class QFieldActivity extends QtActivity {
             Log.i("SIGPACGO", "Created sample_projects directory: " + sampleProjectsDir.getAbsolutePath());
         }
         
+        // Create SIGPACGO Mapa Principal directory
+        File sigpacgoMapaDir = new File(internalAppDir, "SIGPACGO Mapa Principal");
+        if (!sigpacgoMapaDir.exists()) {
+            sigpacgoMapaDir.mkdirs();
+            Log.i("SIGPACGO", "Created SIGPACGO Mapa Principal directory: " + sigpacgoMapaDir.getAbsolutePath());
+        }
+        
         // Create sigpacgo_base directory in internal storage
         File sigpacgoBaseDir = new File(internalAppDir, "sigpacgo_base");
         if (!sigpacgoBaseDir.exists()) {
@@ -335,18 +342,31 @@ public class QFieldActivity extends QtActivity {
                 "SIGPACGO Mapa Principal"
             };
             
+            // Log asset contents for debugging
+            Log.i("SIGPACGO", "Checking assets for SIGPACGO Mapa Principal...");
+            try {
+                String[] assetList = assetManager.list("");
+                Log.i("SIGPACGO", "Root asset directory contains:");
+                for (String asset : assetList) {
+                    Log.i("SIGPACGO", "- " + asset);
+                }
+                
+                if (assetManager.list("resources").length > 0) {
+                    Log.i("SIGPACGO", "resources directory contains:");
+                    for (String asset : assetManager.list("resources")) {
+                        Log.i("SIGPACGO", "- " + asset);
+                    }
+                }
+            } catch (IOException e) {
+                Log.w("SIGPACGO", "Error listing assets: " + e.getMessage());
+            }
+            
             for (String path : sigpacgoMainPaths) {
                 try {
+                    Log.i("SIGPACGO", "Trying to access path: " + path);
                     String[] mainFiles = assetManager.list(path);
                     if (mainFiles != null && mainFiles.length > 0) {
                         Log.i("SIGPACGO", "Found " + mainFiles.length + " main map files in " + path);
-                        
-                        // Create SIGPACGO Mapa Principal directory in the same way as sample_projects
-                        File sigpacgoMapaDir = new File(internalAppDir, "SIGPACGO Mapa Principal");
-                        if (!sigpacgoMapaDir.exists()) {
-                            sigpacgoMapaDir.mkdirs();
-                            Log.i("SIGPACGO", "Created SIGPACGO Mapa Principal directory: " + sigpacgoMapaDir.getAbsolutePath());
-                        }
                         
                         // Copy all files from the assets directory to the app directory
                         for (String item : mainFiles) {
@@ -354,6 +374,7 @@ public class QFieldActivity extends QtActivity {
                             String targetPath = sigpacgoMapaDir.getAbsolutePath() + "/" + item;
                             
                             try {
+                                Log.i("SIGPACGO", "Copying from " + sourcePath + " to " + targetPath);
                                 copyAssetFolder(sourcePath, targetPath);
                                 Log.i("SIGPACGO", "Copied main map file: " + item + " to " + targetPath);
                             } catch (IOException e) {
@@ -363,29 +384,23 @@ public class QFieldActivity extends QtActivity {
                         
                         Log.i("SIGPACGO", "SIGPACGO Mapa Principal files copied successfully from " + path);
                         break;
+                    } else {
+                        Log.w("SIGPACGO", "No files found in path: " + path);
                     }
                 } catch (IOException e) {
                     Log.w("SIGPACGO", "No main map files found in " + path + ": " + e.getMessage());
                 }
             }
             
-            // Verify the main map file exists, if not try to copy directly
-            File mainMapFile = new File(sigpacgoMainDir, "SIGPACGO_Mapa_Principal.qgz");
-            if (!mainMapFile.exists() || mainMapFile.length() == 0) {
-                Log.w("SIGPACGO", "Main map file not found after processing, checking SIGPACGO Mapa Principal directory");
-                
-                // Check if files exist in the SIGPACGO Mapa Principal directory
-                File sigpacgoMapaDir = new File(internalAppDir, "SIGPACGO Mapa Principal");
-                if (sigpacgoMapaDir.exists() && sigpacgoMapaDir.isDirectory()) {
-                    File[] mapFiles = sigpacgoMapaDir.listFiles();
-                    if (mapFiles != null && mapFiles.length > 0) {
-                        for (File mapFile : mapFiles) {
-                            if (mapFile.getName().endsWith(".qgz") || mapFile.getName().endsWith(".qgs")) {
-                                Log.i("SIGPACGO", "Found map file in SIGPACGO Mapa Principal directory: " + mapFile.getName());
-                            }
-                        }
-                    }
+            // Check if SIGPACGO Mapa Principal directory contains files after copying
+            File[] sigpacgoMapaFiles = sigpacgoMapaDir.listFiles();
+            if (sigpacgoMapaFiles != null) {
+                Log.i("SIGPACGO", "SIGPACGO Mapa Principal directory contains " + sigpacgoMapaFiles.length + " files after copying");
+                for (File file : sigpacgoMapaFiles) {
+                    Log.i("SIGPACGO", "- " + file.getName() + " (" + file.length() + " bytes)");
                 }
+            } else {
+                Log.w("SIGPACGO", "SIGPACGO Mapa Principal directory is empty or cannot be accessed");
             }
         } catch (Exception e) {
             Log.e("SIGPACGO", "Error in projects processing: " + e.getMessage());
@@ -536,30 +551,63 @@ public class QFieldActivity extends QtActivity {
     }
     
     /**
-     * Recursively copies an asset folder to the destination
+     * Copies an asset folder to the destination
      */
     private void copyAssetFolder(String assetPath, String destPath) throws IOException {
         AssetManager assetManager = getAssets();
-        String[] assets = assetManager.list(assetPath);
+        String[] files = null;
         
-        Log.d("SIGPACGO", "copyAssetFolder: Path " + assetPath + " has " + assets.length + " items");
-        
-        if (assets.length == 0) {
-            // It's a file, copy it
-            Log.d("SIGPACGO", "copyAssetFolder: Path " + assetPath + " is a file, copying directly");
-            copyAssetFile(assetPath, destPath);
-        } else {
-            // It's a folder, create it and copy its contents
-            Log.d("SIGPACGO", "copyAssetFolder: Path " + assetPath + " is a directory with " + assets.length + " items");
-            File dir = new File(destPath);
-            if (!dir.exists()) {
-                dir.mkdirs();
-                Log.d("SIGPACGO", "copyAssetFolder: Created directory " + destPath);
-            }
+        try {
+            files = assetManager.list(assetPath);
             
-            for (String asset : assets) {
-                Log.d("SIGPACGO", "copyAssetFolder: Processing item " + asset + " in directory " + assetPath);
-                copyAssetFolder(assetPath + "/" + asset, destPath + "/" + asset);
+            // Handle case of assetPath with space, which might need special treatment
+            if (files == null || files.length == 0) {
+                // It's probably a file, not a directory or the directory is empty
+                copyAssetFile(assetPath, destPath);
+                return;
+            }
+        } catch (IOException e) {
+            Log.w("SIGPACGO", "Error listing asset folder " + assetPath + ": " + e.getMessage());
+            // Try as a file instead
+            try {
+                copyAssetFile(assetPath, destPath);
+                return;
+            } catch (IOException e2) {
+                Log.e("SIGPACGO", "Failed to copy as folder or file: " + assetPath);
+                throw e2;
+            }
+        }
+        
+        // Ensure destination directory exists
+        File destFolder = new File(destPath);
+        if (!destFolder.exists()) {
+            destFolder.mkdirs();
+            Log.d("SIGPACGO", "Created directory: " + destPath);
+        }
+        
+        // Copy all files in the folder
+        for (String file : files) {
+            String subAsset = assetPath + "/" + file;
+            String subDest = destPath + "/" + file;
+            
+            try {
+                // Check if it's a directory
+                String[] subFiles = assetManager.list(subAsset);
+                if (subFiles != null && subFiles.length > 0) {
+                    // It's a directory, so recursively copy it
+                    copyAssetFolder(subAsset, subDest);
+                } else {
+                    // It's a file, so copy the file
+                    copyAssetFile(subAsset, subDest);
+                }
+            } catch (IOException e) {
+                Log.w("SIGPACGO", "Error copying item " + subAsset + ": " + e.getMessage());
+                // Try direct file copy as a fallback
+                try {
+                    copyAssetFile(subAsset, subDest);
+                } catch (IOException e2) {
+                    Log.e("SIGPACGO", "Failed fallback copy: " + e2.getMessage());
+                }
             }
         }
     }
