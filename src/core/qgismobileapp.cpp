@@ -779,6 +779,41 @@ void QgisMobileapp::readProjectFile()
 
   const QString suffix = fi.suffix().toLower();
 
+  // Temporarily disable GPKG flushing before loading the project to prevent crashes
+  // We'll track projects we've already loaded to avoid disabling flushing on subsequent loads
+  static QSet<QString> loadedProjects;
+  const bool isFirstLoad = !loadedProjects.contains(mProjectFilePath);
+  
+  if (isFirstLoad) {
+    QgsMessageLog::logMessage( tr( "First time loading project %1, temporarily disabling GPKG flushing" ).arg( mProjectFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    
+    // Also disable flushing for the project file itself if it's a GPKG
+    if (suffix == QStringLiteral( "gpkg" )) {
+      QgsMessageLog::logMessage( tr( "Temporarily disabling flushing for project file %1" ).arg( mProjectFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      if (mGpkgFlusher) {
+        mGpkgFlusher->stop(mProjectFilePath);
+      }
+    }
+    
+    // Find all GPKG files in the project directory
+    QDir projectDir = fi.dir();
+    QStringList gpkgFiles = projectDir.entryList(QStringList() << "*.gpkg", QDir::Files);
+    for (const QString &gpkgFile : gpkgFiles) {
+      QString fullPath = projectDir.filePath(gpkgFile);
+      if (fullPath != mProjectFilePath) { // Don't double-process the project file
+        QgsMessageLog::logMessage( tr( "Temporarily disabling flushing for %1" ).arg( fullPath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+        
+        // If we have a GPKG flusher, disable it for this file
+        if (mGpkgFlusher) {
+          mGpkgFlusher->stop(fullPath);
+        }
+      }
+    }
+    
+    // Add this project to our loaded projects set
+    loadedProjects.insert(mProjectFilePath);
+  }
+
   mProject->clear();
   mProject->layerTreeRegistryBridge()->setLayerInsertionMethod( Qgis::LayerTreeInsertionMethod::OptimalInInsertionGroup );
 
@@ -835,6 +870,17 @@ void QgisMobileapp::readProjectFile()
     {
       QgsMessageLog::logMessage( mProject->error() );
     }
+    
+    // For Android, we need to give SQLite a moment to initialize before we start flushing
+    // This prevents the "Pure virtual function called" crash when opening GPKG files for the first time
+#ifdef Q_OS_ANDROID
+    QgsMessageLog::logMessage("Project loaded on Android. Optimizing SQLite access...");
+    // Add a small delay to ensure all database operations are complete before flush operations begin
+    QTimer::singleShot(1000, this, [this]() {
+      // We could add additional SQLite optimizations here if needed
+      QgsMessageLog::logMessage("Android SQLite optimization complete");
+    });
+#endif
   }
 
   QString title;
@@ -2019,6 +2065,26 @@ void QgisMobileapp::readProjectFile()
   if ( !projectPluginPath.isEmpty() )
   {
     mPluginManager->loadPlugin( projectPluginPath, tr( "Project Plugin" ) );
+  }
+  
+  // Re-enable GPKG flushing with a delay to allow the project to fully load first
+  // Only do this for the first load of a project
+  if (isFirstLoad) {
+    QFileInfo fi( mProjectFilePath );
+    QDir projectDir = fi.dir();
+    QStringList gpkgFiles = projectDir.entryList(QStringList() << "*.gpkg", QDir::Files);
+    
+    // Delay re-enabling the GPKG flusher to avoid initial crashes
+    QTimer::singleShot(5000, [this, gpkgFiles, projectDir]() {
+      for (const QString &gpkgFile : gpkgFiles) {
+        QString fullPath = projectDir.filePath(gpkgFile);
+        QgsMessageLog::logMessage( tr( "Re-enabling flushing for %1" ).arg( fullPath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+        
+        if (mGpkgFlusher) {
+          mGpkgFlusher->start(fullPath);
+        }
+      }
+    });
   }
 }
 

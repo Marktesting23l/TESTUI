@@ -68,7 +68,7 @@ PlatformUtilities::Capabilities PlatformUtilities::capabilities() const
 
 void PlatformUtilities::copySampleProjects()
 {
-  const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/sigpacgo/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
+  const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/resources/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
   Q_ASSERT( success );
   
   // Also copy the SIGPAC base map
@@ -77,14 +77,25 @@ void PlatformUtilities::copySampleProjects()
 
 void PlatformUtilities::copySigpacBaseMap()
 {
-  // Target is directly in app data location for easy access
-  QString targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_base" ) );
+  // For Android and iOS, we should place the file in application directory
+  QString targetDir;
+#if defined( Q_OS_ANDROID ) || defined( Q_OS_IOS )
+  // Use the same directory structure as sample_projects but with sigpacgo_base folder
+  // We're using applicationDirectory() + "SIGPACGO" to ensure it's in storage/emulated/0/Android/data/com.imagritools.sigpacgo/files
+  targetDir = appDataDirs().first() + QStringLiteral( "sigpacgo_base" );
+  qDebug() << "Using Android/iOS app data directory for SIGPAC_BASE:" << targetDir;
+#else
+  // For desktop, keep using the system local data location
+  targetDir = systemLocalDataLocation( QLatin1String( "sigpacgo_base" ) );
+  qDebug() << "Using desktop app data directory for SIGPAC_BASE:" << targetDir;
+#endif
   
   // Create the directory if it doesn't exist
   QDir targetDirObj(targetDir);
   if (!targetDirObj.exists())
   {
     targetDirObj.mkpath(".");
+    qDebug() << "Created directory:" << targetDir;
   }
   
   // Check if the target already has the file

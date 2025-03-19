@@ -2930,8 +2930,9 @@ ApplicationWindow {
 
         Rectangle {
           anchors {
-            horizontalCenter: parent.horizontalCenter
-            verticalCenter: parent.verticalCenter
+            left: gnssButton.right
+            leftMargin: 2
+            verticalCenter: gnssButton.verticalCenter
           }
 
           width: 12
@@ -2944,56 +2945,24 @@ ApplicationWindow {
           visible: positioningSettings.accuracyIndicator && gnssButton.state === "On"
           color: !positionSource.positionInformation || !positionSource.positionInformation.haccValid || positionSource.positionInformation.hacc > positioningSettings.accuracyBad ? Theme.accuracyBad : positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent ? Theme.accuracyTolerated : Theme.accuracyExcellent
           
-          // Compass indicator
+          // Compass indicator - simplified to avoid question mark
           Item {
             id: compassContainer
             anchors.fill: parent
             visible: gnssButton.followOrientationActive && positionSource.positionInformation.orientationValid
             
-            // Arrow/Needle
+            // Simple line for compass
             Rectangle {
-              id: compassNeedleIndicator
               anchors.centerIn: parent
-              width: 2
-              height: parent.height * 0.9
+              width: 1.5
+              height: parent.height * 0.8
               color: "white"
-              antialiasing: true
-              
-              // Arrow head for compass needle
-              Rectangle {
-                width: 4
-                height: 4
-                radius: 2
-                color: "white"
-                anchors.centerIn: parent.top
-                anchors.verticalCenterOffset: -2
-              }
               
               transform: Rotation {
-                origin.x: compassNeedleIndicator.width / 2
-                origin.y: compassNeedleIndicator.height / 2
+                origin.x: width / 2
+                origin.y: height / 2
                 angle: positionSource.positionInformation.orientationValid ? positionSource.positionInformation.orientation : 0
               }
-            }
-            
-            // North indicator
-            Text {
-              id: northIndicator
-              anchors {
-                top: parent.top
-                topMargin: -12
-                horizontalCenter: parent.horizontalCenter
-              }
-              color: "white"
-              font.pixelSize: 8
-              font.bold: true
-              text: "N"
-              transform: Rotation {
-                origin.x: northIndicator.width / 2
-                origin.y: northIndicator.height + 12
-                angle: positionSource.positionInformation.orientationValid ? positionSource.positionInformation.orientation : 0
-              }
-              visible: gnssButton.followOrientationActive
             }
             
             Timer {
@@ -3002,7 +2971,6 @@ ApplicationWindow {
               repeat: true
               onTriggered: {
                 if (gnssButton.followOrientationActive && positionSource.positionInformation.orientationValid) {
-                  // The rotation transform handles this automatically, no need to set rotation manually
                   gnssButton.followOrientation()
                 }
               }
@@ -6270,7 +6238,7 @@ ApplicationWindow {
     console.log("Target SIGPAC_BASE directory: " + targetDir);
     
     // Create target directory if it doesn't exist
-    platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sigpacgo_base");
+    platformUtilities.createDir(platformUtilities.systemLocalDataLocation(""), "sigpacgo_base");
     
     // Check if source exists
     let sourceDirExists = platformUtilities.fileExists(sourceDir);
@@ -6335,7 +6303,7 @@ ApplicationWindow {
     id: accuracyIndicator
     visible: positioningSettings.accuracyIndicator && positionSource.active
     width: 24
-    height: 12
+    height: 10
     radius: 3
     color: {
       if (!positionSource.positionInformation || 
@@ -6349,68 +6317,48 @@ ApplicationWindow {
     }
     border.color: Theme.light
     border.width: 1
-    anchors.right: parent.right
-    anchors.top: parent.top
-    anchors.rightMargin: 10
-    anchors.topMargin: mainWindow.sceneTopMargin + 10
+    
+    // Position the indicator near the GNSS button
+    parent: locationToolbar
+    anchors.left: gnssButton.right
+    anchors.leftMargin: 1
+    anchors.verticalCenter: gnssButton.verticalCenter
+    
     z: 1000
     
-    // Add a small GPS icon to make it clear what this indicator represents
+    // Add a small text label to the accuracy indicator
     Text {
+      id: accuracyText
       anchors.centerIn: parent
       text: "GPS"
       color: "white"
-      font.pixelSize: 8
+      font.pixelSize: 7
       font.bold: true
     }
     
-    // Pulsing animation for the indicator
-    SequentialAnimation {
-      id: pulseAnimation
-      running: accuracyIndicator.visible
-      loops: Animation.Infinite
-      
-      PropertyAnimation {
-        target: accuracyIndicator
-        property: "opacity"
-        from: 1.0
-        to: 0.5
-        duration: 1000
-        easing.type: Easing.InOutQuad
-      }
-      
-      PropertyAnimation {
-        target: accuracyIndicator
-        property: "opacity"
-        from: 0.5
-        to: 1.0
-        duration: 1000
-        easing.type: Easing.InOutQuad
-      }
-    }
-    
-    // Tooltip for the indicator
+    // Add tooltip for the accuracy indicator
     ToolTip {
       visible: accuracyMouseArea.containsMouse
       text: {
         if (!positionSource.positionInformation || !positionSource.positionInformation.haccValid) {
-          return qsTr("Accuracy: Unknown")
+          return qsTr("Precisión: Desconocida")
         }
         let accuracy = positionSource.positionInformation.hacc.toFixed(1)
         let accuracyText = ""
         
         if (positionSource.positionInformation.hacc > positioningSettings.accuracyBad) {
-          accuracyText = qsTr("Poor")
+          accuracyText = qsTr("Baja")
         } else if (positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent) {
-          accuracyText = qsTr("Moderate")
+          accuracyText = qsTr("Media")
         } else {
-          accuracyText = qsTr("Good")
+          accuracyText = qsTr("Alta")
         }
         
-        return qsTr("Accuracy") + ": " + accuracyText + " (" + accuracy + " m)"
+        return qsTr("Precisión") + ": " + accuracyText + " (" + accuracy + " m)"
       }
     }
     
+    // Mouse area for tooltip
     MouseArea {
       id: accuracyMouseArea
       anchors.fill: parent

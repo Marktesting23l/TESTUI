@@ -13,6 +13,12 @@ Item {
   visible: false
   focus: visible
 
+  // Add MouseArea that covers the entire panel
+  MouseArea {
+    anchors.fill: parent
+    onClicked: aboutPanel.visible = false
+  }
+
   Rectangle {
     color: "black"
     opacity: 0.9
@@ -21,11 +27,11 @@ Item {
 
   ColumnLayout {
     id: aboutContainer
-    spacing: 6
+    spacing: 4
     anchors.fill: parent
-    anchors.margins: 20
-    anchors.topMargin: 20 + mainWindow.sceneTopMargin
-    anchors.bottomMargin: 20 + mainWindow.sceneBottomMargin
+    anchors.margins: 15
+    anchors.topMargin: 15 + mainWindow.sceneTopMargin
+    anchors.bottomMargin: 15 + mainWindow.sceneBottomMargin
 
     ScrollView {
       Layout.fillWidth: true
@@ -38,26 +44,22 @@ Item {
       contentHeight: information.height
       clip: true
 
-      MouseArea {
-        anchors.fill: parent
-        onClicked: aboutPanel.visible = false
-      }
-
       ColumnLayout {
         id: information
-        spacing: 10
-        width: aboutPanel.width - 40
+        spacing: 20
+        width: aboutPanel.width - 30
         height: Math.max(mainWindow.height - sponsorshipButton.height - linksButton.height - qfieldAppDirectoryLabel.height - aboutContainer.spacing * 3 - aboutContainer.anchors.topMargin - aboutContainer.anchors.bottomMargin - 10, qfieldPart.height + opengisPart.height + customImagePart.height + spacing * 2)
 
         ColumnLayout {
           id: qfieldPart
           Layout.fillWidth: true
           Layout.preferredHeight: implicitHeight
-          spacing: 5
+          Layout.bottomMargin: 10
+          spacing: 6
 
           MouseArea {
-            Layout.preferredWidth: 120
-            Layout.preferredHeight: 120
+            Layout.preferredWidth: 110
+            Layout.preferredHeight: 110
             Layout.alignment: Qt.AlignHCenter
             Image {
               id: qfieldLogo
@@ -68,73 +70,87 @@ Item {
               sourceSize.width: width * screen.devicePixelRatio
               sourceSize.height: height * screen.devicePixelRatio
             }
-            onClicked: Qt.openUrlExternally("https://qfield.org/")
+            onClicked: {
+              Qt.openUrlExternally("")
+              mouse.accepted = true  // Prevent event from propagating
+            }
           }
 
           Label {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
-            font: Theme.strongFont
+            font: Theme.defaultFont
             color: Theme.light
             textFormat: Text.RichText
             wrapMode: Text.WordWrap
 
-            text: {"Desarrollo basado en: QGIS 3.40.3 BRATISLAVIA | QField 3.5.2 | 
-            GDAL/OGR 3.10.1 | Qt 6.8.2 | ANDROID NDK 26 |"
-            }
-
+            text: {"Versión: beta1.1.0 | Desarrollo basado software libre: QGIS 3.40.3 BRATISLAVA | QField 3.5.2 | GDAL/OGR 3.10.1 | Qt 6.8.2 | ANDROID NDK 26 |"}
           }
         }
 
-        // Space for custom image
         ColumnLayout {
-          id: customImagePart
+          id: sigpacgoPart
           Layout.fillWidth: true
           Layout.preferredHeight: implicitHeight
-          spacing: 5
-          
-          // This is a placeholder for your custom image
-          Rectangle {
-            id: customImagePlaceholder
-            Layout.preferredWidth: 120
-            Layout.preferredHeight: 120
-            Layout.alignment: Qt.AlignHCenter
-            color: "transparent"
-            border.color: "#33ffffff"
-            border.width: 1
-            
-            Text {
-              anchors.centerIn: parent
-              text: "Add your image here"
-              color: Theme.light
-              font.pixelSize: 12
-            }
-          }
-          
-          // Optional label for your custom image
-          Label {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignCenter
-            horizontalAlignment: Text.AlignHCenter
-            font: Theme.strongFont
-            color: Theme.light
-            textFormat: Text.RichText
-            wrapMode: Text.WordWrap
-            text: "Custom Image"
-          }
-        }
-
-        // OpenGIS section
-        ColumnLayout {
-          id: opengisPart
-          Layout.fillWidth: true
-          Layout.preferredHeight: implicitHeight
-          spacing: 5
+          Layout.topMargin: 10
+          Layout.bottomMargin: 10
+          spacing: 6
 
           MouseArea {
-            Layout.preferredWidth: 200
-            Layout.preferredHeight: 100
+            Layout.preferredWidth: 180
+            Layout.preferredHeight: 90
+            Layout.alignment: Qt.AlignHCenter
+            Image {
+              id: imagritoolsLogo
+              width: parent.width
+              height: parent.height
+              fillMode: Image.PreserveAspectFit
+              source: "qrc:/images/imagr-logo.svg"
+              sourceSize.width: width * screen.devicePixelRatio
+              sourceSize.height: height * screen.devicePixelRatio
+            }
+            onClicked: {
+              Qt.openUrlExternally("https://sites.google.com/view/intecnatur")
+              mouse.accepted = true  // Prevent event from propagating
+            }
+          }
+
+          Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: creditText.implicitHeight
+            
+            // Prevent clicks on the text area from closing the panel
+            MouseArea {
+              anchors.fill: parent
+              onClicked: mouse.accepted = true // Stop propagation
+            }
+            
+            Text {
+              id: creditText
+              anchors.centerIn: parent
+              width: Math.min(parent.width - 10, implicitWidth)
+              horizontalAlignment: Text.AlignHCenter
+              font: Theme.defaultFont
+              color: Theme.light
+              textFormat: Text.RichText
+              wrapMode: Text.WordWrap
+              text: qsTr('Mis agradecimientos a los amigos de <a href="https://sites.google.com/view/intecnatur">InTecnatur</a>')
+              onLinkActivated: link => Qt.openUrlExternally(link)
+            }
+          }
+        }
+
+        ColumnLayout {
+          id: intecnaturPart
+          Layout.fillWidth: true
+          Layout.preferredHeight: implicitHeight
+          Layout.topMargin: 10
+          spacing: 6
+
+          MouseArea {
+            Layout.preferredWidth: 180
+            Layout.preferredHeight: 90
             Layout.alignment: Qt.AlignHCenter
             Image {
               id: inTecnaturLogo
@@ -145,66 +161,101 @@ Item {
               sourceSize.width: width * screen.devicePixelRatio
               sourceSize.height: height * screen.devicePixelRatio
             }
-            onClicked: Qt.openUrlExternally("https://sites.google.com/view/intecnatur")
+            onClicked: {
+              Qt.openUrlExternally("https://sites.google.com/view/intecnatur")
+              mouse.accepted = true  // Prevent event from propagating
+            }
           }
 
-          Label {
+          Item {
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignCenter
-            horizontalAlignment: Text.AlignHCenter
-            font: Theme.strongFont
-            color: Theme.light
-            textFormat: Text.RichText
-            text: qsTr("Mis agradecimientos a los amigos de InTecnatur consultoría agroecológica") + 
-                 " " + '<br><a href="https://sites.google.com/view/intecnatur">https://sites.google.com/view/intecnatur</a>'
-            onLinkActivated: link => Qt.openUrlExternally(link)
-          }
-        }
-      }
-    }
-
-    Label {
-      id: qfieldAppDirectoryLabel
-      Layout.fillWidth: true
-      Layout.maximumWidth: parent.width
-      Layout.alignment: Qt.AlignCenter
-      Layout.bottomMargin: 10
-      horizontalAlignment: Text.AlignHCenter
-      font: Theme.tinyFont
-      color: Theme.secondaryTextColor
-      textFormat: Text.RichText
-      wrapMode: Text.WordWrap
-
-      text: {
-        let label = '';
-        let isDesktopPlatform = Qt.platform.os !== "ios" && Qt.platform.os !== "android";
-        let dataDirs = platformUtilities.appDataDirs();
-        if (dataDirs.length > 0) {
-          label = dataDirs.length > 1 ? qsTr('SIGPACGO app directories') : qsTr('SIGPACGO app directory');
-          for (let dataDir of dataDirs) {
-            if (isDesktopPlatform) {
-              label += '<br><a href="' + UrlUtils.fromString(dataDir) + '">' + dataDir + '</a>';
-            } else {
-              label += '<br>' + dataDir;
+            Layout.preferredHeight: creditText.implicitHeight
+            
+            // Prevent clicks on the text area from closing the panel
+            MouseArea {
+              anchors.fill: parent
+              onClicked: mouse.accepted = true // Stop propagation
+            }
+            
+            Text {
+              id: crediText
+              anchors.centerIn: parent
+              width: Math.min(parent.width - 10, implicitWidth)
+              horizontalAlignment: Text.AlignHCenter
+              font: Theme.defaultFont
+              color: Theme.light
+              textFormat: Text.RichText
+              wrapMode: Text.WordWrap
+              text: qsTr('Mis agradecimientos a los amigos de <a href="https://sites.google.com/view/intecnatur">InTecnatur</a> consultoría agroecológica por el apoyo y confianza')
+              onLinkActivated: link => Qt.openUrlExternally(link)
             }
           }
         }
-        return label;
       }
-
-      onLinkActivated: link => Qt.openUrlExternally(link)
     }
 
-    // Row layout for smaller buttons side by side
-    RowLayout {
+    // Directory label with MouseArea to prevent panel closing
+    Item {
       Layout.fillWidth: true
-      spacing: 10
+      Layout.maximumWidth: parent.width
+      Layout.alignment: Qt.AlignCenter
+      Layout.topMargin: 15
+      Layout.bottomMargin: 10
+      Layout.preferredHeight: qfieldAppDirectoryLabel.implicitHeight
+      
+      MouseArea {
+        anchors.fill: parent
+        onClicked: mouse.accepted = true // Stop propagation
+      }
+      
+      Label {
+        id: qfieldAppDirectoryLabel
+        anchors.fill: parent
+        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 8
+        color: Theme.secondaryTextColor
+        textFormat: Text.RichText
+        wrapMode: Text.WordWrap
+
+        text: {
+          let label = '';
+          let isDesktopPlatform = Qt.platform.os !== "ios" && Qt.platform.os !== "android";
+          let dataDirs = platformUtilities.appDataDirs();
+          if (dataDirs.length > 0) {
+            label = dataDirs.length > 1 ? qsTr('SIGPACGO directorios') : qsTr('SIGPACGO directorio');
+            for (let dataDir of dataDirs) {
+              if (isDesktopPlatform) {
+                label += '<br><a href="' + UrlUtils.fromString(dataDir) + '">' + dataDir + '</a>';
+              } else {
+                label += '<br>' + dataDir;
+              }
+            }
+          }
+          return label;
+        }
+
+        onLinkActivated: link => Qt.openUrlExternally(link)
+      }
+    }
+
+    // Prevent the main MouseArea from capturing clicks on the buttons and labels
+    MouseArea {
+      id: buttonAreaBlocker
+      anchors.fill: buttonContainer
+      onClicked: mouse.accepted = true // Stop propagation
+    }
+    
+    // Row layout for smaller buttons side by side
+    ColumnLayout {
+      id: buttonContainer
+      Layout.fillWidth: true
+      spacing: 15
+      Layout.topMargin: 5
       
       QfButton {
         id: sponsorshipButton
         Layout.fillWidth: true
-        Layout.preferredHeight: 36
-        Layout.maximumWidth: parent.width / 2 - 5
+        Layout.preferredHeight: 40
         icon.source: Theme.getThemeVectorIcon('ic_sponsor_white_24dp')
         icon.width: 18
         icon.height: 18
@@ -218,8 +269,7 @@ Item {
         id: linksButton
         dropdown: true
         Layout.fillWidth: true
-        Layout.preferredHeight: 36
-        Layout.maximumWidth: parent.width / 2 - 5
+        Layout.preferredHeight: 40
         icon.source: Theme.getThemeVectorIcon('ic_book_white_24dp')
         icon.width: 18
         icon.height: 18

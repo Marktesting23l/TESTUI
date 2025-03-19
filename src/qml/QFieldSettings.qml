@@ -1095,9 +1095,9 @@ Page {
                   case QAbstractSocket.BoundState:
                     return qsTr('Conectado a %1').arg(positioningSettings.positioningDeviceName);
                   case QAbstractSocket.UnconnectedState:
-                    return qsTr('Connect to %1').arg(positioningSettings.positioningDeviceName);
+                    return qsTr('Conectar a %1').arg(positioningSettings.positioningDeviceName);
                   default:
-                    return qsTr('Connecting to %1').arg(positioningSettings.positioningDeviceName);
+                    return qsTr('Conectando a %1').arg(positioningSettings.positioningDeviceName);
                   }
                 }
                 enabled: positionSource.deviceSocketState === QAbstractSocket.UnconnectedState
@@ -1122,7 +1122,7 @@ Page {
               rowSpacing: 5
 
               Label {
-                text: qsTr("Show position information")
+                text: qsTr("Mostrar información de posición")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1148,7 +1148,7 @@ Page {
                 id: measureLabel
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                text: qsTr("Measure (M) value attached to vertices:")
+                text: qsTr("Valor de medición (M) adjunto a vértices:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -1169,7 +1169,7 @@ Page {
                 property bool loaded: false
                 Component.onCompleted: {
                   // This list matches the Tracker::MeasureType enum, with SecondsSinceStart removed
-                  var measurements = [qsTr("Timestamp (milliseconds since epoch)"), qsTr("Ground speed"), qsTr("Bearing"), qsTr("Horizontal accuracy"), qsTr("Vertical accuracy"), qsTr("PDOP"), qsTr("HDOP"), qsTr("VDOP")];
+                  var measurements = [qsTr("Marca de tiempo (ms desde época)"), qsTr("Velocidad"), qsTr("Dirección"), qsTr("Precisión horizontal"), qsTr("Precisión vertical"), qsTr("PDOP"), qsTr("HDOP"), qsTr("VDOP")];
                   measureComboBox.model = measurements;
                   measureComboBox.currentIndex = positioningSettings.digitizingMeasureType - 1;
                   loaded = true;
@@ -1185,7 +1185,7 @@ Page {
               Label {
                 id: measureTipLabel
                 Layout.fillWidth: true
-                text: qsTr("When digitizing features with the coordinate cursor locked to the current position, the measurement type selected above will be added to the geometry provided it has an M dimension.")
+                text: qsTr("Al digitalizar con el cursor bloqueado a la posición actual, esta medición se añadirá a la geometría si tiene dimensión M.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
 
@@ -1199,7 +1199,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Activate accuracy indicator")
+                text: qsTr("Activar indicador de precisión")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1219,10 +1219,15 @@ Page {
                 onCheckedChanged: {
                   positioningSettings.accuracyIndicator = checked;
                 }
+                Component.onCompleted: {
+                  if (!positioningSettings.accuracyIndicator) {
+                    positioningSettings.accuracyIndicator = true;
+                  }
+                }
               }
 
               Label {
-                text: qsTr("Bad accuracy threshold [m]")
+                text: qsTr("Umbral de precisión mala [m]")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1261,7 +1266,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Excellent accuracy threshold [m]")
+                text: qsTr("Umbral de precisión excelente [m]")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1300,7 +1305,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Enforce accuracy requirement")
+                text: qsTr("Aplicar requisito de precisión")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 enabled: accuracyIndicator.checked
@@ -1328,7 +1333,7 @@ Page {
               }
 
               Label {
-                text: qsTr("When the accuracy indicator is enabled, a badge is attached to the location button and colored <span %1>red</span> if the accuracy value is worse than <i>bad</i>, <span %2>yellow</span> if it falls short of <i>excellent</i>, or <span %3>green</span>.<br><br>In addition, an accuracy restriction mode can be toggled on, which restricts vertex addition when locked to coordinate cursor to positions with an accuracy value worse than the bad threshold.").arg("style='%1'".arg(Theme.toInlineStyles({
+                text: qsTr("Con el indicador activado, se muestra un distintivo de color <span %1>rojo</span> si la precisión es peor que <i>mala</i>, <span %2>amarillo</span> si no alcanza <i>excelente</i>, o <span %3>verde</span>.<br><br>El modo de restricción limita agregar vértices con precisión peor que el umbral malo.").arg("style='%1'".arg(Theme.toInlineStyles({
                         "color": Theme.accuracyBad
                       }))).arg("style='%1'".arg(Theme.toInlineStyles({
                         "color": Theme.accuracyTolerated
@@ -1348,7 +1353,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Enable averaged positioning requirement")
+                text: qsTr("Activar requisito de posición promediada")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1371,7 +1376,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Minimum number of positions collected")
+                text: qsTr("Número mínimo de posiciones")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1410,7 +1415,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Automatically end collection when minimum number is met")
+                text: qsTr("Finalizar automáticamente al alcanzar mínimo")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1438,7 +1443,7 @@ Page {
               }
 
               Label {
-                text: qsTr("When enabled, digitizing vertices with a cursor locked to position will only accepted an averaged position from a minimum number of collected positions. Digitizing using averaged positions is done by pressing and holding the add vertex button, which will collect positions until the press is released. Accuracy requirement settings are respected when enabled.")
+                text: qsTr("Con posición promediada, al digitalizar vértices solo se aceptará un promedio de posiciones recolectadas. Mantenga presionado el botón para recolectar posiciones.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 textFormat: Qt.RichText
@@ -1452,7 +1457,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Antenna height compensation")
+                text: qsTr("Compensación de altura de antena")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1475,7 +1480,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Antenna height [m]")
+                text: qsTr("Altura de antena [m]")
                 enabled: antennaHeightActivated.checked
                 visible: antennaHeightActivated.checked
                 font: Theme.defaultFont
@@ -1515,7 +1520,7 @@ Page {
               }
 
               Label {
-                text: qsTr("This value will correct the Z values recorded from the positioning device. If a value of 1.6 is entered, SIGPACGO will automatically subtract 1.6 from each recorded value. Make sure to insert the effective antenna height, i.e. pole length + antenna phase centre offset.")
+                text: qsTr("Este valor corregirá las alturas registradas. Si se ingresa 1.6, se restará automáticamente de cada valor registrado. Considere longitud del poste + offset del centro de fase.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
 
@@ -1529,7 +1534,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Skip altitude correction")
+                text: qsTr("Omitir corrección de altitud")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
                 wrapMode: Text.WordWrap
@@ -1553,7 +1558,7 @@ Page {
 
               Label {
                 topPadding: 0
-                text: qsTr("Use the altitude as reported by the positioning device. Skip any altitude correction that may be implied by the coordinate system transformation.")
+                text: qsTr("Usar la altitud reportada por el dispositivo. Omite cualquier corrección implícita en la transformación de coordenadas.")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
 
@@ -1567,7 +1572,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Vertical grid shift in use:")
+                text: qsTr("Cambio de cuadrícula vertical en uso:")
                 font: Theme.defaultFont
                 color: Theme.mainTextColor
 
@@ -1612,12 +1617,12 @@ Page {
                   reloading = true;
                   verticalGridShiftComboBox.model.clear();
                   verticalGridShiftComboBox.model.append({
-                      "text": qsTr("None"),
+                      "text": qsTr("Ninguno"),
                       "value": Positioning.ElevationCorrectionMode.None
                     });
                   if (positionSource.deviceCapabilities & AbstractGnssReceiver.OrthometricAltitude)
                     verticalGridShiftComboBox.model.append({
-                        "text": qsTr("Orthometric from device"),
+                        "text": qsTr("Ortométrica desde dispositivo"),
                         "value": Positioning.ElevationCorrectionMode.OrthometricFromDevice
                       });
 
@@ -1659,7 +1664,7 @@ Page {
             Label {
               topPadding: 0
               rightPadding: antennaHeightActivated.width
-              text: qsTr("Vertical grid shift is used to increase the altitude accuracy.")
+              text: qsTr("El cambio de cuadrícula vertical se usa para aumentar la precisión de altitud.")
               font: Theme.tipFont
               color: Theme.secondaryTextColor
 
@@ -1669,7 +1674,7 @@ Page {
             }
 
             Label {
-              text: qsTr("Log NMEA sentences from device to file")
+              text: qsTr("Registrar sentencias NMEA en archivo")
               font: Theme.defaultFont
               color: Theme.mainTextColor
               wrapMode: Text.WordWrap
@@ -1745,7 +1750,7 @@ Page {
       anchors.rightMargin: 10
       
       Label {
-        text: qsTr("Settings")
+        text: qsTr("Configuraciones")
         font: Theme.strongFont
         color: Theme.light
         Layout.fillWidth: true

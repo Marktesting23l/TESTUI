@@ -19,11 +19,22 @@ Page {
 
   // Add debug logging for project paths
   Component.onCompleted: {
-    let localPath = platformUtilities.systemLocalDataLocation("sigpacgo_base");
+    // Different paths for different platforms
+    let localPath;
+    if (Qt.platform.os === "android" || Qt.platform.os === "ios") {
+      localPath = platformUtilities.appDataDirs()[0] + "sigpacgo_base";
+      console.log("Using Android/iOS path for SIGPAC_BASE");
+    } else {
+      localPath = platformUtilities.systemLocalDataLocation();
+      console.log("Using desktop path for SIGPAC_BASE");
+    }
     console.log("Main project path calculated from: " + localPath);
     mainProjectPath = localPath + "/SIGPAC_BASE.qgz";
     console.log("Updated main project path: " + mainProjectPath);
     console.log("Main project exists: " + platformUtilities.fileExists(mainProjectPath));
+    
+    // Check if base map exists, if not, let's copy it
+    checkBaseMapExists();
   }
 
   property alias model: table.model
@@ -947,34 +958,24 @@ Page {
       console.log("Trying to copy it from resources...");
       
       // Create the directory first
-      platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sigpacgo_base");
-      
-      // Try to copy from build output
-      let buildOutputPath = "/home/im/Documents/SIGPACGOEDITS/TESTUI-master/build-x64-linux/output/share/qfield/sigpacgo_base/SIGPAC_BASE.qgz";
-      let copied = false;
-      
-      if (platformUtilities.fileExists(buildOutputPath)) {
-        console.log("Found SIGPAC_BASE.qgz in build output path");
-        copied = platformUtilities.copyFile(buildOutputPath, mainProjectPath);
-      } 
-      
-      if (!copied) {
-        // Try resources location
-        let resourcePath = "/home/im/Documents/SIGPACGOEDITS/TESTUI-master/resources/sigpacgo_base/SIGPAC_BASE.qgz";
-        if (platformUtilities.fileExists(resourcePath)) {
-          console.log("Found SIGPAC_BASE.qgz in resources path");
-          copied = platformUtilities.copyFile(resourcePath, mainProjectPath);
-        }
+      let baseDir;
+      if (Qt.platform.os === "android" || Qt.platform.os === "ios") {
+        baseDir = platformUtilities.appDataDirs()[0];
+        platformUtilities.createDir(baseDir, "sigpacgo_base");
+      } else {
+        platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sigpacgo_base");
       }
       
-      console.log("Base map copy result: " + copied);
+      // The native code in platformutilities.cpp will handle the actual copying.
+      // We'll let the C++ implementation handle copying for better platform compatibility
+      platformUtilities.copySigpacBaseMap();
       
-      // Check again after copying
+      // Check again after copying attempt
       fileInfo = platformUtilities.getFileInfo(mainProjectPath);
       if (fileInfo && fileInfo.exists) {
-        console.log("Base map successfully copied to: " + mainProjectPath);
+        console.log("Base map successfully available at: " + mainProjectPath);
       } else {
-        console.log("Failed to copy base map to: " + mainProjectPath);
+        console.log("Base map still not available at: " + mainProjectPath);
       }
     } else {
       console.log("Base map found at: " + mainProjectPath);

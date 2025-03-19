@@ -1,0 +1,135 @@
+#include "qgsflusher.h"
+#include <QFileInfo>
+#include <QMutexLocker>
+#include <qgsmessagelog.h>
+#include <qgssqliteutils.h>
+#include <sqlite3.h>
+
+// Make sure SQLITE constants are defined
+#ifndef SQLITE_OPEN_READWRITE
+#define SQLITE_OPEN_READWRITE 0x00000002
+#endif
+
+void Flusher::scheduleFlush( const QString &filename )
+{
+  if ( mStoppedFlushes.value( filename, false ) )
+    return;
+
+  if ( mScheduledFlushes.contains( filename ) )
+  {
+    mScheduledFlushes.value( filename )->start( 500 );
+  }
+  else
+  {
+    QTimer *timer = new QTimer();
+    connect( timer, &QTimer::timeout, this, [this, filename]() { flush( filename ); } );
+    timer->setSingleShot( true );
+    mScheduledFlushes.insert( filename, timer );
+    timer->start( 500 );
+  }
+}
+
+void Flusher::flush( const QString &filename )
+{
+  if ( mStoppedFlushes.value( filename, false ) )
+    return;
+
+  QMutexLocker<QMutex> locker( &mMutex );
+
+  // Check if the file exists and is accessible before attempting to open it
+  QFileInfo fileInfo(filename);
+  if (!fileInfo.exists() || !fileInfo.isReadable() || !fileInfo.isWritable()) 
+  {
+    QgsMessageLog::logMessage( QObject::tr( "Cannot flush database - file not accessible: %1" ).arg( filename ) );
+    if ( mScheduledFlushes.contains(filename) )
+    {
+      // Re-schedule for later if file might become available
+      mScheduledFlushes[filename]->start( 1000 );
+    }
+    return;
+  }
+
+  // Add extra try-catch to prevent crashes on Android
+  try 
+  {
+    sqlite3_database_unique_ptr db;
+    int status = db.open_v2( filename, SQLITE_OPEN_READWRITE, nullptr );
+    if ( status != SQLITE_OK )
+    {
+      QgsMessageLog::logMessage( QObject::tr( "There was an error opening the database <b>%1</b>: %2" ).arg( filename, db.errorMessage() ) );
+      
+      // If we can't open the database, try again later rather than crashing
+      if ( mScheduledFlushes.contains(filename) )
+      {
+        mScheduledFlushes[filename]->start( 1000 );
+      }
+      return;
+    }
+
+    QString error;
+    // Add PRAGMA to optimize SQLite on Android
+    db.exec( "PRAGMA journal_mode=WAL;", error );
+    db.exec( "PRAGMA synchronous=NORMAL;", error );
+    db.exec( "PRAGMA wal_checkpoint;", error );
+
+    if ( error.isEmpty() )
+    {
+      if ( mScheduledFlushes.contains(filename) )
+      {
+        delete mScheduledFlushes[filename];
+        mScheduledFlushes.remove( filename );
+      }
+    }
+    else
+    {
+      QgsMessageLog::logMessage( QObject::tr( "Could not flush database %1 (%2) " ).arg( filename, error ) );
+      if ( mScheduledFlushes.contains(filename) )
+      {
+        mScheduledFlushes[filename]->start( 1000 );
+      }
+    }
+  }
+  catch (const std::exception& e)
+  {
+    QgsMessageLog::logMessage( QObject::tr( "Exception while flushing database %1: %2" ).arg( filename, e.what() ) );
+    // Try again later
+    if ( mScheduledFlushes.contains(filename) )
+    {
+      mScheduledFlushes[filename]->start( 2000 );
+    }
+  }
+  catch (...)
+  {
+    QgsMessageLog::logMessage( QObject::tr( "Unknown exception while flushing database %1" ).arg( filename ) );
+    // Try again later with an increased delay
+    if ( mScheduledFlushes.contains(filename) )
+    {
+      mScheduledFlushes[filename]->start( 2000 );
+    }
+  }
+
+  // No need to unlock explicitly - QMutexLocker will do it automatically
+}
+
+void Flusher::stop( const QString &fileName )
+{
+  if ( !mScheduledFlushes.contains( fileName ) )
+    return;
+
+  mScheduledFlushes.value( fileName )->stop();
+  mScheduledFlushes.remove( fileName );
+
+  flush( fileName );
+
+  mStoppedFlushes.insert( fileName, true );
+}
+
+void Flusher::start( const QString &fileName )
+{
+  mStoppedFlushes.remove( fileName );
+}
+
+bool Flusher::isStopped( const QString &fileName ) const
+{
+  return mStoppedFlushes.value( fileName, false );
+} 

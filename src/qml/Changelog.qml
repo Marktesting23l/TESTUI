@@ -25,7 +25,7 @@ Popup {
     anchors.fill: parent
 
     header: QfPageHeader {
-      title: qsTr("What's new in QField")
+      title: qsTr("Novedades en SIGPACGO")
 
       showApplyButton: false
       showCancelButton: false
@@ -49,75 +49,78 @@ Popup {
         flickableDirection: Flickable.VerticalFlick
         interactive: true
         contentWidth: parent.width
-        contentHeight: changelogGrid.height
+        contentHeight: changelogContent.height
         clip: true
 
-        GridLayout {
-          id: changelogGrid
+        Column {
+          id: changelogContent
+          width: parent.width
+          spacing: 15
 
-          anchors.left: parent.left
-          anchors.right: parent.right
-
-          columns: 1
-
-          Text {
-            id: changelogBody
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            Layout.minimumHeight: contentHeight
-            Layout.maximumHeight: contentHeight
-            visible: changelogContents.status != ChangelogContents.LoadingStatus
-
+          Label {
+            width: parent.width
+            text: qsTr("Versión 1.2.0")
+            font.bold: true
+            font.pixelSize: 18
             color: Theme.mainTextColor
-            font: Theme.tipFont
-
-            fontSizeMode: Text.VerticalFit
-            textFormat: Text.MarkdownText
-            wrapMode: Text.WordWrap
-
-            text: {
-              switch (changelogContents.status) {
-              case ChangelogContents.IdleStatus:
-              case ChangelogContents.LoadingStatus:
-                return '';
-              case ChangelogContents.SuccessStatus:
-                return changelogContents.markdown;
-              case ChangelogContents.ErrorStatus:
-                return qsTr('Error while fetching changelog, try again later.');
-              }
-            }
-
-            onLinkActivated: link => {
-              Qt.openUrlExternally(link);
-            }
           }
 
-          BusyIndicator {
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+          Label {
+            width: parent.width
+            text: qsTr("• Nuevas funcionalidades de mapeo\n• Mejor soporte para datos meteorológicos\n• Mejoras en la interfaz de usuario\n• Corrección de errores generales")
+            wrapMode: Text.WordWrap
+            color: Theme.mainTextColor
+          }
 
-            visible: changelogContents.status == ChangelogContents.LoadingStatus
-            running: visible
+          Rectangle {
+            width: parent.width
+            height: 1
+            color: "#e0e0e0"
+          }
+
+          Label {
+            width: parent.width
+            text: qsTr("Versión 1.1.0")
+            font.bold: true
+            font.pixelSize: 18
+            color: Theme.mainTextColor
+          }
+
+          Label {
+            width: parent.width
+            text: qsTr("• Integración con servicios de mapas externos\n• Mejora en la precisión de GPS\n• Nuevas funciones de exportación de datos\n• Optimización del rendimiento")
+            wrapMode: Text.WordWrap
+            color: Theme.mainTextColor
+          }
+
+          Rectangle {
+            width: parent.width
+            height: 1
+            color: "#e0e0e0"
+          }
+
+          Label {
+            width: parent.width
+            text: qsTr("Versión 1.0.0")
+            font.bold: true
+            font.pixelSize: 18
+            color: Theme.mainTextColor
+          }
+
+          Label {
+            width: parent.width
+            text: qsTr("• Lanzamiento inicial de SIGPACGO\n• Funcionalidades básicas de mapeo\n• Soporte para dispositivos Android e iOS\n• Recopilación de datos de campo")
+            wrapMode: Text.WordWrap
+            color: Theme.mainTextColor
           }
         }
       }
 
       QfButton {
-        id: sponsorshipButton
+        id: versionButton
         Layout.fillWidth: true
-        icon.source: Theme.getThemeVectorIcon('ic_sponsor_white_24dp')
 
-        text: qsTr('Support QField')
-        onClicked: Qt.openUrlExternally("https://github.com/sponsors/opengisch")
-      }
-    }
-  }
-
-  ChangelogContents {
-    id: changelogContents
-    onMarkdownChanged: {
-      if (changelogContents.markdown) {
-        settings.setValue("/QField/isLoadingChangelog", false);
-        settings.remove("/QField/isCrashingSslDevice");
+        text: qsTr('Versión actual: ') + appVersion
       }
     }
   }
@@ -125,23 +128,5 @@ Popup {
   onClosed: {
     settings.setValue("/QField/ChangelogVersion", appVersion);
     changelogFlickable.contentY = 0;
-  }
-
-  onOpened: {
-    if (settings.valueBool("/QField/isLoadingChangelog", false)) {
-      settings.setValue("/QField/isCrashingSslDevice", true);
-    } else {
-      settings.remove("/QField/isCrashingSslDevice");
-    }
-    if (settings.valueBool("/QField/isCrashingSslDevice", false) === true) {
-      changelogBody.text = qsTr("Check the latest QField changes on ") + ' <a href="https://github.com/opengisch/qfield/releases">' + qsTr('QField releases page') + '</a>.';
-      return;
-    }
-    if (changelogContents.status === ChangelogContents.SuccessStatus || changelogContents.status === ChangelogContents.LoadingStatus)
-      return;
-    settings.remove("/QField/isLoadingChangelog");
-    settings.setValue("/QField/isLoadingChangelog", true);
-    settings.sync();
-    changelogContents.request();
   }
 }

@@ -130,7 +130,7 @@ void AndroidPlatformUtilities::afterUpdate()
     
     // Force copy sample projects even if not after an update
     const bool success = FileUtils::copyRecursively(
-      systemSharedDataLocation() + QLatin1String("/sigpacgo/sample_projects"), 
+      systemSharedDataLocation() + QLatin1String("/resources/sample_projects"), 
       sampleProjectsDir
     );
     

@@ -226,12 +226,12 @@ public class QFieldActivity extends QtActivity {
         
         // Copy sample projects if they exist
         try {
-            String[] sampleProjects = assetManager.list("sigpacgo/sample_projects");
+            String[] sampleProjects = assetManager.list("resources/sample_projects");
             if (sampleProjects != null && sampleProjects.length > 0) {
                 Log.i("QField", "Found " + sampleProjects.length + " sample projects to copy");
                 for (String project : sampleProjects) {
                     Log.i("QField", "Copying sample project: " + project);
-                    copyAssetFolder("sigpacgo/sample_projects/" + project, 
+                    copyAssetFolder("resources/sample_projects/" + project, 
                                    sampleProjectsDir.getAbsolutePath() + "/" + project);
                 }
                 Log.i("QField", "Sample projects copied successfully");

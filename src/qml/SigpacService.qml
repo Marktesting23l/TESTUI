@@ -54,7 +54,7 @@ QtObject {
                         
                         if (Array.isArray(response) && response.length === 0) {
                             console.log("SIGPAC returned an empty array. The coordinates might be outside of Spain or the SRID might not be supported.");
-                            errorOccurred("No data found. Try using EPSG:4258 (ETRS89) or EPSG:4326 (WGS84) coordinate system.");
+                            errorOccurred("No se encontraron datos. Intente usar el sistema de coordenadas EPSG:4258 (ETRS89) o EPSG:4326 (WGS84).");
                         } else {
                             dataLoaded(response);
                             
@@ -89,11 +89,11 @@ QtObject {
                         }
                     } catch (e) {
                         console.error("Error parsing SIGPAC data:", e);
-                        errorOccurred("Error parsing SIGPAC data: " + e);
+                        errorOccurred("Error al analizar los datos SIGPAC: " + e);
                     }
                 } else {
                     console.error("Error loading SIGPAC data. Status:", xhr.status);
-                    errorOccurred("Error loading SIGPAC data: " + xhr.status);
+                    errorOccurred("Error al cargar datos SIGPAC: " + xhr.status);
                 }
             }
         }
@@ -109,7 +109,7 @@ QtObject {
             xhr.send();
         } catch (e) {
             console.error("Error sending SIGPAC request:", e);
-            errorOccurred("Error sending SIGPAC request: " + e);
+            errorOccurred("Error al enviar la solicitud SIGPAC: " + e);
         }
     }
     
@@ -138,7 +138,7 @@ QtObject {
                         
                         if (Array.isArray(response) && response.length === 0) {
                             console.log("SIGPAC returned an empty array. The SIGPAC code might not exist.");
-                            errorOccurred("No data found for the specified SIGPAC code.");
+                            errorOccurred("No se encontraron datos para el código SIGPAC especificado.");
                         } else {
                             dataLoaded(response);
                             
@@ -152,11 +152,11 @@ QtObject {
                         }
                     } catch (e) {
                         console.error("Error parsing SIGPAC data:", e);
-                        errorOccurred("Error parsing SIGPAC data: " + e);
+                        errorOccurred("Error al analizar los datos SIGPAC: " + e);
                     }
                 } else {
                     console.error("Error loading SIGPAC data. Status:", xhr.status);
-                    errorOccurred("Error loading SIGPAC data: " + xhr.status);
+                    errorOccurred("Error al cargar datos SIGPAC: " + xhr.status);
                 }
             }
         }
@@ -172,7 +172,7 @@ QtObject {
             xhr.send();
         } catch (e) {
             console.error("Error sending SIGPAC request:", e);
-            errorOccurred("Error sending SIGPAC request: " + e);
+            errorOccurred("Error al enviar la solicitud SIGPAC: " + e);
         }
     }
     
@@ -371,7 +371,7 @@ QtObject {
     // Helper function to format SIGPAC data for display
     function formatSigpacData(data) {
         if (!data || data.length === 0) {
-            return "No data found for this location";
+            return "No se encontraron datos para esta ubicación";
         }
         
         var result = "";

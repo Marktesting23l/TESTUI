@@ -100,6 +100,7 @@ set(QFIELD_CORE_SRCS
     qgismobileapp.cpp
     qgsgeometrywrapper.cpp
     qgsgpkgflusher.cpp
+    qgsflusher.cpp
     recentprojectlistmodel.cpp
     referencingfeaturelistmodel.cpp
     rubberbandshape.cpp
@@ -221,6 +222,7 @@ set(QFIELD_CORE_HDRS
     qgismobileapp.h
     qgsgeometrywrapper.h
     qgsgpkgflusher.h
+    qgsflusher.h
     recentprojectlistmodel.h
     referencingfeaturelistmodel.h
     rubberbandshape.h

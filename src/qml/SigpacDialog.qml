@@ -40,6 +40,44 @@ Dialog {
         radius: 4
     }
     
+    // Custom title area with subtitle and link
+    header: ColumnLayout {
+        width: parent.width
+        spacing: 2
+        
+        Label {
+            text: qsTr("Información de Parcela SIGPAC")
+            font: Theme.strongTipFont
+            color: Theme.mainTextColor
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
+            Layout.topMargin: 8
+        }
+        
+        Text {
+            text: "<a href='https://www.fega.gob.es/es'>Consultas servidores FEGA</a>"
+            font {
+                family: Theme.tinyFont.family
+                pixelSize: Theme.tinyFont.pixelSize
+                weight: Theme.tinyFont.weight
+            }
+            color: Theme.secondaryTextColor
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
+            Layout.bottomMargin: 4
+            
+            onLinkActivated: function(link) {
+                Qt.openUrlExternally(link)
+            }
+            
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
+        }
+    }
+    
     // Create the SIGPAC service when the dialog is created
     Component.onCompleted: {
         try {
@@ -149,8 +187,8 @@ Dialog {
         
         ColumnLayout {
             width: mainScrollView.width
-            anchors.margins: 8
-            spacing: 6
+            anchors.margins: 6
+            spacing: 3
             
             TabBar {
                 id: tabBar
@@ -222,14 +260,15 @@ Dialog {
             StackLayout {
                 Layout.fillWidth: true
                 currentIndex: tabBar.currentIndex
+                Layout.topMargin: 2
                 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 100
+                    Layout.preferredHeight: 75
                     
                     ColumnLayout {
                         anchors.fill: parent
-                        spacing: 6
+                        spacing: 2
                         
                         Label {
                             text: qsTr("Posición Actual del Mapa:")
@@ -256,7 +295,7 @@ Dialog {
                         }
                         
                         Label {
-                            text: qsTr("Nota: SIGPAC funciona con EPSG:4258 (ETRS89) o EPSG:4326 (WGS84)")
+                            text: qsTr("Nota: SIGPAC por defecto con EPSG:4258 (ETRS89) 2cm vs EPSG:4326 (WGS84)")
                             font {
                                 family: Theme.tinyFont.family
                                 pixelSize: Theme.tinyFont.pixelSize
@@ -271,12 +310,13 @@ Dialog {
                         Button {
                             text: qsTr("Consultar SIGPAC")
                             Layout.alignment: Qt.AlignHCenter
+                            Layout.topMargin: 2
                             enabled: !isLoading && sigpacService !== null
                             
                             background: Rectangle {
                                 color: parent.enabled ? Theme.mainColor : Theme.controlBackgroundDisabledColor
                                 radius: 4
-                                implicitHeight: 36
+                                implicitHeight: 32
                             }
                             
                             contentItem: Text {
@@ -296,11 +336,11 @@ Dialog {
                 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 200
+                    Layout.preferredHeight: 170
                     
                     ColumnLayout {
                         anchors.fill: parent
-                        spacing: 6
+                        spacing: 2
                         
                         Label {
                             text: qsTr("Introducir Coordenadas Personalizadas:")
@@ -310,7 +350,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("SRID:")
@@ -345,7 +385,7 @@ Dialog {
                         }
                         
                         Label {
-                            text: qsTr("Nota: SIGPAC funciona con EPSG:4258 (ETRS89) o EPSG:4326 (WGS84)")
+                            text: qsTr("Nota: SIGPAC por defecto con EPSG:4258 (ETRS89) o EPSG:4326 (WGS84)")
                             font {
                                 family: Theme.tinyFont.family
                                 pixelSize: Theme.tinyFont.pixelSize
@@ -359,7 +399,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("X:")
@@ -387,7 +427,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Y:")
@@ -416,12 +456,13 @@ Dialog {
                         Button {
                             text: qsTr("Consultar SIGPAC")
                             Layout.alignment: Qt.AlignHCenter
+                            Layout.topMargin: 2
                             enabled: !isLoading && sigpacService !== null && xTextField.text !== "" && yTextField.text !== ""
                             
                             background: Rectangle {
                                 color: parent.enabled ? Theme.mainColor : Theme.controlBackgroundDisabledColor
                                 radius: 4
-                                implicitHeight: 36
+                                implicitHeight: 32
                             }
                             
                             contentItem: Text {
@@ -445,11 +486,11 @@ Dialog {
                 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 250
+                    Layout.preferredHeight: 220
                     
                     ColumnLayout {
                         anchors.fill: parent
-                        spacing: 6
+                        spacing: 2
                         
                         Label {
                             text: qsTr("Introducir Código SIGPAC:")
@@ -459,7 +500,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Provincia:")
@@ -486,7 +527,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Municipio:")
@@ -513,7 +554,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Agregado:")
@@ -564,7 +605,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Polígono:")
@@ -613,7 +654,7 @@ Dialog {
                         
                         RowLayout {
                             Layout.fillWidth: true
-                            spacing: 6
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Recinto:")
@@ -641,6 +682,7 @@ Dialog {
                         Button {
                             text: qsTr("Consultar SIGPAC")
                             Layout.alignment: Qt.AlignHCenter
+                            Layout.topMargin: 2
                             enabled: !isLoading && sigpacService !== null && 
                                     provinciaTextField.text !== "" && 
                                     municipioTextField.text !== "" && 
@@ -651,7 +693,7 @@ Dialog {
                             background: Rectangle {
                                 color: parent.enabled ? Theme.mainColor : Theme.controlBackgroundDisabledColor
                                 radius: 4
-                                implicitHeight: 36
+                                implicitHeight: 32
                             }
                             
                             contentItem: Text {
@@ -680,7 +722,7 @@ Dialog {
             
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 20
+                Layout.preferredHeight: 4
             }
             
             BusyIndicator {
@@ -716,7 +758,7 @@ Dialog {
             RowLayout {
                 visible: !isLoading && isLoadingAdditionalData
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 6
+                spacing: 4
                 
                 BusyIndicator {
                     running: isLoadingAdditionalData
@@ -767,7 +809,7 @@ Dialog {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.minimumHeight: 160
-                Layout.topMargin: 10
+                Layout.topMargin: 0
                 
                 background: Rectangle {
                     color: Theme.controlBackgroundAlternateColor
@@ -786,14 +828,13 @@ Dialog {
                 
                 ScrollView {
                     anchors.fill: parent
-                    anchors.margins: 2
+                    anchors.margins: 1
                     clip: true
                     ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-                    width: parent.width - 8
-                    implicitWidth: width
                     
                     TextArea {
                         id: resultsTextArea
+                        anchors.fill: parent
                         readOnly: true
                         wrapMode: TextEdit.Wrap
                         font: Theme.tipFont
@@ -831,7 +872,8 @@ Dialog {
             
             RowLayout {
                 Layout.alignment: Qt.AlignRight
-                spacing: 6
+                Layout.topMargin: 2
+                spacing: 4
                 
                 Button {
                     text: qsTr("Copiar Resultados")
@@ -841,7 +883,7 @@ Dialog {
                     background: Rectangle {
                         color: Theme.mainColor
                         radius: 4
-                        implicitHeight: 36
+                        implicitHeight: 32
                     }
                     
                     contentItem: Text {
@@ -869,7 +911,7 @@ Dialog {
                     background: Rectangle {
                         color: Theme.mainColor
                         radius: 4
-                        implicitHeight: 36
+                        implicitHeight: 32
                     }
                     
                     contentItem: Text {

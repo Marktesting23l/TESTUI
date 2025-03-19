@@ -61,7 +61,7 @@ Item {
 
     Label {
       width: parent.width
-      text: qsTr("SIGPACGO Information")
+      text: qsTr("Información de SIGPACGO")
       horizontalAlignment: Text.AlignHCenter
       font.pixelSize: 24
       font.bold: true
@@ -71,7 +71,7 @@ Item {
 
     Label {
       width: parent.width
-      text: qsTr("Welcome to SIGPACGO Information Center")
+      text: qsTr("Bienvenido al Centro de Información de SIGPACGO")
       horizontalAlignment: Text.AlignHCenter
       font.pixelSize: 18
       color: "white"
@@ -86,7 +86,7 @@ Item {
 
     Label {
       width: parent.width
-      text: qsTr("User Guides")
+      text: qsTr("Guías de Usuario")
       font.pixelSize: 20
       font.bold: true
       color: "white"
@@ -100,10 +100,10 @@ Item {
 
       Repeater {
         model: [
-          { title: "Getting Started Guide", url: "getting_started.pdf" },
-          { title: "Field Data Collection", url: "field_data.pdf" },
-          { title: "Weather Data Usage", url: "weather_data.pdf" },
-          { title: "Troubleshooting", url: "troubleshooting.pdf" }
+          { title: "Guía de Inicio", url: "getting_started.pdf" },
+          { title: "Recolección de Datos de Campo", url: "field_data.pdf" },
+          { title: "Uso de Datos Meteorológicos", url: "weather_data.pdf" },
+          { title: "Solución de Problemas", url: "troubleshooting.pdf" }
         ]
 
         delegate: Button {
@@ -128,7 +128,7 @@ Item {
           onClicked: {
             // Here we would open the PDF file
             // For now, just display a message
-            displayToast(qsTr("Opening %1...").arg(modelData.title), "info")
+            displayToast(qsTr("Abriendo %1...").arg(modelData.title), "info")
           }
         }
       }
@@ -142,7 +142,7 @@ Item {
 
     Label {
       width: parent.width
-      text: qsTr("Contact Information")
+      text: qsTr("Información de Contacto")
       font.pixelSize: 20
       font.bold: true
       color: "white"
@@ -151,7 +151,7 @@ Item {
 
     Label {
       width: parent.width
-      text: qsTr("For support, please contact:\nsupport@sigpacgo.com\n\nWebsite: www.sigpacgo.com")
+      text: qsTr("Para soporte, por favor contacte:\nsupport@sigpacgo.com\n\nSitio web: www.sigpacgo.com")
       font.pixelSize: 16
       color: "white"
       wrapMode: Text.WordWrap
