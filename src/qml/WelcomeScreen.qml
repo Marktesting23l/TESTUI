@@ -22,19 +22,47 @@ Page {
     // Different paths for different platforms
     let localPath;
     if (Qt.platform.os === "android" || Qt.platform.os === "ios") {
-      localPath = platformUtilities.appDataDirs()[0] + "sigpacgo_base";
-      console.log("Using Android/iOS path for SIGPAC_BASE");
+      // Try to use the main map first
+      localPath = platformUtilities.appDataDirs()[0] + "sigpacgo_main";
+      mainProjectPath = localPath + "/SIGPACGO_Mapa_Principal.qgz";
+      console.log("Using Android/iOS path for SIGPACGO Main Map: " + mainProjectPath);
+      
+      // If main map doesn't exist, fall back to base map
+      let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+      if (!fileInfo || !fileInfo.exists) {
+        localPath = platformUtilities.appDataDirs()[0] + "sigpacgo_base";
+        mainProjectPath = localPath + "/SIGPAC_BASE.qgz";
+        console.log("Main map not found, falling back to base map: " + mainProjectPath);
+        mainProjectTitle = qsTr("Mapa Base SIGPAC-Go"); // Update title for base map
+      } else {
+        mainProjectTitle = qsTr("Mapa Principal SIGPAC-Go"); // Update title for main map
+        console.log("Using main map: " + mainProjectPath);
+      }
     } else {
-      localPath = platformUtilities.systemLocalDataLocation();
-      console.log("Using desktop path for SIGPAC_BASE");
+      // For desktop systems
+      // Try main map first
+      localPath = platformUtilities.systemLocalDataLocation("sigpacgo_main");
+      mainProjectPath = localPath + "/SIGPACGO_Mapa_Principal.qgz";
+      console.log("Using desktop path for SIGPACGO Main Map: " + mainProjectPath);
+      
+      // If main map doesn't exist, fall back to base map
+      let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+      if (!fileInfo || !fileInfo.exists) {
+        localPath = platformUtilities.systemLocalDataLocation("sigpacgo_base");
+        mainProjectPath = localPath + "/SIGPAC_BASE.qgz";
+        console.log("Main map not found, falling back to base map: " + mainProjectPath);
+        mainProjectTitle = qsTr("Mapa Base SIGPAC-Go"); // Update title for base map
+      } else {
+        mainProjectTitle = qsTr("Mapa Principal SIGPAC-Go"); // Update title for main map
+        console.log("Using main map: " + mainProjectPath);
+      }
     }
-    console.log("Main project path calculated from: " + localPath);
-    mainProjectPath = localPath + "/SIGPAC_BASE.qgz";
-    console.log("Updated main project path: " + mainProjectPath);
+    
+    console.log("Main project path: " + mainProjectPath);
     console.log("Main project exists: " + platformUtilities.fileExists(mainProjectPath));
     
-    // Check if base map exists, if not, let's copy it
-    checkBaseMapExists();
+    // Check if maps exist, copy if needed
+    checkMapsExist();
   }
 
   property alias model: table.model
@@ -155,8 +183,10 @@ Page {
             Layout.fillWidth: true
             text: qsTr("Abrir archivo local")
             font.bold: true
-            icon.source: Theme.getThemeIcon("ic_folder_open_black_24dp")
+            icon.source: Theme.getThemeIcon("ic_folder_open_black_24dp") 
             icon.color: Theme.mainColor
+            Material.accent: Theme.mainColor
+            highlighted: true
             onClicked: {
               platformUtilities.requestStoragePermission();
               openLocalDataPicker();
@@ -454,12 +484,17 @@ Page {
                   Layout.preferredWidth: 120
                   text: qsTr("Abrir")
                   font.bold: true
+                  icon.source: Theme.getThemeIcon("ic_folder_open_black_24dp")
+                  icon.color: Theme.mainColor
+                  Material.accent: "#4CAF50" // Green accent to match container theme
+                  highlighted: true
                   onClicked: {
                     let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
                     if (fileInfo && fileInfo.exists) {
                       iface.loadFile(mainProjectPath, mainProjectTitle);
                     } else {
-                      // Try to copy the base map if not exists
+                      // Try to copy maps if not exists
+                      platformUtilities.copyMainMapProject();
                       platformUtilities.copySigpacBaseMap();
                       
                       // Check again
@@ -467,7 +502,7 @@ Page {
                       if (fileInfo && fileInfo.exists) {
                         iface.loadFile(mainProjectPath, mainProjectTitle);
                       } else {
-                        displayToast(qsTr("No se encontró el mapa base. Por favor reinstale la aplicación."));
+                        displayToast(qsTr("No se encontró el mapa. Por favor reinstale la aplicación."));
                       }
                     }
                   }
@@ -731,20 +766,30 @@ Page {
                       anchors.right: parent.right
                       anchors.topMargin: 6
                       anchors.rightMargin: 6
-                      width: 32
-                      height: 32
-                      radius: 16
+                      width: 36
+                      height: 36
+                      radius: 18
                       color: "#40000000"
                       border.color: "#80FFFFFF"
                       border.width: 1
                       
-                      Text {
+                      Image {
                         anchors.centerIn: parent
-                        text: "⋮" // Three vertical dots
-                        font.pointSize: 16
-                        font.bold: true
-                        color: "#FFFFFF"
-                        opacity: 0.9
+                        width: 24
+                        height: 24
+                        source: Theme.getThemeIcon("ic_more_vert_white_24dp")
+                        sourceSize.width: 48
+                        sourceSize.height: 48
+                        
+                        // Fallback if icon not found
+                        Text {
+                          anchors.centerIn: parent
+                          text: "⋮" // Three vertical dots
+                          font.pointSize: 16
+                          font.bold: true
+                          color: "#FFFFFF"
+                          visible: parent.status === Image.Error || parent.status === Image.Null
+                        }
                       }
                       
                       MouseArea {
@@ -752,7 +797,7 @@ Page {
                         onClicked: {
                           recentProjectActions.recentProjectPath = gridDelegate.path;
                           recentProjectActions.recentProjectType = gridDelegate.type;
-                          recentProjectActions.popup(menuButton.x, menuButton.y + menuButton.height);
+                          recentProjectActions.popup(menuButton.parent.mapToItem(welcomeScreen, menuButton.x, menuButton.y + menuButton.height));
                         }
                       }
                     }
@@ -790,9 +835,18 @@ Page {
             property int recentProjectType: 0
 
             title: qsTr('Acciones del Proyecto Reciente')
+            
+            // Add background styling
+            background: Rectangle {
+                implicitWidth: 210
+                color: Theme.menuBackgroundColor
+                radius: 4
+                border.color: Theme.mainColor
+                border.width: 1
+            }
 
             width: {
-              let result = 50;
+              let result = 210;
               let padding = 0;
               for (let i = 0; i < count; ++i) {
                 let item = itemAt(i);
@@ -807,16 +861,19 @@ Page {
 
             MenuItem {
               id: defaultProject
-              // Updated: no longer check for type 2 as it doesn't exist anymore
               // Show this menu item for all project types except non-existent ones
               visible: true
 
               font: Theme.defaultFont
               width: parent.width
               height: visible ? 48 : 0
-              leftPadding: Theme.menuItemCheckLeftPadding
+              leftPadding: Theme.menuItemIconlessLeftPadding
               checkable: true
               checked: recentProjectActions.recentProjectPath === registry.defaultProject
+              
+              // Add icon
+              icon.source: Theme.getThemeIcon("ic_star_black_24dp")
+              icon.color: checked ? Theme.mainColor : Theme.secondaryTextColor
 
               text: qsTr("Proyecto Predeterminado")
               onTriggered: {
@@ -826,16 +883,19 @@ Page {
 
             MenuItem {
               id: baseMapProject
-              // Updated: no longer check for type 2 as it doesn't exist anymore
               // Show this menu item for all project types except non-existent ones
               visible: true
 
               font: Theme.defaultFont
               width: parent.width
               height: visible ? 48 : 0
-              leftPadding: Theme.menuItemCheckLeftPadding
+              leftPadding: Theme.menuItemIconlessLeftPadding
               checkable: true
               checked: recentProjectActions.recentProjectPath === registry.baseMapProject
+              
+              // Add icon
+              icon.source: Theme.getThemeIcon("ic_map_black_24dp")
+              icon.color: checked ? Theme.mainColor : Theme.secondaryTextColor
 
               text: qsTr("Mapa Base para Conjuntos de Datos")
               onTriggered: {
@@ -847,6 +907,10 @@ Page {
               visible: baseMapProject.visible
               width: parent.width
               height: visible ? undefined : 0
+              contentItem: Rectangle {
+                implicitHeight: 1
+                color: Theme.dividerColor
+              }
             }
 
             MenuItem {
@@ -856,6 +920,10 @@ Page {
               width: parent.width
               height: visible ? 48 : 0
               leftPadding: Theme.menuItemIconlessLeftPadding
+              
+              // Add icon
+              icon.source: Theme.getThemeIcon("ic_delete_black_24dp")
+              icon.color: Theme.errorColor
 
               text: qsTr("Eliminar de Proyectos Recientes")
               onTriggered: {
@@ -965,8 +1033,8 @@ Page {
     if (!visible) {
       firstShown = true;
     } else {
-      // Check if the base map exists
-      checkBaseMapExists();
+      // Check if the maps exist
+      checkMapsExist();
       
       // Debug model info when screen becomes visible
       console.log("Welcome screen visible, model count: " + (model ? model.count : "null"));
@@ -976,35 +1044,29 @@ Page {
     }
   }
 
-  // Function to check if the base map exists and copy it if needed
-  function checkBaseMapExists() {
+  // Function to check if the maps exist and copy them if needed
+  function checkMapsExist() {
+    // First, check and copy the base map if needed
     let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
     if (!fileInfo || !fileInfo.exists) {
-      console.log("Base map not found at: " + mainProjectPath);
-      console.log("Trying to copy it from resources...");
+      console.log("Project map not found at: " + mainProjectPath);
+      console.log("Trying to copy required maps...");
       
-      // Create the directory first
-      let baseDir;
-      if (Qt.platform.os === "android" || Qt.platform.os === "ios") {
-        baseDir = platformUtilities.appDataDirs()[0];
-        platformUtilities.createDir(baseDir, "sigpacgo_base");
-      } else {
-        platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sigpacgo_base");
-      }
+      // Try copying the main map first
+      platformUtilities.copyMainMapProject();
       
-      // The native code in platformutilities.cpp will handle the actual copying.
-      // We'll let the C++ implementation handle copying for better platform compatibility
+      // If that fails, try the base map
       platformUtilities.copySigpacBaseMap();
       
-      // Check again after copying attempt
+      // Check again after copying attempts
       fileInfo = platformUtilities.getFileInfo(mainProjectPath);
       if (fileInfo && fileInfo.exists) {
-        console.log("Base map successfully available at: " + mainProjectPath);
+        console.log("Project map successfully available at: " + mainProjectPath);
       } else {
-        console.log("Base map still not available at: " + mainProjectPath);
+        console.log("Project map still not available at: " + mainProjectPath);
       }
     } else {
-      console.log("Base map found at: " + mainProjectPath);
+      console.log("Project map found at: " + mainProjectPath);
     }
   }
 
