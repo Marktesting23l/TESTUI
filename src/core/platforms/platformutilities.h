@@ -340,9 +340,9 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     Q_INVOKABLE void copySigpacBaseMap();
 
     /**
-     * Copies the SIGPACGO Main Map project to the app's data location
+     * Copy the main map project
      */
-    Q_INVOKABLE void copyMainMapProject();
+    Q_INVOKABLE virtual void copyMainMapProject();
 
     static PlatformUtilities *instance();
 

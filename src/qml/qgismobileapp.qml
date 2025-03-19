@@ -6133,7 +6133,6 @@ ApplicationWindow {
         }
     
         onFinished: (path) => {
-          close()
           savePhoto(path)
         }
     

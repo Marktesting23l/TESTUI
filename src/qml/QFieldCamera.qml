@@ -108,6 +108,16 @@ Popup {
     // GPS accuracy thresholds (in meters)
     property real accuracyThresholdGood: 5.0
     property real accuracyThresholdModerate: 20.0
+    
+    // Force update of infoText when folder name changes
+    onFolderNameChanged: {
+      if (infoText) {
+        // Force a refresh by temporarily clearing and then restoring the binding
+        let temp = infoText.text
+        infoText.text = ""
+        infoText.text = temp
+      }
+    }
   }
 
   // Dialog for setting folder name
@@ -699,7 +709,7 @@ Popup {
         }
         
         Timer {
-          interval: 1000
+          interval: 500
           running: infoOverlay.visible
           repeat: true
           onTriggered: {
@@ -1792,6 +1802,7 @@ Popup {
     height: dateStamp.height + 10 // Increased height to fully show the date
     width: parent.width
     anchors.bottom: parent.bottom
+    anchors.bottomMargin: 15 // Add some margin to the bottom to move it lower
   }
 
   // Improved rectangular accuracy indicator for camera
