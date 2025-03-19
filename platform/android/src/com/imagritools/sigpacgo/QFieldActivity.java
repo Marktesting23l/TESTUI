@@ -226,17 +226,41 @@ public class QFieldActivity extends QtActivity {
         
         // Copy sample projects if they exist
         try {
-            String[] sampleProjects = assetManager.list("resources/sample_projects");
-            if (sampleProjects != null && sampleProjects.length > 0) {
-                Log.i("QField", "Found " + sampleProjects.length + " sample projects to copy");
-                for (String project : sampleProjects) {
-                    Log.i("QField", "Copying sample project: " + project);
-                    copyAssetFolder("resources/sample_projects/" + project, 
-                                   sampleProjectsDir.getAbsolutePath() + "/" + project);
+            File qfieldDir = new File(internalAppDir, "qfield");
+            if (!qfieldDir.exists()) {
+                qfieldDir.mkdirs();
+                Log.i("QField", "Created qfield directory: " + qfieldDir.getAbsolutePath());
+            }
+            
+            File qfieldSampleProjectsDir = new File(qfieldDir, "sample_projects");
+            if (!qfieldSampleProjectsDir.exists()) {
+                qfieldSampleProjectsDir.mkdirs();
+                Log.i("QField", "Created qfield/sample_projects directory: " + qfieldSampleProjectsDir.getAbsolutePath());
+            }
+            
+            String[] paths = {"resources/sample_projects", "qfield/sample_projects"};
+            
+            for (String path : paths) {
+                try {
+                    String[] sampleProjects = assetManager.list(path);
+                    if (sampleProjects != null && sampleProjects.length > 0) {
+                        Log.i("QField", "Found " + sampleProjects.length + " sample projects in " + path);
+                        for (String project : sampleProjects) {
+                            Log.i("QField", "Copying sample project: " + project);
+                            copyAssetFolder(path + "/" + project, 
+                                           sampleProjectsDir.getAbsolutePath() + "/" + project);
+                            
+                            if (path.equals("resources/sample_projects")) {
+                                copyAssetFolder(path + "/" + project, 
+                                               qfieldSampleProjectsDir.getAbsolutePath() + "/" + project);
+                            }
+                        }
+                        Log.i("QField", "Sample projects copied successfully from " + path);
+                        break; 
+                    }
+                } catch (IOException e) {
+                    Log.w("QField", "No sample projects found in " + path + ": " + e.getMessage());
                 }
-                Log.i("QField", "Sample projects copied successfully");
-            } else {
-                Log.w("QField", "No sample projects found in assets");
             }
         } catch (IOException e) {
             Log.e("QField", "Error copying sample projects: " + e.getMessage());
