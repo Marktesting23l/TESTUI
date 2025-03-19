@@ -247,21 +247,26 @@ public class QFieldActivity extends QtActivity {
                     String[] sampleProjects = assetManager.list(path);
                     if (sampleProjects != null && sampleProjects.length > 0) {
                         Log.i("QField", "Found " + sampleProjects.length + " sample projects in " + path);
-                        for (String project : sampleProjects) {
-                            Log.i("QField", "Copying sample project: " + project);
-                            try {
-                                copyAssetFolder(path + "/" + project, 
-                                            sampleProjectsDir.getAbsolutePath() + "/" + project);
+                        
+                        // First, handle all items (files and directories) in the sample_projects directory
+                        for (String item : sampleProjects) {
+                            String sourcePath = path + "/" + item;
+                            String targetPath = sampleProjectsDir.getAbsolutePath() + "/" + item;
+                            Log.i("QField", "Copying sample project item: " + item);
                             
+                            try {
+                                // This will check if it's a file or folder and copy appropriately
+                                copyAssetFolder(sourcePath, targetPath);
+                                
                                 // Also copy to qfield directory if we found them in resources/sample_projects
                                 if (path.equals("resources/sample_projects")) {
-                                    copyAssetFolder(path + "/" + project, 
-                                                qfieldSampleProjectsDir.getAbsolutePath() + "/" + project);
+                                    copyAssetFolder(sourcePath, qfieldSampleProjectsDir.getAbsolutePath() + "/" + item);
                                 }
                             } catch (IOException e) {
-                                Log.e("QField", "Error copying project " + project + ": " + e.getMessage());
+                                Log.e("QField", "Error copying project item " + item + ": " + e.getMessage());
                             }
                         }
+                        
                         Log.i("QField", "Sample projects copied successfully from " + path);
                         break; // Exit the loop if we found and copied projects
                     }
