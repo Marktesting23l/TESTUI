@@ -353,10 +353,31 @@ public class QFieldActivity extends QtActivity {
                             }
                             
                             try {
-                                copyAssetFolder(sourcePath, targetPath);
+                                copyAssetFile(sourcePath, targetPath);
                                 Log.i("SIGPACGO", "Copied main map file: " + item);
                             } catch (IOException e) {
                                 Log.e("SIGPACGO", "Error copying main map file " + item + ": " + e.getMessage());
+                                
+                                // Try direct file copy as a backup method
+                                try {
+                                    InputStream in = assetManager.open(sourcePath);
+                                    File outFile = new File(targetPath);
+                                    outFile.getParentFile().mkdirs();
+                                    
+                                    FileOutputStream out = new FileOutputStream(outFile);
+                                    byte[] buffer = new byte[8192]; // Larger buffer for better performance
+                                    int read;
+                                    while ((read = in.read(buffer)) != -1) {
+                                        out.write(buffer, 0, read);
+                                    }
+                                    in.close();
+                                    out.flush();
+                                    out.close();
+                                    
+                                    Log.i("SIGPACGO", "Successfully copied main map via direct method: " + sourcePath);
+                                } catch (IOException ex) {
+                                    Log.e("SIGPACGO", "Also failed with direct copy: " + ex.getMessage());
+                                }
                             }
                         }
                         
@@ -365,6 +386,29 @@ public class QFieldActivity extends QtActivity {
                     }
                 } catch (IOException e) {
                     Log.w("SIGPACGO", "No main map files found in " + path + ": " + e.getMessage());
+                }
+            }
+            
+            // Verify the main map file exists, if not try to copy directly
+            File mainMapFile = new File(sigpacgoMainDir, "SIGPACGO_Mapa_Principal.qgz");
+            if (!mainMapFile.exists() || mainMapFile.length() == 0) {
+                Log.w("SIGPACGO", "Main map file not found after processing, trying direct approach");
+                
+                // Try direct asset file copy
+                String[] directPaths = {
+                    "resources/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz",
+                    "resources/SIGPACGO Principal/SIGPACGO_Principal.qgz",
+                    "SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz"
+                };
+                
+                for (String directPath : directPaths) {
+                    try {
+                        copyAssetFile(directPath, mainMapFile.getAbsolutePath());
+                        Log.i("SIGPACGO", "Successfully copied main map via direct file path: " + directPath);
+                        break;
+                    } catch (IOException e) {
+                        Log.d("SIGPACGO", "Failed direct file copy from: " + directPath);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -758,9 +802,80 @@ public class QFieldActivity extends QtActivity {
     }
 
     private void dismissBlockingProgressDialog() {
-        if (progressDialog != null) {
+        if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
             progressDialog = null;
+        }
+    }
+
+    /**
+     * Directly copies the main map file from assets to the specified destination
+     * Used as a fallback method called from C++ when other copy methods fail
+     */
+    private void copyMainMapFile(String destPath) {
+        Log.i("SIGPACGO", "Explicitly copying main map file to: " + destPath);
+        
+        try {
+            // Try all possible source paths in assets
+            String[] possibleSources = {
+                "resources/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz",
+                "resources/SIGPACGO Principal/SIGPACGO_Principal.qgz",
+                "sigpacgo/main_project/SIGPACGO_Mapa_Principal.qgz",
+                "SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz"
+            };
+            
+            AssetManager assetManager = getAssets();
+            boolean copied = false;
+            
+            for (String sourcePath : possibleSources) {
+                try {
+                    // Try to open the file to check if it exists
+                    InputStream testStream = assetManager.open(sourcePath);
+                    testStream.close();
+                    
+                    // If we get here, the file exists, so copy it
+                    copyAssetFile(sourcePath, destPath);
+                    Log.i("SIGPACGO", "Successfully copied main map from: " + sourcePath);
+                    copied = true;
+                    break;
+                } catch (IOException e) {
+                    Log.d("SIGPACGO", "Source path not found: " + sourcePath);
+                }
+            }
+            
+            if (!copied) {
+                // Last resort: try to copy one of the sample projects as the main map
+                String sampleProjectsDir = getFilesDir().getAbsolutePath() + "/sample_projects";
+                File samplesDir = new File(sampleProjectsDir);
+                if (samplesDir.exists() && samplesDir.isDirectory()) {
+                    File[] files = samplesDir.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            if (file.getName().endsWith(".qgz") || file.getName().endsWith(".qgs")) {
+                                try (FileInputStream in = new FileInputStream(file);
+                                     FileOutputStream out = new FileOutputStream(destPath)) {
+                                    byte[] buf = new byte[1024];
+                                    int len;
+                                    while ((len = in.read(buf)) > 0) {
+                                        out.write(buf, 0, len);
+                                    }
+                                    Log.i("SIGPACGO", "Copied sample project as main map: " + file.getName());
+                                    copied = true;
+                                    break;
+                                } catch (IOException e) {
+                                    Log.e("SIGPACGO", "Error copying sample as main map: " + e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (!copied) {
+                Log.e("SIGPACGO", "Failed to copy main map file - all methods exhausted");
+            }
+        } catch (Exception e) {
+            Log.e("SIGPACGO", "Error in copyMainMapFile: " + e.getMessage());
         }
     }
 
@@ -768,12 +883,15 @@ public class QFieldActivity extends QtActivity {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                AlertDialog alertDialog =
-                    new AlertDialog
-                        .Builder(QFieldActivity.this, R.style.DialogTheme)
-                        .create();
+                AlertDialog alertDialog = new AlertDialog.Builder(QFieldActivity.this).create();
                 alertDialog.setTitle(title);
                 alertDialog.setMessage(message);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
                 alertDialog.show();
             }
         });

@@ -140,6 +140,72 @@ void AndroidPlatformUtilities::afterUpdate()
       qDebug() << "Successfully copied sample projects to" << sampleProjectsDir;
     }
   }
+  
+  // Ensure sigpacgo_main directory exists and contains the main map
+  const QString sigpacgoMainDir = systemLocalDataLocation("sigpacgo_main");
+  QDir mainDir(sigpacgoMainDir);
+  if (!mainDir.exists()) {
+    mainDir.mkpath(".");
+  }
+  
+  // Check if the main map file already exists
+  QString mainMapPath = sigpacgoMainDir + "/SIGPACGO_Mapa_Principal.qgz";
+  if (!QFile::exists(mainMapPath)) {
+    qDebug() << "SIGPACGO_Mapa_Principal.qgz not found at" << mainMapPath << ", attempting to copy it";
+    
+    // Try several possible source paths
+    QStringList sourcePaths;
+    sourcePaths << "assets:/resources/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz";
+    sourcePaths << systemSharedDataLocation() + "/resources/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz";
+    sourcePaths << "assets:/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz";
+    
+    bool copySuccess = false;
+    for (const QString &sourcePath : sourcePaths) {
+      if (QFile::exists(sourcePath)) {
+        copySuccess = QFile::copy(sourcePath, mainMapPath);
+        if (copySuccess) {
+          qDebug() << "Successfully copied main map from" << sourcePath << "to" << mainMapPath;
+          break;
+        } else {
+          qWarning() << "Failed to copy main map from" << sourcePath << "to" << mainMapPath;
+        }
+      } else {
+        qDebug() << "Source path does not exist:" << sourcePath;
+      }
+    }
+    
+    // If direct file copying failed, try to use FileUtils::copyRecursively
+    if (!copySuccess) {
+      QStringList sourceDirPaths;
+      sourceDirPaths << "assets:/resources/SIGPACGO Mapa Principal";
+      sourceDirPaths << systemSharedDataLocation() + "/resources/SIGPACGO Mapa Principal";
+      
+      for (const QString &sourceDirPath : sourceDirPaths) {
+        if (QDir(sourceDirPath).exists()) {
+          copySuccess = FileUtils::copyRecursively(sourceDirPath, sigpacgoMainDir);
+          if (copySuccess) {
+            qDebug() << "Successfully copied main map directory from" << sourceDirPath << "to" << sigpacgoMainDir;
+            break;
+          } else {
+            qWarning() << "Failed to copy main map directory from" << sourceDirPath << "to" << sigpacgoMainDir;
+          }
+        }
+      }
+    }
+    
+    // If we still failed, try using the Java method directly
+    if (!copySuccess && mActivity.isValid()) {
+      runOnAndroidMainThread([mainMapPath] {
+        auto activity = qtAndroidContext();
+        if (activity.isValid()) {
+          QJniObject destPathJni = QJniObject::fromString(mainMapPath);
+          activity.callMethod<void>("copyMainMapFile", "(Ljava/lang/String;)V", destPathJni.object<jstring>());
+        }
+      });
+    }
+  } else {
+    qDebug() << "SIGPACGO_Mapa_Principal.qgz already exists at" << mainMapPath;
+  }
 }
 
 QString AndroidPlatformUtilities::systemSharedDataLocation() const

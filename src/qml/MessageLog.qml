@@ -117,14 +117,14 @@ Page {
       visible: false
     }
 
-    QfButton {
-      text: qsTr("Log runtime profiler")
-      Layout.fillWidth: true
+    //QfButton {
+    //  text: qsTr("Log runtime profiler")
+    //  Layout.fillWidth: true
 
-      onClicked: {
-        iface.logRuntimeProfiler();
-      }
-    }
+    //  onClicked: {
+    //    iface.logRuntimeProfiler();
+    //  }
+    //}
 
     QfButton {
       text: qsTr("Clear message log")

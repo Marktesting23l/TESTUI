@@ -32,11 +32,27 @@ Popup {
     property bool termsAccepted: false
   }
   
-  // Check if terms have been accepted before
+  // Check if terms have been accepted before, but use a timer to delay opening
   Component.onCompleted: {
     accepted = termsSettings.termsAccepted
+    // Use a timer to delay opening the popup to prevent UI blocking
     if (!accepted) {
-      open()
+      openTimer.start()
+      console.log("Terms and conditions will open after a short delay")
+    }
+  }
+  
+  // Timer to delay opening the popup
+  Timer {
+    id: openTimer
+    interval: 500 // Half second delay to avoid black screen
+    running: false
+    repeat: false
+    onTriggered: {
+      if (!termsAndConditionsPopup.accepted) {
+        termsAndConditionsPopup.open()
+        console.log("Terms and conditions opened after delay")
+      }
     }
   }
   

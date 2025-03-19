@@ -82,10 +82,35 @@ Page {
     property string phrasesFilePath: ''
   }
 
-  // Add Terms and Conditions popup
-  TermsAndConditions {
-    id: termsAndConditions
-    parent: Overlay.overlay
+  // Add Terms and Conditions popup with lazy loading
+  Loader {
+    id: termsAndConditionsLoader
+    active: false  // Don't load immediately
+    source: "TermsAndConditions.qml"
+    asynchronous: true  // Load asynchronously to prevent UI blocking
+    
+    onLoaded: {
+      item.parent = Overlay.overlay;
+      console.log("Terms and conditions loaded successfully");
+    }
+  }
+
+  // Function to show terms and conditions
+  function showTermsAndConditions() {
+    // Load if not already loaded
+    if (!termsAndConditionsLoader.active) {
+      termsAndConditionsLoader.active = true;
+    }
+    
+    // Once loaded, show the component
+    if (termsAndConditionsLoader.status === Loader.Ready) {
+      termsAndConditionsLoader.item.open();
+    } else {
+      // If not ready yet, wait until loaded then show
+      termsAndConditionsLoader.onLoaded.connect(function() {
+        termsAndConditionsLoader.item.open();
+      });
+    }
   }
 
   Rectangle {
@@ -489,20 +514,52 @@ Page {
                   Material.accent: "#4CAF50" // Green accent to match container theme
                   highlighted: true
                   onClicked: {
+                    // Always attempt to open the main map first
+                    let mainMapPath;
+                    if (Qt.platform.os === "android" || Qt.platform.os === "ios") {
+                      mainMapPath = platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO_Mapa_Principal.qgz";
+                    } else {
+                      mainMapPath = platformUtilities.systemLocalDataLocation("sigpacgo_main") + "/SIGPACGO_Mapa_Principal.qgz";
+                    }
+                    
+                    // Check if main map exists
+                    let mainMapInfo = platformUtilities.getFileInfo(mainMapPath);
+                    if (mainMapInfo && mainMapInfo.exists) {
+                      iface.loadFile(mainMapPath, qsTr("Mapa Principal SIGPAC-Go"));
+                      console.log("Loading main map: " + mainMapPath);
+                      return;
+                    }
+                    
+                    // If main map doesn't exist, try current path (which might be base map)
                     let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
                     if (fileInfo && fileInfo.exists) {
                       iface.loadFile(mainProjectPath, mainProjectTitle);
+                      console.log("Loading base map: " + mainProjectPath);
                     } else {
                       // Try to copy maps if not exists
                       platformUtilities.copyMainMapProject();
                       platformUtilities.copySigpacBaseMap();
                       
-                      // Check again
+                      // Check again for main map
+                      mainMapInfo = platformUtilities.getFileInfo(mainMapPath);
+                      if (mainMapInfo && mainMapInfo.exists) {
+                        iface.loadFile(mainMapPath, qsTr("Mapa Principal SIGPAC-Go"));
+                        console.log("Loading main map after copy: " + mainMapPath);
+                        return;
+                      }
+                      
+                      // Fall back to base map
                       fileInfo = platformUtilities.getFileInfo(mainProjectPath);
                       if (fileInfo && fileInfo.exists) {
                         iface.loadFile(mainProjectPath, mainProjectTitle);
+                        console.log("Loading base map after copy: " + mainProjectPath);
                       } else {
-                        displayToast(qsTr("No se encontró el mapa. Por favor reinstale la aplicación."));
+                        console.log("No map found after copy attempts");
+                        if (typeof displayToast === 'function') {
+                          displayToast(qsTr("No se encontró el mapa. Por favor reinstale la aplicación."));
+                        } else {
+                          console.log("Error: No map found. Please reinstall the application.");
+                        }
                       }
                     }
                   }
@@ -514,7 +571,54 @@ Page {
             MouseArea {
               anchors.fill: parent
               onClicked: {
-                iface.loadFile(mainProjectPath, mainProjectTitle);
+                // Always attempt to open the main map first
+                let mainMapPath;
+                if (Qt.platform.os === "android" || Qt.platform.os === "ios") {
+                  mainMapPath = platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO_Mapa_Principal.qgz";
+                } else {
+                  mainMapPath = platformUtilities.systemLocalDataLocation("sigpacgo_main") + "/SIGPACGO_Mapa_Principal.qgz";
+                }
+                
+                // Check if main map exists
+                let mainMapInfo = platformUtilities.getFileInfo(mainMapPath);
+                if (mainMapInfo && mainMapInfo.exists) {
+                  iface.loadFile(mainMapPath, qsTr("Mapa Principal SIGPAC-Go"));
+                  console.log("Loading main map: " + mainMapPath);
+                  return;
+                }
+                
+                // If main map doesn't exist, try current path (which might be base map)
+                let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+                if (fileInfo && fileInfo.exists) {
+                  iface.loadFile(mainProjectPath, mainProjectTitle);
+                  console.log("Loading base map: " + mainProjectPath);
+                } else {
+                  // Try to copy maps if not exists
+                  platformUtilities.copyMainMapProject();
+                  platformUtilities.copySigpacBaseMap();
+                  
+                  // Check again for main map
+                  mainMapInfo = platformUtilities.getFileInfo(mainMapPath);
+                  if (mainMapInfo && mainMapInfo.exists) {
+                    iface.loadFile(mainMapPath, qsTr("Mapa Principal SIGPAC-Go"));
+                    console.log("Loading main map after copy: " + mainMapPath);
+                    return;
+                  }
+                  
+                  // Fall back to base map
+                  fileInfo = platformUtilities.getFileInfo(mainProjectPath);
+                  if (fileInfo && fileInfo.exists) {
+                    iface.loadFile(mainProjectPath, mainProjectTitle);
+                    console.log("Loading base map after copy: " + mainProjectPath);
+                  } else {
+                    console.log("No map found after copy attempts");
+                    if (typeof displayToast === 'function') {
+                      displayToast(qsTr("No se encontró el mapa. Por favor reinstale la aplicación."));
+                    } else {
+                      console.log("Error: No map found. Please reinstall the application.");
+                    }
+                  }
+                }
               }
             }
           }
