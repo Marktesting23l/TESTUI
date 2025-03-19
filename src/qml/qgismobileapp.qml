@@ -3355,8 +3355,8 @@ ApplicationWindow {
         }
     
         onFinished: (path) => {
-          close()
-          snap(path)
+          // Don't close the camera after taking a photo
+          savePhoto(path)
         }
     
         onCanceled: {

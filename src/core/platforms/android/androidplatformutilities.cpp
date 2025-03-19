@@ -141,70 +141,43 @@ void AndroidPlatformUtilities::afterUpdate()
     }
   }
   
-  // Ensure sigpacgo_main directory exists and contains the main map
-  const QString sigpacgoMainDir = systemLocalDataLocation("sigpacgo_main");
-  QDir mainDir(sigpacgoMainDir);
-  if (!mainDir.exists()) {
-    mainDir.mkpath(".");
+  // Ensure SIGPACGO Mapa Principal directory exists and is populated
+  // Using exactly the same pattern as sample projects
+  const QString mapaDir = systemLocalDataLocation("SIGPACGO Mapa Principal");
+  QDir mapaMainDir(mapaDir);
+  if (!mapaMainDir.exists()) {
+    mapaMainDir.mkpath(".");
+    
+    // Force copy main map using the same pattern as sample projects
+    const bool success = FileUtils::copyRecursively(
+      systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO Mapa Principal"), 
+      mapaDir
+    );
+    
+    if (!success) {
+      qWarning() << "Failed to copy SIGPACGO Mapa Principal to" << mapaDir;
+    } else {
+      qDebug() << "Successfully copied SIGPACGO Mapa Principal to" << mapaDir;
+    }
   }
   
-  // Check if the main map file already exists
-  QString mainMapPath = sigpacgoMainDir + "/SIGPACGO_Mapa_Principal.qgz";
-  if (!QFile::exists(mainMapPath)) {
-    qDebug() << "SIGPACGO_Mapa_Principal.qgz not found at" << mainMapPath << ", attempting to copy it";
+  // Ensure sigpacgo_base directory exists and is populated
+  const QString baseDir = systemLocalDataLocation("sigpacgo_base");
+  QDir baseMapDir(baseDir);
+  if (!baseMapDir.exists()) {
+    baseMapDir.mkpath(".");
     
-    // Try several possible source paths
-    QStringList sourcePaths;
-    sourcePaths << "assets:/resources/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz";
-    sourcePaths << systemSharedDataLocation() + "/resources/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz";
-    sourcePaths << "assets:/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz";
+    // Force copy base map using the same pattern
+    const bool success = FileUtils::copyRecursively(
+      systemSharedDataLocation() + QLatin1String("/resources/sigpacgo_base"), 
+      baseDir
+    );
     
-    bool copySuccess = false;
-    for (const QString &sourcePath : sourcePaths) {
-      if (QFile::exists(sourcePath)) {
-        copySuccess = QFile::copy(sourcePath, mainMapPath);
-        if (copySuccess) {
-          qDebug() << "Successfully copied main map from" << sourcePath << "to" << mainMapPath;
-          break;
-        } else {
-          qWarning() << "Failed to copy main map from" << sourcePath << "to" << mainMapPath;
-        }
-      } else {
-        qDebug() << "Source path does not exist:" << sourcePath;
-      }
+    if (!success) {
+      qWarning() << "Failed to copy sigpacgo_base to" << baseDir;
+    } else {
+      qDebug() << "Successfully copied sigpacgo_base to" << baseDir;
     }
-    
-    // If direct file copying failed, try to use FileUtils::copyRecursively
-    if (!copySuccess) {
-      QStringList sourceDirPaths;
-      sourceDirPaths << "assets:/resources/SIGPACGO Mapa Principal";
-      sourceDirPaths << systemSharedDataLocation() + "/resources/SIGPACGO Mapa Principal";
-      
-      for (const QString &sourceDirPath : sourceDirPaths) {
-        if (QDir(sourceDirPath).exists()) {
-          copySuccess = FileUtils::copyRecursively(sourceDirPath, sigpacgoMainDir);
-          if (copySuccess) {
-            qDebug() << "Successfully copied main map directory from" << sourceDirPath << "to" << sigpacgoMainDir;
-            break;
-          } else {
-            qWarning() << "Failed to copy main map directory from" << sourceDirPath << "to" << sigpacgoMainDir;
-          }
-        }
-      }
-    }
-    
-    // If we still failed, try using the Java method directly
-    if (!copySuccess && mActivity.isValid()) {
-      runOnAndroidMainThread([mainMapPath] {
-        auto activity = qtAndroidContext();
-        if (activity.isValid()) {
-          QJniObject destPathJni = QJniObject::fromString(mainMapPath);
-          activity.callMethod<void>("copyMainMapFile", "(Ljava/lang/String;)V", destPathJni.object<jstring>());
-        }
-      });
-    }
-  } else {
-    qDebug() << "SIGPACGO_Mapa_Principal.qgz already exists at" << mainMapPath;
   }
 }
 
@@ -823,8 +796,6 @@ QVariantMap AndroidPlatformUtilities::sceneMargins( QQuickWindow *window ) const
   margins[QLatin1String( "left" )] = 0.0;
   return margins;
 }
-
-
 
 bool AndroidPlatformUtilities::isSystemDarkTheme() const
 {

@@ -110,6 +110,16 @@ Popup {
     // GPS accuracy thresholds (in meters)
     property real accuracyThresholdGood: 5.0
     property real accuracyThresholdModerate: 20.0
+    
+    // Force a refresh of the info text when folder name changes
+    onFolderNameChanged: {
+      if (infoText) {
+        // Force the infoText to update by clearing and resetting
+        let existingBinding = infoText.text
+        infoText.text = ""
+        infoText.text = existingBinding
+      }
+    }
   }
 
   // Dialog for setting folder name
@@ -319,7 +329,8 @@ Popup {
                 "backgroundColor": cameraSettings.stampBackgroundColor,
                 "fontSize": cameraSettings.stampFontSize,
                 "padding": 10,
-                "position": "bottomLeft" // Position in the image
+                "position": "bottomLeft", // Position in the image
+                "marginBottom": 30 // Add margin to move stamp text lower
               };
               FileUtils.addImageStamp(path, stampText, styledStamp);
             }
@@ -745,13 +756,18 @@ Popup {
         }
         
         Timer {
-          interval: 1000
+          interval: 500 // Faster update interval
           running: infoOverlay.visible
           repeat: true
           onTriggered: {
             // Force update of the bindings
             dateTimeText.text = dateTimeText.text
-            infoText.text = infoText.text
+            
+            // Always ensure the folder name is current by forcing refresh
+            let updatedText = infoText.text
+            infoText.text = ""
+            infoText.text = updatedText
+            
             if (compassIndicator.visible) {
               compassNeedle.rotation = positionSource.positionInformation.orientation
             }
@@ -998,7 +1014,8 @@ Popup {
                         "backgroundColor": cameraSettings.stampBackgroundColor,
                         "fontSize": cameraSettings.stampFontSize,
                         "padding": 10,
-                        "position": "bottomLeft" // Position in the image
+                        "position": "bottomLeft", // Position in the image
+                        "marginBottom": 30 // Add margin to move stamp text lower
                       };
                       FileUtils.addImageStamp(currentPath, stampText, styledStamp);
                     }
@@ -1464,6 +1481,11 @@ Popup {
                   
                   // Create the folder if it doesn't exist
                   platformUtilities.createDir(qgisProject.homePath, cameraSettings.folderName)
+                  
+                  // Force the info overlay to refresh immediately
+                  if (infoText) {
+                    infoText.text = infoText.text // Trigger binding refresh
+                  }
                 }
               }
               
@@ -1562,7 +1584,7 @@ Popup {
                   TextField {
                     id: prefixField
                     width: parent.width
-                    height: 40
+                    height: 50
                     text: cameraSettings.photoPrefix
                     placeholderText: qsTr("e.g., Nave1, Field3, Plot5")
                     font.pixelSize: 18
@@ -1857,6 +1879,7 @@ Popup {
     height: dateStamp.height + 10 // Increased height to fully show the date
     width: parent.width
     anchors.bottom: parent.bottom
+    anchors.bottomMargin: 30 // Move the stamp background lower on the screen
   }
 
   // Improved rectangular accuracy indicator for camera
