@@ -46,7 +46,7 @@ Dialog {
         spacing: 2
         
         Label {
-            text: qsTr("Información de Parcela SIGPAC")
+            text: qsTr("Información de Parcela/Recinto SIGPAC")
             font: Theme.strongTipFont
             color: Theme.mainTextColor
             horizontalAlignment: Text.AlignHCenter
@@ -80,6 +80,11 @@ Dialog {
     
     // Create the SIGPAC service when the dialog is created
     Component.onCompleted: {
+        if (typeof currentSrid === 'undefined' || currentSrid === null) {
+            console.log("Initializing currentSrid to default value in Component.onCompleted");
+            currentSrid = 4258;
+        }
+        
         try {
             // Create the SigpacService component
             var component = Qt.createComponent("SigpacService.qml");
@@ -124,6 +129,12 @@ Dialog {
         sigpacResults = null;
         errorMessage = "";
         
+        // Ensure currentSrid has a valid value
+        if (typeof currentSrid === 'undefined' || currentSrid === null) {
+            console.log("currentSrid was undefined, setting default value 4258");
+            currentSrid = 4258; // Default to ETRS89
+        }
+        
         // Query the SIGPAC service
         sigpacService.queryByCoordinates(currentSrid, currentX, currentY, "json");
     }
@@ -132,6 +143,11 @@ Dialog {
     function setCoordinates(x, y) {
         currentX = x;
         currentY = y;
+        
+        // Ensure currentSrid has a valid value before attempting to override
+        if (typeof currentSrid === 'undefined' || currentSrid === null) {
+            currentSrid = 4258; // Default to ETRS89
+        }
         
         // Try to get the SRID from the map settings if available
         try {

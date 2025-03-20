@@ -38,9 +38,21 @@ Popup {
     if (state == "PhotoCapture") {
       photoPreview.source = '';
       videoPreview.source = '';
+      // Clear annotations when returning to photo capture
+      if (annotationCanvas) {
+        annotationCanvas.clear();
+      }
+      if (annotationTextModel) {
+        annotationTextModel.clear();
+      }
     } else if (state == "VideoCapture") {
       photoPreview.source = '';
       videoPreview.source = '';
+    } else if (state == "PhotoAnnotation") {
+      // Initialize the canvas when entering annotation mode
+      if (annotationCanvas) {
+        annotationCanvas.requestPaint();
+      }
     }
   }
 
@@ -104,6 +116,12 @@ Popup {
     property string stampTextColor: "#FFFF00" // Yellow text for timestamp
     property string stampBackgroundColor: "#80000000" // Semi-transparent black background
     property int stampFontSize: 24 // Font size for timestamp
+    
+    // Drawing settings
+    property real brushSize: 5
+    property string brushColor: "#FF0000" // Red default color
+    property real textSize: 24
+    property string textColor: "#FFFFFF" // White default text color
     
     // GPS accuracy thresholds (in meters)
     property real accuracyThresholdGood: 5.0
@@ -297,7 +315,8 @@ Popup {
         onImageSaved: (requestId, path) => {
           currentPath = path;
           photoPreview.source = UrlUtils.fromString(path);
-          cameraItem.state = "PhotoPreview";
+          // Go to annotation mode first instead of directly to preview
+          cameraItem.state = "PhotoAnnotation";
         }
       }
       recorder: MediaRecorder {
@@ -824,7 +843,7 @@ Popup {
     Image {
       id: photoPreview
 
-      visible: cameraItem.state == "PhotoPreview"
+      visible: cameraItem.state == "PhotoPreview" || cameraItem.state == "PhotoAnnotation"
 
       anchors.fill: parent
 
@@ -1835,6 +1854,422 @@ Popup {
       color: "white"
       font.pixelSize: 8
       font.bold: true
+    }
+  }
+
+  // Photo Annotation Components
+  Item {
+    id: annotationContainer
+    anchors.fill: parent
+    visible: cameraItem.state == "PhotoAnnotation"
+    
+    // Canvas for drawing
+    Canvas {
+      id: annotationCanvas
+      anchors.fill: parent
+      
+      property point lastPoint
+      property bool drawing: false
+      
+      onPaint: {
+        var ctx = getContext("2d");
+        ctx.lineWidth = cameraSettings.brushSize;
+        ctx.strokeStyle = cameraSettings.brushColor;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+      }
+      
+      function clear() {
+        var ctx = getContext("2d");
+        ctx.reset();
+        requestPaint();
+      }
+      
+      MouseArea {
+        id: canvasMouseArea
+        anchors.fill: parent
+        enabled: !textInputActive && !colorPickerVisible
+        
+        onPressed: {
+          annotationCanvas.lastPoint = Qt.point(mouseX, mouseY);
+          annotationCanvas.drawing = true;
+        }
+        
+        onPositionChanged: {
+          if (annotationCanvas.drawing) {
+            var ctx = annotationCanvas.getContext("2d");
+            ctx.beginPath();
+            ctx.moveTo(annotationCanvas.lastPoint.x, annotationCanvas.lastPoint.y);
+            ctx.lineTo(mouseX, mouseY);
+            ctx.stroke();
+            annotationCanvas.lastPoint = Qt.point(mouseX, mouseY);
+            annotationCanvas.requestPaint();
+          }
+        }
+        
+        onReleased: {
+          annotationCanvas.drawing = false;
+        }
+      }
+    }
+    
+    // Text annotations
+    ListModel {
+      id: annotationTextModel
+    }
+    
+    Repeater {
+      model: annotationTextModel
+      
+      delegate: Text {
+        x: model.x
+        y: model.y
+        text: model.text
+        color: model.color
+        font.pixelSize: model.size
+        
+        MouseArea {
+          anchors.fill: parent
+          enabled: !textInputActive && !colorPickerVisible
+          drag.target: parent
+          
+          onClicked: {
+            if (mouse.button === Qt.RightButton) {
+              annotationTextModel.remove(index);
+            } else if (mouse.button === Qt.LeftButton && (mouse.modifiers & Qt.ControlModifier)) {
+              textInput.text = model.text;
+              cameraSettings.textColor = model.color;
+              cameraSettings.textSize = model.size;
+              textInput.visible = true;
+              textInput.forceActiveFocus();
+              textInputActive = true;
+              annotationTextModel.remove(index);
+            }
+          }
+        }
+      }
+    }
+    
+    // Text input
+    property bool textInputActive: false
+    property bool colorPickerVisible: false
+    
+    Rectangle {
+      id: textInputContainer
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: annotationToolbar.top
+      height: textInput.height + 20
+      color: "#80000000"
+      visible: annotationContainer.textInputActive
+      
+      TextInput {
+        id: textInput
+        anchors.centerIn: parent
+        width: parent.width - 40
+        color: cameraSettings.textColor
+        font.pixelSize: cameraSettings.textSize
+        focus: annotationContainer.textInputActive
+        
+        onAccepted: {
+          if (text.trim() !== "") {
+            annotationTextModel.append({
+              "text": text,
+              "x": (annotationContainer.width - width) / 2,
+              "y": (annotationContainer.height - height) / 2,
+              "color": cameraSettings.textColor,
+              "size": cameraSettings.textSize
+            });
+            text = "";
+            annotationContainer.textInputActive = false;
+          }
+        }
+      }
+    }
+    
+    // Color picker
+    Rectangle {
+      id: colorPicker
+      anchors.centerIn: parent
+      width: parent.width * 0.8
+      height: parent.height * 0.6
+      visible: annotationContainer.colorPickerVisible
+      color: "#333333"
+      radius: 10
+      
+      Column {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 20
+        
+        Text {
+          anchors.horizontalCenter: parent.horizontalCenter
+          text: qsTr("Select Color")
+          color: "white"
+          font.pixelSize: 24
+        }
+        
+        Flow {
+          width: parent.width
+          spacing: 10
+          
+          // Color buttons
+          Repeater {
+            model: ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFFFFF", "#000000"]
+            
+            delegate: Rectangle {
+              width: (colorPicker.width - 80) / 4
+              height: width
+              color: modelData
+              border.color: "white"
+              border.width: cameraSettings.brushColor === modelData || cameraSettings.textColor === modelData ? 3 : 1
+              
+              MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                  if (annotationToolbar.drawingMode) {
+                    cameraSettings.brushColor = modelData;
+                  } else {
+                    cameraSettings.textColor = modelData;
+                  }
+                  annotationContainer.colorPickerVisible = false;
+                }
+              }
+            }
+          }
+        }
+        
+        // Size slider
+        Column {
+          width: parent.width
+          spacing: 10
+          
+          Text {
+            text: qsTr(annotationToolbar.drawingMode ? "Brush Size" : "Text Size")
+            color: "white"
+            font.pixelSize: 18
+          }
+          
+          Slider {
+            id: sizeSlider
+            width: parent.width
+            from: annotationToolbar.drawingMode ? 1 : 12
+            to: annotationToolbar.drawingMode ? 30 : 48
+            value: annotationToolbar.drawingMode ? cameraSettings.brushSize : cameraSettings.textSize
+            
+            onValueChanged: {
+              if (annotationToolbar.drawingMode) {
+                cameraSettings.brushSize = value;
+              } else {
+                cameraSettings.textSize = value;
+              }
+            }
+          }
+        }
+        
+        // Close button
+        Button {
+          anchors.horizontalCenter: parent.horizontalCenter
+          text: qsTr("Close")
+          onClicked: {
+            annotationContainer.colorPickerVisible = false;
+          }
+        }
+      }
+    }
+    
+    // Annotation toolbar
+    Rectangle {
+      id: annotationToolbar
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
+      height: 70
+      color: "#80000000"
+      
+      property bool drawingMode: true
+      
+      Row {
+        anchors.centerIn: parent
+        spacing: 20
+        
+        // Drawing tool button
+        Rectangle {
+          width: 50
+          height: 50
+          radius: 25
+          color: annotationToolbar.drawingMode ? Theme.mainColor : "#555555"
+          
+          Image {
+            anchors.centerIn: parent
+            source: Theme.getThemeVectorIcon("ic_create_white_24dp")
+            width: 30
+            height: 30
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationToolbar.drawingMode = true;
+              annotationContainer.textInputActive = false;
+            }
+          }
+        }
+        
+        // Text tool button
+        Rectangle {
+          width: 50
+          height: 50
+          radius: 25
+          color: !annotationToolbar.drawingMode ? Theme.mainColor : "#555555"
+          
+          Text {
+            anchors.centerIn: parent
+            text: "T"
+            color: "white"
+            font.pixelSize: 30
+            font.bold: true
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationToolbar.drawingMode = false;
+              textInput.visible = true;
+              textInput.forceActiveFocus();
+              annotationContainer.textInputActive = true;
+            }
+          }
+        }
+        
+        // Color picker button
+        Rectangle {
+          width: 50
+          height: 50
+          radius: 25
+          color: "#555555"
+          
+          Rectangle {
+            anchors.centerIn: parent
+            width: 30
+            height: 30
+            radius: 15
+            color: annotationToolbar.drawingMode ? cameraSettings.brushColor : cameraSettings.textColor
+            border.color: "white"
+            border.width: 2
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationContainer.colorPickerVisible = true;
+            }
+          }
+        }
+        
+        // Clear button
+        Rectangle {
+          width: 50
+          height: 50
+          radius: 25
+          color: "#555555"
+          
+          Image {
+            anchors.centerIn: parent
+            source: Theme.getThemeVectorIcon("ic_delete_white_24dp")
+            width: 30
+            height: 30
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationCanvas.clear();
+              annotationTextModel.clear();
+            }
+          }
+        }
+        
+        // Done button
+        Rectangle {
+          width: 50
+          height: 50
+          radius: 25
+          color: Theme.mainColor
+          
+          Image {
+            anchors.centerIn: parent
+            source: Theme.getThemeVectorIcon("ic_check_white_24dp")
+            width: 30
+            height: 30
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              // Render annotations to the image
+              mergeAnnotationsWithImage();
+              cameraItem.state = "PhotoPreview";
+            }
+          }
+        }
+      }
+    }
+    
+    // Function to merge annotations with the image
+    function mergeAnnotationsWithImage() {
+      if (currentPath === '')
+        return;
+        
+      try {
+        // Create a temporary canvas to render the combined image
+        var tempCanvas = Qt.createQmlObject('import QtQuick; Canvas { visible: false }', annotationContainer, 'tempCanvas');
+        tempCanvas.width = photoPreview.sourceSize.width;
+        tempCanvas.height = photoPreview.sourceSize.height;
+        
+        tempCanvas.loadImage(currentPath);
+        
+        tempCanvas.available = true;
+        tempCanvas.renderTarget = Canvas.FramebufferObject;
+        tempCanvas.renderStrategy = Canvas.Cooperative;
+        
+        tempCanvas.onPaint = function() {
+          var ctx = tempCanvas.getContext('2d');
+          
+          // Draw the original image
+          ctx.drawImage(currentPath, 0, 0, tempCanvas.width, tempCanvas.height);
+          
+          // Scale context to match the canvas proportions
+          var scaleX = tempCanvas.width / annotationCanvas.width;
+          var scaleY = tempCanvas.height / annotationCanvas.height;
+          
+          // Draw the annotation canvas
+          ctx.save();
+          ctx.scale(scaleX, scaleY);
+          ctx.drawImage(annotationCanvas, 0, 0);
+          ctx.restore();
+          
+          // Draw text annotations
+          ctx.save();
+          for (var i = 0; i < annotationTextModel.count; i++) {
+            var item = annotationTextModel.get(i);
+            ctx.fillStyle = item.color;
+            ctx.font = item.size + "px sans-serif";
+            ctx.fillText(item.text, item.x * scaleX, item.y * scaleY);
+          }
+          ctx.restore();
+        };
+        
+        tempCanvas.requestPaint();
+        
+        // Save the combined image
+        tempCanvas.save(currentPath);
+        photoPreview.source = ""; // Clear and reload
+        photoPreview.source = UrlUtils.fromString(currentPath);
+        
+      } catch (e) {
+        console.error("Error merging annotations:", e);
+      }
     }
   }
 }

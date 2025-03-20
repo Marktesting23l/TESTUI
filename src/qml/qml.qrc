@@ -12,6 +12,8 @@
         <file>CodeReader.qml</file>
         <file>ConfirmationToolbar.qml</file>
         <file>CoordinateLocator.qml</file>
+        <file>CultivoDeclaradoDialog.qml</file>
+        <file>CultivoDeclaradoService.qml</file>
         <file>DashBoard.qml</file>
         <file>DigitizingToolbar.qml</file>
         <file>Dummy.qml</file>
@@ -131,6 +133,7 @@
         <file>SigpacService.qml</file>
         <file>SigpacDialog.qml</file>
         <file>Information.qml</file>
+        <file>DataOrigin.qml</file>
         <file>TermsAndConditions.qml</file>
     </qresource>
 </RCC>

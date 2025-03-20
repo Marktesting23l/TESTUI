@@ -29,8 +29,6 @@ import org.qgis
 import org.qfield
 import Theme
 
-import "qrc:/qml" as QFieldItems
-
 /**
  * \defgroup qml
  * \brief QField QML items
@@ -272,28 +270,13 @@ ApplicationWindow {
   }
 
   onToggleDigitizeMode: {
-    // First check if we're already in digitize mode
     if (stateMachine.state === "digitize") {
-      // Check if we're in the middle of digitizing
       if (digitizingToolbar.rubberbandModel && digitizingToolbar.rubberbandModel.vertexCount > 1) {
-        displayToast(qsTr("Finish or dismiss the digitizing feature before toggling to browse mode"));
+        displayToast(qsTr("Finish or dimiss the digitizing feature before toggling to browse mode"));
       } else {
-        // Clean up any digitizing state
-        if (digitizingToolbar.rubberbandModel) {
-          digitizingToolbar.rubberbandModel.reset();
-        }
-        
-        // Change to browse mode
         changeMode("browse");
       }
     } else {
-      // Check if we have an editable layer before entering digitize mode
-      if (!dashBoard.ensureEditableLayerSelected()) {
-        displayToast(qsTr("No editable layers found. Cannot enter digitize mode."), "warning");
-        return;
-      }
-      
-      // Change to digitize mode
       changeMode("digitize");
     }
   }
@@ -301,34 +284,19 @@ ApplicationWindow {
   onChangeMode: mode => {
     if (stateMachine.state === mode)
       return;
-    
-    console.log("Changing mode from " + stateMachine.state + " to " + mode);
-    
-    // Store the previous state
     stateMachine.lastState = stateMachine.state;
     stateMachine.state = mode;
-    
-    // Handle mode-specific actions
     switch (stateMachine.state) {
     case 'browse':
       projectInfo.stateMode = mode;
       platformUtilities.setHandleVolumeKeys(false);
-      
-      // Ensure digitizing components are properly reset
-      if (digitizingToolbar.rubberbandModel) {
-        digitizingToolbar.rubberbandModel.reset();
-      }
-      
       displayToast(qsTr('You are now in browse mode'));
       break;
     case 'digitize':
       projectInfo.stateMode = mode;
       platformUtilities.setHandleVolumeKeys(qfieldSettings.digitizingVolumeKeys);
-      
-      // Ensure we have a valid editable layer
-      var hasEditableLayer = dashBoard.ensureEditableLayerSelected();
-      
-      if (hasEditableLayer && dashBoard.activeLayer) {
+      dashBoard.ensureEditableLayerSelected();
+      if (dashBoard.activeLayer) {
         displayToast(qsTr('You are now in digitize mode on layer %1').arg(dashBoard.activeLayer.name));
       } else {
         displayToast(qsTr('You are now in digitize mode'));
@@ -551,13 +519,9 @@ ApplicationWindow {
 
         // when hovering various toolbars, reset coordinate locator position for nicer UX
         if (!freehandHandler.active && (pointInItem(point, digitizingToolbar) || pointInItem(point, elevationProfileButton))) {
-          if (digitizingToolbar.rubberbandModel) {
-            coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(digitizingToolbar.rubberbandModel.lastCoordinate);
-          }
+          coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(digitizingToolbar.rubberbandModel.lastCoordinate);
         } else if (!freehandHandler.active && pointInItem(point, geometryEditorsToolbar)) {
-          if (geometryEditorsToolbar.editorRubberbandModel) {
-            coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(geometryEditorsToolbar.editorRubberbandModel.lastCoordinate);
-          }
+          coordinateLocator.sourceLocation = mapCanvas.mapSettings.coordinateToScreen(geometryEditorsToolbar.editorRubberbandModel.lastCoordinate);
         } else if (!freehandHandler.active) {
           // after a click, it seems that the position is sent once at 0,0 => weird)
           if (point.position !== Qt.point(0, 0)) {
@@ -665,7 +629,7 @@ ApplicationWindow {
     MapCanvas {
       id: mapCanvasMap
 
-      property bool isEnabled: !dashBoard.opened && !aboutDialog.visible && !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !sketcher.visible && !overlayFeatureFormDrawer.visible && !rotateFeaturesToolbar.rotateFeaturesRequested
+      property bool isEnabled: !dashBoard.opened && !aboutDialog.visible && !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !qfieldCloudScreen.visible && !qfieldCloudPopup.visible && !codeReader.visible && !sketcher.visible && !overlayFeatureFormDrawer.visible && !rotateFeaturesToolbar.rotateFeaturesRequested
       interactive: isEnabled && !screenLocker.enabled && !snapToCommonAngleMenu.visible
       isMapRotationEnabled: qfieldSettings.enableMapRotation
       incrementalRendering: true
@@ -1071,17 +1035,17 @@ ApplicationWindow {
     onIsWithinChanged: {
       if (behavior == Geofencer.AlertWhenInsideGeofencedArea && geofencer.isWithin) {
         platformUtilities.vibrate(longVibration);
-        displayToast(qsTr("Position has trespassed into '%1'").arg(isWithinAreaName), 'error');
+        displayToast(qsTr("Position has trespassed into ‘%1’").arg(isWithinAreaName), 'error');
       } else if (behavior == Geofencer.AlertWhenOutsideGeofencedArea && !geofencer.isWithin) {
         platformUtilities.vibrate(longVibration);
-        displayToast(qsTr("Position outside areas after leaving '%1'").arg(lastWithinAreaName), 'error');
+        displayToast(qsTr("Position outside areas after leaving ‘%1’").arg(lastWithinAreaName), 'error');
       } else if (behavior == Geofencer.InformWhenEnteringLeavingGeofencedArea) {
         if (isWithin) {
           platformUtilities.vibrate(shortVibration);
-          displayToast(qsTr("Position entered into '%1'").arg(isWithinAreaName));
+          displayToast(qsTr("Position entered into ‘%1’").arg(isWithinAreaName));
         } else if (lastWithinAreaName != '') {
           platformUtilities.vibrate(shortVibration);
-          displayToast(qsTr("Position left from '%1'").arg(lastWithinAreaName));
+          displayToast(qsTr("Position left from ‘%1’").arg(lastWithinAreaName));
         }
       }
     }
@@ -1161,6 +1125,7 @@ ApplicationWindow {
       mapSettings: mapCanvas.mapSettings
       project: qgisProject
       positionInformation: positionSource.positionInformation
+      cloudUserInformation: projectInfo.cloudUserInformation
     }
 
     Connections {
@@ -1421,7 +1386,7 @@ ApplicationWindow {
       anchors.left: parent.left
       anchors.bottom: parent.bottom
       anchors.leftMargin: 8
-      anchors.bottomMargin: 50
+      anchors.bottomMargin: 10
     }
 
     Column {
@@ -1438,32 +1403,13 @@ ApplicationWindow {
       id: alertIcon
       iconSource: Theme.getThemeVectorIcon("ic_alert_black_24dp")
       round: true
-      bgcolor: Theme.toolButtonBackgroundColor
+      bgcolor: "transparent"
       visible: !screenLocker.enabled && messageLog.unreadMessages
-      width: 30
-      height: 30
-      padding: 2
       anchors.right: pluginsToolbar.right
       anchors.top: pluginsToolbar.bottom
       anchors.topMargin: 4
 
       onClicked: messageLog.visible = true
-    }
-
-    QfToolButton {
-      id: informationButton
-      iconSource: Theme.getThemeVectorIcon("info_box")
-      round: true
-      bgcolor: Theme.toolButtonBackgroundColor
-      visible: !screenLocker.enabled
-      width: 30
-      height: 30
-      padding: 2
-      anchors.right: pluginsToolbar.right
-      anchors.top: alertIcon.bottom
-      anchors.topMargin: 4
-
-      onClicked: informationPanel.visible = true
     }
 
     Column {
@@ -1472,7 +1418,7 @@ ApplicationWindow {
       anchors.rightMargin: 10
       anchors.bottom: parent.bottom
       anchors.bottomMargin: (parent.height - zoomToolbar.height / 2) / 2
-      spacing: 10
+      spacing: 8
       visible: !screenLocker.enabled && (locationToolbar.height + digitizingToolbarContainer.height) / (digitizingToolbarContainer.y) < 0.41
 
       QfToolButton {
@@ -1484,9 +1430,8 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon("ic_add_white_24dp")
         iconColor: Theme.toolButtonColor
 
-        width: 48
-        height: 48
-        padding: 2 
+        width: 36
+        height: 36
 
         onClicked: {
           if (gnssButton.followActive)
@@ -1503,9 +1448,8 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon("ic_remove_white_24dp")
         iconColor: Theme.toolButtonColor
 
-        width: 48
-        height: 48
-        padding: 2 
+        width: 36
+        height: 36
 
         onClicked: {
           if (gnssButton.followActive)
@@ -1514,8 +1458,6 @@ ApplicationWindow {
         }
       }
     }
-
-    
 
     LocatorItem {
       id: locatorItem
@@ -1557,16 +1499,15 @@ ApplicationWindow {
       visible: !screenLocker.enabled
       width: childrenRect.width
       height: childrenRect.height
-      topPadding: mainWindow.sceneTopMargin + 20
-      leftPadding: 12
-      spacing: 15
+      topPadding: mainWindow.sceneTopMargin + 4
+      leftPadding: 4
+      spacing: 4
 
       QfToolButton {
         id: menuButton
         round: true
         iconSource: Theme.getThemeVectorIcon("ic_menu_white_24dp")
         bgcolor: dashBoard.opened ? Theme.mainColor : Theme.darkGray
-        padding: 2 // Reduce padding to make room for larger icon
 
         onClicked: dashBoard.opened ? dashBoard.close() : dashBoard.open()
 
@@ -1575,13 +1516,6 @@ ApplicationWindow {
         }
       }
 
-      BusyIndicator {
-        id: busyIndicator
-        width: menuButton.width + 15
-        height: width
-        running: mapCanvasMap.isRendering
-      }
-    
       QfActionButton {
         id: closeMeasureTool
         visible: stateMachine.state === 'measure'
@@ -1619,58 +1553,7 @@ ApplicationWindow {
       anchors.topMargin: 4
       spacing: 4
 
-      // Add Weather Forecast button
-      QfToolButton {
-        id: weatherButton
-        width: 48
-        height: 48
-        round: true
-        bgcolor: Theme.toolButtonBackgroundColor
-        iconSource: Theme.getThemeVectorIcon('weather')
-        iconColor: Theme.toolButtonColor
-        padding: 1 // Reduce padding to make room for larger icon
-        
-        onClicked: {
-          // Get current map center coordinates
-          var extent = mapCanvas.mapSettings.extent
-          // Calculate center manually from the extent
-          var centerX = (extent.xMinimum + extent.xMaximum) / 2
-          var centerY = (extent.yMinimum + extent.yMaximum) / 2
-          
-          // Create a proper point object using GeometryUtils.point
-          var center = GeometryUtils.point(centerX, centerY)
-          var centerPoint = GeometryUtils.reprojectPoint(center, mapCanvas.mapSettings.destinationCrs, CoordinateReferenceSystemUtils.wgs84Crs())
-          
-          // Update weather forecast panel with current location
-          weatherForecastPanel.updateLocation(centerPoint.y, centerPoint.x, "Ubicación del mapa")
-          weatherForecastPanel.open()
-        }
-      }
-      
-      // Add Cascade Search button
-      QfToolButton {
-        id: cascadeSearchButton
-        width: 42
-        height: 42
-        round: true
-        bgcolor: Theme.toolButtonBackgroundColor
-        iconSource: Theme.getThemeVectorIcon('sigpac_search')
-        iconColor: Theme.toolButtonColor
-        visible: dashBoard.activeLayer !== null
-        padding: 2 // Reduce padding to make room for larger icon
-        
-        onClicked: {
-          if (dashBoard.activeLayer) {
-            cascadeSearchPanel.vectorLayer = dashBoard.activeLayer;
-            cascadeSearchPanel.open();
-          } else {
-            displayToast(qsTr("Please select a vector layer first"), "warning");
-          }
-        }
-      }
-
       QfToolButtonDrawer {
-        id: digitizingDrawer
         name: "digitizingDrawer"
         size: 48
         round: true
@@ -1678,45 +1561,18 @@ ApplicationWindow {
         iconSource: Theme.getThemeVectorIcon('ic_digitizing_settings_black_24dp')
         iconColor: Theme.toolButtonColor
         spacing: 4
-        
-        // Only show when in digitize mode and not in the middle of digitizing
-        visible: stateMachine.state === "digitize" && 
-                 (!digitizingToolbar.rubberbandModel || digitizingToolbar.rubberbandModel.vertexCount <= 1)
-        
-        Component.onCompleted: {
-          console.log("DigitizingDrawer initialized. Will be visible when stateMachine.state === 'digitize'")
-        }
-        
-        onVisibleChanged: {
-          console.log("DigitizingDrawer visibility changed to: " + visible + ", stateMachine.state: " + stateMachine.state)
-        }
-
-        // Listen for state changes to update visibility
-        Connections {
-          target: stateMachine
-          function onStateChanged() {
-            // Update visibility based on state
-            digitizingDrawer.visible = stateMachine.state === "digitize" && 
-                                      (!digitizingToolbar.rubberbandModel || 
-                                       digitizingToolbar.rubberbandModel.vertexCount <= 1)
-          }
-        }
+        visible: stateMachine.state === "digitize" && dashBoard.activeLayer && dashBoard.activeLayer.isValid && (dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Polygon || dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Line || dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Point)
 
         QfToolButton {
           id: snappingButton
-          width: 48
-          height: 48
+          width: 40
+          height: 40
           padding: 2
           round: true
           state: qgisProject && qgisProject.snappingConfig.enabled ? "On" : "Off"
           iconSource: Theme.getThemeVectorIcon("ic_snapping_white_24dp")
           iconColor: Theme.toolButtonColor
           bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
-          visible: true // Always visible
-          
-          Component.onCompleted: {
-            console.log("SnappingButton initialized. Always visible.")
-          }
 
           states: [
             State {
@@ -1732,7 +1588,7 @@ ApplicationWindow {
               name: "On"
               PropertyChanges {
                 target: snappingButton
-                iconColor: "#25062d"
+                iconColor: Theme.mainColor
                 bgcolor: Theme.toolButtonBackgroundColor
               }
             }
@@ -1749,19 +1605,14 @@ ApplicationWindow {
 
         QfToolButton {
           id: topologyButton
-          width: 48
-          height: 48
+          width: 40
+          height: 40
           padding: 2
           round: true
           state: qgisProject && qgisProject.topologicalEditing ? "On" : "Off"
           iconSource: Theme.getThemeVectorIcon("ic_topology_white_24dp")
           iconColor: Theme.toolButtonColor
           bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
-          visible: true // Always visible
-          
-          Component.onCompleted: {
-            console.log("TopologyButton initialized. Always visible.")
-          }
 
           states: [
             State {
@@ -1791,22 +1642,17 @@ ApplicationWindow {
 
         QfToolButton {
           id: freehandButton
-          width: 48
-          height: 48
+          width: visible ? 40 : 0
+          height: visible ? 40 : 0
           padding: 2
           round: true
-          visible: true // Always visible
+          visible: hoverHandler.hasBeenHovered && !(positionSource.active && positioningSettings.positioningCoordinateLock) && stateMachine.state === "digitize" && ((digitizingToolbar.geometryRequested && digitizingToolbar.geometryRequestedLayer && digitizingToolbar.geometryRequestedLayer.isValid && (digitizingToolbar.geometryRequestedLayer.geometryType() === Qgis.GeometryType.Polygon || digitizingToolbar.geometryRequestedLayer.geometryType() === Qgis.GeometryType.Line)) || (!digitizingToolbar.geometryRequested && dashBoard.activeLayer && dashBoard.activeLayer.isValid && (dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Polygon || dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Line)))
           iconSource: Theme.getThemeVectorIcon("ic_freehand_white_24dp")
           iconColor: Theme.toolButtonColor
           bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
-          
+
           property bool freehandDigitizing: false
           state: freehandDigitizing ? "On" : "Off"
-          
-          Component.onCompleted: {
-            freehandDigitizing = settings.valueBool("/QField/Digitizing/FreehandActive", false);
-            console.log("FreehandButton initialized. Always visible.")
-          }
 
           states: [
             State {
@@ -1836,29 +1682,26 @@ ApplicationWindow {
             settings.setValue("/QField/Digitizing/FreehandActive", freehandDigitizing);
           }
 
-          // Component.onCompleted handler moved to the first one above
+          Component.onCompleted: {
+            freehandDigitizing = settings.valueBool("/QField/Digitizing/FreehandActive", false);
+          }
         }
 
         QfToolButton {
           id: snapToCommonAngleButton
 
-          width: 48
-          height: 48
+          width: visible ? 40 : 0
+          height: visible ? 40 : 0
           round: true
-          visible: true // Always visible
+          visible: dashBoard.activeLayer && (dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Polygon || dashBoard.activeLayer.geometryType() === Qgis.GeometryType.Line)
           iconSource: Theme.getThemeVectorIcon("ic_common_angle_white_24dp")
           iconColor: Theme.toolButtonColor
           bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
-          
+
           state: qfieldSettings.snapToCommonAngleIsEnabled ? "On" : "Off"
-          
-          Component.onCompleted: {
-            console.log("SnapToCommonAngleButton initialized. Always visible.")
-          }
 
           states: [
             State {
-
               name: "Off"
               PropertyChanges {
                 target: snapToCommonAngleButton
@@ -2111,188 +1954,90 @@ ApplicationWindow {
       }
     }
 
-    Row {
+    BusyIndicator {
+      id: busyIndicator
+      anchors.left: mainMenuBar.left
+      anchors.top: mainToolbar.bottom
+      width: menuButton.width + 10
+      height: width
+      running: mapCanvasMap.isRendering
+    }
+
+    Column {
       id: locationToolbar
       anchors.right: parent.right
       anchors.rightMargin: 4
-      anchors.bottom: parent.bottom
+      anchors.bottom: digitizingToolbarContainer.top
       anchors.bottomMargin: 4
-      spacing: 10
-      
-      // Removing the compass indicator that has a question mark
-      // Item {
-      //   id: compassIndicator
-      //   width: 40
-      //   height: 40
-      //   visible: positionSource.active
-      //   
-      //   Rectangle {
-      //     id: compassCircle
-      //     anchors.centerIn: parent
-      //     width: 36
-      //     height: 36
-      //     radius: width / 2
-      //     color: "#40FFFFFF"
-      //     border.color: "white"
-      //     border.width: 1
-      //     
-      //     Text {
-      //       anchors.centerIn: parent
-      //       text: "N"
-      //       color: "white"
-      //       font.pixelSize: 10
-      //       font.bold: true
-      //     }
-      //     
-      //     Rectangle {
-      //       id: compassNeedle
-      //       anchors.centerIn: parent
-      //       width: 2
-      //       height: parent.height * 0.8
-      //       color: Theme.mainColor
-      //       antialiasing: true
-      //       transform: Rotation {
-      //         origin.x: compassNeedle.width / 2
-      //         origin.y: compassNeedle.height / 2
-      //         angle: positionSource.positionInformation.orientationValid ? positionSource.positionInformation.orientation : 0
-      //       }
-      //     }
-      //   }
-      //   
-      //   Text {
-      //     anchors.horizontalCenter: parent.horizontalCenter
-      //     anchors.top: compassCircle.bottom
-      //     anchors.topMargin: -2
-      //     text: positionSource.positionInformation.orientationValid ? Math.round(positionSource.positionInformation.orientation) + "°" : "?"
-      //     color: "white"
-      //     font.pixelSize: 8
-      //     font.bold: true
-      //   }
-      //   
-      //   Timer {
-      //     interval: 500  // Changed from 1000 to 500 for more responsive updates
-      //     running: compassIndicator.visible
-      //     repeat: true
-      //     onTriggered: {
-      //       if (positionSource.positionInformation.orientationValid) {
-      //         compassNeedle.rotation = positionSource.positionInformation.orientation
-      //       }
-      //     }
-      //   }
-      //   
-      //   ToolTip.visible: hovered
-      //   ToolTip.text: qsTr("Brújula")
-      // }
-      
+
+      spacing: 4
+
       QfToolButton {
-        id: snapButton
-        width: 40
-        height: 40
+        id: navigationButton
+        visible: navigation.isActive
         round: true
-        iconSource: Theme.getThemeVectorIcon('ic_photoatributes')
-        iconColor: Theme.toolButtonColor
-        bgcolor: Theme.toolButtonBackgroundColor
-        padding: 0 
+        anchors.right: parent.right
+
+        property bool isFollowLocationActive: positionSource.active && gnssButton.followActive && followIncludeDestination
+        iconSource: Theme.getThemeVectorIcon("ic_navigation_flag_purple_24dp")
+        iconColor: isFollowLocationActive ? Theme.toolButtonColor : Theme.navigationColor
+        bgcolor: isFollowLocationActive ? Theme.navigationColor : Theme.toolButtonBackgroundColor
+
+        /*
+        / When set to true, when the map follows the device's current position, the extent
+        / will always include the destination marker.
+        */
+        property bool followIncludeDestination: true
+
         onClicked: {
-          dashBoard.ensureEditableLayerSelected()
-          if (!positionSource.active || !positionSource.positionInformation.latitudeValid || !positionSource.positionInformation.longitudeValid) {
-            mainWindow.displayToast(qsTr('Requiere posicionamiento activo y localización válida'))
-            return
+          if (positionSource.active && gnssButton.followActive) {
+            followIncludeDestination = !followIncludeDestination;
+            settings.setValue("/QField/Navigation/FollowIncludeDestination", followIncludeDestination);
+            gnssButton.followLocation(true);
+          } else {
+            mapCanvas.mapSettings.setCenter(navigation.destination);
           }
-          if (dashBoard.activeLayer.geometryType() != Qgis.GeometryType.Point) {
-            mainWindow.displayToast(qsTr('Requiere que la capa activa sea un vector de puntos'))
-            return
-          }
-          let fieldNames = dashBoard.activeLayer.fields.names
-          if (fieldNames.indexOf('photo') == -1 && fieldNames.indexOf('picture') == -1) {
-            mainWindow.displayToast(qsTr('Requiere que la capa vector tenga un campo atributos llamado \'photo\' o \'picture\''))
-            return
-          }
-          cameraLoader.active = true
         }
-        
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Cámara para añadir fotos a atributos de capas vectoriales")
-      }
-      
-      QfToolButton {
-        id: standaloneCameraButton
-        width: 40
-        height: 40
-        round: true
-        iconSource: Theme.getThemeVectorIcon('ic_camera_photo_black_24dp')
-        iconColor: Theme.toolButtonColor
-        bgcolor: Theme.mainColor
-        padding: 0 
-        onClicked: {
-          standaloneCameraLoader.active = true
+
+        onPressAndHold: {
+          navigationMenu.popup(locationToolbar.x + locationToolbar.width - navigationMenu.width, locationToolbar.y + navigationButton.height - navigationMenu.height);
         }
-        
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Toma fotos Geo-localizadas, puedes elegir nombre carpeta y prefijo nombre de las fotos")
-      }
-      
-      QfToolButton {
-        id: createDCIMButton
-        width: 40
-        height: 40
-        round: true
-        visible: qgisProject && !!qgisProject.homePath
-        padding: 0 // Reduce padding to make room for larger icon
-        
-        iconSource: Theme.getThemeVectorIcon('ic_folder_white_24dp')
-        iconColor: Theme.toolButtonColor
-        bgcolor: Theme.mainColor
-        
-        onClicked: {
-          createDCIMFolder()
+
+        Component.onCompleted: {
+          followIncludeDestination = settings.valueBool("/QField/Navigation/FollowIncludeDestination", true);
         }
-        
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Crear carpeta DCIM")
       }
-      
-      
+
       QfToolButton {
-        id: gnssLockButtonToolbar
-        width: 40
-        height: 40
+        id: gnssLockButton
+        anchors.right: parent.right
+        state: positionSource.active && positioningSettings.positioningCoordinateLock ? "On" : "Off"
         visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
         round: true
         checkable: true
         checked: positioningSettings.positioningCoordinateLock
-        padding: 0 // Set padding to 0 to make the icon fill the button
-        
-        iconSource: positionSource.active && positioningSettings.positioningCoordinateLock ? 
-                   Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp") : 
-                   Theme.getThemeVectorIcon("ic_location_locked_white_24dp")
-        iconColor: positionSource.active && positioningSettings.positioningCoordinateLock ? 
-                  Theme.positionColor : Theme.toolButtonColor
-        bgcolor: positionSource.active && positioningSettings.positioningCoordinateLock ? 
-                Theme.toolButtonBackgroundColor : Theme.toolButtonBackgroundSemiOpaqueColor
-        
-        // Accuracy indicator circle around the button
-        Rectangle {
-          id: gnssLockAccuracyIndicator
-          anchors.centerIn: parent
-          width: parent.width * 1.25
-          height: width
-          radius: width / 2
-          z: -1 // Place behind the button
-          
-          border.width: 1.5
-          border.color: "white"
-          
-          visible: positioningSettings.accuracyIndicator && positionSource.active
-          color: !positionSource.positionInformation || 
-                !positionSource.positionInformation.haccValid || 
-                positionSource.positionInformation.hacc > positioningSettings.accuracyBad ? 
-                Theme.accuracyBad : 
-                positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent ? 
-                Theme.accuracyTolerated : Theme.accuracyExcellent
-          opacity: 0.7 // Make it slightly transparent
-        }
-        
+
+        states: [
+          State {
+            name: "Off"
+            PropertyChanges {
+              target: gnssLockButton
+              iconSource: Theme.getThemeVectorIcon("ic_location_locked_white_24dp")
+              iconColor: Theme.toolButtonColor
+              bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
+            }
+          },
+          State {
+            name: "On"
+            PropertyChanges {
+              target: gnssLockButton
+              iconSource: Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp")
+              iconColor: Theme.positionColor
+              bgcolor: Theme.toolButtonBackgroundColor
+            }
+          }
+        ]
+
         onCheckedChanged: {
           if (gnssButton.state === "On") {
             if (checked) {
@@ -2300,601 +2045,98 @@ ApplicationWindow {
                 // deactivate freehand digitizing when cursor locked is on
                 freehandButton.clicked();
               }
-              displayToast(qsTr("Cursor de coordenadas ahora bloqueado a la posición"));
+              displayToast(qsTr("Coordinate cursor now locked to position"));
               if (positionSource.positionInformation.latitudeValid) {
                 var screenLocation = mapCanvas.mapSettings.coordinateToScreen(locationMarker.location);
-                if (screenLocation.x < 0 || screenLocation.x > mainWindow.width || 
-                    screenLocation.y < 0 || screenLocation.y > mainWindow.height) {
+                if (screenLocation.x < 0 || screenLocation.x > mainWindow.width || screenLocation.y < 0 || screenLocation.y > mainWindow.height) {
                   mapCanvas.mapSettings.setCenter(positionSource.projectedPosition);
                 }
               }
               positioningSettings.positioningCoordinateLock = true;
-              // Sync with the original gnssLockButton
-              gnssLockButton.checked = true;
             } else {
-              displayToast(qsTr("Cursor de coordenadas desbloqueado"));
+              displayToast(qsTr("Coordinate cursor unlocked"));
               positioningSettings.positioningCoordinateLock = false;
-              // Sync with the original gnssLockButton
-              gnssLockButton.checked = false;
+              // deactivate any active averaged position collection
+              positionSource.averagedPosition = false;
             }
           }
         }
-        
-        // Keep in sync with the original gnssLockButton
-        Connections {
-          target: gnssLockButton
-          function onCheckedChanged() {
-            gnssLockButtonToolbar.checked = gnssLockButton.checked;
-          }
-        }
-        
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Bloquear el cursor a la posición actual")
       }
-     QfToolButton {
-      id: sentinelButton
-      visible: settings.valueBool("QField/Sentinel/EnableLayers", true)
-      round: true
-      bgcolor: Theme.toolButtonBackgroundColor
-      iconSource: Theme.getThemeVectorIcon("satellite")
-      iconColor: Theme.toolButtonColor
-      width: 40
-      height: 40
-      padding: 0 // Changed from 2 to 0 to make the icon larger
-      
-      ToolTip.visible: hovered
-      ToolTip.text: qsTr("Capas de Sentinel")
 
-    onClicked: {
-        if (typeof qfieldSettings !== 'undefined' && qfieldSettings) {
-            qfieldSettings.openSentinelConfig();
-        } else {
-            var component = Qt.createComponent("SentinelConfigScreen.qml");
-            if (component.status === Component.Ready) {
-                var sentinelConfig = component.createObject(mainWindow, {
-                    "instanceId": settings.value("QField/Sentinel/InstanceId", "")
-                });
-                sentinelConfig.open();
-            } else {
-                console.error("Error loading SentinelConfigScreen.qml:", component.errorString());
-            }
-        }
-    }
-
-        ToolTip {
-        text: qsTr("Sentinel Settings")
-        visible: parent.hovered
-        delay: 500
-      }
-    }
       QfToolButton {
-        id: googleSearchButton
-        height: 40
-        width: 40
+        id: gnssButton
+        state: positionSource.active ? "On" : "Off"
+        visible: positionSource.valid
         round: true
-        iconSource: Theme.getThemeVectorIcon("maps")
-        iconColor: googleSearchButton.enabled ? Theme.toolButtonColor : Theme.mainTextDisabledColor
-        bgcolor: dashBoard.opened ? Theme.mainColor : Theme.toolButtonBackgroundColor
-        padding: 0 // Changed from 1 to 0 to make the icon larger
-        
-        property var lastCoordinates: null
-        property string lastClipboardText: ""
-        
-        function parseCoordinates(text) {
-          // Check if text is undefined or empty
-          if (!text || text.trim() === '') {
-            return null;
-          }
-          
-          console.log("Parsing text for coordinates: " + text);
-          
-          // Try to match different coordinate formats
-          
-          // Format: "36.97550N, -2.51755E — EPSG:4258: ETRS89"
-          // This is the primary format mentioned in the requirements
-          var regex1 = /(\d+\.\d+)([NS]),\s*(-?\d+\.\d+)([EW])\s*(?:—|-)?\s*(?:EPSG|epsg)?/i;
-          var match = text.match(regex1);
-          
-          if (match) {
-            console.log("Matched format 1: " + JSON.stringify(match));
-            var lat = parseFloat(match[1]);
-            var latDir = match[2];
-            var lon = parseFloat(match[3]);
-            var lonDir = match[4];
-            
-            // Adjust sign based on direction
-            if (latDir.toUpperCase() === "S") lat = -lat;
-            // For longitude, E is positive, W is negative
-            if (lonDir.toUpperCase() === "W") lon = -lon;
-            
-            return { lat: lat, lng: lon };
-          }
-          
-          // Try alternative format with directions: "N36.97550, E-2.51755"
-          var regex2 = /([NS])(\d+\.\d+),\s*([EW])(-?\d+\.\d+)/i;
-          match = text.match(regex2);
-          
-          if (match) {
-            console.log("Matched format 2: " + JSON.stringify(match));
-            var latDir = match[1];
-            var lat = parseFloat(match[2]);
-            var lonDir = match[3];
-            var lon = parseFloat(match[4]);
-            
-            // Adjust sign based on direction
-            if (latDir.toUpperCase() === "S") lat = -lat;
-            if (lonDir.toUpperCase() === "W") lon = -lon;
-            
-            return { lat: lat, lng: lon };
-          }
-          
-          // Try alternative format: decimal degrees with sign
-          // Like "36.97550, -2.51755" or similar variations
-          var regex3 = /(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/;
-          match = text.match(regex3);
-          
-          if (match) {
-            console.log("Matched format 3: " + JSON.stringify(match));
-            var lat = parseFloat(match[1]);
-            var lon = parseFloat(match[2]);
-            
-            // Check if values are in valid range
-            if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
-              return { lat: lat, lng: lon };
+
+        anchors.right: parent.right
+
+        /*
+        / When set to true, the map will follow the device's current position; the map
+        / will stop following the position whe the user manually drag the map.
+        */
+        property bool followActive: false
+        /*
+        / When set to true, map canvas extent changes will not result in the
+        / deactivation of the above followActive mode.
+        */
+        property bool followActiveSkipExtentChanged: false
+        /*
+        / When set to true, the map will rotate to match the device's current magnetometer/compass orientatin.
+        */
+        property bool followOrientationActive: false
+        /*
+        / When set to true, map canvas rotation changes will not result in the
+        / deactivation of the above followOrientationActive mode.
+        */
+        property bool followActiveSkipRotationChanged: false
+
+        states: [
+          State {
+            name: "Off"
+            PropertyChanges {
+              target: gnssButton
+              iconSource: Theme.getThemeVectorIcon("ic_location_disabled_white_24dp")
+              iconColor: Theme.toolButtonColor
+              bgcolor: Theme.toolButtonBackgroundSemiOpaqueColor
             }
-            
-            // If lat is outside range but lon is in lat range, they might be swapped
-            if (Math.abs(lat) > 90 && Math.abs(lat) <= 180 && Math.abs(lon) <= 90) {
-              return { lat: lon, lng: lat };
-            }
-            
-            return { lat: lat, lng: lon };
-          }
-          
-          // Try to find any pair of coordinates in the text
-          var numbers = text.match(/-?\d+\.\d+/g);
-          if (numbers && numbers.length >= 2) {
-            console.log("Matched raw numbers: " + JSON.stringify(numbers));
-            var lat = parseFloat(numbers[0]);
-            var lon = parseFloat(numbers[1]);
-            
-            // Check if values are in valid range
-            if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
-              return { lat: lat, lng: lon };
-            }
-            
-            // If lat is outside range but lon is in lat range, they might be swapped
-            if (Math.abs(lat) > 90 && Math.abs(lat) <= 180 && Math.abs(lon) <= 90) {
-              return { lat: lon, lng: lat };
-            }
-            
-            return { lat: lat, lng: lon };
-          }
-          
-          return null;
-        }
-        
-        function openCoordinatesInMaps(coords) {
-          if (!coords) return false;
-          
-          console.log("Opening coordinates in maps: " + JSON.stringify(coords));
-          
-          // Validate coordinates are in reasonable range
-          if (Math.abs(coords.lat) <= 90 && Math.abs(coords.lng) <= 180) {
-            // Format coordinates consistently with 6 decimal places
-            var lat = coords.lat.toFixed(6);
-            var lng = coords.lng.toFixed(6);
-            
-            if (Qt.platform.os === "android") {
-              // Try to use native Android intent first (most reliable)
-              if (openCoordinatesWithAndroidIntent(lat, lng)) {
-                displayToast(qsTr("Abriendo ubicación en ") + lat + ", " + lng);
-                lastCoordinates = coords;
-                return true;
-              }
-              
-              // Try alternative intent approach with flags
-              if (openCoordinatesWithAndroidIntentFlags(lat, lng)) {
-                displayToast(qsTr("Abriendo ubicación en ") + lat + ", " + lng);
-                lastCoordinates = coords;
-                return true;
-              }
-              
-              // Try multiple formats in sequence until one works
-              var success = false;
-              
-              // Format 1: Use Google Maps with destination parameter (most reliable for navigation)
-              var mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
-              console.log("Trying Maps URL format 1: " + mapsUrl);
-              success = Qt.openUrlExternally(mapsUrl);
-              
-              // Format 2: Use Google Maps search with query parameter
-              if (!success) {
-                mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng;
-                console.log("Trying Maps URL format 2: " + mapsUrl);
-                success = Qt.openUrlExternally(mapsUrl);
-              }
-              
-              // Format 3: Use http://maps.google.com/maps?daddr format
-              if (!success) {
-                mapsUrl = "http://maps.google.com/maps?daddr=" + lat + "," + lng;
-                console.log("Trying Maps URL format 3: " + mapsUrl);
-                success = Qt.openUrlExternally(mapsUrl);
-              }
-              
-              // Format 4: Use geo:lat,lng format (direct coordinates)
-              if (!success) {
-                mapsUrl = "geo:" + lat + "," + lng;
-                console.log("Trying Maps URL format 4: " + mapsUrl);
-                success = Qt.openUrlExternally(mapsUrl);
-              }
-              
-              // Format 5: Use geo:0,0?q=lat,lng(Label) format with label
-              if (!success) {
-                mapsUrl = "geo:0,0?q=" + lat + "," + lng + "(Marked+Location)";
-                console.log("Trying Maps URL format 5: " + mapsUrl);
-                success = Qt.openUrlExternally(mapsUrl);
-              }
-              
-              if (success) {
-                displayToast(qsTr("Abriendo ubicación en ") + lat + ", " + lng);
-                lastCoordinates = coords;
-                return true;
-              } else {
-                console.log("Failed to open maps application with all URL formats");
-                displayToast(qsTr("Failed to open maps application"), "warning");
-                return false;
-              }
-            } else {
-              // For other platforms, use Google Maps URL
-              var mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
-              
-              console.log("Opening URL: " + mapsUrl);
-              var success = Qt.openUrlExternally(mapsUrl);
-              
-              if (success) {
-                displayToast(qsTr("Abriendo ubicación en ") + lat + ", " + lng);
-                lastCoordinates = coords;
-                return true;
-              } else {
-                console.log("Failed to open URL: " + mapsUrl);
-                displayToast(qsTr("Failed to open maps application"), "warning");
-                return false;
-              }
+          },
+          State {
+            name: "On"
+            PropertyChanges {
+              target: gnssButton
+              iconSource: trackings.count > 0 ? Theme.getThemeVectorIcon("ic_location_tracking_white_24dp") : positionSource.positionInformation && positionSource.positionInformation.latitudeValid ? Theme.getThemeVectorIcon("ic_location_valid_white_24dp") : Theme.getThemeVectorIcon("ic_location_white_24dp")
+              iconColor: followActive ? Theme.toolButtonColor : Theme.positionColor
+              bgcolor: followActive ? Theme.positionColor : Theme.toolButtonBackgroundColor
             }
           }
-          
-          return false;
-        }
-        
-        // Alternative approach using intent flags
-        function openCoordinatesWithAndroidIntentFlags(lat, lng) {
-          if (Qt.platform.os !== "android") return false;
-          
-          try {
-            console.log("Trying to open coordinates with Android intent flags: " + lat + ", " + lng);
-            
-            // Get the Android Context
-            var androidContext = Qt.androidContext();
-            if (!androidContext) {
-              console.log("Failed to get Android context");
-              return false;
-            }
-            
-            // Load required Java classes
-            var uriClass = androidContext.getClassLoader().loadClass("android.net.Uri");
-            var intentClass = androidContext.getClassLoader().loadClass("android.content.Intent");
-            var parseMethod = uriClass.getMethod("parse", "java.lang.String");
-            
-            // Create Uri object - try with the destination format which is most reliable for navigation
-            var uriString = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
-            console.log("Using URI: " + uriString);
-            var uri = parseMethod.invoke(null, uriString);
-            
-            // Create Intent with ACTION_VIEW
-            var actionViewField = intentClass.getField("ACTION_VIEW");
-            var actionView = actionViewField.get(null);
-            var intent = intentClass.getConstructor("java.lang.String", "android.net.Uri").newInstance(actionView, uri);
-            
-            // Set the package to Google Maps
-            intent.getMethod("setPackage", "java.lang.String").invoke(intent, "com.google.android.apps.maps");
-            
-            // Add FLAG_ACTIVITY_NEW_TASK flag
-            var flagNewTaskField = intentClass.getField("FLAG_ACTIVITY_NEW_TASK");
-            var flagNewTask = flagNewTaskField.getInt(null);
-            intent.getMethod("addFlags", "int").invoke(intent, flagNewTask);
-            
-            // Add FLAG_ACTIVITY_CLEAR_TOP flag
-            var flagClearTopField = intentClass.getField("FLAG_ACTIVITY_CLEAR_TOP");
-            var flagClearTop = flagClearTopField.getInt(null);
-            intent.getMethod("addFlags", "int").invoke(intent, flagClearTop);
-            
-            // Start the activity
-            androidContext.getMethod("startActivity", "android.content.Intent").invoke(androidContext, intent);
-            
-            console.log("Successfully launched Android intent with flags");
-            return true;
-          } catch (e) {
-            console.log("Error launching Android intent with flags: " + e);
-            return false;
-          }
-        }
-        
-        // Function to use Android's native intent system directly
-        function openCoordinatesWithAndroidIntent(lat, lng) {
-          if (Qt.platform.os !== "android") return false;
-          
-          try {
-            console.log("Trying to open coordinates with native Android intent: " + lat + ", " + lng);
-            
-            // Get the Android Context
-            var androidContext = Qt.androidContext();
-            if (!androidContext) {
-              console.log("Failed to get Android context");
-              return false;
-            }
-            
-            // Try multiple URI formats with a focus on navigation-specific formats
-            var uriStrings = [
-              // Format 1: Google Maps with destination parameter (most reliable for navigation)
-              "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng,
-              
-              // Format 2: Google Maps search with query parameter
-              "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lng,
-              
-              // Format 3: Direct navigation to coordinates
-              "google.navigation:q=" + lat + "," + lng,
-              
-              // Format 4: Google Maps with daddr parameter (destination address)
-              "http://maps.google.com/maps?daddr=" + lat + "," + lng,
-              
-              // Format 5: Standard geo URI with label
-              "geo:0,0?q=" + lat + "," + lng + "(Marked Location)",
-              
-              // Format 6: Direct geo coordinates
-              "geo:" + lat + "," + lng
-            ];
-            
-            // Load required Java classes
-            var uriClass = androidContext.getClassLoader().loadClass("android.net.Uri");
-            var parseMethod = uriClass.getMethod("parse", "java.lang.String");
-            var intentClass = androidContext.getClassLoader().loadClass("android.content.Intent");
-            var actionViewField = intentClass.getField("ACTION_VIEW");
-            var actionView = actionViewField.get(null);
-            
-            // Try each URI format
-            for (var i = 0; i < uriStrings.length; i++) {
-              try {
-                console.log("Trying Android intent with URI: " + uriStrings[i]);
-                
-                // Create Uri object
-                var uri = parseMethod.invoke(null, uriStrings[i]);
-                
-                // Create Intent
-                var intent = intentClass.getConstructor("java.lang.String", "android.net.Uri").newInstance(actionView, uri);
-                
-                // Set the package to Google Maps
-                intent.getMethod("setPackage", "java.lang.String").invoke(intent, "com.google.android.apps.maps");
-                
-                // Add FLAG_ACTIVITY_NEW_TASK flag to ensure it opens in a new task
-                var flagNewTaskField = intentClass.getField("FLAG_ACTIVITY_NEW_TASK");
-                var flagNewTask = flagNewTaskField.getInt(null);
-                intent.getMethod("addFlags", "int").invoke(intent, flagNewTask);
-                
-                // Start the activity
-                androidContext.getMethod("startActivity", "android.content.Intent").invoke(androidContext, intent);
-                
-                console.log("Successfully launched native Android intent with format " + (i + 1));
-                return true;
-              } catch (e) {
-                console.log("Failed with format " + (i + 1) + ": " + e);
-                // Continue to next format
-              }
-            }
-            
-            console.log("All native Android intent formats failed");
-            return false;
-          } catch (e) {
-            console.log("Error in openCoordinatesWithAndroidIntent: " + e);
-            return false;
-          }
-        }
+        ]
 
         onClicked: {
-          // First try to get coordinates from system clipboard
-          var clipboardText = platformUtilities.getTextFromClipboard();
-          console.log("Clipboard content: " + clipboardText);
-          
-          // If we have text in clipboard, try to parse it
-          if (clipboardText && clipboardText.trim() !== '') {
-            var coords = parseCoordinates(clipboardText);
-            if (coords) {
-              // Use coordinates from clipboard
-              lastClipboardText = clipboardText; // Save for future use
-              if (openCoordinatesInMaps(coords)) {
-                displayToast(qsTr("Abriendo mapas en coordenadas: ") + coords.lat.toFixed(6) + ", " + coords.lng.toFixed(6));
-                lastCoordinates = coords; // Save for future use
-                return;
-              }
-            }
-          }
-          
-          // If clipboard doesn't have valid coordinates, try saved clipboard text
-          if (lastClipboardText) {
-            var coords = parseCoordinates(lastClipboardText);
-            if (coords) {
-              // Use coordinates from saved clipboard text
-              if (openCoordinatesInMaps(coords)) {
-                displayToast(qsTr("Abriendo mapas en coordenadas: ") + coords.lat.toFixed(6) + ", " + coords.lng.toFixed(6));
-                return;
-              }
-            }
-          }
-          
-          // Fallback to current position if available
-          if (positionSource.active && positionSource.positionInformation.latitudeValid && 
-              positionSource.positionInformation.longitudeValid) {
-            
-            var currentCoords = {
-              lat: positionSource.positionInformation.latitude,
-              lng: positionSource.positionInformation.longitude
-            };
-            
-            if (openCoordinatesInMaps(currentCoords)) {
-              displayToast(qsTr("Abriendo mapas en posición actual"));
-              lastCoordinates = currentCoords; // Save for future use
-            } else {
-              displayToast(qsTr("Error al abrir la aplicación de mapas"), "warning");
-            }
-          } else if (lastCoordinates) {
-            // Use last coordinates as fallback
-            if (openCoordinatesInMaps(lastCoordinates)) {
-              displayToast(qsTr("Abriendo mapas en las últimas coordenadas usadas"));
-            } else {
-              displayToast(qsTr("Error al abrir la aplicación de mapas"), "warning");
-            }
+          if (followActive) {
+            followOrientationActive = true;
+            followOrientation();
+            displayToast(qsTr("Canvas follows location and compass orientation"));
           } else {
-            displayToast(qsTr("No hay coordenadas disponibles. Copie coordenadas al portapapeles primero."), "warning");
+            followActive = true;
+            if (positionSource.projectedPosition.x) {
+              if (!positionSource.active) {
+                positioningSettings.positioningActivated = true;
+              } else {
+                followLocation(true);
+                displayToast(qsTr("Canvas follows location"));
+              }
+            } else {
+              if (positionSource.valid) {
+                if (positionSource.active) {
+                  displayToast(qsTr("Waiting for location"));
+                } else {
+                  positioningSettings.positioningActivated = true;
+                }
+              }
+            }
           }
         }
-        
-        // Remove press and hold functionality that enabled manual input mode
-        
-        ToolTip.visible: hovered
-        ToolTip.text: qsTr("Abrir coordenadas en app de mapas. Copie coordenadas primero.")
-      }
-
-          QfToolButton {
-            id: navigationButton
-            visible: navigation.isActive
-            round: true
-            padding: 0 // Set padding to 0 to make icon larger
-    
-            property bool isFollowLocationActive: positionSource.active && gnssButton.followActive && followIncludeDestination
-            iconSource: Theme.getThemeVectorIcon("ic_navigation_flag_purple_24dp")
-            iconColor: isFollowLocationActive ? Theme.toolButtonColor : Theme.navigationColor
-            bgcolor: isFollowLocationActive ? Theme.navigationColor : Theme.toolButtonBackgroundColor
-    
-            /*
-            / When set to true, when the map follows the device's current position, the extent
-            / will always include the destination marker.
-            */
-            property bool followIncludeDestination: true
-    
-            onClicked: {
-              if (positionSource.active && gnssButton.followActive) {
-                followIncludeDestination = !followIncludeDestination;
-                settings.setValue("/QField/Navigation/FollowIncludeDestination", followIncludeDestination);
-                gnssButton.followLocation(true);
-              } else {
-                mapCanvas.mapSettings.setCenter(navigation.destination);
-              }
-            }
-    
-            onPressAndHold: {
-              navigationMenu.popup(locationToolbar.x + locationToolbar.width - navigationMenu.width, locationToolbar.y + navigationButton.height - navigationMenu.height);
-            }
-    
-            Component.onCompleted: {
-              followIncludeDestination = settings.valueBool("/QField/Navigation/FollowIncludeDestination", true);
-            }
-            
-            ToolTip {
-              visible: parent.hovered
-              text: qsTr("Navegación")
-            }
-          }
-    
-          QfToolButton {
-            id: gnssLockButton
-            visible: gnssButton.state === "On" && (stateMachine.state === "digitize" || stateMachine.state === 'measure')
-            round: true
-            checkable: true
-            checked: positioningSettings.positioningCoordinateLock
-            padding: 0 // Set padding to 0 to make icon larger
-
-            iconSource: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.getThemeVectorIcon("ic_location_locked_active_white_24dp") : Theme.getThemeVectorIcon("ic_location_locked_white_24dp")
-            iconColor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.positionColor : Theme.toolButtonColor
-            bgcolor: positionSource.active && positioningSettings.positioningCoordinateLock ? Theme.toolButtonBackgroundColor : Theme.toolButtonBackgroundSemiOpaqueColor
-
-            onCheckedChanged: {
-              if (gnssButton.state === "On") {
-                if (checked) {
-                  if (freehandButton.freehandDigitizing) {
-                    // deactivate freehand digitizing when cursor locked is on
-                    freehandButton.clicked();
-                  }
-                  displayToast(qsTr("Cursor de coordenadas ahora bloqueado a la posición"));
-                  if (positionSource.positionInformation.latitudeValid) {
-                    var screenLocation = mapCanvas.mapSettings.coordinateToScreen(locationMarker.location);
-                    if (screenLocation.x < 0 || screenLocation.x > mainWindow.width || screenLocation.y < 0 || screenLocation.y > mainWindow.height) {
-                      mapCanvas.mapSettings.setCenter(positionSource.projectedPosition);
-                    }
-                  }
-                  positioningSettings.positioningCoordinateLock = true;
-                } else {
-                  displayToast(qsTr("Cursor de coordenadas desbloqueado"));
-                  positioningSettings.positioningCoordinateLock = false;
-                }
-              }
-            }
-          }
-    
-          QfToolButton {
-            id: gnssButton
-            visible: positionSource.valid
-            round: true
-            padding: 0 // Set padding to 0 to make icon larger
-    
-            /*
-            / When set to true, the map will follow the device's current position; the map
-            / will stop following the position whe the user manually drag the map.
-            */
-            property bool followActive: false
-            /*
-            / When set to true, map canvas extent changes will not result in the
-            / deactivation of the above followActive mode.
-            */
-            property bool followActiveSkipExtentChanged: false
-            /*
-            / When set to true, the map will rotate to match the device's current magnetometer/compass orientatin.
-            */
-            property bool followOrientationActive: false
-            /*
-            / When set to true, map canvas rotation changes will not result in the
-            / deactivation of the above followOrientationActive mode.
-            */
-            property bool followActiveSkipRotationChanged: false
-    
-            iconSource: positionSource.active ? (trackings.count > 0 ? Theme.getThemeVectorIcon("ic_location_tracking_white_24dp") : positionSource.positionInformation && positionSource.positionInformation.latitudeValid ? Theme.getThemeVectorIcon("ic_location_valid_white_24dp") : Theme.getThemeVectorIcon("ic_location_white_24dp")) : Theme.getThemeVectorIcon("ic_location_disabled_white_24dp")
-            iconColor: positionSource.active ? (followActive ? Theme.positionColorActive : Theme.positionColor) : Theme.positionColorInactive
-            bgcolor: positionSource.active ? (followActive ? Theme.positionBackgroundActiveColor : Theme.positionBackgroundColor) : Theme.toolButtonBackgroundSemiOpaqueColor
-    
-            onClicked: {
-              if (followActive) {
-                followOrientationActive = true;
-                followOrientation();
-                displayToast(qsTr("El mapa sigue la ubicación y orientación de la brújula"));
-              } else {
-                followActive = true;
-                if (positionSource.projectedPosition.x) {
-                  if (!positionSource.active) {
-                    positioningSettings.positioningActivated = true;
-                  } else {
-                    followLocation(true);
-                    displayToast(qsTr("El mapa sigue la ubicación"));
-                  }
-                } else {
-                  if (positionSource.valid) {
-                    if (positionSource.active) {
-                      displayToast(qsTr("Esperando la ubicación"));
-                    } else {
-                      positioningSettings.positioningActivated = true;
-                    }
-                  }
-                }
-              }
-            }
 
         onPressAndHold: {
           gnssMenu.popup(locationToolbar.x + locationToolbar.width - gnssMenu.width, locationToolbar.y + locationToolbar.height - gnssMenu.height);
@@ -2932,9 +2174,10 @@ ApplicationWindow {
 
         Rectangle {
           anchors {
-            left: gnssButton.right
-            leftMargin: 2
-            verticalCenter: gnssButton.verticalCenter
+            top: parent.top
+            right: parent.right
+            rightMargin: 2
+            topMargin: 2
           }
 
           width: 12
@@ -2946,34 +2189,6 @@ ApplicationWindow {
 
           visible: positioningSettings.accuracyIndicator && gnssButton.state === "On"
           color: !positionSource.positionInformation || !positionSource.positionInformation.haccValid || positionSource.positionInformation.hacc > positioningSettings.accuracyBad ? Theme.accuracyBad : positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent ? Theme.accuracyTolerated : Theme.accuracyExcellent
-          
-          // North indicator for orientation - matches the original implementation
-          Item {
-            id: compassContainer
-            anchors.fill: parent
-            visible: gnssButton.followOrientationActive && positionSource.positionInformation.orientationValid
-            
-            // North indicator dot only - no question mark
-            Rectangle {
-              width: 4
-              height: 4
-              radius: 2
-              color: "white"
-              anchors.centerIn: parent
-              anchors.verticalCenterOffset: -parent.height * 0.3
-            }
-            
-            Timer {
-              interval: 200
-              running: compassContainer.visible
-              repeat: true
-              onTriggered: {
-                if (gnssButton.followOrientationActive && positionSource.positionInformation.orientationValid) {
-                  gnssButton.followOrientation()
-                }
-              }
-            }
-          }
         }
       }
 
@@ -2987,7 +2202,7 @@ ApplicationWindow {
             } else {
               gnssButton.followActive = false;
               gnssButton.followOrientationActive = false;
-              displayToast(qsTr("El mapa dejó de seguir la ubicación"));
+              displayToast(qsTr("Canvas stopped following location"));
             }
           }
         }
@@ -3004,39 +2219,25 @@ ApplicationWindow {
       }
     }
 
-    Row {
+    Column {
       id: digitizingToolbarContainer
-      anchors.left: parent.left
-      anchors.leftMargin: 6
-      anchors.rightMargin: 6
+      anchors.right: parent.right
+      anchors.rightMargin: 4
       anchors.bottom: parent.bottom
       anchors.bottomMargin: 4
-      z: 2000 // Ensure it's above all other elements
-      visible: true // Force visibility
 
-      spacing: 10
+      spacing: 4
 
       DigitizingToolbar {
         id: digitizingToolbar
 
-        stateVisible: stateMachine.state === "digitize" || stateMachine.state === 'measure'
+        stateVisible: !screenLocker.enabled && (!positioningSettings.geofencingPreventDigitizingDuringAlert || !geofencer.isAlerting) && ((stateMachine.state === "digitize" && dashBoard.activeLayer && !dashBoard.activeLayer.readOnly &&
+            // unfortunately there is no way to call QVariant::toBool in QML so the value is a string
+            dashBoard.activeLayer.customProperty('QFieldSync/is_geometry_locked') !== 'true' && !geometryEditorsToolbar.stateVisible && !moveFeaturesToolbar.stateVisible && !rotateFeaturesToolbar.stateVisible && (projectInfo.editRights || projectInfo.insertRights)) || stateMachine.state === 'measure' || (stateMachine.state === "digitize" && digitizingToolbar.geometryRequested))
         rubberbandModel: currentRubberband ? currentRubberband.model : null
         mapSettings: mapCanvas.mapSettings
         showConfirmButton: stateMachine.state === "digitize"
         screenHovering: mapCanvasMap.hovered
-        
-        // Make sure the toolbar is visible when it should be
-        visible: stateVisible
-        
-        Component.onCompleted: {
-          console.log("DigitizingToolbar initialized. Will be visible when stateMachine.state is 'digitize' or 'measure'")
-        }
-        
-        onStateVisibleChanged: {
-          console.log("DigitizingToolbar stateVisible changed to: " + stateVisible + ", stateMachine.state: " + stateMachine.state)
-          // Ensure visibility matches stateVisible
-          visible = stateVisible
-        }
 
         digitizingLogger.type: stateMachine.state === 'measure' ? '' : 'add'
 
@@ -3047,6 +2248,7 @@ ApplicationWindow {
           positionInformation: positionSource.positionInformation
           topSnappingResult: coordinateLocator.topSnappingResult
           positionLocked: positionSource.active && positioningSettings.positioningCoordinateLock
+          cloudUserInformation: projectInfo.cloudUserInformation
           geometry: Geometry {
             id: digitizingGeometry
             rubberbandModel: digitizingRubberband.model
@@ -3265,57 +2467,85 @@ ApplicationWindow {
   DashBoard {
     id: dashBoard
     objectName: "dashBoard"
+
+    allowActiveLayerChange: !digitizingToolbar.isDigitizing
+    allowInteractive: !welcomeScreen.visible && !qfieldSettings.visible && !qfieldCloudScreen.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !screenLocker.enabled
     mapSettings: mapCanvas.mapSettings
-    layerTree: flatLayerTree
-    allowActiveLayerChange: stateMachine.state === "browse"
+
+    Component.onCompleted: focusstack.addFocusTaker(this)
+
+    onReturnHome: {
+      if (currentRubberband && currentRubberband.model.vertexCount > 1) {
+        digitizingToolbar.cancelDialog.open();
+        shouldReturnHome = true;
+      } else if (!shouldReturnHome) {
+        openWelcomeScreen();
+      }
+    }
 
     onShowMainMenu: p => {
-      mainMenu.popup(p.x, p.y);
+      mainMenu.popup(p.x - mainMenu.width - 2, p.y - 2);
     }
 
-    onShowPrintLayouts: p => {
-      printLayoutListModel.reloadModel();
-      printLayoutsMenu.popup(p.x, p.y);
-    }
-
-    onShowProjectFolder: {
-      qfieldLocalDataPickerScreen.projectFolderView = true;
-      qfieldLocalDataPickerScreen.model.resetToProjectFolder();
-      qfieldLocalDataPickerScreen.visible = true;
+    onShowCloudPopup: {
+      dashBoard.close();
+      qfieldCloudPopup.show();
     }
 
     onToggleMeasurementTool: {
-      if (stateMachine.state === "measure") {
-        changeMode(stateMachine.lastState);
+      if (featureForm.state === "ProcessingAlgorithmForm") {
+        cancelAlgorithmDialog.visible = true;
       } else {
-        stateMachine.lastState = stateMachine.state;
-        changeMode("measure");
+        activateMeasurementMode();
       }
     }
-    
-    onShowweatherDataPanel: {
-      weatherDataPanel.open();
-    }
 
-    onReturnHome: {
-      if (qgisProject.fileName !== '') {
-        // Close the project by loading an empty project instead
-        iface.clearProject();
+    onShowPrintLayouts: p => {
+      if (layoutListInstantiator.count > 1) {
+        printMenu.popup(p.x, p.y);
+      } else {
+        mainMenu.close();
+        displayToast(qsTr('Printing...'));
+        printMenu.printName = layoutListInstantiator.count === 1 ? layoutListInstantiator.model.titleAt(0) : "";
+        printMenu.printTimer.restart();
       }
-      welcomeScreen.visible = true;
     }
 
+    onShowProjectFolder: {
+      dashBoard.close();
+      qfieldLocalDataPickerScreen.projectFolderView = true;
+      qfieldLocalDataPickerScreen.model.resetToPath(projectInfo.filePath);
+      qfieldLocalDataPickerScreen.visible = true;
+    }
 
+    // If the user clicks the "Return home" button in the middle of digitizing, we will ask if they want to discard their changes.
+    // If they press cancel, nothing will happen, but if they press discard, we will discard their digitizing.
+    // We will also use `shouldReturnHome` to know that we need to return home as well or not.
+    property bool shouldReturnHome: false
 
-    onCloseProject: {
-      if (qgisProject.fileName !== '') {
-        // Close the project by loading an empty project instead
-        iface.clearProject();
+    function ensureEditableLayerSelected() {
+      var firstEditableLayer = null;
+      var activeLayerLocked = false;
+      for (var i = 0; i < layerTree.rowCount(); i++) {
+        var index = layerTree.index(i, 0);
+        if (firstEditableLayer === null) {
+          if (layerTree.data(index, FlatLayerTreeModel.Type) === 'layer' && layerTree.data(index, FlatLayerTreeModel.ReadOnly) === false && layerTree.data(index, FlatLayerTreeModel.GeometryLocked) === false) {
+            firstEditableLayer = layerTree.data(index, FlatLayerTreeModel.VectorLayerPointer);
+          }
+        }
+        if (activeLayer != null && activeLayer === layerTree.data(index, FlatLayerTreeModel.VectorLayerPointer)) {
+          if (layerTree.data(index, FlatLayerTreeModel.ReadOnly) === true || layerTree.data(index, FlatLayerTreeModel.GeometryLocked) === true) {
+            activeLayerLocked = true;
+          } else {
+            break;
+          }
+        }
+        if (firstEditableLayer !== null && (activeLayer == null || activeLayerLocked === true)) {
+          activeLayer = firstEditableLayer;
+          break;
+        }
       }
-      welcomeScreen.visible = true;
     }
-
-    Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
   BookmarkProperties {
@@ -3336,66 +2566,6 @@ ApplicationWindow {
     mainMenu.close();
     dashBoard.close();
     changeMode('measure');
-  }
-
-  Loader {
-    id: cameraLoader
-    active: false
-    sourceComponent: Component {
-      id: cameraComponent
-    
-      QFieldItems.QFieldCamera {
-        id: qfieldCamera
-        visible: false
-    
-        Component.onCompleted: {
-          open()
-        }
-    
-        onFinished: (path) => {
-          // Don't close the camera after taking a photo
-          savePhoto(path)
-        }
-    
-        onCanceled: {
-          close()
-        }
-    
-        onClosed: {
-          cameraLoader.active = false
-        }
-      }
-    }
-  }
-
-  function snap(path) {
-    let today = new Date()
-    let relativePath = 'DCIM/' + today.getFullYear()
-                                + (today.getMonth() +1 ).toString().padStart(2,0)
-                                + today.getDate().toString().padStart(2,0)
-                                + today.getHours().toString().padStart(2,0)
-                                + today.getMinutes().toString().padStart(2,0)
-                                + today.getSeconds().toString().padStart(2,0)
-                                + '.' + FileUtils.fileSuffix(path)
-    platformUtilities.renameFile(path, qgisProject.homePath + '/' + relativePath)
-    
-    let pos = positionSource.projectedPosition
-    let wkt = 'POINT(' + pos.x + ' ' + pos.y + ')'
-    
-    let geometry = GeometryUtils.createGeometryFromWkt(wkt)
-    let feature = FeatureUtils.createBlankFeature(dashBoard.activeLayer.fields, geometry)
-        
-    let fieldNames = feature.fields.names
-    if (fieldNames.indexOf('photo') > -1) {
-      feature.setAttribute(fieldNames.indexOf('photo'), relativePath)
-    } else if (fieldNames.indexOf('picture') > -1) {
-      feature.setAttribute(fieldNames.indexOf('picture'), relativePath)
-    }
-
-    overlayFeatureFormDrawer.featureModel.feature = feature
-    overlayFeatureFormDrawer.featureModel.resetAttributes(true)
-    overlayFeatureFormDrawer.state = 'Add'
-    overlayFeatureFormDrawer.open()
   }
 
   Menu {
@@ -3554,38 +2724,6 @@ ApplicationWindow {
     }
 
     MenuItem {
-      text: qsTr("Photo Gallery")
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_photo_library_white_24dp")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-
-      onTriggered: {
-        dashBoard.close();
-        openPhotoGallery();
-        highlighted = false;
-      }
-    }
-
-    MenuItem {
-      text: qsTr("Create DCIM Folder")
-      visible: qgisProject && !!qgisProject.homePath
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_folder_white_24dp")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-
-      onTriggered: {
-        dashBoard.close();
-        createDCIMFolder();
-        highlighted = false;
-      }
-    }
-
- 
-    MenuItem {
       text: qsTr("Message Log")
 
       font: Theme.defaultFont
@@ -3620,75 +2758,20 @@ ApplicationWindow {
     }
 
     MenuItem {
-      text: qsTr("Agro-estaciones (RIA)")
+      text: qsTr("About QField")
 
       font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("weather-station")
+      icon.source: Theme.getThemeVectorIcon("ic_qfield_black_24dp")
       height: 48
       leftPadding: Theme.menuItemLeftPadding
 
       onTriggered: {
         dashBoard.close();
-        mainMenu.close();
-        weatherDataPanel.open();
-        highlighted = false;
-      }
-    }
-    
-    MenuItem {
-      text: qsTr("Origen de los datos")
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_public_white_24dp")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-      enabled: true
-
-      onTriggered: {
-        mainMenu.close();
-        dashBoard.close();
-        dataOriginPanel.visible = true;
-      }
-    }
-
-    MenuSeparator {
-      width: parent.width
-    }
-
-    
-
-    MenuItem {
-      text: qsTr("Información")
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("info_box")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-
-      onTriggered: {
-        dashBoard.close();
-        mainMenu.close();
-        informationPanel.visible = true;
-        highlighted = false;
-      }
-    }
-
-    MenuItem {
-      text: qsTr("About SIGPACGO")
-
-      font: Theme.defaultFont
-      icon.source: Theme.getThemeVectorIcon("ic_sigpacgo")
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-
-      onTriggered: {
-        dashBoard.close();
-        mainMenu.close();
         aboutDialog.visible = true;
         highlighted = false;
       }
     }
-  } 
+  }
 
   Menu {
     id: sensorMenu
@@ -3836,63 +2919,6 @@ ApplicationWindow {
   }
 
   Menu {
-    id: printLayoutsMenu
-    title: qsTr("Print Layouts")
-
-    topMargin: sceneTopMargin
-    bottomMargin: sceneBottomMargin
-
-    width: {
-      let result = 50;
-      let padding = 0;
-      for (let i = 0; i < count; ++i) {
-        let item = itemAt(i);
-        result = Math.max(item.contentItem.implicitWidth, result);
-        padding = Math.max(item.leftPadding + item.rightPadding, padding);
-      }
-      return mainWindow.width > 0 ? Math.min(result + padding, mainWindow.width - 20) : result + padding;
-    }
-
-    MenuItem {
-      id: defaultPrintItem
-      text: qsTr("Default Map Print")
-      font: Theme.defaultFont
-      leftPadding: Theme.menuItemLeftPadding
-      height: 48
-      // Only show this option if no other layouts are available
-      visible: printLayoutListModel.rowCount() === 0
-
-      onClicked: {
-        printLayoutsMenu.close();
-        displayToast(qsTr('Generando PDF...'));
-        // Call print with empty layout name to use default template
-        iface.print("");
-      }
-    }
-
-    Instantiator {
-      model: printLayoutListModel
-
-      MenuItem {
-        text: Title
-
-        font: Theme.defaultFont
-        leftPadding: Theme.menuItemLeftPadding
-        height: 48
-
-        onClicked: {
-          printLayoutsMenu.close();
-          displayToast(qsTr('Imprimiendo layout: ') + Title);
-          iface.print(Title);
-        }
-      }
-
-      onObjectAdded: (index, object) => printLayoutsMenu.insertItem(index + 1, object) // +1 to account for default item
-      onObjectRemoved: (index, object) => printLayoutsMenu.removeItem(object)
-    }
-  }
-
-  Menu {
     id: canvasMenu
     objectName: "canvasMenu"
 
@@ -3979,945 +3005,10 @@ ApplicationWindow {
         var id = bookmarkModel.addBookmarkAtPoint(canvasMenu.point, name, group);
         if (id !== '') {
           bookmarkProperties.bookmarkId = id;
+          bookmarkProperties.bookmarkName = name;
+          bookmarkProperties.bookmarkGroup = group;
+          bookmarkProperties.open();
         }
-      }
-    }
-    
-    MenuItem {
-      id: querySigpacItem
-      text: qsTr("Búsqueda SIGPAC online")
-      icon.source: Theme.getThemeVectorIcon("spain") // Changed to map icon
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-      font: Theme.defaultFont
-
-      onTriggered: {
-        // Create the SIGPAC dialog if it doesn't exist
-        if (!sigpacDialog) {
-          try {
-            var component = Qt.createComponent("qrc:/qml/SigpacDialog.qml");
-            if (component.status === Component.Ready) {
-              sigpacDialog = component.createObject(mainWindow);
-            } else if (component.status === Component.Error) {
-              console.error("Error creating SigpacDialog:", component.errorString());
-              displayToast(qsTr("Error creating SIGPAC dialog: %1").arg(component.errorString()));
-              return;
-            }
-          } catch (error) {
-            console.error("Error creating SigpacDialog:", error);
-            displayToast(qsTr("Error creating SIGPAC dialog: %1").arg(error));
-            return;
-          }
-        }
-        
-        // Set the coordinates and show the dialog
-        if (!sigpacDialog) {
-          displayToast(qsTr("Failed to create SIGPAC dialog"));
-          return;
-        }
-        
-        // Use the setCoordinates function to set coordinates and query data
-        sigpacDialog.setCoordinates(canvasMenu.point.x, canvasMenu.point.y);
-        sigpacDialog.open();
-      }
-    }
-    
-    MenuItem {
-      id: queryCultivoDeclaradoItem
-      text: qsTr("Consulta Online Cultivo/Expediente")
-      icon.source: Theme.getThemeVectorIcon("ic_agriculture_white_24dp") // Agriculture icon
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-      font: Theme.defaultFont
-
-      onTriggered: {
-        // Create the Cultivo Declarado dialog if it doesn't exist
-        if (!cultivoDeclaradoDialog) {
-          try {
-            // Load service first
-            if (!cultivoDeclaradoService) {
-              var serviceComponent = Qt.createComponent("qrc:/qml/CultivoDeclaradoService.qml");
-              if (serviceComponent.status === Component.Ready) {
-                cultivoDeclaradoService = serviceComponent.createObject(mainWindow);
-              } else if (serviceComponent.status === Component.Error) {
-                console.error("Error creating CultivoDeclaradoService:", serviceComponent.errorString());
-                displayToast(qsTr("Error creating Cultivo Declarado service: %1").arg(serviceComponent.errorString()));
-                return;
-              }
-            }
-            
-            // Then load dialog
-            var dialogComponent = Qt.createComponent("qrc:/qml/CultivoDeclaradoDialog.qml");
-            if (dialogComponent.status === Component.Ready) {
-              cultivoDeclaradoDialog = dialogComponent.createObject(mainWindow);
-              // Connect service
-              cultivoDeclaradoDialog.service = cultivoDeclaradoService;
-            } else if (dialogComponent.status === Component.Error) {
-              console.error("Error creating CultivoDeclaradoDialog:", dialogComponent.errorString());
-              displayToast(qsTr("Error creating Cultivo Declarado dialog: %1").arg(dialogComponent.errorString()));
-              return;
-            }
-          } catch (error) {
-            console.error("Error creating CultivoDeclaradoDialog:", error);
-            displayToast(qsTr("Error creating Cultivo Declarado dialog: %1").arg(error));
-            return;
-          }
-        }
-        
-        // Set the coordinates and show the dialog
-        if (!cultivoDeclaradoDialog) {
-          displayToast(qsTr("Failed to create Cultivo Declarado dialog"));
-          return;
-        }
-        
-        // Use the setCoordinates function to set coordinates and query data
-        cultivoDeclaradoDialog.setCoordinates(canvasMenu.point.x, canvasMenu.point.y);
-        cultivoDeclaradoDialog.open();
-      }
-    }
-    
-    MenuItem {
-      id: calculatorItem
-      text: qsTr("Calculadora")
-      icon.source: Theme.getThemeVectorIcon("calculator") 
-      height: 48
-      leftPadding: Theme.menuItemLeftPadding
-      font: Theme.defaultFont
-
-      onTriggered: {
-        var calculatorDialog = Qt.createQmlObject(`
-          import QtQuick
-          import QtQuick.Controls
-          import QtQuick.Layouts
-          import Theme
-          import org.qfield
-          
-          Dialog {
-            id: calculatorDialog
-            title: qsTr("Calculadora")
-            modal: true
-            
-            x: (parent.width - width) / 2
-            y: (parent.height - height) / 2
-            width: 300
-            height: 470
-            
-            // Create an ExpressionEvaluator for calculations
-            ExpressionEvaluator {
-              id: expressionEvaluator
-              mode: ExpressionEvaluator.ExpressionMode
-              project: qgisProject
-            }
-            
-            // Function to handle button clicks - defined at dialog level
-            function handleButtonClick(value) {
-              // Clear button focus so keyboard doesn't overlap with calculator
-              displayField.focus = false;
-              
-              if (value === "C") {
-                displayField.text = "";
-              } else if (value === "⌫") {
-                if (displayField.text.indexOf("=") >= 0) {
-                  displayField.text = "";
-                } else {
-                  displayField.text = displayField.text.slice(0, -1);
-                }
-              } else if (value === "=") {
-                try {
-                  if (displayField.text && displayField.text.indexOf("=") < 0) {
-                    expressionEvaluator.expressionText = displayField.text;
-                    var result = expressionEvaluator.evaluate();
-                    
-                    // Format the result to limit decimal places
-                    if (typeof result === 'number') {
-                      // Properly format number to have at most 8 decimal places
-                      // First convert to fixed 8 decimals
-                      var resultStr = result.toFixed(8);
-                      
-                      // Remove trailing zeros after decimal point (but keep at least one digit after decimal)
-                      if (resultStr.indexOf('.') !== -1) {
-                        resultStr = resultStr.replace(/\.?0+$/, '');
-                        // If we removed everything after decimal, remove the decimal point too
-                        if (resultStr.endsWith('.')) {
-                          resultStr = resultStr.slice(0, -1);
-                        }
-                      }
-                      
-                      // For very large or very small numbers, use scientific notation
-                      if (Math.abs(result) > 1e10 || (Math.abs(result) < 1e-7 && Math.abs(result) > 0)) {
-                        resultStr = result.toExponential(6);
-                      }
-                      
-                      result = resultStr;
-                    }
-                    
-                    displayField.text += " = " + result;
-                  }
-                } catch (error) {
-                  displayField.text = "Error";
-                }
-              } else if (["+", "-", "*", "/"].includes(value)) {
-                if (displayField.text.indexOf("=") >= 0) {
-                  var result = displayField.text.split("=")[1].trim();
-                  displayField.text = result + " " + value + " ";
-                } else {
-                  displayField.text += " " + value + " ";
-                }
-              } else {
-                if (displayField.text.indexOf("=") >= 0) {
-                  displayField.text = "";
-                }
-                displayField.text += value;
-              }
-            }
-            
-            background: Rectangle {
-              color: Theme.darkTheme ? "#303030" : "#f0f0f0"
-              border.color: Theme.mainColor
-              border.width: 2
-              radius: 8
-            }
-            
-            contentItem: ColumnLayout {
-              spacing: 10
-              
-              // Display area
-              Rectangle {
-                Layout.fillWidth: true
-                height: 70  // Slightly taller
-                color: "white"
-                border.color: "gray"
-                border.width: 1
-                clip: true  // Don't let text overflow
-                
-                Flickable {
-                  id: displayFlickable
-                  anchors.fill: parent
-                  anchors.margins: 5
-                  contentWidth: displayField.paintedWidth
-                  contentHeight: height
-                  flickableDirection: Flickable.HorizontalFlick
-                  boundsBehavior: Flickable.StopAtBounds
-                  
-                  TextInput {
-                    id: displayField
-                    width: Math.max(displayFlickable.width, paintedWidth)
-                    height: displayFlickable.height
-                    font.pixelSize: 20
-                    verticalAlignment: TextInput.AlignVCenter
-                    horizontalAlignment: TextInput.AlignRight
-                    
-                    // Allow paste operations
-                    readOnly: false
-                    selectByMouse: true
-                    text: ""
-                    
-                    // Handle paste operations
-                    onTextChanged: {
-                      if (width > 0 && paintedWidth > displayFlickable.width) {
-                        // Calculate a smaller font size if text is too wide
-                        var newSize = Math.max(12, Math.floor(20 * (displayFlickable.width / paintedWidth)));
-                        font.pixelSize = newSize;
-                      } else if (font.pixelSize < 20) {
-                        // Try to reset font size when text gets shorter
-                        font.pixelSize = 20;
-                      }
-                      
-                      // Check if this was a paste operation with a decimal number
-                      if (text && text !== oldText && text.indexOf('.') !== -1) {
-                        var parts = text.split('.');
-                        if (parts.length > 1 && parts[1].length > 8) {
-                          // If more than 8 decimals, truncate
-                          text = parts[0] + '.' + parts[1].substring(0, 8);
-                        }
-                      }
-                      
-                      // Scroll to end to show latest input
-                      displayFlickable.contentX = Math.max(0, displayField.paintedWidth - displayFlickable.width);
-                      
-                      // Store current text for next comparison
-                      oldText = text;
-                    }
-                    
-                    property string oldText: ""
-                    
-                    // Make it look like a display
-                    color: "black"
-                    selectionColor: Theme.mainColor
-                  }
-                }
-                
-                // Show result in a different color
-                Rectangle {
-                  anchors.fill: parent
-                  anchors.margins: 5
-                  color: "transparent"
-                  visible: displayField.text.indexOf("=") >= 0
-                  
-                  Text {
-                    anchors.fill: parent
-                    anchors.rightMargin: 5
-                    text: {
-                      if (displayField.text.indexOf("=") >= 0) {
-                        return displayField.text.split("=")[1].trim();
-                      }
-                      return "";
-                    }
-                    font.pixelSize: displayField.font.pixelSize  // Match the adjusted font size
-                    color: "green"
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight  // Also elide result text if needed
-                  }
-                }
-              }
-              
-              // Help text for available functions
-              Rectangle {
-                Layout.fillWidth: true
-                height: 40
-                color: "#F0F0F0"
-                
-                Text {
-                  anchors.fill: parent
-                  anchors.margins: 5
-                  text: qsTr("Disponible: +, -, *, /, sin(), cos(), sqrt(), pi")
-                  font.pixelSize: 12
-                  color: "#666666"
-                  wrapMode: Text.WordWrap
-                }
-              }
-              
-              // Calculator keypad container
-              Rectangle {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                color: "#E8E8E8"
-                radius: 4
-                
-                ColumnLayout {
-                  anchors.fill: parent
-                  anchors.margins: 5
-                  spacing: 5
-                  
-                  // Row 1: Clear and Backspace
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "C"
-                      
-                      background: Rectangle {
-                        color: "#FF6666"
-                        radius: 4
-                        border.width: 1
-                        border.color: Qt.darker("#FF6666", 1.2)
-                      }
-                      
-                      contentItem: Text {
-                        text: "C"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "white"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("C")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "⌫"
-                      
-                      background: Rectangle {
-                        color: "#FFCC66"
-                        radius: 4
-                        border.width: 1
-                        border.color: Qt.darker("#FFCC66", 1.2)
-                      }
-                      
-                      contentItem: Text {
-                        text: "⌫"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "white"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("⌫")
-                    }
-                  }
-                  
-                  // Row 2: 7, 8, 9, ÷
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "7"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "7"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("7")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "8"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "8"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("8")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "9"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "9"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("9")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "÷"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "÷"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("/")
-                    }
-                  }
-                  
-                  // Row 3: 4, 5, 6, ×
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "4"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "4"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("4")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "5"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "5"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("5")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "6"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "6"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("6")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "×"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "×"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("*")
-                    }
-                  }
-                  
-                  // Row 4: 1, 2, 3, -
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "1"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "1"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("1")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "2"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "2"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("2")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "3"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "3"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("3")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "-"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "-"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("-")
-                    }
-                  }
-                  
-                  // Row 5: 0, ., =, +
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "0"
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "0"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("0")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "."
-                      
-                      background: Rectangle {
-                        color: "#FFFFFF"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "."
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "black"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick(".")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "="
-                      
-                      background: Rectangle {
-                        color: "#66CC99"
-                        radius: 4
-                        border.width: 1
-                        border.color: Qt.darker("#66CC99", 1.2)
-                      }
-                      
-                      contentItem: Text {
-                        text: "="
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "white"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("=")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "+"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "+"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("+")
-                    }
-                  }
-                  
-                  // Function buttons row
-                  RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 5
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "sin"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "sin"
-                        font.pixelSize: 16
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("sin(")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "cos"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "cos"
-                        font.pixelSize: 16
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("cos(")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "sqrt"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "sqrt"
-                        font.pixelSize: 16
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("sqrt(")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: "("
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: "("
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick("(")
-                    }
-                    
-                    Button {
-                      Layout.fillWidth: true
-                      Layout.preferredHeight: 40
-                      text: ")"
-                      
-                      background: Rectangle {
-                        color: "#E6E6E6"
-                        radius: 4
-                        border.width: 1
-                        border.color: "#CCCCCC"
-                      }
-                      
-                      contentItem: Text {
-                        text: ")"
-                        font.pixelSize: 18
-                        font.bold: true
-                        color: "#0066CC"
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                      }
-                      
-                      onClicked: calculatorDialog.handleButtonClick(")")
-                    }
-                  }
-                  
-                  Button {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 40
-                    Layout.topMargin: 10
-                    text: qsTr("Cerrar")
-                    
-                    background: Rectangle {
-                      color: "#DDDDDD"
-                      radius: 4
-                      border.width: 1
-                      border.color: "#BBBBBB"
-                    }
-                    
-                    contentItem: Text {
-                      text: qsTr("Close")
-                      font.pixelSize: 16
-                      color: "black"
-                      horizontalAlignment: Text.AlignHCenter
-                      verticalAlignment: Text.AlignVCenter
-                    }
-                    
-                    onClicked: calculatorDialog.close()
-                  }
-                }
-              }
-            }
-          }
-        `, mainWindow, "calculatorDialog")
-        
-        calculatorDialog.open()
       }
     }
 
@@ -5461,8 +3552,6 @@ ApplicationWindow {
     }
   }
 
-  
-
   /* The feature form */
   FeatureListForm {
     id: featureForm
@@ -5549,21 +3638,6 @@ ApplicationWindow {
     featureModel.currentLayer: dashBoard.activeLayer
 
     Component.onCompleted: focusstack.addFocusTaker(this)
-  }
-
-  WeatherDataPanel {
-    id: weatherDataPanel
-    parent: mainWindow.contentItem
-  }
-  
-  WeatherForecastPanel {
-    id: weatherForecastPanel
-    parent: mainWindow.contentItem
-    positionSource: positionSource
-  }
-
-  CascadeSearchPanel {
-    id: cascadeSearchPanel
   }
 
   function displayToast(message, type, action_text, action_function) {
@@ -5713,8 +3787,45 @@ ApplicationWindow {
       gridDecoration.annotationOutlineColor = gridDecorationConfiguration["annotationOutlineColor"];
       gridDecoration.enabled = gridDecorationConfiguration["hasLines"] || gridDecorationConfiguration["hasMarkers"];
       recentProjectListModel.reloadModel();
-      projectInfo.hasInsertRights = true;
-      projectInfo.hasEditRights = true;
+      const cloudProjectId = QFieldCloudUtils.getProjectId(qgisProject.fileName);
+      cloudProjectsModel.currentProjectId = cloudProjectId;
+      cloudProjectsModel.refreshProjectModification(cloudProjectId);
+      if (cloudProjectId !== '') {
+        var cloudProjectData = cloudProjectsModel.getProjectData(cloudProjectId);
+        switch (cloudProjectData.UserRole) {
+        case 'reader':
+          stateMachine.state = "browse";
+          projectInfo.hasInsertRights = false;
+          projectInfo.hasEditRights = false;
+          break;
+        case 'reporter':
+          projectInfo.hasInsertRights = true;
+          projectInfo.hasEditRights = false;
+          break;
+        case 'editor':
+        case 'manager':
+        case 'admin':
+          projectInfo.hasInsertRights = true;
+          projectInfo.hasEditRights = true;
+          break;
+        default:
+          projectInfo.hasInsertRights = true;
+          projectInfo.hasEditRights = true;
+          break;
+        }
+        if (cloudProjectsModel.layerObserver.deltaFileWrapper.hasError()) {
+          qfieldCloudPopup.show();
+        }
+        if (cloudConnection.status === QFieldCloudConnection.LoggedIn) {
+          projectInfo.cloudUserInformation = cloudConnection.userInformation;
+          cloudProjectsModel.refreshProjectFileOutdatedStatus(cloudProjectId);
+        } else {
+          projectInfo.restoreCloudUserInformation();
+        }
+      } else {
+        projectInfo.hasInsertRights = true;
+        projectInfo.hasEditRights = true;
+      }
       if (stateMachine.state === "digitize" && !qfieldAuthRequestHandler.hasPendingAuthRequest) {
         dashBoard.ensureEditableLayerSelected();
       }
@@ -5881,31 +3992,77 @@ ApplicationWindow {
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
-  Information {
-    id: informationPanel
-    anchors.fill: parent
-    z: 800
-    
-    Component.onCompleted: focusstack.addFocusTaker(this)
-  }
-
-  DataOrigin {
-    id: dataOriginPanel
-    anchors.fill: parent
-    z: 800
-    
-    Component.onCompleted: focusstack.addFocusTaker(this)
-  }
-
   TrackerSettings {
     id: trackerSettings
   }
 
-  
+  QFieldCloudConnection {
+    id: cloudConnection
 
-  
+    property int previousStatus: QFieldCloudConnection.Disconnected
 
-  
+    onStatusChanged: {
+      if (cloudConnection.status === QFieldCloudConnection.Disconnected && previousStatus === QFieldCloudConnection.LoggedIn) {
+        displayToast(qsTr('Signed out'));
+      } else if (cloudConnection.status === QFieldCloudConnection.Connecting) {
+        displayToast(qsTr('Connecting...'));
+      } else if (cloudConnection.status === QFieldCloudConnection.LoggedIn) {
+        displayToast(qsTr('Signed in'));
+        if (QFieldCloudUtils.hasPendingAttachments()) {
+          // Go ahead and upload pending attachments in the background
+          platformUtilities.uploadPendingAttachments(cloudConnection);
+        }
+        var cloudProjectId = QFieldCloudUtils.getProjectId(qgisProject.fileName);
+        if (cloudProjectId) {
+          projectInfo.cloudUserInformation = userInformation;
+          cloudProjectsModel.refreshProjectFileOutdatedStatus(cloudProjectId);
+        }
+      }
+      previousStatus = cloudConnection.status;
+    }
+    onLoginFailed: function (reason) {
+      displayToast(reason);
+    }
+  }
+
+  QFieldCloudProjectsModel {
+    id: cloudProjectsModel
+    cloudConnection: cloudConnection
+    layerObserver: layerObserverAlias
+    gpkgFlusher: gpkgFlusherAlias
+
+    onProjectDownloaded: function (projectId, projectName, hasError, errorString) {
+      return hasError ? displayToast(qsTr("Project %1 failed to download").arg(projectName), 'error') : displayToast(qsTr("Project %1 successfully downloaded, it's now available to open").arg(projectName));
+    }
+
+    onPushFinished: function (projectId, isDownloadingProject, hasError, errorString) {
+      if (hasError) {
+        displayToast(qsTr("Changes failed to reach QFieldCloud: %1").arg(errorString), 'error');
+        return;
+      }
+      if (!isDownloadingProject) {
+        displayToast(qsTr("Changes successfully pushed to QFieldCloud"));
+      }
+      if (QFieldCloudUtils.hasPendingAttachments()) {
+        // Go ahead and upload pending attachments in the background
+        platformUtilities.uploadPendingAttachments(cloudConnection);
+      }
+    }
+
+    onWarning: message => displayToast(message)
+
+    onDeltaListModelChanged: function () {
+      qfieldCloudDeltaHistory.model = cloudProjectsModel.currentProjectData.DeltaList;
+    }
+  }
+
+  QFieldCloudDeltaHistory {
+    id: qfieldCloudDeltaHistory
+
+    modal: true
+    closePolicy: Popup.CloseOnEscape
+    parent: Overlay.overlay
+  }
 
   WelcomeScreen {
     id: welcomeScreen
@@ -5924,7 +4081,9 @@ ApplicationWindow {
       qfieldLocalDataPickerScreen.visible = true;
     }
 
-    
+    onShowQFieldCloudScreen: {
+      qfieldCloudScreen.visible = true;
+    }
 
     onShowSettings: {
       qfieldSettings.reset();
@@ -5934,7 +4093,34 @@ ApplicationWindow {
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
 
-  
+  QFieldCloudScreen {
+    id: qfieldCloudScreen
+
+    anchors.fill: parent
+    visible: false
+    focus: visible
+
+    onFinished: {
+      visible = false;
+    }
+
+    Component.onCompleted: focusstack.addFocusTaker(this)
+  }
+
+  QFieldCloudPopup {
+    id: qfieldCloudPopup
+    visible: false
+    focus: visible
+    parent: Overlay.overlay
+
+    width: parent.width
+    height: parent.height
+  }
+
+  QFieldCloudPackageLayersFeedback {
+    id: cloudPackageLayersFeedback
+    visible: false
+  }
 
   QFieldLocalDataPickerScreen {
     id: qfieldLocalDataPickerScreen
@@ -5960,7 +4146,6 @@ ApplicationWindow {
 
     Component.onCompleted: focusstack.addFocusTaker(this)
   }
-
 
   Changelog {
     id: changelogPopup
@@ -6085,6 +4270,7 @@ ApplicationWindow {
     positionInformation: positionSource.positionInformation
     positionLocked: positionSource.active && positioningSettings.positioningCoordinateLock
     vertexModel: geometryEditingVertexModel
+    cloudUserInformation: projectInfo.cloudUserInformation
   }
 
   VertexModel {
@@ -6247,275 +4433,4 @@ ApplicationWindow {
       }
     }
   }
-
-  Loader {
-    id: standaloneCameraLoader
-    active: false
-    sourceComponent: Component {
-      id: standaloneCameraComponent
-    
-      QFieldItems.QFieldCamera {
-        id: standaloneCameraItem
-        visible: false
-    
-        Component.onCompleted: {
-          open()
-        }
-    
-        onFinished: (path) => {
-          savePhoto(path)
-        }
-    
-        onCanceled: {
-          close()
-        }
-    
-        onClosed: {
-          standaloneCameraLoader.active = false
-        }
-      }
-    }
-  }
-
-  function savePhoto(path) {
-    // folder name from camera settings or use DCIM as default
-    let folderName = "DCIM"
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
-      folderName = standaloneCameraLoader.item.cameraSettings.folderName
-    }
-    
-    // Create the folder if it doesn't exist
-    platformUtilities.createDir(qgisProject.homePath, folderName)
-    
-    // Generate a unique filename with timestamp
-    let today = new Date()
-    let dateStr = today.getFullYear().toString() +
-                 (today.getMonth() + 1).toString().padStart(2, '0') +
-                 today.getDate().toString().padStart(2, '0')
-    
-    let timestamp = today.getHours().toString().padStart(2, '0') +
-                   today.getMinutes().toString().padStart(2, '0') +
-                   today.getSeconds().toString().padStart(2, '0')
-    
-    // Get the photo prefix if it exists
-    let prefix = ""
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item && 
-        standaloneCameraLoader.item.cameraSettings.photoPrefix) {
-      prefix = standaloneCameraLoader.item.cameraSettings.photoPrefix + "_"
-    }
-    
-    let relativePath = folderName + '/' + prefix + 'IMG_' + dateStr + '_' + timestamp + '.' + FileUtils.fileSuffix(path)
-    
-    // Move the file to the destination folder
-    platformUtilities.renameFile(path, qgisProject.homePath + '/' + relativePath)
-    
-    // Add metadata and stamping if enabled
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
-      let camera = standaloneCameraLoader.item
-      
-      if (camera.cameraSettings.geoTagging && positionSource.active) {
-        FileUtils.addImageMetadata(qgisProject.homePath + '/' + relativePath, camera.currentPosition)
-        // Set the Make to SIGPACGO
-        platformUtilities.setExifTag(qgisProject.homePath + '/' + relativePath, "Exif.Image.Make", "SIGPACGO")
-        platformUtilities.setExifTag(qgisProject.homePath + '/' + relativePath, "Xmp.tiff.Make", "SIGPACGO")
-      }
-      
-      if (camera.cameraSettings.stamping) {
-        FileUtils.addImageStamp(qgisProject.homePath + '/' + relativePath, camera.stampExpressionEvaluator.evaluate())
-      }
-    }
-    
-    // Display a toast with the saved location
-    displayToast(qsTr("Foto guardada en ") + folderName)
-  }
-
-  function openPhotoGallery() {
-    // Check if a project is loaded and has a valid home path
-    if (!qgisProject || !qgisProject.homePath) {
-      displayToast(qsTr("No hay proyecto cargado. Por favor, abra un proyecto primero."))
-      return
-    }
-    
-    // Check if DCIM folder exists, if not check for SIGPACGO_Photos
-    let dcimPath = qgisProject.homePath + '/DCIM'
-    let sigpacgoPhotosPath = qgisProject.homePath + '/SIGPACGO_Photos'
-    
-    // Try to determine which folder to open based on what exists
-    // First try to open DCIM folder
-    platformUtilities.createDir(qgisProject.homePath, "DCIM")
-    platformUtilities.open(dcimPath)
-    displayToast(qsTr("Abriendo carpeta DCIM"))
-  }
-  
-  // Function to create a DCIM folder in the project directory
-  function createDCIMFolder() {
-    // Check if a project is loaded and has a valid home path
-    if (!qgisProject || !qgisProject.homePath) {
-      displayToast(qsTr("No hay proyecto cargado. Por favor, abra un proyecto primero."))
-      return
-    }
-    
-    // Create the DCIM directory if it doesn't exist
-    platformUtilities.createDir(qgisProject.homePath, "DCIM")
-    
-    // Display a toast
-    displayToast(qsTr("Carpeta DCIM creada en el directorio del proyecto"))
-    
-    // Open the folder
-    platformUtilities.open(qgisProject.homePath + '/DCIM')
-  }
-  
-  // Function to ensure sample projects are available
-  function ensureSampleProjects() {
-    // Force copy sample projects
-    platformUtilities.copySampleProjects()
-    
-    // Display a toast
-    displayToast(qsTr("Sample projects folder created"))
-  }
-  
-  // Function to ensure SIGPACGO main map is available
-  function ensureMainMap() {
-    // Force copy main map project
-    platformUtilities.copyMainMapProject()
-    
-    // Display a toast
-    displayToast(qsTr("SIGPACGO Main Map copied successfully"))
-  }
-  
-  // Make sure Component.onCompleted exists and calls our function
-  Component.onCompleted: {
-    // Call with a slight delay to ensure UI is fully loaded
-    Qt.callLater(function() {
-      let result = ensureSigpacBaseProject();
-      console.log("SIGPAC_BASE project setup result: " + result);
-    });
-  }
-  
-  // Cascade Search Panel
-
-  // Add the SIGPAC dialog property
-  property var sigpacDialog: null
-  property var cultivoDeclaradoService: null
-  property var cultivoDeclaradoDialog: null
-
-  // Global accuracy indicator
-  QfToolButton {
-    id: accuracyIndicator
-    visible: positioningSettings.accuracyIndicator && positionSource.active && 
-             !welcomeScreen.visible && !qfieldSettings.visible && !aboutDialog.visible && 
-             !qfieldLocalDataPickerScreen.visible && !overlayFeatureFormDrawer.visible && 
-             !informationPanel.visible
-    width: 30
-    height: 30
-    radius: 15
-    round: true
-    
-    // Force correct position by setting it immediately after the information button
-    anchors.right: informationButton.right
-    anchors.top: informationButton.bottom 
-    anchors.topMargin: 4
-    
-    // Use the bgcolor property for the indicator color
-    bgcolor: {
-      if (!positionSource.positionInformation || 
-          !positionSource.positionInformation.haccValid || 
-          positionSource.positionInformation.hacc > positioningSettings.accuracyBad)
-        return Theme.accuracyBad
-      else if (positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent)
-        return Theme.accuracyTolerated
-      else
-        return Theme.accuracyExcellent
-    }
-    
-    // Set text content
-    text: "GPS"
-    font.pixelSize: 9
-    font.bold: true
-    Material.foreground: "white"  // Use Material.foreground instead of textColor
-    
-    z: 1000
-    
-    // Add tooltip for the accuracy indicator
-    ToolTip {
-      visible: accuracyMouseArea.containsMouse
-      text: {
-        if (!positionSource.positionInformation || !positionSource.positionInformation.haccValid) {
-          return qsTr("Precisión: Desconocida")
-        }
-        let accuracy = positionSource.positionInformation.hacc.toFixed(1)
-        return qsTr("Precisión: ") + accuracy + " m"
-      }
-    }
-    
-    // Add mouse area for the tooltip and interaction
-    MouseArea {
-      id: accuracyMouseArea
-      anchors.fill: parent
-      hoverEnabled: true
-      // Show position information when clicked instead of toggling GPS
-      onClicked: {
-        if (positioningSettings.showPositionInformation) {
-          informationPanel.visible = true
-        } else {
-          // If position information panel is not enabled, show a message
-          displayToast(qsTr("Haga clic en el botón de GNSS para activar/desactivar el GPS"))
-        }
-      }
-    }
-  }
-
-  // Add center reticle
-  Item {
-    id: centerReticle
-    anchors.centerIn: mapCanvas
-    visible: stateMachine.state === "browse" && !dashBoard.opened && !aboutDialog.visible && !welcomeScreen.visible && !qfieldSettings.visible && !qfieldLocalDataPickerScreen.visible && !codeReader.visible && !sketcher.visible && !overlayFeatureFormDrawer.visible && !informationPanel.visible
-    z: 100
-    
-    Rectangle {
-      id: horizontalLine
-      width: 12
-      height: 1
-      color: Theme.mainColor
-      opacity: 0.8
-      anchors.centerIn: parent
-    }
-    
-    Rectangle {
-      id: verticalLine
-      width: 1
-      height: 12
-      color: Theme.mainColor
-      opacity: 0.8
-      anchors.centerIn: parent
-    }
-    
-    // Center dot - perfectly aligned with the cross
-    Rectangle {
-      id: centerDot
-      width: 3  // Odd number for perfect pixel alignment
-      height: 3
-      radius: width / 2
-      color: Theme.mainColor
-      opacity: 0.8
-      // Center dot exactly in the middle of the reticle
-      anchors.centerIn: parent
-    }
-  }
-
-  
-  
-  Menu {
-    id: sentinelMenu
-  }
-
-  PrintLayoutListModel {
-    id: printLayoutListModel
-    project: qgisProject
-  }
-
-  Window {
-    id: topBar
-  }
 }
-

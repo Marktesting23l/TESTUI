@@ -30,7 +30,11 @@ Page {
       const dataDir = platformUtilities.appDataDirs()[0];
       pathsToTry.push(
         dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
-        dataDir + "sigpacgo_main/SIGPACGO.qgz"
+        dataDir + "sigpacgo_main/SIGPACGO.qgz",
+        // Add direct path which should work on the device
+        "/data/user/0/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+        "/data/data/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+        dataDir + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
       );
     } else {
       // Desktop paths
@@ -562,6 +566,16 @@ Page {
                       }
                     }
                     
+                    // Try the specific hard-coded path from the user's device
+                    const specificPath = "/data/user/0/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz";
+                    let specificFileInfo = platformUtilities.getFileInfo(specificPath);
+                    if (specificFileInfo && specificFileInfo.exists) {
+                      console.log("Loading main map from specific device path: " + specificPath);
+                      iface.loadFile(specificPath, qsTr("Mapa Principal SIGPAC-Go"));
+                      mainProjectPath = specificPath; // Update the verified path
+                      return;
+                    }
+                    
                     // If that fails, try standard locations
                     const pathsToTry = [];
                     
@@ -572,11 +586,30 @@ Page {
                         dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
                         dataDir + "sigpacgo_main/SIGPACGO.qgz"
                       );
+                      
+                      // Add more variations of paths that might work
+                      const extraPaths = [
+                        "/data/user/0/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                        "/data/data/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                        dataDir + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
+                      ];
+                      
+                      for (const path of extraPaths) {
+                        if (!pathsToTry.includes(path)) {
+                          pathsToTry.push(path);
+                        }
+                      }
                     } else {
                       // Desktop paths
                       pathsToTry.push(
                         platformUtilities.applicationDirectory() + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
                       );
+                    }
+                    
+                    // Log all paths we're checking
+                    console.log("Checking the following paths for SIGPACGO.qgz:");
+                    for (let i = 0; i < pathsToTry.length; i++) {
+                      console.log("Path " + (i+1) + ": " + pathsToTry[i]);
                     }
                     
                     // Try each path
@@ -597,6 +630,9 @@ Page {
                     if (!mapFound) {
                       console.log("No map found in standard locations, trying to copy");
                       try {
+                        // Clear previous error state
+                        console.log("Attempting to reset and copy map files again");
+                        
                         platformUtilities.copyMainMapProject();
                         
                         // Check paths again
@@ -644,6 +680,16 @@ Page {
                   }
                 }
                 
+                // Try the specific hard-coded path from the user's device
+                const specificPath = "/data/user/0/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz";
+                let specificFileInfo = platformUtilities.getFileInfo(specificPath);
+                if (specificFileInfo && specificFileInfo.exists) {
+                  console.log("Loading main map from specific device path: " + specificPath);
+                  iface.loadFile(specificPath, qsTr("Mapa Principal SIGPAC-Go"));
+                  mainProjectPath = specificPath; // Update the verified path
+                  return;
+                }
+                
                 // If that fails, try standard locations
                 const pathsToTry = [];
                 
@@ -654,6 +700,19 @@ Page {
                     dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
                     dataDir + "sigpacgo_main/SIGPACGO.qgz"
                   );
+                  
+                  // Add more variations of paths that might work
+                  const extraPaths = [
+                    "/data/user/0/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                    "/data/data/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                    dataDir + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
+                  ];
+                  
+                  for (const path of extraPaths) {
+                    if (!pathsToTry.includes(path)) {
+                      pathsToTry.push(path);
+                    }
+                  }
                 } else {
                   // Desktop paths
                   pathsToTry.push(
@@ -679,6 +738,9 @@ Page {
                 if (!mapFound) {
                   console.log("No map found in standard locations, trying to copy");
                   try {
+                    // Clear previous error state
+                    console.log("Attempting to reset and copy map files again");
+                    
                     platformUtilities.copyMainMapProject();
                     
                     // Check paths again
@@ -1244,6 +1306,37 @@ Page {
   function checkMapsExist() {
     console.log("Checking if main map exists at path: " + mainProjectPath);
     
+    // Try all possible paths on the device
+    const allPossiblePaths = [];
+    
+    if (Qt.platform.os === "android") {
+      const dataDir = platformUtilities.appDataDirs()[0];
+      allPossiblePaths.push(
+        dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+        dataDir + "sigpacgo_main/SIGPACGO.qgz",
+        "/data/user/0/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+        "/data/data/com.imagritools.sigpacgo/files/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+        dataDir + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
+      );
+    } else {
+      allPossiblePaths.push(
+        platformUtilities.applicationDirectory() + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
+      );
+    }
+    
+    // Log each path to check
+    console.log("Checking all possible paths for SIGPACGO.qgz:");
+    for (let i = 0; i < allPossiblePaths.length; i++) {
+      console.log("Path " + (i+1) + ": " + allPossiblePaths[i]);
+      
+      let fileInfo = platformUtilities.getFileInfo(allPossiblePaths[i]);
+      if (fileInfo && fileInfo.exists) {
+        console.log("Found main map at: " + allPossiblePaths[i]);
+        mainProjectPath = allPossiblePaths[i]; // Update to this verified path
+        return; // No need to continue if we found the file
+      }
+    }
+
     // First try to directly copy all maps without checking
     try {
       console.log("Proactively copying all map resources...");
@@ -1256,6 +1349,10 @@ Page {
       if (Qt.platform.os === "android") {
         const dataDir = platformUtilities.appDataDirs()[0];
         console.log("Checking Android app data directory contents: " + dataDir);
+        
+        // Try to create directories if they don't exist
+        console.log("Ensuring SIGPACGO_Mapa_Principal directory exists");
+        platformUtilities.createDir(dataDir, "SIGPACGO_Mapa_Principal");
         
         // Check sample_projects dir
         let sampleDirInfo = platformUtilities.getFileInfo(dataDir + "sample_projects");
@@ -1274,80 +1371,46 @@ Page {
           console.log("SIGPACGO_Mapa_Principal directory does not exist, explicitly trying to create it");
           platformUtilities.createDir(dataDir, "SIGPACGO_Mapa_Principal");
         }
+        
+        // Check directory without slash
+        mapDirInfo = platformUtilities.getFileInfo(dataDir + "SIGPACGO_Mapa_Principal");
+        if (mapDirInfo && mapDirInfo.exists) {
+          console.log("SIGPACGO_Mapa_Principal directory exists (without slash)");
+        }
       }
     } catch (e) {
       console.log("Error during proactive map copy: " + e);
     }
     
-    // Now check if the main map exists
-    let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
-    if (!fileInfo || !fileInfo.exists) {
-      console.log("Main map not found at: " + mainProjectPath);
-      console.log("Trying to create maps...");
-      
-      try {
-        // Try to call the main map copy function directly
-        platformUtilities.copyMainMapProject();
-        console.log("Called platformUtilities.copyMainMapProject() directly");
-        
-        // Check again after copying
-        fileInfo = platformUtilities.getFileInfo(mainProjectPath);
-        if (fileInfo && fileInfo.exists) {
-          console.log("Main map successfully available at: " + mainProjectPath);
-        } else {
-          console.log("Main map still not available at: " + mainProjectPath);
-          
-          // Try using a different path pattern
-          if (Qt.platform.os === "android") {
-            // Try alternative locations on Android
-            const altPaths = [
-              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO.qgz",
-              platformUtilities.systemLocalDataLocation("SIGPACGO_Mapa_Principal") + "/SIGPACGO.qgz",
-              platformUtilities.systemLocalDataLocation("sigpacgo_main") + "/SIGPACGO.qgz"
-            ];
-            
-            console.log("Checking alternative paths:");
-            for (let i = 0; i < altPaths.length; i++) {
-              console.log("- Checking: " + altPaths[i]);
-              let altFileInfo = platformUtilities.getFileInfo(altPaths[i]);
-              if (altFileInfo && altFileInfo.exists) {
-                mainProjectPath = altPaths[i];
-                console.log("Found main map at alternative path: " + mainProjectPath);
-                break;
-              }
-            }
-          }
-        }
-      } catch (e) {
-        console.log("Error during map copy operation: " + e);
+    // Now check if the main map exists after copying
+    for (let i = 0; i < allPossiblePaths.length; i++) {
+      let fileInfo = platformUtilities.getFileInfo(allPossiblePaths[i]);
+      if (fileInfo && fileInfo.exists) {
+        console.log("Found main map after copying at: " + allPossiblePaths[i]);
+        mainProjectPath = allPossiblePaths[i]; // Update to this verified path
+        return; // No need to continue if we found the file
       }
-    } else {
-      console.log("Main map found at: " + mainProjectPath);
     }
     
-    // Check sample projects independently
+    // If still not found, try direct call to copyMainMapProject
+    console.log("Still couldn't find main map, trying direct copy...");
     try {
-      const sampleProjectsDir = platformUtilities.systemLocalDataLocation("sample_projects");
-      console.log("Checking sample_projects directory: " + sampleProjectsDir);
+      platformUtilities.copyMainMapProject();
+      console.log("Called platformUtilities.copyMainMapProject() directly");
       
-      let sampleDirInfo = platformUtilities.getFileInfo(sampleProjectsDir);
-      if (!sampleDirInfo || !sampleDirInfo.exists) {
-        console.log("Sample projects directory doesn't exist, creating it");
-        const dirCreated = platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sample_projects");
-        console.log("Sample projects directory creation result: " + dirCreated);
+      // Check again
+      for (let i = 0; i < allPossiblePaths.length; i++) {
+        let fileInfo = platformUtilities.getFileInfo(allPossiblePaths[i]);
+        if (fileInfo && fileInfo.exists) {
+          console.log("Found main map after direct copy at: " + allPossiblePaths[i]);
+          mainProjectPath = allPossiblePaths[i]; // Update to this verified path
+          return; // Success!
+        }
       }
       
-      // Check if the directory has any files
-      const dirExists = platformUtilities.getFileInfo(sampleProjectsDir).exists;
-      if (dirExists) {
-        console.log("Sample projects directory exists, checking contents");
-        
-        // Try calling the copy function to populate it
-        platformUtilities.copySampleProjects();
-        console.log("Called platformUtilities.copySampleProjects() to populate sample_projects");
-      }
+      console.log("Failed to find main map file after all attempts");
     } catch (e) {
-      console.log("Error checking sample projects: " + e);
+      console.log("Error during direct map copy: " + e);
     }
   }
 

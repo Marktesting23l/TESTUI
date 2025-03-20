@@ -877,7 +877,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Nota: Debe reiniciar QField o volver a cargar su proyecto para que la configuración de Sentinel surta efecto.")
+                text: qsTr("Nota: Debe reiniciar SIGPACGO o volver a cargar su proyecto para que la configuración de Sentinel surta efecto.")
                 font: Theme.tipFont
                 color: Theme.warningColor
                 wrapMode: Text.WordWrap
