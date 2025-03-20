@@ -141,23 +141,23 @@ void AndroidPlatformUtilities::afterUpdate()
     }
   }
   
-  // Ensure SIGPACGO Mapa Principal directory exists and is populated
+  // Ensure SIGPACGO_Mapa_Principal directory exists and is populated
   // Using exactly the same pattern as sample projects
-  const QString mapaDir = systemLocalDataLocation("SIGPACGO Mapa Principal");
+  const QString mapaDir = systemLocalDataLocation("SIGPACGO_Mapa_Principal");
   QDir mapaMainDir(mapaDir);
   if (!mapaMainDir.exists()) {
     mapaMainDir.mkpath(".");
     
     // Force copy main map using the same pattern as sample projects
     const bool success = FileUtils::copyRecursively(
-      systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO Mapa Principal"), 
+      systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO_Mapa_Principal"), 
       mapaDir
     );
     
     if (!success) {
-      qWarning() << "Failed to copy SIGPACGO Mapa Principal to" << mapaDir;
+      qWarning() << "Failed to copy SIGPACGO_Mapa_Principal to" << mapaDir;
     } else {
-      qDebug() << "Successfully copied SIGPACGO Mapa Principal to" << mapaDir;
+      qDebug() << "Successfully copied SIGPACGO_Mapa_Principal to" << mapaDir;
     }
   }
   
@@ -853,10 +853,10 @@ void AndroidPlatformUtilities::stopPositioningService() const
 void AndroidPlatformUtilities::copyMainMapProject()
 {
   // For Android, we need to explicitly create the directory and copy the files
-  qDebug() << "Android: Copying SIGPACGO Mapa Principal...";
+  qDebug() << "Android: Copying SIGPACGO_Mapa_Principal...";
   
   // First ensure parent directory exists
-  const QString mapaDir = systemLocalDataLocation("SIGPACGO Mapa Principal");
+  const QString mapaDir = systemLocalDataLocation("SIGPACGO_Mapa_Principal");
   QDir mapaMainDir(mapaDir);
   if (!mapaMainDir.exists()) {
     mapaMainDir.mkpath(".");
@@ -865,25 +865,25 @@ void AndroidPlatformUtilities::copyMainMapProject()
   
   // Force copy main map using the same pattern as sample projects
   const bool success = FileUtils::copyRecursively(
-    systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO Mapa Principal"), 
+    systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO_Mapa_Principal"), 
     mapaDir
   );
   
   if (!success) {
-    qWarning() << "Android: Failed to copy SIGPACGO Mapa Principal to" << mapaDir;
+    qWarning() << "Android: Failed to copy SIGPACGO_Mapa_Principal to" << mapaDir;
     
     // Try to call Java method to copy the files
     if (mActivity.isValid()) {
       runOnAndroidMainThread([this] {
         auto activity = qtAndroidContext();
         if (activity.isValid()) {
-          qDebug() << "Android: Calling Java copyAssets method to copy SIGPACGO Mapa Principal";
+          qDebug() << "Android: Calling Java copyAssets method to copy SIGPACGO_Mapa_Principal";
           activity.callMethod<void>("copyAssets");
         }
       });
     }
   } else {
-    qDebug() << "Android: Successfully copied SIGPACGO Mapa Principal to" << mapaDir;
+    qDebug() << "Android: Successfully copied SIGPACGO_Mapa_Principal to" << mapaDir;
   }
   
   // Also call the parent implementation

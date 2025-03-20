@@ -19,6 +19,9 @@ Page {
 
   // Add debug logging for project paths
   Component.onCompleted: {
+    // Initialize terms and conditions
+    termsAndConditionsLoader.active = true;
+    
     // Try to find the main map in standard locations
     const pathsToTry = [];
     
@@ -26,19 +29,19 @@ Page {
     if (Qt.platform.os === "android") {
       const dataDir = platformUtilities.appDataDirs()[0];
       pathsToTry.push(
-        dataDir + "SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz",
-        dataDir + "sigpacgo_main/SIGPACGO_Mapa_Principal.qgz",
-        dataDir + "SIGPACGO/SIGPACGO_Mapa_Principal.qgz"
+        dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+        dataDir + "sigpacgo_main/SIGPACGO.qgz",
+        dataDir + "SIGPACGO/SIGPACGO.qgz"
       );
     } else {
       // Desktop paths
       pathsToTry.push(
-        platformUtilities.applicationDirectory() + "/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz"
+        platformUtilities.applicationDirectory() + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
       );
     }
     
     // Log all paths we're checking
-    console.log("Checking the following paths for SIGPACGO Mapa Principal:");
+    console.log("Checking the following paths for SIGPACGO_Mapa_Principal:");
     for (let i = 0; i < pathsToTry.length; i++) {
       console.log("Path " + (i+1) + ": " + pathsToTry[i]);
     }
@@ -531,14 +534,14 @@ Page {
                     if (Qt.platform.os === "android") {
                       const dataDir = platformUtilities.appDataDirs()[0];
                       pathsToTry.push(
-                        dataDir + "SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz",
-                        dataDir + "sigpacgo_main/SIGPACGO_Mapa_Principal.qgz",
-                        dataDir + "SIGPACGO/SIGPACGO_Mapa_Principal.qgz"
+                        dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                        dataDir + "sigpacgo_main/SIGPACGO.qgz",
+                        dataDir + "SIGPACGO/SIGPACGO.qgz"
                       );
                     } else {
                       // Desktop paths
                       pathsToTry.push(
-                        platformUtilities.applicationDirectory() + "/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz"
+                        platformUtilities.applicationDirectory() + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
                       );
                     }
                     
@@ -614,14 +617,14 @@ Page {
                 if (Qt.platform.os === "android") {
                   const dataDir = platformUtilities.appDataDirs()[0];
                   pathsToTry.push(
-                    dataDir + "SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz",
-                    dataDir + "sigpacgo_main/SIGPACGO_Mapa_Principal.qgz",
-                    dataDir + "SIGPACGO/SIGPACGO_Mapa_Principal.qgz"
+                    dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                    dataDir + "sigpacgo_main/SIGPACGO.qgz",
+                    dataDir + "SIGPACGO/SIGPACGO.qgz"
                   );
                 } else {
                   // Desktop paths
                   pathsToTry.push(
-                    platformUtilities.applicationDirectory() + "/SIGPACGO Mapa Principal/SIGPACGO_Mapa_Principal.qgz"
+                    platformUtilities.applicationDirectory() + "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"
                   );
                 }
                 
@@ -1185,7 +1188,11 @@ Page {
   }
 
   onVisibleChanged: {
-    adjustWelcomeScreen();
+    if (visible) {
+      // Show terms and conditions when welcome screen becomes visible
+      showTermsAndConditions();
+      adjustWelcomeScreen();
+    }
     if (!visible) {
       firstShown = true;
     } else {
@@ -1223,8 +1230,8 @@ Page {
           if (Qt.platform.os === "android") {
             // Try alternative location patterns on Android
             const altPaths = [
-              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO_Mapa_Principal.qgz",
-              platformUtilities.appDataDirs()[0] + "SIGPACGO/SIGPACGO_Mapa_Principal.qgz"
+              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO.qgz",
+              platformUtilities.appDataDirs()[0] + "SIGPACGO/SIGPACGO.qgz"
             ];
             
             for (let i = 0; i < altPaths.length; i++) {

@@ -216,7 +216,7 @@ public class QFieldActivity extends QtActivity {
         
         // Create necessary directories
         File sampleProjectsDir = new File(internalAppDir, "sample_projects");
-        File sigpacgoMapaDir = new File(internalAppDir, "SIGPACGO Mapa Principal");
+        File sigpacgoMapaDir = new File(internalAppDir, "SIGPACGO_Mapa_Principal");
         File sigpacgoBaseDir = new File(internalAppDir, "sigpacgo_base");
         
         // Create directories if they don't exist
@@ -226,14 +226,14 @@ public class QFieldActivity extends QtActivity {
         
         Log.i("SIGPACGO", "Created directories:");
         Log.i("SIGPACGO", "- Sample projects: " + sampleProjectsDir.getAbsolutePath());
-        Log.i("SIGPACGO", "- SIGPACGO Mapa Principal: " + sigpacgoMapaDir.getAbsolutePath());
+        Log.i("SIGPACGO", "- SIGPACGO_Mapa_Principal: " + sigpacgoMapaDir.getAbsolutePath());
         Log.i("SIGPACGO", "- SIGPACGO Base: " + sigpacgoBaseDir.getAbsolutePath());
         
         try {
-            // First, try to copy SIGPACGO Mapa Principal
+            // First, try to copy SIGPACGO_Mapa_Principal
             String[] mapaSourcePaths = {
-                "resources/SIGPACGO Mapa Principal",
-                "SIGPACGO Mapa Principal"
+                "resources/SIGPACGO_Mapa_Principal",
+                "SIGPACGO_Mapa_Principal"
             };
             
             boolean mapaCopied = false;
@@ -242,7 +242,7 @@ public class QFieldActivity extends QtActivity {
                     Log.i("SIGPACGO", "Attempting to copy from: " + sourcePath);
                     copyAssetFolder(sourcePath, sigpacgoMapaDir.getAbsolutePath());
                     mapaCopied = true;
-                    Log.i("SIGPACGO", "Successfully copied SIGPACGO Mapa Principal from " + sourcePath);
+                    Log.i("SIGPACGO", "Successfully copied SIGPACGO_Mapa_Principal from " + sourcePath);
                     break;
                 } catch (IOException e) {
                     Log.w("SIGPACGO", "Failed to copy from " + sourcePath + ": " + e.getMessage());
@@ -250,7 +250,7 @@ public class QFieldActivity extends QtActivity {
             }
             
             if (!mapaCopied) {
-                Log.e("SIGPACGO", "Failed to copy SIGPACGO Mapa Principal from any source");
+                Log.e("SIGPACGO", "Failed to copy SIGPACGO_Mapa_Principal from any source");
             }
             
             // Then copy sample projects
@@ -276,7 +276,7 @@ public class QFieldActivity extends QtActivity {
             }
             
             // Finally, verify the contents
-            verifyDirectory(sigpacgoMapaDir, "SIGPACGO Mapa Principal");
+            verifyDirectory(sigpacgoMapaDir, "SIGPACGO_Mapa_Principal");
             verifyDirectory(sampleProjectsDir, "Sample Projects");
             
         } catch (Exception e) {

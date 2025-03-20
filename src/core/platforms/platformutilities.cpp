@@ -71,8 +71,8 @@ void PlatformUtilities::copySampleProjects()
   const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/resources/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
   Q_ASSERT( success );
   
-  // Also copy SIGPACGO Mapa Principal exactly the same way as sample projects
-  FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO Mapa Principal" ), systemLocalDataLocation( QLatin1String( "SIGPACGO Mapa Principal" ) ) );
+  // Also copy SIGPACGO_Mapa_Principal exactly the same way as sample projects
+  FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO_Mapa_Principal" ), systemLocalDataLocation( QLatin1String( "SIGPACGO_Mapa_Principal" ) ) );
   
   // Also copy the SIGPAC base map
   copySigpacBaseMap();
@@ -100,10 +100,10 @@ void PlatformUtilities::copySigpacBaseMap()
 void PlatformUtilities::copyMainMapProject()
 {
   // Actually copy the main map project instead of doing nothing
-  qDebug() << "Copying SIGPACGO Mapa Principal...";
+  qDebug() << "Copying SIGPACGO_Mapa_Principal...";
   
   // First ensure parent directory exists
-  QString targetDir = systemLocalDataLocation( QLatin1String( "SIGPACGO Mapa Principal" ) );
+  QString targetDir = systemLocalDataLocation( QLatin1String( "SIGPACGO_Mapa_Principal" ) );
   QDir targetDirObj(targetDir);
   if (!targetDirObj.exists())
   {
@@ -113,14 +113,14 @@ void PlatformUtilities::copyMainMapProject()
   
   // Copy the main map files
   const bool success = FileUtils::copyRecursively( 
-    systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO Mapa Principal" ), 
+    systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO_Mapa_Principal" ), 
     targetDir 
   );
   
   if (success) {
-    qDebug() << "Successfully copied SIGPACGO Mapa Principal to" << targetDir;
+    qDebug() << "Successfully copied SIGPACGO_Mapa_Principal to" << targetDir;
   } else {
-    qWarning() << "Failed to copy SIGPACGO Mapa Principal to" << targetDir;
+    qWarning() << "Failed to copy SIGPACGO_Mapa_Principal to" << targetDir;
   }
 }
 
