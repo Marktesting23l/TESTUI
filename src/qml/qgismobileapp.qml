@@ -3636,6 +3636,22 @@ ApplicationWindow {
     }
     
     MenuItem {
+      text: qsTr("Códigos SIGPAC")
+
+      font: Theme.defaultFont
+      icon.source: Theme.getThemeVectorIcon("ic_table_vector_24dp")
+      height: 48
+      leftPadding: Theme.menuItemLeftPadding
+
+      onTriggered: {
+        dashBoard.close();
+        mainMenu.close();
+        sigpacCodesPanel.open();
+        highlighted = false;
+      }
+    }
+    
+    MenuItem {
       text: qsTr("Origen de los datos")
 
       font: Theme.defaultFont
@@ -4102,6 +4118,10 @@ ApplicationWindow {
             width: 300
             height: 470
             
+            // Properties to store the last expression and result
+            property string lastExpression: ""
+            property string lastResult: ""
+            
             // Create an ExpressionEvaluator for calculations
             ExpressionEvaluator {
               id: expressionEvaluator
@@ -4116,6 +4136,8 @@ ApplicationWindow {
               
               if (value === "C") {
                 displayField.text = "";
+                calculatorDialog.lastExpression = "";
+                calculatorDialog.lastResult = "";
               } else if (value === "⌫") {
                 if (displayField.text.indexOf("=") >= 0) {
                   displayField.text = "";
@@ -4151,22 +4173,38 @@ ApplicationWindow {
                       result = resultStr;
                     }
                     
-                    displayField.text += " = " + result;
+                    // Store the expression and result
+                    calculatorDialog.lastExpression = displayField.text;
+                    calculatorDialog.lastResult = result;
+                    
+                    // Add a space at the end to trigger redraw without changing content
+                    var currentText = displayField.text;
+                    displayField.text = currentText + " ";
+                    // Short timeout to ensure UI updates correctly
+                    Qt.callLater(function() { 
+                      displayField.text = currentText;
+                    });
                   }
                 } catch (error) {
                   displayField.text = "Error";
+                  calculatorDialog.lastExpression = "";
+                  calculatorDialog.lastResult = "";
                 }
               } else if (["+", "-", "*", "/"].includes(value)) {
                 if (displayField.text.indexOf("=") >= 0) {
-                  var result = displayField.text.split("=")[1].trim();
-                  displayField.text = result + " " + value + " ";
+                  // Use the last result to continue calculation
+                  displayField.text = calculatorDialog.lastResult + " " + value + " ";
                 } else {
                   displayField.text += " " + value + " ";
                 }
               } else {
                 if (displayField.text.indexOf("=") >= 0) {
+                  // Clear previous result
                   displayField.text = "";
+                  calculatorDialog.lastExpression = "";
+                  calculatorDialog.lastResult = "";
                 }
+                
                 displayField.text += value;
               }
             }
@@ -4184,26 +4222,22 @@ ApplicationWindow {
               // Display area
               Rectangle {
                 Layout.fillWidth: true
-                height: 70  // Slightly taller
+                height: 75  // Increase overall height
                 color: "white"
                 border.color: "gray"
                 border.width: 1
-                clip: true  // Don't let text overflow
                 
-                Flickable {
-                  id: displayFlickable
+                ColumnLayout {
                   anchors.fill: parent
-                  anchors.margins: 5
-                  contentWidth: displayField.paintedWidth
-                  contentHeight: height
-                  flickableDirection: Flickable.HorizontalFlick
-                  boundsBehavior: Flickable.StopAtBounds
+                  anchors.margins: 3
+                  spacing: 0
                   
+                  // Input field
                   TextInput {
                     id: displayField
-                    width: Math.max(displayFlickable.width, paintedWidth)
-                    height: displayFlickable.height
-                    font.pixelSize: 20
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 35
+                    font.pixelSize: 18
                     verticalAlignment: TextInput.AlignVCenter
                     horizontalAlignment: TextInput.AlignRight
                     
@@ -4212,17 +4246,15 @@ ApplicationWindow {
                     selectByMouse: true
                     text: ""
                     
+                    // Change background color when result is showing
+                    Rectangle {
+                      anchors.fill: parent
+                      color: calculatorDialog.lastResult !== "" ? "#F0F8FF" : "transparent" // Light blue background when result is shown
+                      z: -1 // Behind the text
+                    }
+                    
                     // Handle paste operations
                     onTextChanged: {
-                      if (width > 0 && paintedWidth > displayFlickable.width) {
-                        // Calculate a smaller font size if text is too wide
-                        var newSize = Math.max(12, Math.floor(20 * (displayFlickable.width / paintedWidth)));
-                        font.pixelSize = newSize;
-                      } else if (font.pixelSize < 20) {
-                        // Try to reset font size when text gets shorter
-                        font.pixelSize = 20;
-                      }
-                      
                       // Check if this was a paste operation with a decimal number
                       if (text && text !== oldText && text.indexOf('.') !== -1) {
                         var parts = text.split('.');
@@ -4231,9 +4263,6 @@ ApplicationWindow {
                           text = parts[0] + '.' + parts[1].substring(0, 8);
                         }
                       }
-                      
-                      // Scroll to end to show latest input
-                      displayFlickable.contentX = Math.max(0, displayField.paintedWidth - displayFlickable.width);
                       
                       // Store current text for next comparison
                       oldText = text;
@@ -4245,29 +4274,32 @@ ApplicationWindow {
                     color: "black"
                     selectionColor: Theme.mainColor
                   }
-                }
-                
-                // Show result in a different color
-                Rectangle {
-                  anchors.fill: parent
-                  anchors.margins: 5
-                  color: "transparent"
-                  visible: displayField.text.indexOf("=") >= 0
                   
-                  Text {
-                    anchors.fill: parent
-                    anchors.rightMargin: 5
-                    text: {
-                      if (displayField.text.indexOf("=") >= 0) {
-                        return displayField.text.split("=")[1].trim();
+                  // Result display
+                  Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 30  // Increase height for result
+                    color: "transparent"
+                    visible: calculatorDialog.lastResult !== ""
+                    
+                    Text {
+                      anchors.fill: parent
+                      anchors.rightMargin: 5
+                      text: {
+                        if (calculatorDialog.lastResult !== "") {
+                          return "=  " + calculatorDialog.lastResult;  // Add extra space after equals sign
+                        }
+                        return "";
                       }
-                      return "";
+                      font.pixelSize: 18  // Increase result font size
+                      font.bold: true     // Make result bold for better visibility
+                      color: "green"
+                      horizontalAlignment: Text.AlignRight
+                      verticalAlignment: Text.AlignVCenter
+                      elide: Text.ElideNone
+                      fontSizeMode: Text.Fit
+                      minimumPixelSize: 12  // Increase minimum font size
                     }
-                    font.pixelSize: displayField.font.pixelSize  // Match the adjusted font size
-                    color: "green"
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight  // Also elide result text if needed
                   }
                 }
               }
@@ -4902,7 +4934,7 @@ ApplicationWindow {
                     }
                     
                     contentItem: Text {
-                      text: qsTr("Close")
+                      text: qsTr("Cerrar")
                       font.pixelSize: 16
                       color: "black"
                       horizontalAlignment: Text.AlignHCenter
@@ -6021,14 +6053,6 @@ ApplicationWindow {
     }
   }
 
-  Nyuki {
-    id: nyuki
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: -200
-    anchors.left: parent.left
-    width: 200
-    height: 200
-  }
 
   DropArea {
     id: dropArea
@@ -6517,5 +6541,23 @@ ApplicationWindow {
   Window {
     id: topBar
   }
+
+  Drawer {
+    id: sigpacCodesPanel
+    width: parent.width
+    height: parent.height
+    edge: Qt.RightEdge
+    interactive: sigpacCodesPanel.visible
+    dragMargin: 0 // prevents opening the drawer by dragging
+
+    SigpacCodes {
+      anchors.fill: parent
+    }
+
+    onClosed: {
+      mainMenu.close()
+    }
+  }
+
 }
 

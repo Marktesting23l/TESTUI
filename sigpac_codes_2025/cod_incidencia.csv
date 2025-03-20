@@ -1,0 +1,131 @@
+codigo,descripcion
+7,Uso asignado por la información de Catastro
+11,Árboles dispersos
+12,Contiene otros usos sin subdividir
+13,Se observa en la ortofoto uso de cultivo
+14,Superficie de cultivo que se prolonga en red viaria o fluvial
+15,Recinto perteneciente a parcela incluida en información gráfica de un Certificado de Forestación
+17,Recinto perteneciente a parcela incluida en información alfanumérica del Registro Vitícola identificada como arranque de viña
+19,Cítricos según SIG Citrícola
+20,Viña según SIG Vitícola
+21,Catastrado de arroz
+37,Recinto perteneciente a parcela incluida en información alfanumérica de un Certificado de Forestación
+39,La superficie de cítricos no ocupa la totalidad del recinto por asociación con otros frutales
+46,Recinto de uso no arable perteneciente a parcela incluido en fichero de parcelas declaradas
+47,Se observa en la ortofoto superficie arada
+49,Arboles aislados o a marco en cultivo combinado con el uso arable
+58,Viña según Registro Vitícola en parte del Recinto SIGPAC
+62,Uso pastos en parcela incluida en base de datos de pasto permanente
+63,Uso diferente a pastos en parcela incluida en base de datos de pasto permanente
+74,Información de uso SIGPAC aportada por la Comunidad Autónoma
+75,Información del sistema de explotación aportada por la Comunidad Autónoma
+80,Dato con origen en información procedente de la Comunidad Autónoma
+81,Instalaciones energéticas
+83,Tomate en invernadero
+96,Uso SIGPAC validado por fotointerpretación Control Teledetección 2017
+97,Uso SIGPAC estudiado por Control Teledetección 2017
+98,Uso SIGPAC validado por fotointerpretación Control Teledetección 2018
+99,Uso SIGPAC estudiado por Control Teledetección 2018
+100,Uso SIGPAC validado por fotointerpretación Control Teledetección 2019
+111,Asociación viña-hortalizas
+112,Plataneras
+116,Contiene elementos del paisaje
+117,No subvencionable: Cultivo abandonado
+119,Catastrado de urbano
+120,Zona esteparia medida
+124,Superficies forestales de rotación corta.
+127,Regadío comprobado. No consta existencia de concesión.
+128,Recintos sin cultivar con valores ambientales o por medidas agroambientales
+129,Plantación trufera o encinas micorrizadas
+130,Plantaciones forestales regulares
+132,Roquedo según cobertura SIOSE
+133,Todo el recinto es un elemento del paisaje sin definir
+134,Elemento del paisaje árboles en hilera
+135,Elemento del paisaje árboles en grupo hasta 0,3 ha
+136,Elemento del paisaje linde hasta 10 m de anchura
+137,Elemento del paisaje charcas, lagunas, pequeños humedales, etc. hasta 0,1ha
+138,Elemento del paisaje islas de vegetación natural o roca hasta 0,1ha
+139,Elemento del paisaje terraza hasta 10 m de anchura
+140,Información del coeficiente de subvencionabilidad aportada por la Comunidad Autónoma
+142,Cultivo de esparrago
+143,Monte-bajo matorral
+144,Erial
+145,Plantas aromáticas leñosas
+146,Asignación CAP manual recintos pequeños
+148,Recinto perteneciente a un Tancat
+149,Recinto de pasto sensible transformado
+150,recinto con mezcla de platanera y otros frutales tropicales
+151,Frutales bajo plástico
+152,Improductivo según cobertura MFE
+153,Actualización CAP manual con coeficiente 2016
+154,Visto en campo 2017
+155,Frutos secos que no cumplen la densidad mínima, según control de campo o administrativo
+156,Control de pastos de más de 10 años
+157,El cambio de uso SIGPAC, procedente de un uso forestal o pastos, no acredita autorización administrativa de la Consejería con competencia en medio ambiente
+158,Barbecho de 5 años consecutivos
+159,Subvencionabilidad del recinto condicionada por incendio
+160,Contiene Balates
+161,Frutos secos que no cumplen la densidad mínima, según el nº de árboles registrado
+162,Visto en campo 2018
+163,El cambio de uso reflejado en SIGPAC ha sido informado por parte de la Consejería con competencia en medio ambiente como exento de la necesidad de autorización
+164,El cambio de uso reflejado en SIGPAC ha sido informado por parte de la Consejería con competencia en medio ambiente como autorizado
+165,El cambio de uso SIGPAC a leñoso, procedente de tierras de cultivo en zona LIC o ZEPA, no acredita autorización administrativa de la Consejería con competencia en medio ambiente
+166,El cambio de uso reflejado en SIGPAC ha sido informado por parte de la Consejería con competencia en medio ambiente como no autorizado
+167,Pino inoculado con níscalo
+168,Pastos leñosos sin mayoría herbácea
+169,Pino para producción de piñones
+170,Visto en campo 2019
+171,Uso SIGPAC estudiado por Control Teledetección 2019
+173,Actividad agraria comprobada 2016
+174,Actividad agraria comprobada 2017
+175,Actividad agraria comprobada 2018
+176,Actividad agraria comprobada 2019
+177,Cultivos Permanentes con actividad de mantenimiento 5 años consecutivos
+178,Monitorización 2019: Pendiente confirmar por renovación Ortofoto
+179,Recinto con derecho de cultivo en dominio público
+180,Uso SIGPAC validado por fotointerpretación Control Teledetección 2020
+181,Uso SIGPAC estudiado por Control Teledetección 2020
+182,Visto en campo 2020
+183,Monitorización 2020: Pendiente confirmar por renovación Ortofoto
+184,cultivo sin suelo
+185,Actividad agraria comprobada en 2020
+186,Pasto Permanente con actividad de mantenimiento 5 años consecutivos
+187,Pendiente control por covid-19
+188,Uso SIGPAC validado por fotointerpretación Control Teledetección 2021
+189,Uso SIGPAC estudiado por Control Teledetección 2021
+190,Visto en campo 2021
+191,Monitorización 2021: Pendiente confirmar por renovación Ortofoto
+192,Actividad agraria comprobada en 2021
+193,Dominio público según catastro
+196,Visto en campo 2022
+197,Monitorización 2022: Pendiente confirmar por renovación Ortofoto
+198,Actividad agraria comprobada en 2022
+199,Recinto inactivo
+202,Información de Región en Concentración Parcelaria aportada por la Comunidad Autónoma
+204,Información Vía Pecuaria aportada por la Comunidad Autónoma
+208,CSP externo pendiente cambio raster
+209,Revisado por fotointerpretación por la Comunidad Autónoma
+210,Recintos afectados por Erupción 2021
+211, Pasto sin actividad agraria.
+213,Prado susceptible de siega con altitud <= 300 m
+214,Prado susceptible de siega con altitud > 300 m
+215,Elemento del paisaje construcciones tradicionales
+216,Elemento del paisaje seto hasta 10 m de anchura
+217,Elemento del paisaje árboles aislados
+218,Visto en campo 2023
+219,Monitorización 2023: Pendiente confirmar por renovación Ortofoto
+220,Actividad agraria comprobada en 2023
+221,Tierra de cultivo explotada de regadío en alguno de los últimos 3 años
+222,Elemento del paisaje muro de piedra
+223,Cabecera de cultivo permanente
+224,Cultivo leñoso con bancales
+225, Recinto con CSP bloqueado tras incendio
+226,Cultivo de setas o champiñón
+227,Prado susceptible de siega
+228,Visto en campo 2024
+229,Monitorización 2024: Pendiente confirmar por renovación Ortofoto
+230,Actividad agraria comprobada en 2024
+231,Disponibilidad No acreditada
+233,Visto en campo 2025
+234,Monitorización 2025: Pendiente confirmar por renovación Ortofoto
+235,Actividad agraria comprobada en 2025

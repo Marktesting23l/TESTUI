@@ -21,6 +21,7 @@ Page {
   Component.onCompleted: {
     // Initialize terms and conditions
     termsAndConditionsLoader.active = true;
+    sigpacTermsLoader.active = true;
     
     // Try to find the main map in standard locations
     const pathsToTry = [];
@@ -99,11 +100,14 @@ Page {
       item.parent = Overlay.overlay;
       console.log("Terms and conditions loaded successfully");
       
-      // Connect to the termsAccepted signal to save the setting
+      // Connect to the termsAccepted signal to save the setting and show SIGPAC terms if needed
       item.termsAccepted.connect(function() {
         console.log("Terms and conditions accepted signal received");
         // Store locally that we've shown and accepted terms
         settings.setValue("SIGPACGO/termsAccepted", true);
+        
+        // After accepting the main terms, show SIGPAC terms if needed
+        showSigpacTermsIfNeeded();
       });
       
       // Check if we need to show terms when loaded
@@ -113,10 +117,37 @@ Page {
     }
   }
   
+  // Add SIGPAC Terms popup with lazy loading
+  Loader {
+    id: sigpacTermsLoader
+    active: false  // Don't load immediately
+    source: "SigpacTerms.qml"
+    asynchronous: true  // Load asynchronously to prevent UI blocking
+    
+    onLoaded: {
+      item.parent = Overlay.overlay;
+      console.log("SIGPAC terms loaded successfully");
+      
+      // Connect to the termsAccepted signal to save the setting
+      item.termsAccepted.connect(function() {
+        console.log("SIGPAC terms accepted signal received");
+        // Store locally that we've shown and accepted terms
+        settings.setValue("SIGPACGO/sigpacTermsAccepted", true);
+      });
+      
+      // Check if we need to show SIGPAC terms when loaded
+      if (needToShowSigpacTerms) {
+        showSigpacDialogIfNeeded();
+      }
+    }
+  }
+  
   // Property to track if we've checked terms this session
   property bool termsCheckedThisSession: false
   // Property to track if we need to show terms when loader completes
   property bool needToShowTerms: false
+  // Property to track if we need to show SIGPAC terms when loader completes
+  property bool needToShowSigpacTerms: false
 
   // Function to show terms and conditions if needed
   function showTermsAndConditions() {
@@ -130,6 +161,9 @@ Page {
     if (settings.valueBool("SIGPACGO/termsAccepted", false)) {
       console.log("Terms already accepted according to settings, not showing dialog");
       termsCheckedThisSession = true;
+      
+      // Check if we need to show SIGPAC terms (only if main terms are accepted)
+      showSigpacTermsIfNeeded();
       return;
     }
     
@@ -150,9 +184,41 @@ Page {
       console.log("Showing terms and conditions dialog");
     } else {
       console.log("Terms already accepted in component, not showing dialog");
+      
+      // If main terms are accepted, check if we need to show SIGPAC terms
+      showSigpacTermsIfNeeded();
     }
     termsCheckedThisSession = true;
     needToShowTerms = false;
+  }
+  
+  // Function to show SIGPAC terms if needed
+  function showSigpacTermsIfNeeded() {
+    // Check if SIGPAC terms have already been accepted in settings
+    if (settings.valueBool("SIGPACGO/sigpacTermsAccepted", false)) {
+      console.log("SIGPAC terms already accepted according to settings, not showing dialog");
+      return;
+    }
+    
+    // First, make sure the component is loaded
+    if (!sigpacTermsLoader.active) {
+      sigpacTermsLoader.active = true;
+      needToShowSigpacTerms = true;
+    } else if (sigpacTermsLoader.status === Loader.Ready) {
+      // Component already loaded
+      showSigpacDialogIfNeeded();
+    }
+  }
+  
+  // Helper function to show the SIGPAC terms dialog if needed
+  function showSigpacDialogIfNeeded() {
+    if (!sigpacTermsLoader.item.accepted) {
+      sigpacTermsLoader.item.open();
+      console.log("Showing SIGPAC terms dialog");
+    } else {
+      console.log("SIGPAC terms already accepted in component, not showing dialog");
+    }
+    needToShowSigpacTerms = false;
   }
 
   Rectangle {
@@ -250,6 +316,7 @@ Page {
             Layout.fillWidth: true
             text: qsTr("Abrir archivo local")
             font.bold: true
+            font.pixelSize: Theme.defaultFont.pixelSize * 1.2
             icon.source: Theme.getThemeIcon("ic_folder_open_black_24dp") 
             icon.color: Theme.mainColor
             Material.accent: Theme.mainColor
@@ -473,7 +540,47 @@ Page {
             Layout.preferredHeight: 120
             Layout.margins: 10
             radius: 8
-            color: Qt.hsla(0.33, 0.2, 0.95, 1.0) // Light green background
+            
+            // Replace plain color with gradient background
+            gradient: Gradient {
+              GradientStop { position: 0.0; color: Qt.hsla(0.33, 0.15, 0.97, 1.0) }
+              GradientStop { position: 1.0; color: Qt.hsla(0.33, 0.25, 0.93, 1.0) }
+            }
+            
+            // Add pattern overlay
+            Canvas {
+                id: patternCanvas
+                anchors.fill: parent
+                opacity: 0.08
+                
+                onPaint: {
+                    var ctx = getContext("2d");
+                    ctx.fillStyle = "#4CAF50";
+                    
+                    // Create grid pattern
+                    var gridSize = 6;
+                    var dotSize = 1;
+                    
+                    for (var x = 0; x < width; x += gridSize) {
+                        for (var y = 0; y < height; y += gridSize) {
+                            ctx.fillRect(x, y, dotSize, dotSize);
+                        }
+                    }
+                }
+            }
+            
+            // Image with map of Spain
+            Image {
+                id: spainMapImage
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                width: parent.width * 0.4
+                height: parent.height * 0.8
+                source: "qrc:/images/sigpacgo_logo.svg"  // Fallback to logo if spain.svg doesn't work
+                opacity: 0.15
+                fillMode: Image.PreserveAspectFit
+            }
+            
             border.color: "#4CAF50" // Green border
             border.width: 2
             

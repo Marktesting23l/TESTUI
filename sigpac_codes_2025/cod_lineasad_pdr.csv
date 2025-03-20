@@ -1,0 +1,328 @@
+id,codigo,descripcion
+1509234707,01221000100,Pago al régimen de ayudas a la forestación de tierras agrícolas por primas compensatorias de rentas para superficies agrarias forestadas
+1509234708,01010010749,10.1.8.2 Sistemas agrarios de especial interés para las poblaciones de aves de los arrozales andaluces. Convocatoria 2022
+1509234709,01010010401,10.1.13 Mantenimiento de sistemas tradicionales de ganadería extensiva de Andalucía en rumiantes. Convocatoria 2020
+1509234710,01651012501,6501.2.1 Cultivos herbáceos de secano.  Convocatoria 2023
+1509234711,01651012502,6501.2.3  Cultivos industriales.  Algodón y remolacha. Compromisos obligatorios. Convocatoria 2023
+1509234712,01651012504,6501.2.4 Compromiso voluntario de Cultivos industriales. Algodón y remolacha. Convocatoria 2023
+1509234713,01651012503,6501.2.2  Invernaderos: hortícolas intensivos.  Convocatoria 2023
+1509234714,01651011801,6501.2.5 Castaño. Convocatoria 2023
+1509234715,01651011802,6501.2.6  Uva Pasa. Convocatoria 2023
+1509234716,01651010501,6501.4.1  Apicultura para la biodiversidad. Convocatoria 2023
+1509234717,01653010001,6503.1 Conversión a prácticas y métodos de agricultura y ganadería ecológica. Convocatoria 2023
+1509234718,01653010301,6503.1.1  Conversión a prácticas y métodos de apicultura ecológica. Convocatoria 2023
+1509234719,01653020001,6503.2 Mantenimiento de prácticas y métodos de agricultura y ganadería ecológica. Convocatoria 2023
+1509234720,01653020301,6503.2.1  Mantenimiento de prácticas y métodos de apicultura ecológica. Convocatoria 2023
+1509234721,01655010201,6505.1.1  Fomento de razas autóctonas. Convocatoria 2023
+1509234722,01661010002,6613.1 Pago compensatorio por zonas montañosas. Convocatoria 2024
+1509234723,01661020002,6613.2 Pago compensatorio por otras zonas con limitaciones naturales significativas. Convocatoria 2024
+1509234724,01661030002,6613.3 Pago compensatorio por otras zonas con limitaciones específicas. Convocatoria 2024
+1509234725,02221000000,Forestación de tierras agrícolas
+1509234726,02651010502,Apicultura con colmenares reducidos y dispersos. Convocatoria 2023
+1509234727,02651010503,Apicultura con colmenares reducidos y dispersos. Convocatoria 2024
+1509234728,02651010801,Lucha alternativa a la lucha química en el arroz. Convocatoria 2023
+1509234729,02651010802,Lucha alternativa a la lucha química en el arroz. Convocatoria 2024
+1509234730,02651011301,Cultivo de esparceta para el mantenimiento de la fauna esteparia. Convocatoria 2023
+1509234731,02651011302,Mantenimiento de las actividades agrarias tradicionales en zonas de alta presencia de mamíferos. Convocatoria 2023
+1509234732,02651011303,Mantenimiento de las actividades agrarias tradicionales en zonas de alta presencia de mamíferos. Convocatoria 2024
+1509234733,02651012001,Mantenimiento del Rastrojo en la Red Natura 2000. Convocatoria 2023
+1509234734,02651012201,Generación de alimento para la avifauna en el área de influencia socioeconómica de la Reserva Natural Dirigida de la Laguna de Gallocanta . Convocatoria 2023
+1509234735,02651012202,Generación de alimento para la avifauna de los agrosistemas fuera del P.O.R.N. Convocatoria 2023
+1509234736,02651012203,Generación de alimento para la avifauna en otras zonas. Convocatoria 2023
+1509234737,02651012301,Generación de corredores biológicos en la Red Natura 2000. Convocatoria 2023
+1509234738,02651012302,Generación de corredores biológicos en la Red Natura 2000. Convocatoria 2024
+1509234739,02653000101,Agricultura ecológica. Convocatoria 2023
+1509234740,02653000201,Ganadería ecológica. Convocatoria 2023
+1509234741,02654000001,Bienestar y sanidad animal en ganadería extensiva. Convocatoria 2023
+1509234742,02655010201,Mantenimiento de Razas Autóctonas españolas de protección especial o en peligro de extinción. Convocatoria 2023
+1509234743,02013010009,Pagos compensatorios en zonas de montaña. Convocatoria 2024
+1509234744,02013030005,Pagos compensatorios en zonas con limitaciones específicas. Convocatoria 2024
+1509234745,02671010002,Pagos compensatorios por zonas agrícolas de la red Natura 2000. Convocatoria 2024
+1509234746,02671030002,Pagos compensatorios por zonas agrícolas incluidas en planes hidrológicos de cuenca. Convocatoria 2024
+1509234747,03010010504,Apicultura para la biodiversidad. Convocatoria 2023
+1509234748,03010012701,Ayuda a las plantaciones de manzano para fomentar la biodiversidad. Convocatoria 2020
+1509234749,03010010218,Mantenimiento de razas autóctonas puras en peligro de extinción. Convocatoria 2023
+1509234750,03011010137,Prórroga - Pagos para la adopción/mantenimiento de prácticas de Agricultura ecológica. Convocatoria 2019
+1509234751,03011010138,Pagos para la adopción/mantenimiento de prácticas de Agricultura ecológica. Convocatoria 2020
+1509234752,03011010140,Pagos para la adopción/mantenimiento de prácticas de Agricultura ecológica. Convocatoria 2023
+1509234753,03011010308,Pagos para la adopción de prácticas de Apicultura ecológica. Convocatoria 2023
+1509234754,03011020308,Pagos para la mantenimiento de prácticas de Apicultura ecológica. Convocatoria 2023
+1509234755,03011010205,Prórroga - Pagos para  la adopción/mantenimiento de prácticas de Ganadería ecológica. Convocatoria 2019
+1509234756,03011010206,Pagos para  la adopción/mantenimiento de prácticas de Ganadería ecológica. Convocatoria 2020
+1509234757,03011010208,Pagos para  la adopción/mantenimiento de prácticas de Ganadería ecológica. Convocatoria 2023
+1509234758,03012010110,Pagos para zonas agrícolas de la Red Natura 2000. Convocatoria 2024
+1509234759,03013000007,Pago compensatorio por zonas de montaña y con limitaciones naturales significativas. Convocatoria 2024
+1509234760,04651010801,Fomento de la lucha biológica. Convocatoria 2023
+1509234761,04651010802,Solarización y biosolarización. Convocatoria 2023
+1509234762,04651010803,Elementos de trampa masiva y/o confusión sexual. Convocatoria 2023
+1509234763,04651010101,Fomento de la producción integrada. Convocatoria 2023
+1509234764,04651013001,Aprovechamiento de aguas regeneradas. Convocatoria 2023
+1509234765,04653000201,Pastos para el aprovechamiento de la ganadería ecológica. Convocatoria 2023
+1509234766,04653000101,Fomento de la agricultura ecológica. Convocatoria 2023
+1509234767,04655010201,Fomento de las razas autóctonas en peligro de extinción. Convocatoria 2023
+1509234768,04655010301,Protección de las variedades en riesgo de erosión genética. Convocatoria 2023
+1509234769,04654000002,Bienestar animal. Convocatoria 2024
+1509234770,04661010002,Pagos compensatorios en zonas de montaña. Convocatoria 2024
+1509234771,04661030002,Pagos compensatorios en zonas con limitaciones específicas. Convocatoria 2024
+1509234772,05010010156,Prórroga - Ayuda para compromisos agroambientales y climáticos. Cultivo de tuneras para la producción de cochinilla. Anualidad 2024
+1509234773,05010010157,Prórroga - Ayuda para compromisos agroambientales y climáticos. Cultivos leñosos en pendiente o terrazas. Anualidad 2024
+1509234774,05010010158,Prórroga - Ayuda para compromisos agroambientales y climáticos. Gestión racional de sistemas de pastoreo para protección de flora y fauna mediante la práctica de la trashumancia.  Anualidad 2024
+1509234775,05010010159,Prórroga - Ayuda para compromisos agroambientales y climáticos. Mantenimiento de setos tradicionales. Anualidad 2024
+1509234776,05010010160,Prórroga - Ayuda para compromisos agroambientales y climáticos. Mantenimiento y conservación de cercas y muretes tradicionales. Anualidad 2024
+1509234777,05010010161,Prórroga - Ayuda para compromisos agroambientales y climáticos. Mejora y conservación de gavias. Anualidad 2024
+1509234778,05010010162,Prórroga - Ayuda para compromisos agroambientales y climáticos. Mejora y conservación del medio físico. Actuación sobre pastizales. Anualidad 2024
+1509234779,05010010163,Prórroga - Ayuda para compromisos agroambientales y climáticos. Producción integrada.  Anualidad 2024
+1509234780,05010010502,Prórroga - Ayuda para compromisos agroambientales y climáticos. Apicultura. Anualidad 2024
+1509234781,05010010213,Prórroga - Ayuda para compromisos agroambientales y climáticos. Mantenimiento de razas autóctonas puras en peligro de extinción. Anualidad 2024
+1509234782,05011020001,Prórroga - Pago para el mantenimiento de agricultura ecológica por hectárea en producción. Anualidad 2024
+1509234783,05011020002,Prórroga - Pago para el mantenimiento de agricultura ecológica por hectárea en producción de forrajes y granos para alimentación animal. Anualidad 2024
+1509234784,05011020201,Prórroga - Pago para el mantenimiento de ganadería ecológica por cabeza de ganado en producción. Anualidad 2024
+1509234785,06651010401,Compromisos de fomento y gestión sostenible de pastos/gestión y fertilización del suelo. Convocatoria 2023
+1509234786,06651010402,Compromisos de fomento y gestión sostenible de pastos/gestión de plagas y malas hierbas. Convocatoria 2023
+1509234787,06651010403,Compromisos de fomento y gestión sostenible de pastos/gestión y fertilización del suelo y de plagas y malas hierbas. Convocatoria 2023
+1509234788,06651011301,Compromisos Mantenimiento o mejora de habitats y de actividades agrarias tradicionales que preserven la biodiversidad/ Pastoreo con ganado vacuno y/o equino en superficie de pasto comunal con CSP mayor que 60. Convocatoria 2023
+1509234789,06651011302,Compromisos Mantenimiento o mejora de habitats y de actividades agrarias tradicionales que preserven la biodiversidad/ Pastoreo con ganado vacuno y/o equino en superficie de pasto comunal con CSP menor o igual que 60. Convocatoria 2023
+1509234790,06651011303,Compromisos Mantenimiento o mejora de habitats y de actividades agrarias tradicionales que preserven la biodiversidad/ Pastoreo con ganado ovino y/o caprino en superficie de pasto comunal con CSP mayor que 60. Convocatoria 2023
+1509234791,06651011304,Compromisos Mantenimiento o mejora de habitats y de actividades agrarias tradicionales que preserven la biodiversidad/ Pastoreo con ganado ovino y/o caprino en superficie de pasto comunal con CSP menor o igual que 60. Convocatoria 2023
+1509234792,06651010501,Compromisos Apicultura para la biodiversidad. Convocatoria 2023
+1509234793,06653000101,Agricultura ecológica. Convocatoria 2024 
+1509234794,06653000201,Ganadería ecológica. Convocatoria 2024 
+1509234795,06653000301,Apicultura ecológica. Convocatoria 2024
+1509234796,06654000001,Bienestar animal. Convocatoria 2024
+1509234797,06655010201,Mantenimiento de razas locales amenazadas. Convocatoria 2024  
+1509234798,06661000002,Zonas con limitaciones naturales u otras limitaciones específicas. Convocatoria 2024
+1509234799,07221000100,Reforestación y creación de superficies forestales. Primas compensatorias
+1509234800,07008010101,Reforestación y creación de superficies forestales. Primas de mantenimiento. Convocatoria 2019.  Implantación 2022
+1509234801,07008010103,Reforestación y creación de superficies forestales. Primas de mantenimiento. Convocatoria 2019.  Implantación 2023
+1509234802,07008010201,Reforestación y creación de superficies forestales. Primas compensatorias. Convocatoria 2019.  Implantación 2022
+1509234803,07008010202,Reforestación y creación de superficies forestales. Primas compensatorias. Convocatoria 2019.  Implantación 2023
+1509234804,07008010102,Creación y densificación de Dehesas. Primas de mantenimiento. Convocatoria 2019. Implantación 2022
+1509234805,07008010104,Creación y densificación de Dehesas. Primas de mantenimiento. Convocatoria 2019. Implantación 2023
+1509234806,07010011304,Plantas aromáticas para mejora de la biodiversidad. Convocatoria 2022
+1509234807,07671010001,Pagos Compensatorios por zonas agrícolas de la RN2000. Convocatoria 2024
+1509234808,07013010008,Indemnización para zonas de montaña. Convocatoria 2024
+1509234809,07015010102,Pagos compensatorios por compromisos silvoamibientales y climáticos. Convocatoria 2019
+1509234810,07651010501,Apicultura para mejora de la biodiversidad. Convocatoria 2023 
+1509234811,07651012501,Gestión sostenible  viñedo de secano. Convocatoria 2023
+1509234812,07651010701,Gestión de la agricultura extensiva para la protección de la grulla común. Convocatoria 2023 
+1509234813,07653000101,Agricultura ecológica. Convocatoria 2023 
+1509234814,07653000201,Ganadería ecológica. Convocatoria 2023 
+1509234815,07014000003,Bienestar de los animales. Convocatoria 2023
+1509234816,07655010201,Conservación de razas autóctonas amenazadas de erosión genética. Convocatoria 2023 
+1509234817,07651012502,Girasol medioambiental. Convocatoria 2024
+1509234818,08010011408,Agroecosistemas extensivos de secano en humedales de importancia internacional. Convocatoria 2020
+1509234819,08010010506,Apicultura para la mejora de la biodiversidad. Convocatoria 2020
+1509234820,08010010433,Aprovechamiento forrajero extensivo mediante pastoreo con ganado ovino y/o caprino. Convocatoria 2020
+1509234821,08010012505,Cultivos agroindustriales sostenibles. Convocatoria 2020
+1509234822,08010011808,Cultivos permanentes en paisajes singulares. Convocatoria 2020
+1509234823,08010010434,Gestión sostenible de superficies forrajeras pastables y apoyo a los sistemas tradicionales de pastoreo trashumante. Convocatoria 2020
+1509234824,08010010176,Producción integrada. Convocatoria 2020
+1509234825,08010010216,Mantenimiento de razas autóctonas puras en peligro de extinción. Convocatoria 2020
+1509234826,08011000005,Ayuda a la agricultura ecológica. Convocatoria 2020
+1509234827,08651012501,6501.2 Cultivos agroindustriales sostenibles. Convocatoria 2023
+1509234828,08651010401,6501.3 Aprovechamiento forrajero extensivo mediante pastoreo con ganado ovino o caprino. Convocatoria 2023
+1509234829,08651010402,6501.3 Gestión sostenible de superficies forrajeras pastables y apoyo a los sistemas tradicionales de pastoreo trashumante. Convocatoria 2023
+1509234830,08651011401,6501.5 Agroecosistemas extensivos de secano. Convocatoria 2023
+1509234831,08651011801,6501.6 Cultivos permanentes en paisajes singulares. Convocatoria 2023
+1509234832,08651012502,6501.6 Introducción de cultivos minoritarios. Convocatoria 2023
+1509234833,08651010801,6501.8 Abonado orgánico. Convocatoria 2023
+1509234834,08653000101,6503 Agricultura ecológica. Convocatoria 2023
+1509234835,08655010201,6505 Mantenimiento de razas autóctonas puras en peligro de extinción. Convocatoria 2023
+1509234836,08651010501,6501.4 Apicultura para la mejora de la biodiversidad. Convocatoria 2023
+1509234837,08661000002,6613 Zonas con limitaciones. Convocatoria 2024
+1509234838,08651012503,6501.2 Cultivos agroindustriales sostenibles. Convocatoria 2024
+1509234839,08651010403,6501.3 Aprovechamiento forrajero extensivo mediante pastoreo con ganado ovino o caprino. Convocatoria 2024
+1509234840,08651010404,6501.3 Gestión sostenible de superficies forrajeras pastables y apoyo a los sistemas tradicionales de pastoreo trashumante. Convocatoria 2024
+1509234841,08651011402,6501.5 Agroecosistemas extensivos de secano. Convocatoria 2024
+1509234842,08651011802,6501.6 Cultivos permanentes en paisajes singulares. Convocatoria 2024
+1509234843,08651012504,6501.6 Introducción de cultivos minoritarios. Convocatoria 2024
+1509234844,08651010802,6501.8 Abonado orgánico. Convocatoria 2024
+1509234845,08653000102,6503 Agricultura ecológica. Convocatoria 2024
+1509234846,08655010202,6505 Mantenimiento de razas autóctonas puras en peligro de extinción. Convocatoria 2024
+1509234847,08651010502,6501.4 Apicultura para la mejora de la biodiversidad. Convocatoria 2024
+1509234848,09651010702,Protección de la Avifauna esteparia de RN2000. Convocatoria 2024
+1509234849,09653000002,Producción Ecológica. Convocatoria 2024
+1509234850,09013010008,Pagos compensatorios por zonas de montaña. Convocatoria 2024
+1509234851,09013020008,Pagos compensatorios por otras zonas con limitaciones naturales significativas. Convocatoria 2024
+1509234852,09013030008,Pagos compensatorios por otras zonas afectadas por limitaciones específicas. Convocatoria 2024
+1509234853,09651012502,Cultivos Sostenibles. Convocatoria 2024
+1509234854,09651010402,Pastos Sostenibles. Convocatoria 2024
+1509234855,09651011402,Hábitats. Cultivos inundados y pastos inundables. Convocatoria 2024
+1509234856,09651010802,Sistemas altenativos a la lucha química. Convocatoria 2024
+1509234857,09655010202,Recursos genéticos ganaderos - Razas autóctonas. Convocatoria 2024
+1509234858,09651010502,Apicultura Sostenible. Convocatoria 2024
+1509234859,09010010755,Mejora de los hábitats esteparios de RN 2000. Convocatoria 2024
+1509234860,09011010128,Agricultura ecológica. Convocatoria 2024 
+1509234861,09011010209,Ganadería ecológica. Convocatoria 2024 
+1509234862,10221000001,Forestación de tierras agrícolas. Convocatoria 2008
+1509234863,10221000002,Forestación de tierras agrícolas. Convocatoria 2005
+1509234864,10221000003,Forestación de tierras agrícolas. Convocatoria 2002
+1509234865,10008020001,Prima de mantenimiento por implantación de sistemas agroforestales. Convocatoria 2022
+1509234866,10010010170,Prórroga - Operación 10.1.1. Producción Integrada de olivar. Convocatoria 2019
+1509234867,10010010171,Prórroga - Operación 10.1.1. Producción Integrada de  frutales de hueso.Convocatoria 2019
+1509234868,10010010172,Prórroga - Operación 10.1.1. Producción Integrada de frutales de pepita.Convocatoria 2019
+1509234869,10010010173,Prórroga - Operación 10.1.1. Producción Integrada de arroz.  Convocatoria 2019
+1509234870,10010010174,Prórroga - Operación 10.1.1. Producción Integrada de tomate. Convocatoria 2019
+1509234871,10010010216,Prórroga - Operación 10.1.2. Razas Autóctonas en peligro de extinción. Convocatoria 2019
+1509234872,10010010507,Prórroga - Operación 10.1.3. Apicultura para la conservación de la biodiversidad. Convocatoria 2019
+1509234873,10010010751,Prórroga - Actuación 10.1.4.1 Sistemas agrarios en cultivos ceralistas para la protección de las aves esteparias en ZEPAs y/o LICs. Convocatoria 2019
+1509234874,10010010752,Prórroga - Actuación 10.1.4.2. Agricultura de conservación en cultivos cerealistas para la protección de las aves esteparias en ZEPAs y/o LICs. Convocatoria 2019
+1509234875,10011020133,Prórroga - Operación 11.2.2.Mantenimiento producción ecológica de viñedo para vinificación. Convocatoria 2019. 
+1509234876,10011020134,Prórroga - Operación 11.2.1. Mantenimiento producción ecológica de olivar. Convocatoria 2019
+1509234877,10011020135,Prórroga - Operación 11.2.3.Mantenimiento producción ecológica de frutales de hueso.  Convocatoria 2019
+1509234878,10011020136,Prórroga - Operación 11.2.4. Mantenimiento producción ecológica de frutales de pepita. Convocatoria 2019
+1509234879,10011020138,Prórroga - Operación 11.2.6. Mantenimiento producción ecológica de herbáceos de secano. Convocatoria 2019. 
+1509234880,10011020137,Prórroga - Operación 11.2.5. Mantenimiento producción ecológica de frutales de secano.Convocatoria 2019
+1509234881,10011020204,Prórroga - Operación 11.2.7. Mantenimiento otras utilizaciones de tierra (Ganadería ecológica). Convocatoria 2019
+1509234882,10011020304,Prórroga - Operación 11.2.8. Mantenimiento apicultura ecológica. Convocatoria 2019
+1509234883,10651010701,Protección de la avifauna. Convocatoria 2023
+1509234884,10651010101,Producción integrada cultivo de tabaco. Convocatoria 2023
+1509234885,10651010102,Producción integrada cultivos leñosos. Convocatoria 2023
+1509234886,10651010103,Producción integrada cultivos anuales. Convocatoria 2023
+1509234887,10651010501,Apicultura para la biodiversidad. Convocatoria 2023
+1509234888,10653000201,Ganadería ecológica. Convocatoria 2023
+1509234889,10653000101,Agricultura ecológica. Cultivos herbáceos de secano. Convocatoria 2023
+1509234890,10653000102,Agricultura ecológica. Cultivos leñosos. Convocatoria 2023
+1509234891,10653000103,Agricultura ecológica.Aromática. Convocatoria 2023 
+1509234892,10653000301,Apicultura ecológica. Convocatoria 2023
+1509234893,10655010201,Fomento Razas autóctonas amenazadas. Convocatoria 2023
+1509234894,10661010002,Zonas de montaña (zona 1). Convocatoria 2024
+1509234895,10661020002,Zonas con limitaciones naturales significativas (zona 2). Convocatoria 2024
+1509234896,10661030002,Zonas con limitaciones específicas (zona 3). Convocatoria 2024
+1509234897,11008010101,Forestación de tierras no agrícolas – Primas de mantenimiento
+1509234898,11651012502,6501.2 Cultivos  sostenibles extensivos. Convocatoria 2023
+1509234899,11651012503,6501.2 Cultivos sostenibles leñosos. Convocatoria 2023
+1509234900,11651012504,6501.2 Economía circular. Convocatoria 2023
+1509234901,11651010401,6501.3  Extensificación de las explotaciones ganaderas. Convocatoria 2023
+1509234902,11651010402,6501.3 Pastoreo en zonas con presencia de grandes carnívoros. Convocatoria 2023.
+1509234903,11651010501,6501.4 Apicultura para la biodiversidad. Convocatoria 2023
+1509234904,11652010001,6502.1  Ayudas para la creación de superficies forestales. Convocatoria 2023
+1509234905,11652020001,6502.2 Ayudas para acciones silvícolas . Convocatoria 2023
+1509234906,11653000101,6503 Conversión  y mantenimiento agricultura ecológica. Convocatoria 2023 
+1509234907,11653000102,6503 Conversión y mantenimiento Viñedo ecológico. Convocatoria 2023
+1509234908,11653000201,6503 Conversión y mantenimiento ganadería ecológica. Convocatoria 2023
+1509234909,11653010301,6503 Conversión apicultura ecológica. Convocatoria 2023
+1509234910,11653020301,6503 Mantenimiento apicultura ecológica. Convocatoria 2023
+1509234911,11655010201,6505.1.1 Conservación de razas autóctonas en peligro de extinción. Convocatoria 2023
+1509234912,11655010301,6505.1.2 Conservación de variedades en riesgo de erosión genética. Convocatoria 2023
+1509234913,11013010008,Pagos compensatorios áreas de montaña.  Convocatoria 2024
+1509234914,11013020008,Pagos compensatorios áreas de distintas de montaña. Convocatoria 2024
+1509234915,11008020001,Sistemas agroforestales (castaño para fruto) – Primas de mantenimiento
+1509234916,12221000001,Primera forestación de tierras agrícolas - Régimen transitorio FEADER-Primas. Convocatoria 2006
+1509234917,12221000002,Primera forestación de tierras agrícolas - Régimen transitorio FEADER-Primas.Convocatoria 2004
+1509234918,12221000003,Primera forestación de tierras agrícolas - Régimen transitorio FEADER-Primas. Convocatoria 2003
+1509234919,12221000004,Primera forestación de tierras agrícolas - Régimen transitorio FEADER-Primas. Convocatoria 2002
+1509234920,12221000005,Primera forestación de tierras agrícolas - Régimen transitorio FEADER-Primas. Convocatoria 2001
+1509234921,12010010218,Ayudas para el mantenimiento de razas autóctonas en peligro de extinción. Programa Agroambiental 2022-2024
+1509234922,12010010762,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Mejora y mantenimiento del barbecho tradicional.  Programa Agroambiental 2022-2026
+1509234923,12010010767,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Mejora y mantenimiento del barbecho tradicional. Programa Agroambiental 2023-2027
+1509234924,12010010763,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Barbecho semillado con leguminosas. Programa Agroambiental. 2022-2026
+1509234925,12010010768,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Barbecho semillado con leguminosas. Programa Agroambiental.  2023-2027
+1509234926,12010010764,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Retirada de la producción de tierras. Programa Agroambiental. 2022-2026
+1509234927,12010010769,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Retirada de tierras de la producción.  Programa Agroambiental. 2023-2027
+1509234928,12010010765,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Cultivo de girasol. Programa Agroambiental. 2022-2026 
+1509234929,12010010766,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Retraso en la recogida del cereal. Programa Agroambiental 2022-2026
+1509234930,12010010771,Ayudas para el fomento de la agricultura compatible con la conservación de las aves esteparias de la Red Natura 2000: Retraso en la recogida del cereal. Programa Agroambiental 2023-2027
+1509234931,12010010504,Ayudas a la apicultura para la biodiversidad. Programa Agroambiental 2022-2024
+1509234932,12651010701,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Mejora y mantenimiento del barbecho tradicional. Programa Agroambiental 2024-2028
+1509234933,12651010702,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Barbecho semillado con leguminosas. Programa Agroambiental 2024-2028
+1509234934,12651010703,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Barbecho de larga duración. Programa Agroambiental 2024-2028
+1509234935,12651010704,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Retraso o cancelación en la recogida del cereal. Programa Agroambiental 2024-2028
+1509234936,12651010705,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Mejora y mantenimiento del barbecho tradicional. Programa Agroambiental 2025-2029
+1509234937,12651010706,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Barbecho semillado con leguminosas. Programa Agroambiental 2025-2029
+1509234938,12651010707,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Barbecho de larga duración. Programa Agroambiental 2025-2029
+1509234939,12651010708,Compromisos agroambientales en superficies agrarias para protección de la avifauna: Retraso o cancelación en la recogida del cereal. Programa Agroambiental 2025-2029
+1509234940,12651011301,Mantenimiento o mejora de hábitats y de actividades agrarias tradicionales que preserven la biodiversidad: olivar tradicional. Programa Agroambiental 2023-2027
+1509234941,12653000102,Ayudas a la adopción y mantenimiento de Agricultura ecológica. Programa Agroambiental 2024-2028 
+1509234942,12653000202,Ayudas a la adopción y mantenimiento de agricultura ecológica: ganadería (pastos). Programa Agroambiental 2024-2028  
+1509234943,12651010502,Apicultura para la biodiversidad. Programa Agroambiental 2024-2028
+1509234944,12661010002,Pagos de compensación en zonas con limitaciones naturales: zonas de montaña de la CAM. Convocatoria 2024   
+1509234945,12655010201,Compromisos de conservación de recursos genéticos. Razas de ganadería autóctonas amenazadas de erosión genética. Programa Agroambiental 2023-2027
+1509234946,12655010202,Compromisos de conservación de recursos genéticos. Razas de ganadería autóctonas amenazadas de erosión genética. Programa Agroambiental 2024-2028
+1509234947,12654000002,Compromisos para bienestar y sanidad animal: vacuno lácteo. Programa Agroambiental 2024-2028
+1509234948,12651011302,Mantenimiento o mejora de hábitats y de actividades agrarias tradicionales que preserven la biodiversidad: olivar tradicional. Programa Agroambiental 2024-2028
+1509234949,13221000001,Forestación de tierras agrícolas Real Decreto 6/2001 (2000 - 2006). Convocatoria 2002
+1509234950,13653020101,Solicitud de ayuda y pago para el mantenimiento de  Agricultura Ecológica. Convocatoria 2024
+1509234951,13651010701,Solicitud de pago para la protección de la avifauna esteparia. Convocatoria 2023 
+1509234952,13651011101,Solicitud de pago para el mantenimiento de hábitats y de actividades agrarias tradicionales (Paisaje en Red Natura). Convocatoria 2023 
+1509234953,13651011301,Solicitud de pago para el mantenimiento de hábitats y de actividades agrícolas tradicionales (Viñedo viejo en DOP). Convocatoria 2023 
+1509234954,13651010501,Solicitud de pago a la Apicultura para la biodiversidad. Convocatoria 2023 
+1509234955,13655010201,Solicitud de pago para el fomento de razas autóctonas. Convocatoria 2023 
+1509234956,13013010008,Pagos compensatorios en zonas de montaña. Convocatoria 2024
+1509234957,13013020008,Pagos compensatorios en zonas con limitaciones naturales. Convocatoria 2024
+1509234958,14221000100,Forestación de tierras agrarias. Pérdida de renta. Varios periodos de programación: 1994-1999, 2000-2006 y 2007-2013 
+1509234959,14010010934,Captura de carbono en secanos semiáridos. Convocatoria 2020
+1509234960,14010010146,Ayuda a la producción agroambiental de patata de siembra. Convocatoria 2023
+1509234961,14651012501,Ayuda a la producción agroambiental de patata de siembra. Convocatoria 2024
+1509234962,14651010402,Fomento de sistemas ganaderos sostenibles, mediante pastoreo y extensificación. Convocatoria 2024
+1509234963,14651011301,Preservación de agrosistemas mediterráneos sostenibles. Convocatoria 2024
+1509234964,14010010216,Razas locales en riesgo de abandono. Convocatoria 2023
+1509234965,14655010201,Razas Autóctonas de Navarra. Convocatoria. 2024
+1509234966,14011010005,Conversión a los métodos y prácticas de la agricultura ecológica. Convocatoria 2023
+1509234967,14653010101,Conversión a los métodos y prácticas de la agricultura ecológica. Convocatoria 2024
+1509234968,14011020005,Mantenimiento de los métodos y prácticas de la agricultura ecológica. Convocatoria 2023
+1509234969,14653020101,Mantenimiento de los métodos y prácticas de la agricultura ecológica. Convocatoria 2024
+1509234970,14651010501,Apicultura para la biodiversidad. Convocatoria 2023
+1509234971,14651010502,Apicultura para la biodiversidad. Convocatoria 2024
+1509234972,14654000001,Bienestar animal. Convocatoria 2023
+1509234973,14654000002,Bienestar animal. Convocatoria 2024
+1509234974,14013000009,Ayudas a zonas con limitaciones naturales u otras limitaciones específicas. Convocatoria 2024
+1509234975,14651010701,Barbechos para las aves esteparias. Convocatoria 2024
+1509234976,14651010401,Prados de siega de alto valor natural. Convocatoria 2024
+1509234977,14655010202,Coexistencia entre ganadería extensiva y grandes carnívoros. Medida 1. Geolocalizadores. Convocatoria 2024
+1509234978,14655010203,Coexistencia entre ganadería extensiva y grandes carnívoros. Medida 2. Estructuras temporales de pernoctación. Convocatoria 2024
+1509234979,14655010204,Coexistencia entre ganadería extensiva y grandes carnívoros. Medida 3. Perros guardianes. Convocatoria 2024
+1509234980,14655010205,Coexistencia entre ganadería extensiva y grandes carnívoros. Medida 4. Apoyo de pastor en labores de vigilancia en zonas de riesgo. Convocatoria 2024
+1509234981,15651010101,Producción Integrada. Convocatoria 2023
+1509234982,15651010102,Producción Integrada. Convocatoria 2024
+1509234983,15651012501,Cultivos sostenibles. Convocatoria 2023
+1509234984,15651012502,Cultivos sostenibles. Convocatoria 2024
+1509234985,15651010401,Fomento y gestión sostenible de pastos. Convocatoria 2023
+1509234986,15651010402,Fomento y gestión sostenible de pastos. Convocatoria 2024
+1509234987,15651010501,Apicultura para la biodiversidad. Convocatoria 2023
+1509234988,15651010502,Apicultura para la biodiversidad. Convocatoria 2024
+1509234989,15653000101,Agricultura Ecológica - Conversión/Mantenimiento. Convocatoria 2023
+1509234990,15653000102,Agricultura Ecológica - Conversión/Mantenimiento. Convocatoria 2024
+1509234991,15655010301,Conservación de Recursos Genéticos - Manzanos de sidra. Convocatoria 2023
+1509234992,15655010302,Conservación de Recursos Genéticos - Manzanos de sidra. Convocatoria 2024
+1509234993,15655010201,Conservación de Recursos Genéticos - Razas autóctonas. Convocatoria 2023
+1509234994,15655010202,Conservación de Recursos Genéticos - Razas autóctonas. Convocatoria 2024
+1509234995,15661010002,Zonas con Limitaciones Naturales - Zonas de montaña. Convocatoria 2024
+1509234996,15661020002,Zonas con Limitaciones Naturales - Otras zonas. Convocatoria 2024
+1509234997,16010010505,Apicultura para la mejora de la biodiversidad riojana. Convocatoria 2020
+1509234998,16651010501,Apicultura para la mejora de la biodiversidad. Convocatoria 2023
+1509234999,16651010502,Apicultura para la mejora de la biodiversidad. Convocatoria 2024
+1509235000,16651011301,Mantenimiento de la biodiversidad en viñedo y olivar. Convocatoria 2023
+1509235001,16651011302,Mantenimiento de la biodiversidad en viñedo y olivar. Convocatoria 2024
+1509235002,16651012501,Culivos sostenibles. Convocatoria 2023
+1509235003,16651012503,Culivos sostenibles. Convocatoria 2024
+1509235004,16651012502,Cultivos sostenibles. Compromiso adicional. Ampliar un año la rotación. Convocatoria 2023
+1509235005,16651012504,Cultivos sostenibles. Compromiso adicional. Ampliar un año la rotación. Convocatoria 2024
+1509235006,16651012901,Gestión de insumos agrícolas mediante tecnologías de dosificación variable: Productos fitosanitarios. Convocatoria 2023
+1509235007,16651012902,Gestión de insumos agrícolas mediante tecnologías de dosificación variable: Productos fitosanitarios. Convocatoria 2024
+1509235008,16651011601,Gestión de insumos agrícolas mediante tecnologías de dosificación variable: Fertilizantes. Convocatoria 2023
+1509235009,16651011602,Gestión de insumos agrícolas mediante tecnologías de dosificación variable: Fertilizantes. Convocatoria 2024
+1509235010,16651010801,Lucha alternativa a la lucha química. Convocatoria 2023
+1509235011,16651010802,Lucha alternativa a la lucha química. Convocatoria 2024
+1509235012,16653010301,Apicultura ecológica conversión. Convocatoria 2023
+1509235013,16653010302,Apicultura ecológica conversión. Convocatoria 2024
+1509235014,16653020301,Apicultura ecológica mantenimiento. Convocatoria 2023
+1509235015,16653020302,Apicultura ecológica mantenimiento. Convocatoria 2024
+1509235016,16653000201,Ganadería ecológica. Convocatoria 2023
+1509235017,16653000202,Ganadería ecológica. Convocatoria 2024 
+1509235018,16653000101,Agricultura ecológica. Convocatoria 2023
+1509235019,16653000102,Agricultura ecológica. Convocatoria 2024 
+1509235020,16654000001,Bienestar y sanidad animal. Convocatoria 2023
+1509235021,16654000003,Bienestar y sanidad animal. Convocatoria 2024
+1509235022,16654000002,Compatibilización de los sistemas de pastoreo tradicionales en el entorno del lobo. Convocatoria 2023
+1509235023,16654000004,Compatibilización de los sistemas de pastoreo tradicionales en el entorno del lobo. Convocatoria 2024
+1509235024,16655010201,Mantenimiento y fomento de razas autóctonas. Convocatoria 2023
+1509235025,16655010202,Mantenimiento y fomento de razas autóctonas. Convocatoria 2024
+1509235026,16661010002,Indemnización compensatoria en zonas de montaña. Convocatoria 2024
+1509235027,17651010501,Apicultura para la biodiversidad. Convocatoria 2023
+1509235028,17651011401,Mantenimiento o mejora de hábitats y de actividades agrarias tradicionales que preserven la biodiversidad (cultivo de arroz). Convocatoria 2023
+1509235029,17651010701,Protección de la avifauna (aves esteparias). Convocatoria 2023
+1509235030,17653000101,Compromisos de gestión medioambiental en agricultura ecológica. Convocatoria 2023
+1509235031,17655010201,Compromisos de conservación de recursos genéticos: conservación oveja guirra. Convocatoria 2023
+1509235032,17013010004,Ayudas compensatorias a zonas de montaña. Convocatoria 2024
+1509235033,17013020002,Ayuda a zonas distintas de las de montaña con limitaciones naturales. Convocatoria 2024

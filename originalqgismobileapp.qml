@@ -1385,8 +1385,8 @@ ApplicationWindow {
       mapSettings: mapCanvas.mapSettings
       anchors.left: parent.left
       anchors.bottom: parent.bottom
-      anchors.leftMargin: 8
-      anchors.bottomMargin: 10
+      anchors.leftMargin: 2
+      anchors.bottomMargin: 16
     }
 
     Column {

@@ -429,9 +429,10 @@ Drawer {
                     Label {
                         text: "Datos de <a href='https://open-meteo.com/'>Open-Meteo</a>"
                         onLinkActivated: function(link) { Qt.openUrlExternally(link) }
-                        font.pixelSize: 10
+                        font.pixelSize: isSmallScreen ? 10 : 12
                         color: Theme.accentColor
-                        visible: !isSmallScreen
+                        Layout.fillWidth: true
+                        textFormat: Text.RichText
                     }
                 }
                 

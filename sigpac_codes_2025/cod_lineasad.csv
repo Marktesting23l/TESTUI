@@ -1,0 +1,77 @@
+id,codigo,descripcion
+1,1,Regimen de pago básico
+2,2,Pago para Prácticas Beneficiosas para el Clima y el Medio Ambiente 
+3,6,Pago para jóvenes agricultores
+4,9,Régimen de pequeños agricultores
+5,201,Ayuda asociada al cultivo del arroz
+6,202,Ayuda asociada a los cultivos proteicos
+7,203,Ayuda asociada a los frutos de cáscara y las algarrobas
+8,204,Ayuda asociada a las legumbres de calidad
+9,205,Ayuda asociada a la remolacha azucarera
+10,206,Ayuda asociada al tomate para industria
+11,207,Ayuda algodón
+12,301,Ayuda asociada vaca nodriza
+13,302,Ayuda  asociada vacuno de cebo
+14,303,Ayuda asociada vacuno de leche
+15,304,Ayuda asociada ovino
+16,305,Ayuda  asociada caprino
+17,306,Ayuda asociada vacuno de leche derechos especiales
+18,307,Ayuda asociada vacuno de cebo derechos especiales
+19,308,Ayuda asociada ovino/caprino derechos especiales
+1294819366,8,Forestación
+1294819368,10,Agroambiente y clima
+1294819369,11,Agricultura ecológica
+1294819370,12,Red Natura
+1294819371,13,Zonas con limitaciones naturales u otras limitaciones específicas
+1294819372,14,Bienestar de los animales
+1294819373,15,Servicios silvoambientales y climáticos y conservación de los bosques
+1294819374,221,Forestación de tierras agrícolas
+1294819375,311,Ayuda estatal destinada en el ejercicio 2020 a las explotaciones de ovino y caprino con dificultades de comercialización de corderos y cabritos
+1336729440,CL,Ayuda a la comercialización local de frutas, hortalizas, raíces y tubérculos alimenticios, flores y plantas vuvas recolectadas en Canarias
+1336729441,PA,Ayuda por la hectárea para el cultivo de la papa de mesa
+1336729442,TO,Ayuda a los productores tradicionales de tomate de invierno. Ayuda por ha
+1336729443,RT,Ayuda a los productores tradicionales de tomate de invierno. Ayuda a la reconversión
+1336729444,AV,Ayuda por superficie a los productores de Aloe Vera
+1336729445,OL,Ayuda por superficie a los productores de Olivar
+1336729446,PT,Ayuda a los productores de Plátano
+1348438408,VI,Ayuda por hectárea para el mantenimiento del cultivo de vides destinadas a la producción de vinos con Denominación de Origen Protegida (DOP)
+1348438409,VN,Prima a los terneros nacidos de vaca nodriza
+1348438410,BO,Prima a los terneros nacidos de otros vacunos
+1348438411,SA,Prima por sacrificio de vacuno
+1348438412,IT,Ayuda para la importación de terneros destinados al engorde
+1348438413,RL,Ayuda a la reposición en vacuno de leche con novillas nacidas en Canarias
+1348438414,BP,Ayuda al consumo humano de productos de leche de vaca de origen local. Ayuda al productor de leche de vaca
+1348438415,CP,Ayuda al consumo de productos lácteos elaborados con leche de cabra y oveja de origen local. Ayuda al productor de leche de caprino-ovino
+1348438416,RP,Ayuda para la producción de reproductores de porcino en Canarias
+1348438417,GP,Ayuda para la producción de gallinas ponedora
+1348438418,HG,Ayuda a la producción local de huevos de gallina
+1348438419,CH,Ayuda a los productores de determinados cultivos forrajeros
+1348438420,KH,Ayuda a la producción y comercialización de cochinilla DOP
+1370646718,18,Ayuda Básica a la Renta para la Sostenibilidad (ABR)
+1370646719,19,Ayuda Complementaria Redistributiva
+1370646720,20,Ayuda Complementaria para jóvenes agricultores y agricultoras
+1370646721,209,Ayuda a la producción sostenible de proteínas de origen vegetal
+1370646722,210,Ayuda a la producción sostenible de arroz
+1370646723,211,Ayuda a la producción sostenible de remolacha azucarera
+1370646724,212,Ayuda a la producción sostenible de tomate para transformación
+1370646725,213,Ayuda a los productores de frutos secos en áreas con riesgo de desertificación
+1370646726,214,Ayuda a la producción tradicional de uva pasa
+1370646727,215,Ayuda al olivar con dificultades específicas y alto valor medioambiental
+1370646728,216,Pago específico al cultivo del algodón
+1370646729,312,Ayuda para los ganaderos extensivos de vacuno de carne
+1370646730,313,Ayuda para el engorde de terneros en la explotación de nacimiento
+1370646731,314,Ayuda para el engorde sostenible de terneros
+1370646732,315,Ayuda de producción sostenible de leche de vaca
+1370646733,316,Ayuda para los ganaderos extensivos y semiextensivos de ovino y caprino de carne
+1370646734,317,Ayuda para la producción sostenible de leche de oveja y cabra
+1370646735,318,Ayuda para los ganaderos extensivos y semiextensivos de ovino y caprino sin pastos a su disposición y que pastorean rastroje, barbech y restos hortíco
+1370646736,5011,Agricultura de carbono y agroecología: Pastoreo extensivo, siega y biodiversidad en las superficies de Pastos Húmedos.
+1370646737,5012,Agricultura de carbono y agroecología: Pastoreo extensivo, siega y biodiversidad en las superficies de Pastos Mediterráneos
+1370646738,5021,Agricultura de carbono y agroecología: Rotaciones y siembra directa en tierras de cultivo de secano.
+1370646739,5022,Agricultura de carbono y agroecología: Rotaciones y siembra directa en tierras de cultivo de secano humedo
+1370646740,5023,Agricultura de carbono y agroecología: Rotaciones y siembra directa en tierras de cultivo de regadío.
+1370646741,5031,Agricultura de carbono: Cubiertas vegetales y cubiertas inertes en cultivos leñosos en terrenos llanos
+1370646742,5032,Agricultura de carbono: Cubiertas vegetales y cubiertas inertes en cultivos leñosos en terrenos de pendiente media
+1370646743,5033,Agricultura de carbono: Cubiertas vegetales y cubiertas inertes en cultivos leñosos en terrenos de elevada pendiente y bancales
+1370646744,5041,Agroecología: Espacios de biodiversidad en tierras de cultivo y cultivos permanentes
+1370646745,TT,Ayuda a los productores tradicionales de tomate de invierno. Ayuda a la reconversión

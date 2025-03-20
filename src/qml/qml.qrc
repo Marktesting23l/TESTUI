@@ -15,48 +15,79 @@
         <file>CultivoDeclaradoDialog.qml</file>
         <file>CultivoDeclaradoService.qml</file>
         <file>DashBoard.qml</file>
+        <file>DataOrigin.qml</file>
         <file>DigitizingToolbar.qml</file>
         <file>Dummy.qml</file>
         <file>ElevationProfile.qml</file>
+        <file>EmbeddedFeatureForm.qml</file>
         <file>FeatureForm.qml</file>
         <file>FeatureListForm.qml</file>
+        <file>FeatureListSelectionHighlight.qml</file>
+        <file>forecast.json</file>
+        <file>GeometryEditorsToolbar.qml</file>
+        <file>GeometryHighlighter.qml</file>
+        <file>GeometryRenderer.qml</file>
         <file>GridRenderer.qml</file>
+        <file>ImageDial.qml</file>
+        <file>Information.qml</file>
+        <file>InformationDrawer.qml</file>
+        <file>LayerLoginDialog.qml</file>
+        <file>LayerTreeItemProperties.qml</file>
+        <file>Legend.qml</file>
         <file>LinePolygon.qml</file>
+        <file>LocatorItem.qml</file>
+        <file>LocatorSettings.qml</file>
         <file>LocationMarker.qml</file>
         <file>MapCanvas.qml</file>
         <file>MeasuringTool.qml</file>
         <file>MessageLog.qml</file>
+        <file>municipality_data.json</file>
         <file>NavigationBar.qml</file>
         <file>NavigationHighlight.qml</file>
         <file>NavigationInformationView.qml</file>
         <file>NavigationRenderer.qml</file>
+        <file>OpenMeteoWeatherService.qml</file>
+        <file>OverlayFeatureFormDrawer.qml</file>
+        <file>PluginManagerSettings.qml</file>
         <file>PositioningDeviceSettings.qml</file>
-        <file>PositioningSettings.qml</file>
         <file>PositioningInformationView.qml</file>
         <file>PositioningPreciseView.qml</file>
-        <file>ProcessingAlgorithmsList.qml</file>
+        <file>PositioningSettings.qml</file>
         <file>ProcessingAlgorithmForm.qml</file>
         <file>ProcessingAlgorithmPreview.qml</file>
-        <file>processingparameterwidgets/ProcessingParameterWidgetBase.qml</file>
-        <file>processingparameterwidgets/boolean.qml</file>
-        <file>processingparameterwidgets/enum.qml</file>
-        <file>processingparameterwidgets/distance.qml</file>
-        <file>processingparameterwidgets/number.qml</file>
-        <file>processingparameterwidgets/source.qml</file>
+        <file>ProcessingAlgorithmsList.qml</file>
         <file>QFieldAudioRecorder.qml</file>
         <file>QFieldCamera.qml</file>
+        <file>QFieldGuide.qml</file>
+        <file>QFieldLocalDataPickerScreen.qml</file>
         <file>QFieldSettings.qml</file>
+        <file>QFieldSketcher.qml</file>
+        <file>qgismobileapp.qml</file>
+        <file>RelationCombobox.qml</file>
         <file>RIAWeatherService.qml</file>
+        <file>Rubberband.qml</file>
         <file>ScaleBar.qml</file>
+        <file>ScreenLocker.qml</file>
         <file>SensorInformationView.qml</file>
         <file>SentinelConfigScreen.qml</file>
-        <file>Toast.qml</file>
-        <file>EgenioussDeviceChooser.qml</file>
+        <file>SerialPortDeviceChooser.qml</file>
+        <file>SigpacCodes.qml</file>
+        <file>SigpacDialog.qml</file>
+        <file>SigpacService.qml</file>
+        <file>SigpacTerms.qml</file>
         <file>TcpDeviceChooser.qml</file>
+        <file>TemporalProperties.qml</file>
+        <file>TermsAndConditions.qml</file>
+        <file>Toast.qml</file>
+        <file>TrackerSettings.qml</file>
+        <file>TrackingSession.qml</file>
         <file>UdpDeviceChooser.qml</file>
         <file>VariableEditor.qml</file>
+        <file>VertexRubberband.qml</file>
         <file>WeatherDataPanel.qml</file>
+        <file>WeatherForecastPanel.qml</file>
         <file>WelcomeScreen.qml</file>
+        <file>Changelog.qml</file>
         <file>editorwidgets/EditorWidgetBase.qml</file>
         <file>editorwidgets/Binary.qml</file>
         <file>editorwidgets/CheckBox.qml</file>
@@ -69,29 +100,12 @@
         <file>editorwidgets/RelationReference.qml</file>
         <file>editorwidgets/relationeditors/relation_editor.qml</file>
         <file>editorwidgets/relationeditors/ordered_relation_editor.qml</file>
+        <file>editorwidgets/ValueRelation.qml</file>
         <file>geometryeditors/Erase.qml</file>
         <file>geometryeditors/VertexEditor.qml</file>
         <file>geometryeditors/SplitFeature.qml</file>
         <file>geometryeditors/Reshape.qml</file>
         <file>geometryeditors/FillRing.qml</file>
-        <file>GeometryEditorsToolbar.qml</file>
-        <file>qgismobileapp.qml</file>
-        <file>Legend.qml</file>
-        <file>TemporalProperties.qml</file>
-        <file>LayerTreeItemProperties.qml</file>
-        <file>VertexRubberband.qml</file>
-        <file>LocatorItem.qml</file>
-        <file>LocatorSettings.qml</file>
-        <file>OverlayFeatureFormDrawer.qml</file>
-        <file>GeometryRenderer.qml</file>
-        <file>GeometryHighlighter.qml</file>
-        <file>FeatureListSelectionHighlight.qml</file>
-        <file>editorwidgets/ValueRelation.qml</file>
-        <file>RelationCombobox.qml</file>
-        <file>Rubberband.qml</file>
-        <file>Changelog.qml</file>
-        <file>Nyuki.qml</file>
-        <file>LayerLoginDialog.qml</file>
         <file>imports/Theme/Theme.qml</file>
         <file>imports/Theme/QfActionButton.qml</file>
         <file>imports/Theme/QfComboBox.qml</file>
@@ -111,29 +125,15 @@
         <file>imports/Theme/qmldir</file>
         <file>imports/Theme/QfSwipeAnimator.qml</file>
         <file>imports/Theme/QfVisibilityFadingRow.qml</file>
-        <file>TrackerSettings.qml</file>
-        <file>TrackingSession.qml</file>
-        <file>EmbeddedFeatureForm.qml</file>
-        <file>ImageDial.qml</file>
-        <file>ScreenLocker.qml</file>
-        <file>SerialPortDeviceChooser.qml</file>
-        <file>QFieldLocalDataPickerScreen.qml</file>
-        <file>QFieldSketcher.qml</file>
-        <file>PluginManagerSettings.qml</file>
-        <file>InformationDrawer.qml</file>
-        <file>QFieldGuide.qml</file>
         <file>imports/Theme/QfProgrerssRing.qml</file>
         <file>imports/Theme/QfScrollBar.qml</file>
         <file>imports/Theme/QfSearchBar.qml</file>
         <file>imports/Theme/QfDialog.qml</file>
-        <file>municipality_data.json</file>
-        <file>WeatherForecastPanel.qml</file>
-        <file>OpenMeteoWeatherService.qml</file>
-        <file>forecast.json</file>
-        <file>SigpacService.qml</file>
-        <file>SigpacDialog.qml</file>
-        <file>Information.qml</file>
-        <file>DataOrigin.qml</file>
-        <file>TermsAndConditions.qml</file>
+        <file>processingparameterwidgets/ProcessingParameterWidgetBase.qml</file>
+        <file>processingparameterwidgets/boolean.qml</file>
+        <file>processingparameterwidgets/enum.qml</file>
+        <file>processingparameterwidgets/distance.qml</file>
+        <file>processingparameterwidgets/number.qml</file>
+        <file>processingparameterwidgets/source.qml</file>
     </qresource>
 </RCC>

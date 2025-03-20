@@ -917,8 +917,34 @@ void AndroidPlatformUtilities::copyMainMapProject()
         }
       }
     }
-  }
     
+    // Also try to copy Mis_Datos.gpkg separately
+    QStringList datosFilePaths = {
+      systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO_Mapa_Principal/Mis_Datos.gpkg"),
+      systemSharedDataLocation() + QLatin1String("/SIGPACGO_Mapa_Principal/Mis_Datos.gpkg"),
+      systemSharedDataLocation() + QLatin1String("/Mis_Datos.gpkg"),
+      systemSharedDataLocation() + QLatin1String("/resources/Mis_Datos.gpkg")
+    };
+    
+    bool datosSuccess = false;
+    for (const QString& filePath : datosFilePaths)
+    {
+      if (QFile::exists(filePath))
+      {
+        qDebug() << "Android: Found GeoKG file:" << filePath;
+        if (QFile::copy(filePath, mapaDir + "/Mis_Datos.gpkg")) {
+          qDebug() << "Android: Successfully copied Mis_Datos.gpkg to" << mapaDir;
+          datosSuccess = true;
+          break;
+        }
+      }
+    }
+    
+    if (!datosSuccess) {
+      qWarning() << "Android: Failed to copy Mis_Datos.gpkg from any source path";
+    }
+  }
+  
   // If still not successful, call Java method to copy the assets from the APK directly
   if (!success && mActivity.isValid()) {
     qDebug() << "Android: Using Java copyAssets method as fallback";

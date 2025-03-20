@@ -1048,7 +1048,7 @@ Drawer {
         
         GroupBox {
             id: selectionGroupBox
-            title: "Selección"
+            title: "Selección (otras comunidades próximamente"
             Layout.fillWidth: true
             padding: 0
             

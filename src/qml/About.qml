@@ -275,10 +275,10 @@ Item {
         icon.height: 18
         font.pixelSize: 12
 
-        text: qsTr('Documentation')
+        text: qsTr('Registro de cambios')
 
         onClicked: {
-          Qt.openUrlExternally("https://docs.qfield.org/");
+          changelogPopup.open();
         }
 
         onDropdownClicked: {

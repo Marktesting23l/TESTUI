@@ -1957,8 +1957,9 @@ Popup {
     Rectangle {
       id: textInputContainer
       anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.bottom: annotationToolbar.top
+      anchors.right: annotationToolbar.left
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: 100 // Stay above Android navigation
       height: textInput.height + 20
       color: "#80000000"
       visible: annotationContainer.textInputActive
@@ -1975,7 +1976,7 @@ Popup {
           if (text.trim() !== "") {
             annotationTextModel.append({
               "text": text,
-              "x": (annotationContainer.width - width) / 2,
+              "x": (annotationContainer.width - annotationToolbar.width - width) / 2,
               "y": (annotationContainer.height - height) / 2,
               "color": cameraSettings.textColor,
               "size": cameraSettings.textSize
@@ -1990,12 +1991,24 @@ Popup {
     // Color picker
     Rectangle {
       id: colorPicker
-      anchors.centerIn: parent
-      width: parent.width * 0.8
-      height: parent.height * 0.6
+      anchors.right: annotationToolbar.left
+      anchors.rightMargin: 10
+      anchors.verticalCenter: parent.verticalCenter
+      width: parent.width * 0.7
+      height: parent.height * 0.5
       visible: annotationContainer.colorPickerVisible
       color: "#333333"
       radius: 10
+      
+      // Add a subtle shadow effect
+      layer.enabled: true
+      layer.effect: QfDropShadow {
+        horizontalOffset: 3
+        verticalOffset: 3
+        radius: 8.0
+        color: "#80000000"
+        source: colorPicker
+      }
       
       Column {
         anchors.fill: parent
@@ -2007,6 +2020,7 @@ Popup {
           text: qsTr("Select Color")
           color: "white"
           font.pixelSize: 24
+          font.bold: true
         }
         
         Flow {
@@ -2015,7 +2029,8 @@ Popup {
           
           // Color buttons
           Repeater {
-            model: ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFFFFF", "#000000"]
+            model: ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FFFFFF", "#000000", 
+                    "#FF8800", "#8800FF", "#00FF88", "#884400", "#888888", "#CCCCCC", "#880000", "#008800"]
             
             delegate: Rectangle {
               width: (colorPicker.width - 80) / 4
@@ -2023,6 +2038,19 @@ Popup {
               color: modelData
               border.color: "white"
               border.width: cameraSettings.brushColor === modelData || cameraSettings.textColor === modelData ? 3 : 1
+              radius: 4 // Rounded corners
+              
+              // Add selection indicator
+              Rectangle {
+                anchors.centerIn: parent
+                width: parent.width / 3
+                height: width
+                radius: width / 2
+                color: "transparent"
+                border.color: "white"
+                border.width: 2
+                visible: cameraSettings.brushColor === modelData || cameraSettings.textColor === modelData
+              }
               
               MouseArea {
                 anchors.fill: parent
@@ -2045,7 +2073,8 @@ Popup {
           spacing: 10
           
           Text {
-            text: qsTr(annotationToolbar.drawingMode ? "Brush Size" : "Text Size")
+            text: qsTr(annotationToolbar.drawingMode ? "Brush Size" : "Text Size") + ": " + 
+                 Math.round(annotationToolbar.drawingMode ? cameraSettings.brushSize : cameraSettings.textSize)
             color: "white"
             font.pixelSize: 18
           }
@@ -2056,6 +2085,18 @@ Popup {
             from: annotationToolbar.drawingMode ? 1 : 12
             to: annotationToolbar.drawingMode ? 30 : 48
             value: annotationToolbar.drawingMode ? cameraSettings.brushSize : cameraSettings.textSize
+            
+            // Add visual indicator of current size
+            Rectangle {
+              anchors.verticalCenter: parent.verticalCenter
+              x: sizeSlider.leftPadding + sizeSlider.visualPosition * (sizeSlider.availableWidth - width)
+              width: Math.max(10, annotationToolbar.drawingMode ? cameraSettings.brushSize : cameraSettings.textSize / 2)
+              height: width
+              radius: width / 2
+              color: annotationToolbar.drawingMode ? cameraSettings.brushColor : cameraSettings.textColor
+              border.color: "white"
+              border.width: 1
+            }
             
             onValueChanged: {
               if (annotationToolbar.drawingMode) {
@@ -2071,6 +2112,23 @@ Popup {
         Button {
           anchors.horizontalCenter: parent.horizontalCenter
           text: qsTr("Close")
+          width: 150
+          height: 40
+          
+          contentItem: Text {
+            text: qsTr("Close")
+            color: "white"
+            font.pixelSize: 16
+            font.bold: true
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+          }
+          
+          background: Rectangle {
+            radius: 6
+            color: parent.down ? Qt.darker(Theme.mainColor, 1.2) : Theme.mainColor
+          }
+          
           onClicked: {
             annotationContainer.colorPickerVisible = false;
           }
@@ -2081,15 +2139,60 @@ Popup {
     // Annotation toolbar
     Rectangle {
       id: annotationToolbar
-      anchors.left: parent.left
       anchors.right: parent.right
+      anchors.top: parent.top
       anchors.bottom: parent.bottom
-      height: 70
+      anchors.topMargin: mainWindow.sceneTopMargin + 60 // Leave space for back button
+      anchors.rightMargin: 4
+      width: 70
       color: "#80000000"
       
       property bool drawingMode: true
       
-      Row {
+      // Instructions label
+      Rectangle {
+        id: instructionsLabel
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 80
+        width: parent.width - 10
+        height: instructionsText.contentHeight + 20
+        color: "#80000000"
+        radius: 5
+        visible: opacity > 0
+        opacity: 1.0
+        
+        Text {
+          id: instructionsText
+          anchors.centerIn: parent
+          width: parent.width - 10
+          text: qsTr("Tap to draw or add text, then save")
+          color: "white"
+          font.pixelSize: 12
+          wrapMode: Text.WordWrap
+          horizontalAlignment: Text.AlignHCenter
+        }
+        
+        // Timer to fade out instructions after a few seconds
+        Timer {
+          interval: 5000
+          running: true
+          onTriggered: {
+            fadeOutAnimation.start()
+          }
+        }
+        
+        NumberAnimation {
+          id: fadeOutAnimation
+          target: instructionsLabel
+          property: "opacity"
+          to: 0.0
+          duration: 1000
+          easing.type: Easing.InOutQuad
+        }
+      }
+      
+      Column {
         anchors.centerIn: parent
         spacing: 20
         

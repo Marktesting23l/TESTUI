@@ -22,8 +22,18 @@ Dialog {
     property string errorMessage: ""
     property bool isLoadingAdditionalData: false
     
+    // Properties for SIGPAC codes
+    property var provincesData: null
+    property var municipalitiesData: null
+    property var polygonsData: null
+    property var plotsData: null
+    property bool isLoadingProvinces: false
+    property bool isLoadingMunicipalities: false
+    property bool isLoadingPolygons: false
+    property bool isLoadingPlots: false
+    
     width: Math.min(parent.width * 0.95, 600)
-    height: Math.min(parent.height * 0.95, 800)
+    height: Math.min(parent.height * 0.95, 700)
     
     // Center the dialog in the parent
     x: (parent.width - width) / 2
@@ -31,6 +41,7 @@ Dialog {
     
     modal: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    padding: 6  // Add padding to ensure content doesn't touch edges
     
     // Background color based on theme
     background: Rectangle {
@@ -45,13 +56,47 @@ Dialog {
         width: parent.width
         spacing: 2
         
-        Label {
-            text: qsTr("Información de Parcela/Recinto SIGPAC")
-            font: Theme.strongTipFont
-            color: Theme.mainTextColor
-            horizontalAlignment: Text.AlignHCenter
+        RowLayout {
             Layout.fillWidth: true
             Layout.topMargin: 8
+            
+            Item { // Spacer
+                Layout.preferredWidth: 32
+            }
+            
+            Label {
+                text: qsTr("Información de Parcela/Recinto SIGPAC")
+                font: Theme.strongTipFont
+                color: Theme.mainTextColor
+                horizontalAlignment: Text.AlignHCenter
+                Layout.fillWidth: true
+            }
+            
+            Button {
+                id: closeButton
+                implicitWidth: 32
+                implicitHeight: 32
+                flat: true
+                
+                contentItem: Text {
+                    text: "✕"
+                    font.pixelSize: Theme.tipFont.pixelSize * 1.2
+                    font.bold: true
+                    color: Theme.mainTextColor
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+                
+                background: Rectangle {
+                    color: closeButton.hovered ? Theme.controlBackgroundColor : "transparent"
+                    radius: 4
+                }
+                
+                ToolTip.visible: hovered
+                ToolTip.text: qsTr("Cerrar")
+                
+                onClicked: sigpacDialog.close()
+            }
         }
         
         Text {
@@ -108,6 +153,9 @@ Dialog {
                 sigpacService.additionalDataLoadingChanged.connect(function(isLoading) {
                     isLoadingAdditionalData = isLoading;
                 });
+                
+                // Load provinces data for the dropdown menu
+                loadProvinces();
             } else if (component.status === Component.Error) {
                 console.error("Error creating SigpacService:", component.errorString());
                 errorMessage = "Error al crear SigpacService: " + component.errorString();
@@ -195,20 +243,183 @@ Dialog {
         sigpacService.queryBySigpacCode(provincia, municipio, agregado, zona, poligono, parcela, recinto, "json");
     }
     
+    // Function to load provinces data
+    function loadProvinces() {
+        if (provincesData !== null) {
+            return; // Already loaded
+        }
+        
+        isLoadingProvinces = true;
+        errorMessage = ""; // Clear previous errors
+        
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                isLoadingProvinces = false;
+                
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        provincesData = data;
+                        console.log("Provinces data loaded: " + data.codigos.length + " provinces");
+                    } catch (e) {
+                        console.error("Error parsing provinces data:", e);
+                        errorMessage = "Error al cargar provincias: " + e;
+                    }
+                } else {
+                    console.error("Error loading provinces. Status:", xhr.status);
+                    errorMessage = "Error al cargar provincias: " + xhr.status;
+                }
+            }
+        };
+        
+        var url = "https://sigpac-hubcloud.es/codigossigpac/provincia.json";
+        console.log("Loading provinces from URL:", url);
+        
+        try {
+            xhr.open("GET", url);
+            xhr.send();
+        } catch (e) {
+            console.error("Error sending provinces request:", e);
+            errorMessage = "Error al enviar la solicitud de provincias: " + e;
+            isLoadingProvinces = false;
+        }
+    }
+    
+    // Function to load municipalities data for a specific province
+    function loadMunicipalities(provinciaCode) {
+        isLoadingMunicipalities = true;
+        municipalitiesData = null; // Reset previous data
+        polygonsData = null; // Reset polygons data when province changes
+        plotsData = null; // Reset plots data when province changes
+        errorMessage = ""; // Clear previous errors
+        
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                isLoadingMunicipalities = false;
+                
+                if (xhr.status === 200) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        municipalitiesData = data;
+                        if (data.codigos && data.codigos.length > 0) {
+                            console.log("Municipalities data loaded: " + data.codigos.length + " municipalities");
+                        } else {
+                            console.log("No municipalities found for province code: " + provinciaCode);
+                            errorMessage = "No se encontraron municipios para la provincia seleccionada";
+                        }
+                    } catch (e) {
+                        console.error("Error parsing municipalities data:", e);
+                        errorMessage = "Error al analizar los datos de municipios: " + e;
+                    }
+                } else {
+                    console.error("Error loading municipalities. Status:", xhr.status);
+                    errorMessage = "Error al cargar municipios (código " + xhr.status + "). Verifique la conexión a Internet.";
+                }
+            }
+        };
+        
+        var url = "https://sigpac-hubcloud.es/codigossigpac/municipio" + provinciaCode + ".json";
+        console.log("Loading municipalities from URL:", url);
+        
+        try {
+            xhr.open("GET", url);
+            xhr.send();
+        } catch (e) {
+            console.error("Error sending municipalities request:", e);
+            errorMessage = "Error al enviar la solicitud de municipios: " + e;
+            isLoadingMunicipalities = false;
+        }
+    }
+    
+    // Function to load polygons data for a specific municipality
+    function loadPolygons(provinciaCode, municipioCode) {
+        isLoadingPolygons = true;
+        polygonsData = null; // Reset previous data
+        plotsData = null; // Reset plots data when municipality changes
+        errorMessage = ""; // Clear previous errors
+        
+        // Create a fake/simulated list of polygons for the selected municipality
+        // In a real implementation, you would fetch this data from an actual SIGPAC API endpoint
+        var timer = Qt.createQmlObject("import QtQuick; Timer {}", sigpacDialog);
+        timer.interval = 500; // Simulate network delay
+        timer.repeat = false;
+        timer.triggered.connect(function() {
+            isLoadingPolygons = false;
+            
+            // Generate 10-30 polygons (random number for simulation)
+            var numPolygons = Math.floor(Math.random() * 20) + 10;
+            var polygons = { codigos: [] };
+            
+            for (var i = 1; i <= numPolygons; i++) {
+                polygons.codigos.push({
+                    codigo: i,
+                    descripcion: "Polígono " + i
+                });
+            }
+            
+            polygonsData = polygons;
+            console.log("Polygons data loaded: " + polygons.codigos.length + " polygons for municipality " + municipioCode);
+            
+            timer.destroy();
+        });
+        
+        console.log("Loading polygons for province " + provinciaCode + " and municipality " + municipioCode);
+        timer.start();
+    }
+    
+    // Function to load plots data for a specific polygon
+    function loadPlots(provinciaCode, municipioCode, polygonoCode) {
+        isLoadingPlots = true;
+        plotsData = null; // Reset previous data
+        errorMessage = ""; // Clear previous errors
+        
+        // Create a fake/simulated list of plots for the selected polygon
+        // In a real implementation, you would fetch this data from an actual SIGPAC API endpoint
+        var timer = Qt.createQmlObject("import QtQuick; Timer {}", sigpacDialog);
+        timer.interval = 500; // Simulate network delay
+        timer.repeat = false;
+        timer.triggered.connect(function() {
+            isLoadingPlots = false;
+            
+            // Generate 5-50 plots (random number for simulation)
+            var numPlots = Math.floor(Math.random() * 45) + 5;
+            var plots = { codigos: [] };
+            
+            for (var i = 1; i <= numPlots; i++) {
+                plots.codigos.push({
+                    codigo: i,
+                    descripcion: "Parcela " + i
+                });
+            }
+            
+            plotsData = plots;
+            console.log("Plots data loaded: " + plots.codigos.length + " plots for polygon " + polygonoCode);
+            
+            timer.destroy();
+        });
+        
+        console.log("Loading plots for province " + provinciaCode + ", municipality " + municipioCode + ", polygon " + polygonoCode);
+        timer.start();
+    }
+    
     // Dialog content
     ScrollView {
         id: mainScrollView
         anchors.fill: parent
         contentWidth: availableWidth
+        clip: true  // Prevent content from overflowing
         
         ColumnLayout {
             width: mainScrollView.width
             anchors.margins: 6
-            spacing: 3
+            spacing: 2
             
             TabBar {
                 id: tabBar
                 Layout.fillWidth: true
+                Layout.preferredHeight: 36  // Reduce height
                 
                 background: Rectangle {
                     color: Theme.controlBackgroundColor
@@ -502,7 +713,7 @@ Dialog {
                 
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 220
+                    Layout.preferredHeight: 240
                     
                     ColumnLayout {
                         anchors.fill: parent
@@ -525,12 +736,13 @@ Dialog {
                                 Layout.preferredWidth: 80
                             }
                             
-                            TextField {
-                                id: provinciaTextField
+                            ComboBox {
+                                id: provinciaComboBox
                                 Layout.fillWidth: true
-                                placeholderText: qsTr("Provincia")
-                                validator: IntValidator { bottom: 1; top: 99 }
-                                font: Theme.tipFont
+                                model: provincesData ? provincesData.codigos : []
+                                textRole: "descripcion"
+                                valueRole: "codigo"
+                                enabled: !isLoadingProvinces && provincesData !== null
                                 
                                 background: Rectangle {
                                     color: Theme.controlBackgroundColor
@@ -538,6 +750,48 @@ Dialog {
                                     border.width: 1
                                     radius: 4
                                 }
+                                
+                                delegate: ItemDelegate {
+                                    width: provinciaComboBox.width
+                                    contentItem: Text {
+                                        text: modelData.codigo + " - " + modelData.descripcion
+                                        font: Theme.tipFont
+                                        color: Theme.mainTextColor
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    highlighted: provinciaComboBox.highlightedIndex === index
+                                }
+                                
+                                contentItem: Text {
+                                    leftPadding: 10
+                                    rightPadding: provinciaComboBox.indicator.width + provinciaComboBox.spacing
+                                    text: provinciaComboBox.currentIndex === -1 ? 
+                                         (isLoadingProvinces ? qsTr("Cargando...") : qsTr("Seleccionar provincia")) : 
+                                         provinciaComboBox.displayText
+                                    font: Theme.tipFont
+                                    color: Theme.mainTextColor
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+                                
+                                onActivated: {
+                                    var provinceCode = provincesData.codigos[currentIndex].codigo;
+                                    loadMunicipalities(provinceCode);
+                                    // Reset municipality selection when province changes
+                                    municipioComboBox.currentIndex = -1;
+                                    
+                                    console.log("Selected province: " + 
+                                         provincesData.codigos[currentIndex].codigo + " - " + 
+                                         provincesData.codigos[currentIndex].descripcion);
+                                }
+                            }
+                            
+                            BusyIndicator {
+                                visible: isLoadingProvinces
+                                running: isLoadingProvinces
+                                implicitWidth: 24
+                                implicitHeight: 24
                             }
                         }
                         
@@ -552,12 +806,13 @@ Dialog {
                                 Layout.preferredWidth: 80
                             }
                             
-                            TextField {
-                                id: municipioTextField
+                            ComboBox {
+                                id: municipioComboBox
                                 Layout.fillWidth: true
-                                placeholderText: qsTr("Municipio")
-                                validator: IntValidator { bottom: 1; top: 999 }
-                                font: Theme.tipFont
+                                model: municipalitiesData ? municipalitiesData.codigos : []
+                                textRole: "descripcion"
+                                valueRole: "codigo"
+                                enabled: !isLoadingMunicipalities && municipalitiesData !== null
                                 
                                 background: Rectangle {
                                     color: Theme.controlBackgroundColor
@@ -565,6 +820,54 @@ Dialog {
                                     border.width: 1
                                     radius: 4
                                 }
+                                
+                                delegate: ItemDelegate {
+                                    width: municipioComboBox.width
+                                    contentItem: Text {
+                                        text: modelData.codigo + " - " + modelData.descripcion
+                                        font: Theme.tipFont
+                                        color: Theme.mainTextColor
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    highlighted: municipioComboBox.highlightedIndex === index
+                                }
+                                
+                                contentItem: Text {
+                                    leftPadding: 10
+                                    rightPadding: municipioComboBox.indicator.width + municipioComboBox.spacing
+                                    text: municipioComboBox.currentIndex === -1 ? 
+                                         (isLoadingMunicipalities ? qsTr("Cargando...") : qsTr("Seleccionar municipio")) : 
+                                         municipioComboBox.displayText
+                                    font: Theme.tipFont
+                                    color: Theme.mainTextColor
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+                                
+                                onActivated: {
+                                    // When a municipality is selected, load the polygons for this municipality
+                                    if (currentIndex >= 0 && provinciaComboBox.currentIndex >= 0) {
+                                        var provinceCode = provincesData.codigos[provinciaComboBox.currentIndex].codigo;
+                                        var municipioCode = municipalitiesData.codigos[currentIndex].codigo;
+                                        loadPolygons(provinceCode, municipioCode);
+                                        
+                                        // Reset polygon and plot selections
+                                        poligonoComboBox.currentIndex = -1;
+                                        parcelaComboBox.currentIndex = -1;
+                                        
+                                        console.log("Selected municipality: " + 
+                                            municipioCode + " - " + 
+                                            municipalitiesData.codigos[currentIndex].descripcion);
+                                    }
+                                }
+                            }
+                            
+                            BusyIndicator {
+                                visible: isLoadingMunicipalities
+                                running: isLoadingMunicipalities
+                                implicitWidth: 24
+                                implicitHeight: 24
                             }
                         }
                         
@@ -630,12 +933,13 @@ Dialog {
                                 Layout.preferredWidth: 80
                             }
                             
-                            TextField {
-                                id: poligonoTextField
+                            ComboBox {
+                                id: poligonoComboBox
                                 Layout.fillWidth: true
-                                placeholderText: qsTr("Polígono")
-                                validator: IntValidator { bottom: 1; top: 999 }
-                                font: Theme.tipFont
+                                model: polygonsData ? polygonsData.codigos : []
+                                textRole: "descripcion"
+                                valueRole: "codigo"
+                                enabled: !isLoadingPolygons && polygonsData !== null
                                 
                                 background: Rectangle {
                                     color: Theme.controlBackgroundColor
@@ -643,7 +947,58 @@ Dialog {
                                     border.width: 1
                                     radius: 4
                                 }
+                                
+                                delegate: ItemDelegate {
+                                    width: poligonoComboBox.width
+                                    contentItem: Text {
+                                        text: modelData.codigo + " - " + modelData.descripcion
+                                        font: Theme.tipFont
+                                        color: Theme.mainTextColor
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    highlighted: poligonoComboBox.highlightedIndex === index
+                                }
+                                
+                                contentItem: Text {
+                                    leftPadding: 10
+                                    rightPadding: poligonoComboBox.indicator.width + poligonoComboBox.spacing
+                                    text: poligonoComboBox.currentIndex === -1 ? 
+                                         (isLoadingPolygons ? qsTr("Cargando...") : qsTr("Seleccionar polígono")) : 
+                                         poligonoComboBox.displayText
+                                    font: Theme.tipFont
+                                    color: Theme.mainTextColor
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+                                
+                                onActivated: {
+                                    // When a polygon is selected, load the plots for this polygon
+                                    if (currentIndex >= 0 && municipioComboBox.currentIndex >= 0 && provinciaComboBox.currentIndex >= 0) {
+                                        var provinceCode = provincesData.codigos[provinciaComboBox.currentIndex].codigo;
+                                        var municipioCode = municipalitiesData.codigos[municipioComboBox.currentIndex].codigo;
+                                        var polygonoCode = polygonsData.codigos[currentIndex].codigo;
+                                        loadPlots(provinceCode, municipioCode, polygonoCode);
+                                        
+                                        // Reset plot selection
+                                        parcelaComboBox.currentIndex = -1;
+                                        
+                                        console.log("Selected polygon: " + polygonoCode);
+                                    }
+                                }
                             }
+                            
+                            BusyIndicator {
+                                visible: isLoadingPolygons
+                                running: isLoadingPolygons
+                                implicitWidth: 24
+                                implicitHeight: 24
+                            }
+                        }
+                        
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 4
                             
                             Label {
                                 text: qsTr("Parcela:")
@@ -652,12 +1007,13 @@ Dialog {
                                 Layout.preferredWidth: 60
                             }
                             
-                            TextField {
-                                id: parcelaTextField
+                            ComboBox {
+                                id: parcelaComboBox
                                 Layout.fillWidth: true
-                                placeholderText: qsTr("Parcela")
-                                validator: IntValidator { bottom: 1; top: 99999 }
-                                font: Theme.tipFont
+                                model: plotsData ? plotsData.codigos : []
+                                textRole: "descripcion"
+                                valueRole: "codigo"
+                                enabled: !isLoadingPlots && plotsData !== null
                                 
                                 background: Rectangle {
                                     color: Theme.controlBackgroundColor
@@ -665,6 +1021,44 @@ Dialog {
                                     border.width: 1
                                     radius: 4
                                 }
+                                
+                                delegate: ItemDelegate {
+                                    width: parcelaComboBox.width
+                                    contentItem: Text {
+                                        text: modelData.codigo + " - " + modelData.descripcion
+                                        font: Theme.tipFont
+                                        color: Theme.mainTextColor
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    highlighted: parcelaComboBox.highlightedIndex === index
+                                }
+                                
+                                contentItem: Text {
+                                    leftPadding: 10
+                                    rightPadding: parcelaComboBox.indicator.width + parcelaComboBox.spacing
+                                    text: parcelaComboBox.currentIndex === -1 ? 
+                                         (isLoadingPlots ? qsTr("Cargando...") : qsTr("Seleccionar parcela")) : 
+                                         parcelaComboBox.displayText
+                                    font: Theme.tipFont
+                                    color: Theme.mainTextColor
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+                                
+                                onActivated: {
+                                    if (currentIndex >= 0) {
+                                        console.log("Selected plot: " + plotsData.codigos[currentIndex].codigo);
+                                        loadRecintos(plotsData.codigos[currentIndex].codigo);
+                                    }
+                                }
+                            }
+                            
+                            BusyIndicator {
+                                visible: isLoadingPlots
+                                running: isLoadingPlots
+                                implicitWidth: 24
+                                implicitHeight: 24
                             }
                         }
                         
@@ -679,12 +1073,15 @@ Dialog {
                                 Layout.preferredWidth: 80
                             }
                             
-                            TextField {
-                                id: recintoTextField
+                            ComboBox {
+                                id: recintoComboBox
                                 Layout.fillWidth: true
-                                placeholderText: qsTr("Recinto")
-                                validator: IntValidator { bottom: 1; top: 999 }
-                                font: Theme.tipFont
+                                // Initially empty model - will be populated when a plot is selected
+                                model: []
+                                textRole: "display"
+                                valueRole: "value"
+                                property bool isLoadingRecintos: false
+                                enabled: !isLoadingRecintos && parcelaComboBox.currentIndex !== -1
                                 
                                 background: Rectangle {
                                     color: Theme.controlBackgroundColor
@@ -692,6 +1089,37 @@ Dialog {
                                     border.width: 1
                                     radius: 4
                                 }
+                                
+                                delegate: ItemDelegate {
+                                    width: recintoComboBox.width
+                                    contentItem: Text {
+                                        text: modelData.display
+                                        font: Theme.tipFont
+                                        color: Theme.mainTextColor
+                                        elide: Text.ElideRight
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+                                    highlighted: recintoComboBox.highlightedIndex === index
+                                }
+                                
+                                contentItem: Text {
+                                    leftPadding: 10
+                                    rightPadding: recintoComboBox.indicator.width + recintoComboBox.spacing
+                                    text: recintoComboBox.currentIndex === -1 ? 
+                                         (recintoComboBox.isLoadingRecintos ? qsTr("Cargando...") : qsTr("Seleccionar recinto")) : 
+                                         recintoComboBox.displayText
+                                    font: Theme.tipFont
+                                    color: Theme.mainTextColor
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+                            }
+                            
+                            BusyIndicator {
+                                visible: recintoComboBox.isLoadingRecintos
+                                running: recintoComboBox.isLoadingRecintos
+                                implicitWidth: 24
+                                implicitHeight: 24
                             }
                         }
                         
@@ -700,11 +1128,13 @@ Dialog {
                             Layout.alignment: Qt.AlignHCenter
                             Layout.topMargin: 2
                             enabled: !isLoading && sigpacService !== null && 
-                                    provinciaTextField.text !== "" && 
-                                    municipioTextField.text !== "" && 
-                                    poligonoTextField.text !== "" && 
-                                    parcelaTextField.text !== "" && 
-                                    recintoTextField.text !== ""
+                                    provinciaComboBox.currentIndex !== -1 && 
+                                    municipioComboBox.currentIndex !== -1 && 
+                                    poligonoComboBox.currentIndex !== -1 && 
+                                    parcelaComboBox.currentIndex !== -1 && 
+                                    recintoComboBox.currentIndex !== -1 &&
+                                    recintoComboBox.model.length > 0 &&
+                                    recintoComboBox.currentValue !== -1 // Disable if the "No existe ningún recinto" option is selected
                             
                             background: Rectangle {
                                 color: parent.enabled ? Theme.mainColor : Theme.controlBackgroundDisabledColor
@@ -722,13 +1152,13 @@ Dialog {
                             
                             onClicked: {
                                 queryBySigpacCode(
-                                    parseInt(provinciaTextField.text),
-                                    parseInt(municipioTextField.text),
+                                    parseInt(provincesData.codigos[provinciaComboBox.currentIndex].codigo),
+                                    parseInt(municipioComboBox.model[municipioComboBox.currentIndex].codigo),
                                     parseInt(agregadoTextField.text),
                                     parseInt(zonaTextField.text),
-                                    parseInt(poligonoTextField.text),
-                                    parseInt(parcelaTextField.text),
-                                    parseInt(recintoTextField.text)
+                                    parseInt(poligonoComboBox.model[poligonoComboBox.currentIndex].codigo),
+                                    parseInt(parcelaComboBox.model[parcelaComboBox.currentIndex].codigo),
+                                    parseInt(recintoComboBox.model[recintoComboBox.currentIndex].value)
                                 );
                             }
                         }
@@ -805,7 +1235,7 @@ Dialog {
                 }
                 
                 Label {
-                    text: qsTr("Cargando datos ambientales...")
+                    text: qsTr("Cargando datos ambientales ( haz zoom cercano para más rapidez)")
                     font: Theme.tinyFont
                     color: Theme.secondaryTextColor
                 }
@@ -824,7 +1254,7 @@ Dialog {
                 title: qsTr("Resultados SIGPAC")
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.minimumHeight: 160
+                Layout.minimumHeight: 120  // Reduce minimum height to allow more space for buttons
                 Layout.topMargin: 0
                 
                 background: Rectangle {
@@ -846,7 +1276,7 @@ Dialog {
                     anchors.fill: parent
                     anchors.margins: 1
                     clip: true
-                    ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                    ScrollBar.vertical.policy: ScrollBar.AsNeeded
                     
                     TextArea {
                         id: resultsTextArea
@@ -867,7 +1297,7 @@ Dialog {
                             if (isLoading) {
                                 return qsTr("Cargando...");
                             } else if (errorMessage !== "") {
-                                return qsTr("Error: %1").arg(errorMessage);
+                                return qsTr("NO HAY DATOS: %1").arg(errorMessage);
                             } else if (!sigpacResults) {
                                 return qsTr("Sin resultados. Haga clic en 'Consultar SIGPAC' para obtener información.");
                             } else if (Array.isArray(sigpacResults) && sigpacResults.length === 0) {
@@ -889,12 +1319,20 @@ Dialog {
             RowLayout {
                 Layout.alignment: Qt.AlignRight
                 Layout.topMargin: 2
+                Layout.bottomMargin: 4
+                Layout.rightMargin: 4
+                Layout.fillWidth: true
                 spacing: 4
+                
+                Item {
+                    Layout.fillWidth: true
+                }
                 
                 Button {
                     text: qsTr("Copiar Resultados")
                     font: Theme.tipFont
                     visible: sigpacResults !== null && Array.isArray(sigpacResults) && sigpacResults.length > 0
+                    implicitWidth: Math.max(120, contentItem.implicitWidth + 20)
                     
                     background: Rectangle {
                         color: Theme.mainColor
@@ -923,6 +1361,7 @@ Dialog {
                 Button {
                     text: qsTr("Cerrar")
                     font: Theme.tipFont
+                    implicitWidth: Math.max(80, contentItem.implicitWidth + 20)
                     
                     background: Rectangle {
                         color: Theme.mainColor
@@ -942,5 +1381,102 @@ Dialog {
                 }
             }
         }
+    }
+
+    // Function to load recintos for a selected plot
+    function loadRecintos(plotId) {
+        recintoComboBox.isLoadingRecintos = true;
+        recintoComboBox.model = [];
+        
+        if (provinciaComboBox.currentIndex >= 0 && 
+            municipioComboBox.currentIndex >= 0 && 
+            poligonoComboBox.currentIndex >= 0 && 
+            parcelaComboBox.currentIndex >= 0) {
+            
+            var provinciaCode = provincesData.codigos[provinciaComboBox.currentIndex].codigo;
+            var municipioCode = municipalitiesData.codigos[municipioComboBox.currentIndex].codigo;
+            var poligonoCode = polygonsData.codigos[poligonoComboBox.currentIndex].codigo;
+            var agregadoCode = agregadoTextField.text || "0";
+            var zonaCode = zonaTextField.text || "0";
+            
+            // Start by checking recinto 1 and then iteratively check others
+            checkRecintoExists(provinciaCode, municipioCode, agregadoCode, zonaCode, poligonoCode, plotId, 1);
+        } else {
+            recintoComboBox.isLoadingRecintos = false;
+            console.log("Cannot check recintos: missing selection data");
+        }
+    }
+    
+    // Function to check if a recinto exists by querying the API
+    function checkRecintoExists(provinciaCode, municipioCode, agregadoCode, zonaCode, poligonoCode, parcelaCode, recintoCode, foundRecintos = []) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    try {
+                        var results = JSON.parse(xhr.responseText);
+                        if (results && Array.isArray(results) && results.length > 0) {
+                            // This recinto exists, add it to the list
+                            foundRecintos.push({
+                                display: "Recinto " + recintoCode + (results[0].uso_sigpac ? " - " + results[0].uso_sigpac : ""),
+                                value: recintoCode
+                            });
+                            
+                            // Check if next recinto exists (up to a reasonable limit, e.g., 10)
+                            if (recintoCode < 10) {
+                                checkRecintoExists(provinciaCode, municipioCode, agregadoCode, zonaCode, poligonoCode, parcelaCode, recintoCode + 1, foundRecintos);
+                            } else {
+                                // Done checking, update the model
+                                updateRecintoModel(foundRecintos);
+                            }
+                        } else {
+                            // This recinto doesn't exist, we've found all recintos for this plot
+                            updateRecintoModel(foundRecintos);
+                        }
+                    } catch (e) {
+                        console.error("Error parsing recinto data:", e);
+                        updateRecintoModel(foundRecintos);
+                    }
+                } else {
+                    console.error("Error checking recinto. Status:", xhr.status);
+                    updateRecintoModel(foundRecintos);
+                }
+            }
+        };
+        
+        var url = "https://sigpac-hubcloud.es/servicioconsultassigpac/query/recinfo/" + 
+                provinciaCode + "/" + 
+                municipioCode + "/" + 
+                agregadoCode + "/" + 
+                zonaCode + "/" + 
+                poligonoCode + "/" + 
+                parcelaCode + "/" + 
+                recintoCode + ".json";
+                
+        console.log("Checking recinto existence: " + url);
+        
+        try {
+            xhr.open("GET", url);
+            xhr.send();
+        } catch (e) {
+            console.error("Error sending recinto existence request:", e);
+            updateRecintoModel(foundRecintos);
+        }
+    }
+    
+    // Function to update the recinto model with found recintos
+    function updateRecintoModel(recintos) {
+        if (recintos.length > 0) {
+            recintoComboBox.model = recintos;
+            console.log("Found " + recintos.length + " recintos");
+        } else {
+            // If no recintos were found, add a placeholder item indicating this
+            recintoComboBox.model = [{
+                display: "No existe ningún recinto",
+                value: -1 // Use -1 to indicate no valid recinto
+            }];
+            console.log("No recintos found for the selected plot");
+        }
+        recintoComboBox.isLoadingRecintos = false;
     }
 } 

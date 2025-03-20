@@ -1,0 +1,48 @@
+codigo,descripcion
+1,Identificación automática
+2,Identificación por fotointerpretación
+3,Subsanación de errores
+4,Alegación 2016
+5,Control terreno 2016
+10,Alegación 2017
+11,Control terreno 2017
+12,Actualización SIGPAC por cambio de ortofoto
+14,Alegación 2018
+15,Control terreno 2018
+16,Alegación 2019
+17,Control terreno 2019
+19,Desdoble motivo de cambio y situación
+130,Alegaciones 2020
+131,Controles Clásicos 2020
+132,Control Condicionalidad 2020
+133,Control por Teledetección 2020
+134,Carga recintos uso EP
+136,Otros controles campo 2020
+138,Control por Monitorización 2020
+139,Alegaciones 2021
+140,Controles Clásicos 2021
+141,Control Condicionalidad 2021
+142,Control por Teledetección 2021
+145,Otros controles campo 2021
+147,Control por Monitorización 2021
+148,Alegaciones 2022
+149,Controles Clásicos 2022
+150,Control Condicionalidad 2022
+153,Otros controles campo 2022
+155,Control por Monitorización 2022
+156,Alegaciones 2023
+157,Controles Clásicos 2023
+158,Control Condicionalidad 2023
+161,Otros controles campo 2023
+163,Control por Monitorización 2023
+164,Homogeneización EEPP
+165,Alegaciones 2024
+166,Controles Clásicos 2024
+167,Control Condicionalidad 2024
+170,Otros controles campo 2024
+172,Control por Monitorización 2024
+174,Alegaciones 2025
+175,Controles Clásicos 2025
+176,Control Condicionalidad 2025
+179,Otros controles campo 2025
+181,Control por Monitorización 2025

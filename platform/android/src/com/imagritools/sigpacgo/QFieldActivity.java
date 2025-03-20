@@ -260,10 +260,34 @@ public class QFieldActivity extends QtActivity {
                 }
             }
             
+            // Also copy Mis_Datos.gpkg similarly
+            String[] datosFiles = {
+                "SIGPACGO_Mapa_Principal/Mis_Datos.gpkg",
+                "resources/SIGPACGO_Mapa_Principal/Mis_Datos.gpkg",
+                "src/main/assets/resources/SIGPACGO_Mapa_Principal/Mis_Datos.gpkg",
+                "Mis_Datos.gpkg"
+            };
+            
+            boolean datosCopied = false;
+            for (String sourceFile : datosFiles) {
+                try {
+                    Log.i("SIGPACGO", "Attempting to copy GeoKG file from: " + sourceFile);
+                    File destFile = new File(sigpacgoMapaDir, "Mis_Datos.gpkg");
+                    copyAssetFile(sourceFile, destFile.getAbsolutePath());
+                    datosCopied = true;
+                    Log.i("SIGPACGO", "Successfully copied GeoKG file from " + sourceFile);
+                    break;
+                } catch (IOException e) {
+                    Log.w("SIGPACGO", "Failed to copy from " + sourceFile + ": " + e.getMessage());
+                }
+            }
+            
             if (!mapaCopied) {
                 Log.e("SIGPACGO", "Failed to copy SIGPACGO map file from any source");
-                // Create an empty placeholder file if we couldn't copy
-                createEmptyProjectFile(new File(sigpacgoMapaDir, "SIGPACGO.qgz"));
+            }
+            
+            if (!datosCopied) {
+                Log.e("SIGPACGO", "Failed to copy Mis_Datos.gpkg file from any source");
             }
             
             // Attempt to copy sample project files - try multiple directories

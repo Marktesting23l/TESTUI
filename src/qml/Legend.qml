@@ -96,7 +96,7 @@ ListView {
           anchors.verticalCenter: parent.verticalCenter
 
           QfToolButton {
-            height: 35
+            height: 40
             width: height
             anchors.centerIn: parent
             iconSource: Theme.getThemeVectorIcon('ic_legend_collapsed_state_24dp')
@@ -105,6 +105,8 @@ ListView {
             visible: HasChildren
             enabled: HasChildren
             rotation: !IsCollapsed ? 90 : 0
+            icon.width: 30
+            icon.height: 30
 
             Behavior on rotation  {
               NumberAnimation {
@@ -218,7 +220,7 @@ ListView {
           leftPadding: 0
           text: Name
           horizontalAlignment: Text.AlignLeft
-          font.pointSize: Theme.tipFont.pointSize
+          font.pointSize: Type === "group" ? Theme.tipFont.pointSize - 1 : Theme.tipFont.pointSize
           font.bold: Type === "group" || (Type === "layer" && VectorLayerPointer && VectorLayerPointer == activeLayer) ? true : false
           elide: Text.ElideRight
           opacity: Visible ? 1 : 0.25
