@@ -305,6 +305,139 @@ public class QFieldActivity extends QtActivity {
         }
     }
 
+    /**
+     * Copies an asset folder to the destination
+     */
+    private void copyAssetFolder(String assetPath, String destPath) throws IOException {
+        AssetManager assetManager = getAssets();
+        String[] files = null;
+        
+        Log.i("SIGPACGO", "Attempting to copy asset folder from: " + assetPath + " to: " + destPath);
+        
+        try {
+            files = assetManager.list(assetPath);
+            
+            if (files == null || files.length == 0) {
+                // Try to copy as a file since it might be a file or empty directory
+                try {
+                    copyAssetFile(assetPath, destPath);
+                    Log.i("SIGPACGO", "Successfully copied as file: " + assetPath);
+                    return;
+                } catch (IOException e) {
+                    Log.w("SIGPACGO", "Failed to copy as file: " + e.getMessage());
+                    // Create empty directory if file copy failed
+                    new File(destPath).mkdirs();
+                    Log.i("SIGPACGO", "Created empty directory: " + destPath);
+                    return;
+                }
+            }
+        } catch (IOException e) {
+            Log.w("SIGPACGO", "Error listing asset folder " + assetPath + ": " + e.getMessage());
+            // Try as a file instead
+            try {
+                copyAssetFile(assetPath, destPath);
+                Log.i("SIGPACGO", "Successfully copied as file after list failure: " + assetPath);
+                return;
+            } catch (IOException e2) {
+                Log.e("SIGPACGO", "Failed to copy as folder or file: " + assetPath + ", Error: " + e2.getMessage());
+                throw e2;
+            }
+        }
+        
+        // Create destination directory
+        File destFolder = new File(destPath);
+        if (!destFolder.exists()) {
+            destFolder.mkdirs();
+            Log.i("SIGPACGO", "Created directory: " + destPath);
+        }
+        
+        // Copy all files in the folder
+        for (String file : files) {
+            String subAsset = assetPath + "/" + file;
+            String subDest = destPath + "/" + file;
+            
+            try {
+                // Check if it's a directory
+                String[] subFiles = assetManager.list(subAsset);
+                if (subFiles != null && subFiles.length > 0) {
+                    // It's a directory, recursively copy it
+                    copyAssetFolder(subAsset, subDest);
+                    Log.i("SIGPACGO", "Copied directory: " + subAsset);
+                } else {
+                    // It's a file, copy it
+                    copyAssetFile(subAsset, subDest);
+                    Log.i("SIGPACGO", "Copied file: " + subAsset);
+                }
+            } catch (IOException e) {
+                Log.w("SIGPACGO", "Error processing " + subAsset + ": " + e.getMessage());
+                // Try direct file copy as fallback
+                try {
+                    copyAssetFile(subAsset, subDest);
+                    Log.i("SIGPACGO", "Successfully copied file using fallback: " + subAsset);
+                } catch (IOException e2) {
+                    Log.e("SIGPACGO", "Failed fallback copy: " + e2.getMessage());
+                    throw e2;
+                }
+            }
+        }
+    }
+
+    /**
+     * Copies a single asset file to the destination
+     */
+    private void copyAssetFile(String assetPath, String destPath) throws IOException {
+        Log.i("SIGPACGO", "Attempting to copy asset file from: " + assetPath + " to: " + destPath);
+        
+        InputStream in = null;
+        OutputStream out = null;
+        
+        try {
+            in = getAssets().open(assetPath);
+            File outFile = new File(destPath);
+            
+            // Create parent directories if they don't exist
+            File parentDir = outFile.getParentFile();
+            if (!parentDir.exists()) {
+                boolean created = parentDir.mkdirs();
+                if (!created) {
+                    Log.w("SIGPACGO", "Failed to create parent directory: " + parentDir.getAbsolutePath());
+                }
+            }
+            
+            out = new FileOutputStream(outFile);
+            byte[] buffer = new byte[8192]; // Increased buffer size for better performance
+            int read;
+            long total = 0;
+            
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+                total += read;
+            }
+            
+            out.flush();
+            Log.i("SIGPACGO", "Successfully copied " + total + " bytes from " + assetPath + " to " + destPath);
+            
+        } catch (IOException e) {
+            Log.e("SIGPACGO", "Error copying asset file " + assetPath + ": " + e.getMessage());
+            throw e;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    Log.w("SIGPACGO", "Error closing input stream: " + e.getMessage());
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    Log.w("SIGPACGO", "Error closing output stream: " + e.getMessage());
+                }
+            }
+        }
+    }
+
     private void processProjectIntent() {
         showBlockingProgressDialog(getString(R.string.processing_message));
 
