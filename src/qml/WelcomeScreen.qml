@@ -83,7 +83,7 @@ Page {
     property bool loadProjectOnLaunch: false
     property string phrasesFilePath: ''
   }
-
+  
   // Add Terms and Conditions popup with lazy loading
   Loader {
     id: termsAndConditionsLoader
@@ -94,24 +94,38 @@ Page {
     onLoaded: {
       item.parent = Overlay.overlay;
       console.log("Terms and conditions loaded successfully");
+      
+      // Connect to the termsAccepted signal to save the setting
+      item.termsAccepted.connect(function() {
+        console.log("Terms and conditions accepted signal received");
+      });
     }
   }
 
   // Function to show terms and conditions
   function showTermsAndConditions() {
-    // Load if not already loaded
+    // First, make sure the component is loaded
     if (!termsAndConditionsLoader.active) {
       termsAndConditionsLoader.active = true;
-    }
-    
-    // Once loaded, show the component
-    if (termsAndConditionsLoader.status === Loader.Ready) {
-      termsAndConditionsLoader.item.open();
-    } else {
-      // If not ready yet, wait until loaded then show
+      
+      // After loading, check if terms need to be shown
       termsAndConditionsLoader.onLoaded.connect(function() {
-        termsAndConditionsLoader.item.open();
+        // Only show if not already accepted (using the component's setting)
+        if (!termsAndConditionsLoader.item.accepted) {
+          termsAndConditionsLoader.item.open();
+          console.log("Showing terms and conditions dialog");
+        } else {
+          console.log("Terms already accepted, not showing dialog");
+        }
       });
+    } else if (termsAndConditionsLoader.status === Loader.Ready) {
+      // Component already loaded, check if terms need to be shown
+      if (!termsAndConditionsLoader.item.accepted) {
+        termsAndConditionsLoader.item.open();
+        console.log("Showing terms and conditions dialog");
+      } else {
+        console.log("Terms already accepted, not showing dialog");
+      }
     }
   }
 
@@ -1206,31 +1220,73 @@ Page {
 
   // Function to check if the maps exist and copy them if needed
   function checkMapsExist() {
-    // Check if the main map exists
+    console.log("Checking if main map exists at path: " + mainProjectPath);
+    
+    // First try to directly copy all maps without checking
+    try {
+      console.log("Proactively copying all map resources...");
+      
+      // Try to copy both main map project and sample projects
+      platformUtilities.copySampleProjects(); // This will copy both sample projects and main map
+      console.log("Called platformUtilities.copySampleProjects() to copy all required resources");
+      
+      // List available directories to verify
+      if (Qt.platform.os === "android") {
+        const dataDir = platformUtilities.appDataDirs()[0];
+        console.log("Checking Android app data directory contents: " + dataDir);
+        
+        // Check sample_projects dir
+        let sampleDirInfo = platformUtilities.getFileInfo(dataDir + "sample_projects");
+        if (sampleDirInfo && sampleDirInfo.exists) {
+          console.log("sample_projects directory exists");
+        } else {
+          console.log("sample_projects directory does not exist, explicitly trying to create it");
+          platformUtilities.createDir(dataDir, "sample_projects");
+        }
+        
+        // Check SIGPACGO_Mapa_Principal dir
+        let mapDirInfo = platformUtilities.getFileInfo(dataDir + "SIGPACGO_Mapa_Principal");
+        if (mapDirInfo && mapDirInfo.exists) {
+          console.log("SIGPACGO_Mapa_Principal directory exists");
+        } else {
+          console.log("SIGPACGO_Mapa_Principal directory does not exist, explicitly trying to create it");
+          platformUtilities.createDir(dataDir, "SIGPACGO_Mapa_Principal");
+        }
+      }
+    } catch (e) {
+      console.log("Error during proactive map copy: " + e);
+    }
+    
+    // Now check if the main map exists
     let fileInfo = platformUtilities.getFileInfo(mainProjectPath);
     if (!fileInfo || !fileInfo.exists) {
       console.log("Main map not found at: " + mainProjectPath);
-      console.log("Trying to copy required maps...");
+      console.log("Trying to create maps...");
       
       try {
-        // Try to copy the main map project - this uses the C++ implementation that works across platforms
+        // Try to call the main map copy function directly
         platformUtilities.copyMainMapProject();
+        console.log("Called platformUtilities.copyMainMapProject() directly");
         
-        // Check again after copying attempts
+        // Check again after copying
         fileInfo = platformUtilities.getFileInfo(mainProjectPath);
         if (fileInfo && fileInfo.exists) {
           console.log("Main map successfully available at: " + mainProjectPath);
         } else {
           console.log("Main map still not available at: " + mainProjectPath);
           
-          // Try using a different path pattern in case the location is different
+          // Try using a different path pattern
           if (Qt.platform.os === "android") {
-            // Try alternative location patterns on Android
+            // Try alternative locations on Android
             const altPaths = [
-              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO.qgz"
+              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO.qgz",
+              platformUtilities.systemLocalDataLocation("SIGPACGO_Mapa_Principal") + "/SIGPACGO.qgz",
+              platformUtilities.systemLocalDataLocation("sigpacgo_main") + "/SIGPACGO.qgz"
             ];
             
+            console.log("Checking alternative paths:");
             for (let i = 0; i < altPaths.length; i++) {
+              console.log("- Checking: " + altPaths[i]);
               let altFileInfo = platformUtilities.getFileInfo(altPaths[i]);
               if (altFileInfo && altFileInfo.exists) {
                 mainProjectPath = altPaths[i];
@@ -1245,6 +1301,31 @@ Page {
       }
     } else {
       console.log("Main map found at: " + mainProjectPath);
+    }
+    
+    // Check sample projects independently
+    try {
+      const sampleProjectsDir = platformUtilities.systemLocalDataLocation("sample_projects");
+      console.log("Checking sample_projects directory: " + sampleProjectsDir);
+      
+      let sampleDirInfo = platformUtilities.getFileInfo(sampleProjectsDir);
+      if (!sampleDirInfo || !sampleDirInfo.exists) {
+        console.log("Sample projects directory doesn't exist, creating it");
+        const dirCreated = platformUtilities.createDir(platformUtilities.systemLocalDataLocation(), "sample_projects");
+        console.log("Sample projects directory creation result: " + dirCreated);
+      }
+      
+      // Check if the directory has any files
+      const dirExists = platformUtilities.getFileInfo(sampleProjectsDir).exists;
+      if (dirExists) {
+        console.log("Sample projects directory exists, checking contents");
+        
+        // Try calling the copy function to populate it
+        platformUtilities.copySampleProjects();
+        console.log("Called platformUtilities.copySampleProjects() to populate sample_projects");
+      }
+    } catch (e) {
+      console.log("Error checking sample projects: " + e);
     }
   }
 

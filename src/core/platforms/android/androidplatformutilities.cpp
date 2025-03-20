@@ -77,6 +77,17 @@ AndroidPlatformUtilities::AndroidPlatformUtilities()
   : mActivity( qtAndroidContext() )
   , mSystemGenericDataLocation( QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ) + QStringLiteral( "/share" ) )
 {
+  // Ensure assets are copied when the app starts
+  if ( mActivity.isValid() )
+  {
+    runOnAndroidMainThread( [] {
+      auto activity = qtAndroidContext();
+      if ( activity.isValid() )
+      {
+        activity.callMethod<void>( "copyAssets" );
+      }
+    } );
+  }
 }
 
 PlatformUtilities::Capabilities AndroidPlatformUtilities::capabilities() const
@@ -863,27 +874,70 @@ void AndroidPlatformUtilities::copyMainMapProject()
     qDebug() << "Android: Created directory:" << mapaDir;
   }
   
-  // Force copy main map using the same pattern as sample projects
-  const bool success = FileUtils::copyRecursively(
-    systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO_Mapa_Principal"), 
-    mapaDir
-  );
+  // Try direct file system copy first
+  bool success = false;
+  QStringList sourcePaths = {
+    systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO_Mapa_Principal"),
+    systemSharedDataLocation() + QLatin1String("/SIGPACGO_Mapa_Principal")
+  };
   
-  if (!success) {
-    qWarning() << "Android: Failed to copy SIGPACGO_Mapa_Principal to" << mapaDir;
-    
-    // Try to call Java method to copy the files
-    if (mActivity.isValid()) {
-      runOnAndroidMainThread([this] {
-        auto activity = qtAndroidContext();
-        if (activity.isValid()) {
-          qDebug() << "Android: Calling Java copyAssets method to copy SIGPACGO_Mapa_Principal";
-          activity.callMethod<void>("copyAssets");
-        }
-      });
+  for (const QString& sourcePath : sourcePaths)
+  {
+    if (QDir(sourcePath).exists() || QFile::exists(sourcePath))
+    {
+      qDebug() << "Android: Found source path:" << sourcePath;
+      success = FileUtils::copyRecursively(sourcePath, mapaDir);
+      if (success) {
+        qDebug() << "Android: Successfully copied SIGPACGO_Mapa_Principal to" << mapaDir;
+        break;
+      }
     }
-  } else {
-    qDebug() << "Android: Successfully copied SIGPACGO_Mapa_Principal to" << mapaDir;
+  }
+  
+  // If that fails, try to copy single files
+  if (!success) {
+    qWarning() << "Android: Failed to copy SIGPACGO_Mapa_Principal from any source path";
+    
+    QStringList singleFilePaths = {
+      systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"),
+      systemSharedDataLocation() + QLatin1String("/SIGPACGO_Mapa_Principal/SIGPACGO.qgz"),
+      systemSharedDataLocation() + QLatin1String("/SIGPACGO.qgz"),
+      systemSharedDataLocation() + QLatin1String("/resources/SIGPACGO.qgz")
+    };
+    
+    for (const QString& filePath : singleFilePaths)
+    {
+      if (QFile::exists(filePath))
+      {
+        qDebug() << "Android: Found map file:" << filePath;
+        if (QFile::copy(filePath, mapaDir + "/SIGPACGO.qgz")) {
+          qDebug() << "Android: Successfully copied SIGPACGO.qgz to" << mapaDir;
+          success = true;
+          break;
+        }
+      }
+    }
+  }
+    
+  // If still not successful, call Java method to copy the assets from the APK directly
+  if (!success && mActivity.isValid()) {
+    qDebug() << "Android: Using Java copyAssets method as fallback";
+    runOnAndroidMainThread([this] {
+      auto activity = qtAndroidContext();
+      if (activity.isValid()) {
+        qDebug() << "Android: Calling Java copyAssets method to copy assets";
+        activity.callMethod<void>("copyAssets");
+        
+        // Check if the copy succeeded
+        const QString mapPath = systemLocalDataLocation("SIGPACGO_Mapa_Principal") + "/SIGPACGO.qgz";
+        QFileInfo mapFile(mapPath);
+        if (mapFile.exists()) {
+          qDebug() << "Android: Java copyAssets method successfully created" << mapPath;
+        } else {
+          qWarning() << "Android: Java copyAssets method failed to create" << mapPath;
+        }
+      }
+    });
   }
   
   // Also call the parent implementation

@@ -230,49 +230,50 @@ public class QFieldActivity extends QtActivity {
         Log.i("SIGPACGO", "- SIGPACGO Base: " + sigpacgoBaseDir.getAbsolutePath());
         
         try {
-            // First, try to copy SIGPACGO_Mapa_Principal
-            String[] mapaSourcePaths = {
-                "resources/SIGPACGO_Mapa_Principal",
-                "SIGPACGO_Mapa_Principal"
+            // Attempt to copy the main map file directly with various possible paths
+            String[] mapaFiles = {
+                "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                "resources/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                "SIGPACGO.qgz"
             };
             
             boolean mapaCopied = false;
-            for (String sourcePath : mapaSourcePaths) {
+            for (String sourceFile : mapaFiles) {
                 try {
-                    Log.i("SIGPACGO", "Attempting to copy from: " + sourcePath);
-                    copyAssetFolder(sourcePath, sigpacgoMapaDir.getAbsolutePath());
+                    Log.i("SIGPACGO", "Attempting to copy map file from: " + sourceFile);
+                    File destFile = new File(sigpacgoMapaDir, "SIGPACGO.qgz");
+                    copyAssetFile(sourceFile, destFile.getAbsolutePath());
                     mapaCopied = true;
-                    Log.i("SIGPACGO", "Successfully copied SIGPACGO_Mapa_Principal from " + sourcePath);
+                    Log.i("SIGPACGO", "Successfully copied map file from " + sourceFile);
                     break;
                 } catch (IOException e) {
-                    Log.w("SIGPACGO", "Failed to copy from " + sourcePath + ": " + e.getMessage());
+                    Log.w("SIGPACGO", "Failed to copy from " + sourceFile + ": " + e.getMessage());
                 }
             }
             
             if (!mapaCopied) {
-                Log.e("SIGPACGO", "Failed to copy SIGPACGO_Mapa_Principal from any source");
+                Log.e("SIGPACGO", "Failed to copy SIGPACGO map file from any source");
             }
             
-            // Then copy sample projects
-            String[] sampleSourcePaths = {
-                "resources/sample_projects",
-                "sample_projects"
-            };
+            // Attempt to copy sample project files - try multiple directories
+            String[] sampleDirs = {"sample_projects", "resources/sample_projects"};
+            boolean anySamplesCopied = false;
             
-            boolean samplesCopied = false;
-            for (String sourcePath : sampleSourcePaths) {
+            for (String sampleDir : sampleDirs) {
                 try {
-                    copyAssetFolder(sourcePath, sampleProjectsDir.getAbsolutePath());
-                    samplesCopied = true;
-                    Log.i("SIGPACGO", "Successfully copied sample projects from " + sourcePath);
-                    break;
+                    Log.i("SIGPACGO", "Attempting to copy samples from: " + sampleDir);
+                    if (copyAssetFolder(assetManager, sampleDir, sampleProjectsDir.getAbsolutePath())) {
+                        anySamplesCopied = true;
+                        Log.i("SIGPACGO", "Successfully copied sample projects from " + sampleDir);
+                        break;
+                    }
                 } catch (IOException e) {
-                    Log.w("SIGPACGO", "Failed to copy sample projects from " + sourcePath + ": " + e.getMessage());
+                    Log.w("SIGPACGO", "Failed to copy samples from " + sampleDir + ": " + e.getMessage());
                 }
             }
             
-            if (!samplesCopied) {
-                Log.e("SIGPACGO", "Failed to copy sample projects from any source");
+            if (!anySamplesCopied) {
+                Log.e("SIGPACGO", "Failed to copy any sample projects from assets");
             }
             
             // Finally, verify the contents
@@ -286,100 +287,65 @@ public class QFieldActivity extends QtActivity {
     }
     
     /**
-     * Verifies the contents of a directory
+     * Copies a complete asset folder with all subfolders and files
      */
-    private void verifyDirectory(File directory, String label) {
-        Log.i("SIGPACGO", "Verifying " + label + " directory: " + directory.getAbsolutePath());
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
-            if (files != null && files.length > 0) {
-                Log.i("SIGPACGO", label + " directory contains " + files.length + " files:");
-                for (File file : files) {
-                    Log.i("SIGPACGO", "- " + file.getName() + " (" + file.length() + " bytes)");
-                }
-            } else {
-                Log.w("SIGPACGO", label + " directory is empty");
-            }
-        } else {
-            Log.e("SIGPACGO", label + " directory does not exist");
-        }
-    }
-
-    /**
-     * Copies an asset folder to the destination
-     */
-    private void copyAssetFolder(String assetPath, String destPath) throws IOException {
-        AssetManager assetManager = getAssets();
-        String[] files = null;
+    private boolean copyAssetFolder(AssetManager assetManager, String fromAssetPath, String toPath) throws IOException {
+        Log.i("SIGPACGO", "Copying asset folder from " + fromAssetPath + " to " + toPath);
         
-        Log.i("SIGPACGO", "Attempting to copy asset folder from: " + assetPath + " to: " + destPath);
+        String[] files = null;
+        boolean result = true;
         
         try {
-            files = assetManager.list(assetPath);
-            
+            files = assetManager.list(fromAssetPath);
             if (files == null || files.length == 0) {
-                // Try to copy as a file since it might be a file or empty directory
-                try {
-                    copyAssetFile(assetPath, destPath);
-                    Log.i("SIGPACGO", "Successfully copied as file: " + assetPath);
-                    return;
-                } catch (IOException e) {
-                    Log.w("SIGPACGO", "Failed to copy as file: " + e.getMessage());
-                    // Create empty directory if file copy failed
-                    new File(destPath).mkdirs();
-                    Log.i("SIGPACGO", "Created empty directory: " + destPath);
-                    return;
-                }
+                // If it's an empty directory, just return
+                return true;
             }
         } catch (IOException e) {
-            Log.w("SIGPACGO", "Error listing asset folder " + assetPath + ": " + e.getMessage());
-            // Try as a file instead
-            try {
-                copyAssetFile(assetPath, destPath);
-                Log.i("SIGPACGO", "Successfully copied as file after list failure: " + assetPath);
-                return;
-            } catch (IOException e2) {
-                Log.e("SIGPACGO", "Failed to copy as folder or file: " + assetPath + ", Error: " + e2.getMessage());
-                throw e2;
-            }
+            // The fromAssetPath is not a directory; it might be a file
+            Log.w("SIGPACGO", fromAssetPath + " is not a directory or doesn't exist: " + e.getMessage());
+            return false;
         }
         
-        // Create destination directory
-        File destFolder = new File(destPath);
-        if (!destFolder.exists()) {
-            destFolder.mkdirs();
-            Log.i("SIGPACGO", "Created directory: " + destPath);
-        }
+        // Make sure the target directory exists
+        new File(toPath).mkdirs();
         
-        // Copy all files in the folder
+        // Process all files and subdirectories
         for (String file : files) {
-            String subAsset = assetPath + "/" + file;
-            String subDest = destPath + "/" + file;
+            String subFromAssetPath = fromAssetPath.isEmpty() ? file : fromAssetPath + "/" + file;
+            String subToPath = toPath + "/" + file;
             
+            String[] subFiles = null;
             try {
-                // Check if it's a directory
-                String[] subFiles = assetManager.list(subAsset);
-                if (subFiles != null && subFiles.length > 0) {
-                    // It's a directory, recursively copy it
-                    copyAssetFolder(subAsset, subDest);
-                    Log.i("SIGPACGO", "Copied directory: " + subAsset);
-                } else {
-                    // It's a file, copy it
-                    copyAssetFile(subAsset, subDest);
-                    Log.i("SIGPACGO", "Copied file: " + subAsset);
-                }
+                subFiles = assetManager.list(subFromAssetPath);
             } catch (IOException e) {
-                Log.w("SIGPACGO", "Error processing " + subAsset + ": " + e.getMessage());
-                // Try direct file copy as fallback
+                Log.w("SIGPACGO", "Error listing files in " + subFromAssetPath + ": " + e.getMessage());
+                continue;
+            }
+            
+            if (subFiles != null && subFiles.length > 0) {
+                // It's a directory, recursively copy it
+                File subDir = new File(subToPath);
+                if (!subDir.exists()) {
+                    subDir.mkdirs();
+                    Log.i("SIGPACGO", "Created subdirectory: " + subToPath);
+                }
+                
+                // Recursive call
+                result &= copyAssetFolder(assetManager, subFromAssetPath, subToPath);
+            } else {
+                // It's a file, copy it directly
                 try {
-                    copyAssetFile(subAsset, subDest);
-                    Log.i("SIGPACGO", "Successfully copied file using fallback: " + subAsset);
-                } catch (IOException e2) {
-                    Log.e("SIGPACGO", "Failed fallback copy: " + e2.getMessage());
-                    throw e2;
+                    copyAssetFile(subFromAssetPath, subToPath);
+                    Log.i("SIGPACGO", "Copied asset file: " + subFromAssetPath + " to " + subToPath);
+                } catch (IOException e) {
+                    Log.e("SIGPACGO", "Failed to copy asset file: " + subFromAssetPath + ": " + e.getMessage());
+                    result = false;
                 }
             }
         }
+        
+        return result;
     }
 
     /**
@@ -1871,6 +1837,26 @@ public class QFieldActivity extends QtActivity {
             });
         } else {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    /**
+     * Verifies the contents of a directory
+     */
+    private void verifyDirectory(File directory, String label) {
+        Log.i("SIGPACGO", "Verifying " + label + " directory: " + directory.getAbsolutePath());
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            if (files != null && files.length > 0) {
+                Log.i("SIGPACGO", label + " directory contains " + files.length + " files:");
+                for (File file : files) {
+                    Log.i("SIGPACGO", "- " + file.getName() + " (" + file.length() + " bytes)");
+                }
+            } else {
+                Log.w("SIGPACGO", label + " directory is empty");
+            }
+        } else {
+            Log.e("SIGPACGO", label + " directory does not exist");
         }
     }
 }

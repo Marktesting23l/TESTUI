@@ -68,11 +68,62 @@ PlatformUtilities::Capabilities PlatformUtilities::capabilities() const
 
 void PlatformUtilities::copySampleProjects()
 {
-  const bool success = FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/resources/sample_projects" ), systemLocalDataLocation( QLatin1String( "sample_projects" ) ) );
-  Q_ASSERT( success );
+  QString destPath = systemLocalDataLocation( QLatin1String( "sample_projects" ) );
+  qDebug() << "Copying sample projects to" << destPath;
+  
+  // Create the destination directory if it doesn't exist
+  QDir destDir(destPath);
+  if (!destDir.exists()) {
+    destDir.mkpath(".");
+    qDebug() << "Created sample_projects directory at:" << destPath;
+  }
+  
+  // Try multiple source paths
+  QStringList sourcePaths = {
+    systemSharedDataLocation() + QLatin1String( "/resources/sample_projects" ),
+    systemSharedDataLocation() + QLatin1String( "/sample_projects" ),
+    QStringLiteral("assets:/sample_projects"),
+    QStringLiteral("assets:/resources/sample_projects")
+  };
+  
+  bool success = false;
+  for (const QString& sourcePath : sourcePaths) {
+    QDir sourceDir(sourcePath);
+    if (sourceDir.exists()) {
+      qDebug() << "Found sample projects source at:" << sourcePath;
+      success = FileUtils::copyRecursively(sourcePath, destPath);
+      if (success) {
+        qDebug() << "Successfully copied sample projects from" << sourcePath << "to" << destPath;
+        break;
+      } else {
+        qWarning() << "Failed to copy sample projects from" << sourcePath << "to" << destPath;
+      }
+    } else {
+      qDebug() << "Sample projects source path doesn't exist:" << sourcePath;
+    }
+  }
+  
+  if (!success) {
+    qWarning() << "Failed to copy sample projects from any source path";
+    
+#if defined(Q_OS_ANDROID)
+    // On Android, try to call the Java method to copy the assets as a last resort
+    qDebug() << "Trying to run Java copyAssets method on Android";
+    // This is handled by the AndroidPlatformUtilities class elsewhere
+#endif
+  }
+  
+  // Verify what we've copied
+  QDir checkDir(destPath);
+  QStringList entries = checkDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+  if (!entries.isEmpty()) {
+    qDebug() << "sample_projects directory contains:" << entries.join(", ");
+  } else {
+    qWarning() << "sample_projects directory is empty after copy attempt";
+  }
   
   // Also copy SIGPACGO_Mapa_Principal exactly the same way as sample projects
-  FileUtils::copyRecursively( systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO_Mapa_Principal" ), systemLocalDataLocation( QLatin1String( "SIGPACGO_Mapa_Principal" ) ) );
+  copyMainMapProject();
   
   // Also copy the SIGPAC base map
   copySigpacBaseMap();
@@ -111,16 +162,53 @@ void PlatformUtilities::copyMainMapProject()
     qDebug() << "Created directory:" << targetDir;
   }
   
-  // Copy the main map files
-  const bool success = FileUtils::copyRecursively( 
-    systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO_Mapa_Principal" ), 
-    targetDir 
-  );
+  // Try different source paths
+  QStringList sourcePaths = {
+    systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO_Mapa_Principal" ),
+    systemSharedDataLocation() + QLatin1String( "/SIGPACGO_Mapa_Principal" )
+  };
   
-  if (success) {
-    qDebug() << "Successfully copied SIGPACGO_Mapa_Principal to" << targetDir;
-  } else {
-    qWarning() << "Failed to copy SIGPACGO_Mapa_Principal to" << targetDir;
+  bool success = false;
+  for (const QString& sourcePath : sourcePaths)
+  {
+    if (QDir(sourcePath).exists() || QFile::exists(sourcePath))
+    {
+      qDebug() << "Found source path:" << sourcePath;
+      success = FileUtils::copyRecursively(sourcePath, targetDir);
+      if (success) {
+        qDebug() << "Successfully copied SIGPACGO_Mapa_Principal to" << targetDir;
+        break;
+      }
+    }
+  }
+  
+  if (!success) {
+    qWarning() << "Failed to copy SIGPACGO_Mapa_Principal from any source path";
+    
+    // As a last resort, try to copy just the file directly
+    QStringList singleFilePaths = {
+      systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO_Mapa_Principal/SIGPACGO.qgz" ),
+      systemSharedDataLocation() + QLatin1String( "/SIGPACGO_Mapa_Principal/SIGPACGO.qgz" ),
+      systemSharedDataLocation() + QLatin1String( "/SIGPACGO.qgz" ),
+      systemSharedDataLocation() + QLatin1String( "/resources/SIGPACGO.qgz" )
+    };
+    
+    for (const QString& filePath : singleFilePaths)
+    {
+      if (QFile::exists(filePath))
+      {
+        qDebug() << "Found map file:" << filePath;
+        if (QFile::copy(filePath, targetDir + "/SIGPACGO.qgz")) {
+          qDebug() << "Successfully copied SIGPACGO.qgz to" << targetDir;
+          success = true;
+          break;
+        }
+      }
+    }
+    
+    if (!success) {
+      qWarning() << "Failed to copy SIGPACGO.qgz from any source path";
+    }
   }
 }
 
