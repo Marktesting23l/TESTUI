@@ -98,35 +98,57 @@ Page {
       // Connect to the termsAccepted signal to save the setting
       item.termsAccepted.connect(function() {
         console.log("Terms and conditions accepted signal received");
+        // Store locally that we've shown and accepted terms
+        settings.setValue("SIGPACGO/termsAccepted", true);
       });
+      
+      // Check if we need to show terms when loaded
+      if (needToShowTerms) {
+        showTermsDialogIfNeeded();
+      }
     }
   }
+  
+  // Property to track if we've checked terms this session
+  property bool termsCheckedThisSession: false
+  // Property to track if we need to show terms when loader completes
+  property bool needToShowTerms: false
 
-  // Function to show terms and conditions
+  // Function to show terms and conditions if needed
   function showTermsAndConditions() {
+    // If we've already checked terms this session, don't check again
+    if (termsCheckedThisSession) {
+      console.log("Terms already checked this session, not showing dialog");
+      return;
+    }
+    
+    // Check if terms have already been accepted in settings
+    if (settings.valueBool("SIGPACGO/termsAccepted", false)) {
+      console.log("Terms already accepted according to settings, not showing dialog");
+      termsCheckedThisSession = true;
+      return;
+    }
+    
     // First, make sure the component is loaded
     if (!termsAndConditionsLoader.active) {
       termsAndConditionsLoader.active = true;
-      
-      // After loading, check if terms need to be shown
-      termsAndConditionsLoader.onLoaded.connect(function() {
-        // Only show if not already accepted (using the component's setting)
-        if (!termsAndConditionsLoader.item.accepted) {
-          termsAndConditionsLoader.item.open();
-          console.log("Showing terms and conditions dialog");
-        } else {
-          console.log("Terms already accepted, not showing dialog");
-        }
-      });
+      needToShowTerms = true;
     } else if (termsAndConditionsLoader.status === Loader.Ready) {
-      // Component already loaded, check if terms need to be shown
-      if (!termsAndConditionsLoader.item.accepted) {
-        termsAndConditionsLoader.item.open();
-        console.log("Showing terms and conditions dialog");
-      } else {
-        console.log("Terms already accepted, not showing dialog");
-      }
+      // Component already loaded
+      showTermsDialogIfNeeded();
     }
+  }
+  
+  // Helper function to show the terms dialog if needed
+  function showTermsDialogIfNeeded() {
+    if (!termsAndConditionsLoader.item.accepted) {
+      termsAndConditionsLoader.item.open();
+      console.log("Showing terms and conditions dialog");
+    } else {
+      console.log("Terms already accepted in component, not showing dialog");
+    }
+    termsCheckedThisSession = true;
+    needToShowTerms = false;
   }
 
   Rectangle {

@@ -32,11 +32,21 @@ Popup {
     property bool termsAccepted: false
   }
   
+  // Global settings reference
+  Settings {
+    id: globalSettings
+  }
+  
   // Check existing acceptance state, but don't automatically open
   Component.onCompleted: {
-    // Get initial state from settings
-    accepted = termsSettings.termsAccepted
-    console.log("Terms and conditions component loaded, acceptance state: " + accepted)
+    // Check both local component setting and global setting
+    if (termsSettings.termsAccepted || globalSettings.valueBool("SIGPACGO/termsAccepted", false)) {
+      accepted = true;
+      // Make sure both settings are in sync
+      termsSettings.termsAccepted = true;
+      globalSettings.setValue("SIGPACGO/termsAccepted", true);
+    }
+    console.log("Terms and conditions component loaded, acceptance state: " + accepted);
   }
   
   background: Rectangle {
@@ -131,8 +141,9 @@ Popup {
         highlighted: true
         
         onClicked: {
-          // Save that terms have been accepted
+          // Save that terms have been accepted in both settings
           termsSettings.termsAccepted = true
+          globalSettings.setValue("SIGPACGO/termsAccepted", true)
           accepted = true
           console.log("Terms and conditions accepted and saved to settings")
           termsAccepted()

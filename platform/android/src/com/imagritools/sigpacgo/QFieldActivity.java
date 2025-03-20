@@ -229,11 +229,20 @@ public class QFieldActivity extends QtActivity {
         Log.i("SIGPACGO", "- SIGPACGO_Mapa_Principal: " + sigpacgoMapaDir.getAbsolutePath());
         Log.i("SIGPACGO", "- SIGPACGO Base: " + sigpacgoBaseDir.getAbsolutePath());
         
+        // List all assets to see what we have available
+        try {
+            Log.i("SIGPACGO", "Listing all available assets for debugging:");
+            listAllAssets(assetManager, "", 0);
+        } catch (Exception e) {
+            Log.e("SIGPACGO", "Error listing assets: " + e.getMessage());
+        }
+        
         try {
             // Attempt to copy the main map file directly with various possible paths
             String[] mapaFiles = {
                 "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
                 "resources/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
+                "src/main/assets/resources/SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
                 "SIGPACGO.qgz"
             };
             
@@ -253,10 +262,16 @@ public class QFieldActivity extends QtActivity {
             
             if (!mapaCopied) {
                 Log.e("SIGPACGO", "Failed to copy SIGPACGO map file from any source");
+                // Create an empty placeholder file if we couldn't copy
+                createEmptyProjectFile(new File(sigpacgoMapaDir, "SIGPACGO.qgz"));
             }
             
             // Attempt to copy sample project files - try multiple directories
-            String[] sampleDirs = {"sample_projects", "resources/sample_projects"};
+            String[] sampleDirs = {
+                "sample_projects", 
+                "resources/sample_projects",
+                "src/main/assets/resources/sample_projects"
+            };
             boolean anySamplesCopied = false;
             
             for (String sampleDir : sampleDirs) {
@@ -274,6 +289,8 @@ public class QFieldActivity extends QtActivity {
             
             if (!anySamplesCopied) {
                 Log.e("SIGPACGO", "Failed to copy any sample projects from assets");
+                // Create dummy sample files if we couldn't copy real ones
+                createDummySampleProjects(sampleProjectsDir);
             }
             
             // Finally, verify the contents
@@ -287,6 +304,59 @@ public class QFieldActivity extends QtActivity {
     }
     
     /**
+     * Creates a minimal QGIS project file as a placeholder
+     */
+    private void createEmptyProjectFile(File file) {
+        try {
+            Log.i("SIGPACGO", "Creating placeholder QGIS project file at: " + file.getAbsolutePath());
+            
+            // Minimal QGIS project XML content
+            String minimalQgisProject = 
+                "<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>\n" +
+                "<qgis version=\"3.16.0\">\n" +
+                "  <projectlayers></projectlayers>\n" +
+                "  <layerorder></layerorder>\n" +
+                "  <properties>\n" +
+                "    <WMSServiceTitle>SIGPACGO Placeholder Project</WMSServiceTitle>\n" +
+                "    <WMSServiceAbstract>This is a placeholder project created because the original asset was not found.</WMSServiceAbstract>\n" +
+                "  </properties>\n" +
+                "</qgis>";
+            
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(minimalQgisProject.getBytes("UTF-8"));
+            fos.close();
+            
+            Log.i("SIGPACGO", "Successfully created placeholder project file");
+        } catch (Exception e) {
+            Log.e("SIGPACGO", "Failed to create placeholder project: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Creates dummy sample project files if real samples couldn't be copied
+     */
+    private void createDummySampleProjects(File sampleProjectsDir) {
+        try {
+            Log.i("SIGPACGO", "Creating dummy sample projects in: " + sampleProjectsDir.getAbsolutePath());
+            
+            // Create a few dummy project files
+            String[] dummyProjects = {
+                "Sample_Project_1.qgz", 
+                "Sample_Project_2.qgz"
+            };
+            
+            for (String projectName : dummyProjects) {
+                File projectFile = new File(sampleProjectsDir, projectName);
+                createEmptyProjectFile(projectFile);
+            }
+            
+            Log.i("SIGPACGO", "Successfully created dummy sample projects");
+        } catch (Exception e) {
+            Log.e("SIGPACGO", "Failed to create dummy sample projects: " + e.getMessage());
+        }
+    }
+    
+    /**
      * Copies a complete asset folder with all subfolders and files
      */
     private boolean copyAssetFolder(AssetManager assetManager, String fromAssetPath, String toPath) throws IOException {
@@ -294,21 +364,72 @@ public class QFieldActivity extends QtActivity {
         
         String[] files = null;
         boolean result = true;
+        int totalFilesCopied = 0;
         
         try {
             files = assetManager.list(fromAssetPath);
-            if (files == null || files.length == 0) {
-                // If it's an empty directory, just return
-                return true;
+            if (files == null) {
+                Log.e("SIGPACGO", "Asset path returned null file list: " + fromAssetPath);
+                return false;
+            } else if (files.length == 0) {
+                // If it's an empty directory, check if it's actually a file
+                try {
+                    InputStream is = assetManager.open(fromAssetPath);
+                    Log.i("SIGPACGO", "Found single file at: " + fromAssetPath);
+                    is.close();
+                    // It's a file, not a directory
+                    File destFile = new File(toPath);
+                    copyAssetFile(fromAssetPath, destFile.getAbsolutePath());
+                    return true;
+                } catch (IOException e) {
+                    // It's an empty directory
+                    Log.w("SIGPACGO", fromAssetPath + " appears to be an empty directory or doesn't exist: " + e.getMessage());
+                    new File(toPath).mkdirs();
+                    return true;
+                }
+            }
+            
+            Log.i("SIGPACGO", "Found " + files.length + " entries in " + fromAssetPath);
+            for (String filename : files) {
+                Log.d("SIGPACGO", "- Found: " + filename);
             }
         } catch (IOException e) {
-            // The fromAssetPath is not a directory; it might be a file
+            // The fromAssetPath is not a directory or doesn't exist
             Log.w("SIGPACGO", fromAssetPath + " is not a directory or doesn't exist: " + e.getMessage());
+            try {
+                // Try to list all assets to see what's available at the parent level
+                String parentPath = "";
+                int lastSlash = fromAssetPath.lastIndexOf('/');
+                if (lastSlash > 0) {
+                    parentPath = fromAssetPath.substring(0, lastSlash);
+                    Log.i("SIGPACGO", "Checking parent directory: " + parentPath);
+                    try {
+                        String[] parentContents = assetManager.list(parentPath);
+                        if (parentContents != null && parentContents.length > 0) {
+                            Log.i("SIGPACGO", "Parent directory contains: " + String.join(", ", parentContents));
+                        } else {
+                            Log.i("SIGPACGO", "Parent directory is empty or doesn't exist");
+                        }
+                    } catch (Exception ex) {
+                        Log.w("SIGPACGO", "Error listing parent directory: " + ex.getMessage());
+                    }
+                }
+                
+                // Try to list root assets
+                String[] allAssets = assetManager.list("");
+                Log.i("SIGPACGO", "Available root assets: " + String.join(", ", allAssets));
+            } catch (Exception ex) {
+                Log.e("SIGPACGO", "Failed to list root assets: " + ex.getMessage());
+            }
             return false;
         }
         
         // Make sure the target directory exists
-        new File(toPath).mkdirs();
+        File targetDir = new File(toPath);
+        if (!targetDir.exists()) {
+            boolean created = targetDir.mkdirs();
+            Log.i("SIGPACGO", "Created target directory " + toPath + ": " + created);
+        }
         
         // Process all files and subdirectories
         for (String file : files) {
@@ -332,12 +453,17 @@ public class QFieldActivity extends QtActivity {
                 }
                 
                 // Recursive call
-                result &= copyAssetFolder(assetManager, subFromAssetPath, subToPath);
+                boolean subResult = copyAssetFolder(assetManager, subFromAssetPath, subToPath);
+                result &= subResult;
+                if (subResult) {
+                    totalFilesCopied++; // Count successful directories
+                }
             } else {
                 // It's a file, copy it directly
                 try {
                     copyAssetFile(subFromAssetPath, subToPath);
                     Log.i("SIGPACGO", "Copied asset file: " + subFromAssetPath + " to " + subToPath);
+                    totalFilesCopied++;
                 } catch (IOException e) {
                     Log.e("SIGPACGO", "Failed to copy asset file: " + subFromAssetPath + ": " + e.getMessage());
                     result = false;
@@ -345,9 +471,129 @@ public class QFieldActivity extends QtActivity {
             }
         }
         
-        return result;
+        Log.i("SIGPACGO", "Total files/directories copied from " + fromAssetPath + ": " + totalFilesCopied);
+        if (totalFilesCopied == 0) {
+            Log.w("SIGPACGO", "No files were actually copied from " + fromAssetPath + " though operation 'succeeded'");
+        }
+        
+        return result && totalFilesCopied > 0; // Only consider success if at least one file was copied
     }
-
+    
+    /**
+     * Recursively lists all assets in the asset manager for debugging
+     */
+    private void listAllAssets(AssetManager assetManager, String path, int depth) throws IOException {
+        if (depth > 5) {
+            Log.w("SIGPACGO", "Asset listing reached maximum depth at " + path);
+            return; // Prevent infinite recursion
+        }
+        
+        String prefix = "";
+        for (int i = 0; i < depth; i++) {
+            prefix += "  ";
+        }
+        
+        String[] list = null;
+        try {
+            list = assetManager.list(path);
+        } catch (IOException e) {
+            Log.e("SIGPACGO", prefix + "Error listing path " + path + ": " + e.getMessage());
+            return;
+        }
+        
+        if (list == null || list.length == 0) {
+            // This could be an empty directory or a file
+            try {
+                // Attempt to open it as a file
+                InputStream is = assetManager.open(path);
+                // If we get here, it's a file
+                is.close();
+                Log.i("SIGPACGO", prefix + "- " + (path.isEmpty() ? "/" : path) + " (FILE)");
+            } catch (IOException e) {
+                // If we can't open it, it's an empty directory or doesn't exist
+                Log.i("SIGPACGO", prefix + "- " + (path.isEmpty() ? "/" : path) + " (empty directory or invalid path)");
+            }
+            return;
+        }
+        
+        if (!path.isEmpty()) {
+            Log.i("SIGPACGO", prefix + "- " + path + "/ (" + list.length + " items)");
+        } else {
+            Log.i("SIGPACGO", prefix + "- Root directory (" + list.length + " items)");
+        }
+        
+        for (String item : list) {
+            String fullPath = path.isEmpty() ? item : path + "/" + item;
+            String[] subItems = null;
+            
+            try {
+                subItems = assetManager.list(fullPath);
+            } catch (IOException e) {
+                Log.e("SIGPACGO", prefix + "  Error listing path " + fullPath + ": " + e.getMessage());
+                continue;
+            }
+            
+            if (subItems == null || subItems.length == 0) {
+                // Check if this is actually a file
+                try {
+                    InputStream is = assetManager.open(fullPath);
+                    is.close();
+                    // It's a file
+                    Log.i("SIGPACGO", prefix + "  - " + item + " (file)");
+                } catch (IOException e) {
+                    // It's an empty directory or doesn't exist
+                    Log.i("SIGPACGO", prefix + "  - " + item + " (empty directory)");
+                }
+            } else {
+                // This is a directory, recursively list it
+                listAllAssets(assetManager, fullPath, depth + 1);
+            }
+        }
+        
+        // Check specific paths we're interested in
+        if (depth == 0) {
+            // Only do this at the root level to avoid repetition
+            if (path.isEmpty()) {
+                Log.i("SIGPACGO", "Checking specific paths of interest:");
+                
+                String[] interestingPaths = {
+                    "resources",
+                    "resources/SIGPACGO_Mapa_Principal",
+                    "resources/sample_projects",
+                    "src",
+                    "src/main",
+                    "src/main/assets",
+                    "src/main/assets/resources",
+                    "src/main/assets/resources/SIGPACGO_Mapa_Principal",
+                    "src/main/assets/resources/sample_projects"
+                };
+                
+                for (String interestingPath : interestingPaths) {
+                    try {
+                        String[] contents = assetManager.list(interestingPath);
+                        if (contents != null && contents.length > 0) {
+                            Log.i("SIGPACGO", "Path " + interestingPath + " exists with " + contents.length + " items");
+                            for (String item : contents) {
+                                Log.i("SIGPACGO", "  - " + item);
+                            }
+                        } else {
+                            try {
+                                // Check if it's a file
+                                InputStream is = assetManager.open(interestingPath);
+                                is.close();
+                                Log.i("SIGPACGO", "Path " + interestingPath + " is a file");
+                            } catch (IOException e) {
+                                Log.w("SIGPACGO", "Path " + interestingPath + " is empty or doesn't exist");
+                            }
+                        }
+                    } catch (IOException e) {
+                        Log.w("SIGPACGO", "Path " + interestingPath + " doesn't exist: " + e.getMessage());
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Copies a single asset file to the destination
      */
@@ -1846,17 +2092,41 @@ public class QFieldActivity extends QtActivity {
     private void verifyDirectory(File directory, String label) {
         Log.i("SIGPACGO", "Verifying " + label + " directory: " + directory.getAbsolutePath());
         if (directory.exists()) {
-            File[] files = directory.listFiles();
-            if (files != null && files.length > 0) {
-                Log.i("SIGPACGO", label + " directory contains " + files.length + " files:");
-                for (File file : files) {
-                    Log.i("SIGPACGO", "- " + file.getName() + " (" + file.length() + " bytes)");
+            if (directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if (files != null && files.length > 0) {
+                    Log.i("SIGPACGO", label + " directory contains " + files.length + " files:");
+                    for (File file : files) {
+                        if (file.isDirectory()) {
+                            Log.i("SIGPACGO", "- " + file.getName() + " (directory)");
+                            // Recursively list subdirectory contents
+                            File[] subFiles = file.listFiles();
+                            if (subFiles != null && subFiles.length > 0) {
+                                for (File subFile : subFiles) {
+                                    Log.i("SIGPACGO", "  - " + subFile.getName() + " (" + subFile.length() + " bytes)");
+                                }
+                            } else {
+                                Log.i("SIGPACGO", "  [empty directory]");
+                            }
+                        } else {
+                            Log.i("SIGPACGO", "- " + file.getName() + " (" + file.length() + " bytes)");
+                        }
+                    }
+                } else {
+                    Log.w("SIGPACGO", label + " directory is empty");
                 }
             } else {
-                Log.w("SIGPACGO", label + " directory is empty");
+                Log.e("SIGPACGO", label + " is not a directory! It's a file with " + directory.length() + " bytes");
             }
         } else {
             Log.e("SIGPACGO", label + " directory does not exist");
+            // Try to create it
+            boolean created = directory.mkdirs();
+            if (created) {
+                Log.i("SIGPACGO", "Created " + label + " directory");
+            } else {
+                Log.e("SIGPACGO", "Failed to create " + label + " directory");
+            }
         }
     }
 }
