@@ -30,8 +30,7 @@ Page {
       const dataDir = platformUtilities.appDataDirs()[0];
       pathsToTry.push(
         dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
-        dataDir + "sigpacgo_main/SIGPACGO.qgz",
-        dataDir + "SIGPACGO/SIGPACGO.qgz"
+        dataDir + "sigpacgo_main/SIGPACGO.qgz"
       );
     } else {
       // Desktop paths
@@ -535,8 +534,7 @@ Page {
                       const dataDir = platformUtilities.appDataDirs()[0];
                       pathsToTry.push(
                         dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
-                        dataDir + "sigpacgo_main/SIGPACGO.qgz",
-                        dataDir + "SIGPACGO/SIGPACGO.qgz"
+                        dataDir + "sigpacgo_main/SIGPACGO.qgz"
                       );
                     } else {
                       // Desktop paths
@@ -618,8 +616,7 @@ Page {
                   const dataDir = platformUtilities.appDataDirs()[0];
                   pathsToTry.push(
                     dataDir + "SIGPACGO_Mapa_Principal/SIGPACGO.qgz",
-                    dataDir + "sigpacgo_main/SIGPACGO.qgz",
-                    dataDir + "SIGPACGO/SIGPACGO.qgz"
+                    dataDir + "sigpacgo_main/SIGPACGO.qgz"
                   );
                 } else {
                   // Desktop paths
@@ -1230,8 +1227,7 @@ Page {
           if (Qt.platform.os === "android") {
             // Try alternative location patterns on Android
             const altPaths = [
-              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO.qgz",
-              platformUtilities.appDataDirs()[0] + "SIGPACGO/SIGPACGO.qgz"
+              platformUtilities.appDataDirs()[0] + "sigpacgo_main/SIGPACGO.qgz"
             ];
             
             for (let i = 0; i < altPaths.length; i++) {

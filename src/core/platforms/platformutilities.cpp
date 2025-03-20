@@ -211,7 +211,7 @@ void PlatformUtilities::loadQgsProject() const
 
 QStringList PlatformUtilities::appDataDirs() const
 {
-  QString appDataDir = QStandardPaths::standardLocations( QStandardPaths::DocumentsLocation ).first() + QStringLiteral( "/SIGPACGO Documents/SIGPACGO/" );
+  QString appDataDir = QStandardPaths::standardLocations( QStandardPaths::DocumentsLocation ).first() + QStringLiteral( "/SIGPACGO Documents/" );
   
   // Ensure the directory exists
   QDir dir(appDataDir);
@@ -282,13 +282,6 @@ QString PlatformUtilities::applicationDirectory() const
   if (!dir.exists())
   {
     dir.mkpath(".");
-  }
-  
-  // Also ensure the SIGPACGO subdirectory exists
-  QDir sigpacgoDir(appDir + "SIGPACGO/");
-  if (!sigpacgoDir.exists())
-  {
-    sigpacgoDir.mkpath(".");
   }
   
   return appDir;
