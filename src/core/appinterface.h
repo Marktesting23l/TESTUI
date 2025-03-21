@@ -133,6 +133,66 @@ class AppInterface : public QObject
     Q_INVOKABLE void addItemToMainMenuActionsToolbar( QQuickItem *item ) const;
 
     /**
+     * Returns a list of layers in a GeoPackage file
+     * @param gpkgPath The path to the GeoPackage file
+     * @return A list of layer objects with name and type properties
+     */
+    Q_INVOKABLE QVariantList getLayersInGeoPackage( const QString &gpkgPath ) const;
+    
+    /**
+     * Adds a layer from a GeoPackage file to the current project
+     * @param gpkgPath The path to the GeoPackage file
+     * @param layerName The name of the layer to add
+     * @param layerType The type of the layer (vector or raster)
+     * @return True if the layer was successfully added, false otherwise
+     */
+    Q_INVOKABLE bool addLayerFromGeoPackage( const QString &gpkgPath, const QString &layerName, const QString &layerType ) const;
+    
+    /**
+     * Removes a layer from the current project
+     * @param layerId The ID of the layer to remove
+     * @return True if the layer was successfully removed, false otherwise
+     */
+    Q_INVOKABLE bool removeLayerFromProject( const QString &layerId ) const;
+    
+    /**
+     * Returns a list of all layers in the current project
+     * @return A list of layer objects with id, name, and type properties
+     */
+    Q_INVOKABLE QVariantList getProjectLayers() const;
+
+    /**
+     * Returns a list of all layer groups in the current project
+     * @return A list of group objects with id and name properties
+     */
+    Q_INVOKABLE QVariantList getLayerGroups() const;
+    
+    /**
+     * Adds a layer from a GeoPackage file to a specific group in the current project
+     * @param gpkgPath The path to the GeoPackage file
+     * @param layerName The name of the layer to add
+     * @param layerType The type of the layer (vector or raster)
+     * @param groupName The name of the group to add the layer to (empty for root group)
+     * @return True if the layer was successfully added, false otherwise
+     */
+    Q_INVOKABLE bool addLayerToGroup( const QString &gpkgPath, const QString &layerName, const QString &layerType, const QString &groupName ) const;
+
+    /**
+     * Removes a layer group from the current project
+     * @param groupName The name of the group to remove
+     * @return True if the group was successfully removed, false otherwise
+     */
+    Q_INVOKABLE bool removeLayerGroup( const QString &groupName ) const;
+
+    /**
+     * Creates a backup of a folder and all its contents
+     * @param sourceFolderPath The path to the folder to backup
+     * @param destinationFolderPath The path where the backup will be saved (if empty, uses default location)
+     * @return The path to the created backup file, or empty string if backup failed
+     */
+    Q_INVOKABLE QString createFolderBackup( const QString &sourceFolderPath, const QString &destinationFolderPath = QString() ) const;
+
+    /**
      * Returns the main window.
      */
     Q_INVOKABLE QObject *mainWindow() const;

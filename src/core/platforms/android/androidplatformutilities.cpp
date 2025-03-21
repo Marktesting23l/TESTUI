@@ -306,6 +306,21 @@ void AndroidPlatformUtilities::importDatasets() const
   }
 }
 
+void AndroidPlatformUtilities::importDatasetsToCurrentProject( const QString &projectFolderPath ) const
+{
+  if ( mActivity.isValid() )
+  {
+    runOnAndroidMainThread( [projectFolderPath] {
+      auto activity = qtAndroidContext();
+      if ( activity.isValid() )
+      {
+        QJniObject pathJni = QJniObject::fromString( projectFolderPath );
+        activity.callMethod<void>( "triggerImportDatasetsToProject", "(Ljava/lang/String;)V", pathJni.object<jstring>() );
+      }
+    } );
+  }
+}
+
 void AndroidPlatformUtilities::updateProjectFromArchive( const QString &projectPath ) const
 {
   if ( mActivity.isValid() )

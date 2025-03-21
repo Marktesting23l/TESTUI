@@ -107,6 +107,7 @@ public class QFieldActivity extends QtActivity {
     private static final int IMPORT_DATASET = 300;
     private static final int IMPORT_PROJECT_FOLDER = 301;
     private static final int IMPORT_PROJECT_ARCHIVE = 302;
+    private static final int IMPORT_DATASET_TO_PROJECT = 303;
 
     private static final int UPDATE_PROJECT_FROM_ARCHIVE = 400;
 
@@ -1122,6 +1123,26 @@ public class QFieldActivity extends QtActivity {
         return;
     }
 
+    private void triggerImportDatasetsToProject(String projectFolderPath) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setType("*/*");
+        projectPath = projectFolderPath;
+        try {
+            startActivityForResult(intent, IMPORT_DATASET_TO_PROJECT);
+        } catch (ActivityNotFoundException e) {
+            displayAlertDialog(
+                getString(R.string.operation_unsupported),
+                getString(R.string.import_operation_unsupported));
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT.");
+        }
+        return;
+    }
+
     private void triggerImportProjectFolder() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
@@ -1507,6 +1528,59 @@ public class QFieldActivity extends QtActivity {
                     }
                 } else {
                     openPath(importDatasetPath);
+                }
+            }
+        });
+    }
+    
+    void importDatasetsToProject(Uri[] datasetUris, String projectFolder) {
+        if (datasetUris.length == 0 || projectFolder == null || projectFolder.isEmpty()) {
+            return;
+        }
+
+        ProgressDialog progressDialog =
+            new ProgressDialog(this, R.style.DialogTheme);
+        progressDialog.setMessage(getString(R.string.import_dataset_wait));
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Context context = getApplication().getApplicationContext();
+        ContentResolver resolver = getContentResolver();
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean imported = false;
+                for (Uri datasetUri : datasetUris) {
+                    DocumentFile documentFile =
+                        DocumentFile.fromSingleUri(context, datasetUri);
+                    String importFilePath =
+                        projectFolder + "/" + documentFile.getName();
+                    try {
+                        InputStream input =
+                            resolver.openInputStream(datasetUri);
+                        imported = QFieldUtils.inputStreamToFile(
+                            input, importFilePath, documentFile.length());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        imported = false;
+                    }
+                    if (!imported) {
+                        break;
+                    }
+                }
+
+                progressDialog.dismiss();
+                if (!imported) {
+                    if (!isFinishing()) {
+                        displayAlertDialog(
+                            getString(R.string.import_error),
+                            getString(R.string.import_dataset_error));
+                    }
+                } else {
+                    // Return to the same folder
+                    openPath(projectFolder);
                 }
             }
         });
@@ -2105,6 +2179,66 @@ public class QFieldActivity extends QtActivity {
                     }
                 }
             });
+        } else if (requestCode == IMPORT_DATASET_TO_PROJECT &&
+                   resultCode == Activity.RESULT_OK) {
+            Log.d("SIGPACGO", "handling import dataset to project");
+            if (projectPath == null || projectPath.isEmpty() || data == null) {
+                return;
+            }
+
+            Context context = getApplication().getApplicationContext();
+            ContentResolver resolver = getContentResolver();
+
+            Uri[] datasetUris;
+            if (data.getClipData() != null) {
+                datasetUris = new Uri[data.getClipData().getItemCount()];
+                for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                    datasetUris[i] = data.getClipData().getItemAt(i).getUri();
+                }
+            } else {
+                datasetUris = new Uri[1];
+                datasetUris[0] = data.getData();
+            }
+
+            // Check if any of the files already exist in the project folder
+            boolean hasExists = false;
+            for (Uri datasetUri : datasetUris) {
+                DocumentFile documentFile =
+                    DocumentFile.fromSingleUri(context, datasetUri);
+                File importFilePath =
+                    new File(projectPath + "/" + documentFile.getName());
+                if (importFilePath.exists()) {
+                    hasExists = true;
+                    break;
+                }
+            }
+
+            if (hasExists) {
+                AlertDialog.Builder builder =
+                    new AlertDialog.Builder(this, R.style.DialogTheme);
+                builder.setTitle(getString(R.string.import_overwrite_title));
+                builder.setMessage(getString(R.string.import_overwrite_dataset));
+                builder.setPositiveButton(
+                    getString(R.string.import_overwrite_confirm),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            importDatasetsToProject(datasetUris, projectPath);
+                            dialog.dismiss();
+                        }
+                    });
+                builder.setNegativeButton(
+                    getString(R.string.import_overwrite_cancel),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                AlertDialog dialog = builder.create();
+                dialog.setCancelable(false);
+                dialog.show();
+            } else {
+                importDatasetsToProject(datasetUris, projectPath);
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

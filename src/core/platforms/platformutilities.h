@@ -117,6 +117,13 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     Q_INVOKABLE bool rmFile( const QString &filename ) const;
     Q_INVOKABLE bool renameFile( const QString &oldFilePath, const QString &newFilePath, bool overwrite = true ) const;
 
+    /**
+     * Returns a list of files in a directory that match a given pattern
+     * @param directory The directory to search in
+     * @param pattern The file pattern to match (e.g. "*.gpkg")
+     * @return A list of file paths matching the pattern
+     */
+    Q_INVOKABLE QStringList getDirectoryContents( const QString &directory, const QString &pattern ) const;
 
     /**
      * The main application directory within which projects and datasets can be imported.
@@ -139,6 +146,12 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     Q_INVOKABLE virtual void importProjectArchive() const;
     //! Requests and imports one or more datasets into QField's application directory action
     Q_INVOKABLE virtual void importDatasets() const;
+
+    /**
+     * Imports one or more datasets directly into the specified project folder
+     * \param projectFolderPath the path to the current project folder where datasets should be imported
+     */
+    Q_INVOKABLE virtual void importDatasetsToCurrentProject( const QString &projectFolderPath ) const;
 
     /**
      * Update a local project content from a user-picked archive file action

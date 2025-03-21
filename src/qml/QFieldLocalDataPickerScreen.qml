@@ -364,7 +364,7 @@ Page {
         // Since the project menu only has one action for now, hide if PlatformUtilities.UpdateProjectFromArchive is missing
         property bool isLocalProject: qgisProject && QFieldCloudUtils.getProjectId(qgisProject.fileName) === '' && (projectInfo.filePath.endsWith('.qgs') || projectInfo.filePath.endsWith('.qgz'))
         property bool isLocalProjectActionAvailable: updateProjectFromArchive.enabled || uploadProjectToWebdav.enabled
-        visible: (projectFolderView && isLocalProject && table.model.currentDepth === 1) || table.model.currentPath === 'root'
+        visible: projectFolderView || table.model.currentPath === 'root'
 
         anchors.bottom: parent.bottom
         anchors.right: parent.right
@@ -378,10 +378,34 @@ Page {
         onClicked: {
           var xy = mapToItem(mainWindow.contentItem, actionButton.width, actionButton.height);
           if (projectFolderView) {
-            projectMenu.popup(xy.x - projectMenu.width, xy.y - projectMenu.height - header.height);
+            if (isLocalProject && table.model.currentDepth === 1) {
+              projectMenu.popup(xy.x - projectMenu.width, xy.y - projectMenu.height - header.height);
+            } else {
+              importMenu.popup(xy.x - importMenu.width, xy.y - importMenu.height - header.height);
+            }
           } else {
             importMenu.popup(xy.x - importMenu.width, xy.y - importMenu.height - header.height);
           }
+        }
+      }
+      
+      // Layer management button
+      QfToolButton {
+        id: layerManagementButton
+        round: false
+        visible: qgisProject
+
+        anchors.bottom: parent.bottom
+        anchors.right: actionButton.left
+        anchors.bottomMargin: 10
+        anchors.rightMargin: 10
+
+        bgcolor: Theme.accentColor
+        iconSource: Theme.getThemeVectorIcon("ic_layers_white_24dp")
+        iconColor: Theme.toolButtonColor
+
+        onClicked: {
+          layerManagementDialog.open()
         }
       }
     }
@@ -428,8 +452,6 @@ Page {
         }
       }
 
-
-
       MenuItem {
         id: exportDatasetTo
         enabled: platformUtilities.capabilities & PlatformUtilities.CustomExport && itemMenu.itemMetaType == LocalFilesModel.Dataset
@@ -464,6 +486,24 @@ Page {
           } else {
             localFilesModel.removeFromFavorites(itemMenu.itemPath);
           }
+        }
+      }
+
+      MenuItem {
+        id: createBackupMenuItem
+        enabled: itemMenu.itemMetaType == LocalFilesModel.Folder
+        visible: enabled
+        
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+        
+        text: qsTr("Crear copia de seguridad")
+        onTriggered: {
+          createBackupDialog.folderPath = itemMenu.itemPath
+          createBackupDialog.folderName = itemMenu.itemPath.split('/').pop()
+          createBackupDialog.open()
         }
       }
 
@@ -651,6 +691,22 @@ Page {
         }
       }
 
+      MenuItem {
+        id: importDatasetToProjectFolder
+
+        enabled: platformUtilities.capabilities & PlatformUtilities.CustomImport && qfieldLocalDataPickerScreen.projectFolderView
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Importar archivo a carpeta del proyecto")
+        onTriggered: {
+          platformUtilities.importDatasetsToCurrentProject(table.model.currentPath);
+        }
+      }
+
       MenuSeparator {
         enabled: platformUtilities.capabilities & PlatformUtilities.CustomImport
         visible: enabled
@@ -687,10 +743,77 @@ Page {
           importWebdavUrlInput.focus = true;
         }
       }
-
       
-
+      MenuSeparator {
+        enabled: qfieldLocalDataPickerScreen.projectFolderView && qgisProject
+        visible: enabled
+        width: parent.width
+        height: enabled ? undefined : 0
+      }
       
+      MenuItem {
+        id: layerManagementMenu
+        
+        enabled: qgisProject
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Gestionar capas")
+        onTriggered: {
+          layerManagementDialog.open()
+        }
+      }
+      
+      MenuItem {
+        id: addLayerMenu
+        
+        enabled: qfieldLocalDataPickerScreen.projectFolderView && qgisProject
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Añadir capa al proyecto")
+        onTriggered: {
+          addLayerFromFileDialog.open()
+        }
+      }
+      
+      MenuItem {
+        id: removeLayerFromProjectMenu
+        
+        enabled: qfieldLocalDataPickerScreen.projectFolderView && qgisProject
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Eliminar capa del proyecto")
+        onTriggered: {
+          removeLayerDialog.open()
+        }
+      }
+      
+      MenuItem {
+        id: manageGroupsMenu
+        
+        enabled: qgisProject
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Gestionar grupos de capas")
+        onTriggered: {
+          manageGroupsDialog.open()
+        }
+      }
     }
 
     Menu {
@@ -765,7 +888,47 @@ Page {
           }
         }
       }
+
+      MenuSeparator {
+        enabled: platformUtilities.capabilities & PlatformUtilities.CustomImport
+        visible: enabled
+        width: parent.width
+        height: enabled ? undefined : 0
+      }
+      
+      MenuItem {
+        id: importFileToProject
+
+        enabled: platformUtilities.capabilities & PlatformUtilities.CustomImport && qfieldLocalDataPickerScreen.projectFolderView
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Importar archivo a este proyecto")
+        onTriggered: {
+          platformUtilities.importDatasetsToCurrentProject(table.model.currentPath);
+        }
+      }
+      
+      MenuItem {
+        id: addLayerFromFile
+
+        enabled: qfieldLocalDataPickerScreen.projectFolderView && qgisProject
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Añadir capa al proyecto")
+        onTriggered: {
+          addLayerFromFileDialog.open()
+        }
+      }
     }
+  }
   }
 
   QfDialog {
@@ -1362,6 +1525,809 @@ Page {
         webdavConnectionLoader.item.storePassword = importWebdavStorePasswordCheck.checked;
         webdavConnectionLoader.item.importPath(importWebdavPathInput.model[importWebdavPathInput.currentIndex], platformUtilities.applicationDirectory() + "/Imported Projects/");
       }
+    }
+  }
+
+  QfDialog {
+    id: addLayerFromFileDialog
+    title: qsTr("Añadir capa al proyecto")
+    focus: visible
+    parent: mainWindow.contentItem
+    
+    // Use a property to track whether the action should be enabled
+    property bool canAccept: false
+    
+    standardButtons: Dialog.Ok | Dialog.Cancel
+    
+    // Directly modify the dialog's state instead of trying to access individual buttons
+    onCanAcceptChanged: {
+      if (standardButton(Dialog.Ok)) {
+        standardButton(Dialog.Ok).enabled = canAccept
+      }
+    }
+    
+    onAboutToShow: {
+      // Reset states
+      canAccept = false
+      
+      // Scan current directory for GPKG files
+      filesList.model = []
+      
+      let currentPath = table.model.currentPath
+      let files = platformUtilities.getDirectoryContents(currentPath, "*.gpkg")
+      filesList.model = files
+      
+      // Reset selection
+      filesList.currentIndex = -1
+      layerList.model = []
+      
+      // Get layer groups from the project
+      if (qgisProject) {
+        let groups = iface.getLayerGroups()
+        let groupNames = []
+        
+        // Add a special entry for "Imported Layers" which is now our default
+        groupNames.push({
+          id: "imported_layers",
+          name: qsTr("Capas Importadas (predeterminado)"),
+          path: ""
+        })
+        
+        // Add groups to model
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i].id !== "root" && groups[i].name !== "Imported Layers") {
+            groupNames.push({
+              id: groups[i].id,
+              name: groups[i].name,
+              path: groups[i].path
+            })
+          }
+        }
+        
+        // Add option to create new group
+        groupNames.push({
+          id: "new_group",
+          name: qsTr("Crear nuevo grupo..."),
+          path: ""
+        })
+        
+        groupSelector.model = groupNames
+        groupSelector.currentIndex = 0 // Select default by default
+        newGroupSection.visible = false
+      }
+      
+      // Check if we have an active project
+      if (!qgisProject) {
+        noProjectMessage.visible = true
+        noFilesMessage.visible = false
+        groupSelectorSection.visible = false
+      } else if (files.length === 0) {
+        noProjectMessage.visible = false
+        noFilesMessage.visible = true
+        groupSelectorSection.visible = false
+      } else {
+        noProjectMessage.visible = false
+        noFilesMessage.visible = false
+        groupSelectorSection.visible = true
+      }
+    }
+
+    Column {
+      width: Math.min(600, mainWindow.width - 60)
+      height: childrenRect.height
+      spacing: 10
+      
+      Label {
+        id: noProjectMessage
+        width: parent.width
+        text: qsTr("No hay un proyecto activo. Primero debe abrir un proyecto QGIS.")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: "red"
+        visible: false
+      }
+      
+      Label {
+        id: noFilesMessage
+        width: parent.width
+        text: qsTr("No se han encontrado archivos GPKG en el directorio actual.")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: "orange"
+        visible: false
+      }
+
+      Label {
+        width: parent.width
+        text: qsTr("Seleccione un archivo GPKG:")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+      }
+
+      Rectangle {
+        width: parent.width
+        height: Math.min(150, mainWindow.height / 4)
+        color: Theme.controlBackgroundColor
+        border.color: Theme.controlBorderColor
+        border.width: 1
+
+        ListView {
+          id: filesList
+          anchors.fill: parent
+          anchors.margins: 2
+          clip: true
+          focus: true
+          
+          delegate: Rectangle {
+            width: filesList.width
+            height: 40
+            color: filesList.currentIndex === index ? Theme.mainColor : "transparent"
+            
+            MouseArea {
+              anchors.fill: parent
+              onClicked: {
+                filesList.currentIndex = index
+                // Get layers in the selected GPKG file
+                let layers = iface.getLayersInGeoPackage(modelData)
+                layerList.model = layers
+                layerList.currentIndex = -1
+                // Always reset acceptance state when file selection changes
+                addLayerFromFileDialog.canAccept = false
+              }
+            }
+            
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.left: parent.left
+              anchors.leftMargin: 5
+              text: modelData.split('/').pop() // Only show filename, not path
+              font: Theme.defaultFont
+              color: filesList.currentIndex === index ? Theme.toolButtonColor : Theme.mainTextColor
+            }
+          }
+        }
+      }
+      
+      Label {
+        width: parent.width
+        text: qsTr("Seleccione una capa para añadir:")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+        visible: layerList.model.length > 0
+      }
+      
+      Rectangle {
+        width: parent.width
+        height: Math.min(150, mainWindow.height / 4)
+        color: Theme.controlBackgroundColor
+        border.color: Theme.controlBorderColor
+        border.width: 1
+        visible: layerList.model.length > 0
+        
+        ListView {
+          id: layerList
+          anchors.fill: parent
+          anchors.margins: 2
+          clip: true
+          
+          delegate: Rectangle {
+            width: layerList.width
+            height: 40
+            color: layerList.currentIndex === index ? Theme.mainColor : "transparent"
+            
+            MouseArea {
+              anchors.fill: parent
+              onClicked: {
+                layerList.currentIndex = index
+                // Enable acceptance when both a file and layer are selected and we have an active project
+                addLayerFromFileDialog.canAccept = filesList.currentIndex >= 0 && 
+                                                 layerList.currentIndex >= 0 &&
+                                                 qgisProject !== null
+              }
+            }
+            
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.left: parent.left
+              anchors.leftMargin: 5
+              text: modelData.name
+              font: Theme.defaultFont
+              color: layerList.currentIndex === index ? Theme.toolButtonColor : Theme.mainTextColor
+            }
+          }
+        }
+      }
+      
+      Column {
+        id: groupSelectorSection
+        width: parent.width
+        spacing: 5
+        visible: qgisProject !== null
+        
+        Label {
+          width: parent.width
+          text: qsTr("Añadir a grupo:")
+          wrapMode: Text.WordWrap
+          font: Theme.defaultFont
+          color: Theme.mainTextColor
+        }
+        
+        ComboBox {
+          id: groupSelector
+          width: parent.width
+          model: []
+          textRole: "name"
+          
+          onActivated: {
+            if (currentIndex >= 0) {
+              let selectedItem = model[currentIndex]
+              newGroupSection.visible = selectedItem.id === "new_group"
+            }
+          }
+        }
+        
+        Column {
+          id: newGroupSection
+          width: parent.width
+          spacing: 5
+          visible: false
+          
+          Label {
+            width: parent.width
+            text: qsTr("Nombre del nuevo grupo:")
+            wrapMode: Text.WordWrap
+            font: Theme.defaultFont
+            color: Theme.mainTextColor
+          }
+          
+          TextField {
+            id: newGroupNameField
+            width: parent.width
+            placeholderText: qsTr("Introduzca el nombre del grupo")
+          }
+        }
+      }
+    }
+    
+    onAccepted: {
+      if (filesList.currentIndex >= 0 && layerList.currentIndex >= 0) {
+        let gpkgPath = filesList.model[filesList.currentIndex]
+        let layerInfo = layerList.model[layerList.currentIndex]
+        let success = false
+        
+        // Determine which group to use
+        let groupName = ""
+        if (groupSelector.currentIndex >= 0) {
+          let selectedGroup = groupSelector.model[groupSelector.currentIndex]
+          
+          if (selectedGroup.id === "new_group" && newGroupNameField.text.trim() !== "") {
+            // Using a new group
+            groupName = newGroupNameField.text.trim()
+          } else if (selectedGroup.id === "imported_layers") {
+            // Using the default Imported Layers group
+            groupName = "" // Empty string will trigger use of "Imported Layers" in C++ code
+          } else if (selectedGroup.id !== "new_group") {
+            // Using an existing group
+            groupName = selectedGroup.id
+          }
+        }
+        
+        // Add the layer to the selected group
+        success = iface.addLayerToGroup(gpkgPath, layerInfo.name, layerInfo.type, groupName)
+        
+        if (success) {
+          let message = qsTr("Capa añadida correctamente")
+          if (groupName && groupName !== "root") {
+            message += qsTr(" al grupo ") + groupName
+          } else {
+            message += qsTr(" al grupo de Capas Importadas")
+          }
+          mainWindow.showMessage(message, undefined, undefined)
+        }
+      }
+    }
+  }
+
+  QfDialog {
+    id: removeLayerDialog
+    title: qsTr("Eliminar capa del proyecto")
+    focus: visible
+    parent: mainWindow.contentItem
+    
+    // Use a property to track whether the action should be enabled
+    property bool canAccept: false
+    
+    standardButtons: Dialog.Ok | Dialog.Cancel
+    
+    // Directly modify the dialog's state instead of trying to access individual buttons
+    onCanAcceptChanged: {
+      if (standardButton(Dialog.Ok)) {
+        standardButton(Dialog.Ok).enabled = canAccept
+      }
+    }
+    
+    onAboutToShow: {
+      // Reset states
+      canAccept = false
+      
+      // Get all layers from the current project
+      if (qgisProject) {
+        removeLayersList.model = iface.getProjectLayers()
+        removeLayerNoProjectMessage.visible = false
+        removeLayerNoLayersMessage.visible = removeLayersList.model.length === 0
+      } else {
+        removeLayersList.model = []
+        removeLayerNoProjectMessage.visible = true
+        removeLayerNoLayersMessage.visible = false
+      }
+      
+      // Reset selection
+      removeLayersList.currentIndex = -1
+    }
+
+    Column {
+      width: Math.min(600, mainWindow.width - 60)
+      height: childrenRect.height
+      spacing: 10
+      
+      Label {
+        id: removeLayerNoProjectMessage
+        width: parent.width
+        text: qsTr("No hay un proyecto activo. Primero debe abrir un proyecto QGIS.")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: "red"
+        visible: false
+      }
+      
+      Label {
+        id: removeLayerNoLayersMessage
+        width: parent.width
+        text: qsTr("No hay capas en el proyecto actual.")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: "orange"
+        visible: false
+      }
+
+      Label {
+        width: parent.width
+        text: qsTr("Seleccione una capa para eliminar:")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+        visible: removeLayersList.model.length > 0
+      }
+
+      Rectangle {
+        width: parent.width
+        height: Math.min(300, mainWindow.height / 3)
+        color: Theme.controlBackgroundColor
+        border.color: Theme.controlBorderColor
+        border.width: 1
+        visible: removeLayersList.model.length > 0
+
+        ListView {
+          id: removeLayersList
+          anchors.fill: parent
+          anchors.margins: 2
+          clip: true
+          focus: true
+          
+          delegate: Rectangle {
+            width: removeLayersList.width
+            height: 40
+            color: removeLayersList.currentIndex === index ? Theme.mainColor : "transparent"
+            
+            MouseArea {
+              anchors.fill: parent
+              onClicked: {
+                removeLayersList.currentIndex = index
+                // Enable acceptance when a layer is selected
+                removeLayerDialog.canAccept = true
+              }
+            }
+            
+            RowLayout {
+              anchors.fill: parent
+              anchors.leftMargin: 5
+              anchors.rightMargin: 5
+              spacing: 5
+              
+              // Layer icon based on type
+              Text {
+                text: modelData.type === "vector" ? "▢" : 
+                     modelData.type === "raster" ? "▣" : "◈"
+                font.pointSize: Theme.defaultFont.pointSize * 1.2
+                color: removeLayersList.currentIndex === index ? Theme.toolButtonColor : Theme.mainTextColor
+              }
+              
+              // Layer name
+              Text {
+                Layout.fillWidth: true
+                text: modelData.name
+                font: Theme.defaultFont
+                elide: Text.ElideRight
+                color: removeLayersList.currentIndex === index ? Theme.toolButtonColor : Theme.mainTextColor
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    onAccepted: {
+      if (removeLayersList.currentIndex >= 0) {
+        let layerInfo = removeLayersList.model[removeLayersList.currentIndex]
+        let success = iface.removeLayerFromProject(layerInfo.id)
+        
+        if (success) {
+          mainWindow.showMessage(qsTr("Capa eliminada correctamente"), undefined, undefined)
+        } else {
+          mainWindow.showMessage(qsTr("No se pudo eliminar la capa"), undefined, undefined)
+        }
+      }
+    }
+  }
+
+  QfDialog {
+    id: manageGroupsDialog
+    title: qsTr("Gestionar grupos de capas")
+    focus: visible
+    parent: mainWindow.contentItem
+    
+    standardButtons: Dialog.Close
+    
+    onAboutToShow: {
+      // Get layer groups from the project
+      if (qgisProject) {
+        let groups = iface.getLayerGroups()
+        let groupNames = []
+        
+        // Add groups to model (exclude root)
+        for (let i = 0; i < groups.length; i++) {
+          if (groups[i].id !== "root") {
+            groupNames.push({
+              id: groups[i].id,
+              name: groups[i].name,
+              path: groups[i].path
+            })
+          }
+        }
+        
+        groupsList.model = groupNames
+      }
+    }
+
+    Column {
+      width: Math.min(600, mainWindow.width - 60)
+      height: childrenRect.height
+      spacing: 10
+      
+      Label {
+        width: parent.width
+        text: qsTr("Seleccione un grupo para gestionarlo:")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+        visible: groupsList.model && groupsList.model.length > 0
+      }
+      
+      Label {
+        width: parent.width
+        text: qsTr("No hay grupos en el proyecto actual.")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: "orange"
+        visible: !groupsList.model || groupsList.model.length === 0
+      }
+
+      Rectangle {
+        width: parent.width
+        height: Math.min(200, mainWindow.height / 3)
+        color: Theme.controlBackgroundColor
+        border.color: Theme.controlBorderColor
+        border.width: 1
+        visible: groupsList.model && groupsList.model.length > 0
+
+        ListView {
+          id: groupsList
+          anchors.fill: parent
+          anchors.margins: 2
+          clip: true
+          
+          delegate: Rectangle {
+            width: groupsList.width
+            height: 50
+            color: "transparent"
+            
+            Row {
+              anchors.fill: parent
+              anchors.margins: 5
+              spacing: 10
+              
+              Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: modelData.name
+                font: Theme.defaultFont
+                color: Theme.mainTextColor
+                width: parent.width - removeGroupButton.width - 10
+              }
+              
+              Button {
+                id: removeGroupButton
+                anchors.verticalCenter: parent.verticalCenter
+                width: 100
+                height: 40
+                text: qsTr("Eliminar")
+                
+                onClicked: {
+                  confirmRemoveGroupDialog.groupId = modelData.id
+                  confirmRemoveGroupDialog.groupName = modelData.name
+                  confirmRemoveGroupDialog.open()
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  QfDialog {
+    id: confirmRemoveGroupDialog
+    title: qsTr("Confirmar eliminación")
+    focus: visible
+    parent: mainWindow.contentItem
+    
+    property string groupId: ""
+    property string groupName: ""
+    
+    standardButtons: Dialog.Yes | Dialog.No
+    
+    Label {
+      width: Math.min(400, mainWindow.width - 60)
+      text: qsTr("¿Está seguro de que desea eliminar el grupo '%1'?\n\nATENCIÓN: Todas las capas dentro del grupo también serán eliminadas permanentemente.").arg(confirmRemoveGroupDialog.groupName)
+      wrapMode: Text.WordWrap
+      font: Theme.defaultFont
+      color: "red"
+    }
+    
+    onAccepted: {
+      let success = iface.removeLayerGroup(confirmRemoveGroupDialog.groupId)
+      if (success) {
+        mainWindow.showMessage(qsTr("Grupo y sus capas eliminados correctamente"), undefined, undefined)
+        // Refresh the groups list
+        manageGroupsDialog.onAboutToShow()
+      } else {
+        mainWindow.showMessage(qsTr("Error al eliminar el grupo"), undefined, undefined)
+      }
+    }
+  }
+
+  QfDialog {
+    id: layerManagementDialog
+    title: qsTr("Gestión de capas del proyecto")
+    focus: visible
+    parent: mainWindow.contentItem
+    
+    standardButtons: Dialog.Close
+    
+    Column {
+      width: Math.min(600, mainWindow.width - 60)
+      height: childrenRect.height
+      spacing: 20
+      
+      Label {
+        width: parent.width
+        text: qsTr("Seleccione una acción:")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+      }
+      
+      Column {
+        width: parent.width
+        spacing: 10
+        
+        Button {
+          width: parent.width
+          height: 50
+          text: qsTr("Añadir capa al proyecto")
+          enabled: qgisProject !== null
+          
+          onClicked: {
+            layerManagementDialog.close()
+            addLayerFromFileDialog.open()
+          }
+        }
+        
+        Button {
+          width: parent.width
+          height: 50
+          text: qsTr("Eliminar capa del proyecto")
+          enabled: qgisProject !== null
+          
+          onClicked: {
+            layerManagementDialog.close()
+            removeLayerDialog.open()
+          }
+        }
+        
+        Button {
+          width: parent.width
+          height: 50
+          text: qsTr("Gestionar grupos de capas")
+          enabled: qgisProject !== null
+          
+          onClicked: {
+            layerManagementDialog.close()
+            manageGroupsDialog.open()
+          }
+        }
+      }
+    }
+  }
+
+  QfDialog {
+    id: createBackupDialog
+    title: qsTr("Crear copia de seguridad")
+    focus: visible
+    parent: mainWindow.contentItem
+    
+    property string folderPath: ""
+    property string folderName: ""
+    property bool backupInProgress: false
+    
+    standardButtons: backupInProgress ? Dialog.NoButton : (Dialog.Ok | Dialog.Cancel)
+    
+    Column {
+      width: Math.min(600, mainWindow.width - 60)
+      spacing: 10
+      
+      Label {
+        width: parent.width
+        text: qsTr("Crear una copia de seguridad de la carpeta: <b>%1</b>").arg(createBackupDialog.folderName)
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+      }
+      
+      Rectangle {
+        width: parent.width
+        height: 1
+        color: Theme.secondaryBackgroundColor
+      }
+      
+      Label {
+        width: parent.width
+        text: qsTr("Destino de la copia de seguridad:")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+      }
+      
+      Column {
+        width: parent.width
+        spacing: 5
+        
+        RadioButton {
+          id: defaultLocationRadio
+          text: qsTr("Ubicación predeterminada (Documentos/SIGPACGO_Backups)")
+          checked: true
+        }
+        
+        RadioButton {
+          id: customLocationRadio
+          text: qsTr("Seleccionar ubicación")
+        }
+        
+        Row {
+          width: parent.width
+          visible: customLocationRadio.checked
+          spacing: 10
+          
+          TextField {
+            id: customLocationField
+            width: parent.width - selectFolderButton.width - 10
+            placeholderText: qsTr("Ruta de destino")
+            readOnly: true
+          }
+          
+          Button {
+            id: selectFolderButton
+            text: qsTr("Explorar")
+            onClicked: {
+              // Implementation depends on platform capabilities
+              // For now, we'll use a simple folder picker
+              selectFolderDialog.open()
+            }
+          }
+        }
+      }
+      
+      Rectangle {
+        width: parent.width
+        height: 1
+        color: Theme.secondaryBackgroundColor
+        visible: createBackupDialog.backupInProgress
+      }
+      
+      ProgressBar {
+        width: parent.width
+        indeterminate: true
+        visible: createBackupDialog.backupInProgress
+      }
+      
+      Label {
+        width: parent.width
+        text: qsTr("Creando copia de seguridad, por favor espere...")
+        wrapMode: Text.WordWrap
+        font: Theme.defaultFont
+        color: Theme.mainTextColor
+        visible: createBackupDialog.backupInProgress
+      }
+    }
+    
+    onAccepted: {
+      // Show backup in progress state
+      createBackupDialog.backupInProgress = true
+      standardButtons = Dialog.NoButton
+      
+      // Determine destination path
+      let destinationPath = ""
+      if (customLocationRadio.checked && customLocationField.text) {
+        destinationPath = customLocationField.text
+      }
+      
+      // Use a timer to allow the UI to update before starting the backup process
+      createBackupTimer.destinationPath = destinationPath
+      createBackupTimer.start()
+    }
+    
+    // Timer to delay the backup process slightly to allow the UI to update
+    Timer {
+      id: createBackupTimer
+      interval: 100
+      repeat: false
+      property string destinationPath: ""
+      
+      onTriggered: {
+        // Call the backup function
+        let backupPath = iface.createFolderBackup(createBackupDialog.folderPath, destinationPath)
+        
+        // Update UI based on result
+        createBackupDialog.backupInProgress = false
+        createBackupDialog.standardButtons = Dialog.Close
+        
+        if (backupPath && backupPath.length > 0) {
+          mainWindow.showMessage(qsTr("Copia de seguridad creada correctamente: %1").arg(backupPath), undefined, undefined)
+        } else {
+          mainWindow.showMessage(qsTr("Error al crear la copia de seguridad"), undefined, undefined)
+        }
+      }
+    }
+    
+    // Dialog to select a custom destination folder
+    QfDialog {
+      id: selectFolderDialog
+      title: qsTr("Seleccionar carpeta de destino")
+      
+      onAccepted: {
+        // In a real implementation, this would use the platform's folder picker
+        // For now, we'll use a simple simulation
+        customLocationField.text = platformUtilities.applicationDirectory + "/backups"
+      }
+      
+      Label {
+        text: qsTr("En esta versión, las copias de seguridad se guardarán en: %1/backups").arg(platformUtilities.applicationDirectory)
+        wrapMode: Text.WordWrap
+        width: Math.min(500, mainWindow.width - 60)
+      }
+      
+      standardButtons: Dialog.Ok | Dialog.Cancel
     }
   }
 

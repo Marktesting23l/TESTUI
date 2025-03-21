@@ -432,6 +432,11 @@ void PlatformUtilities::importProjectArchive() const
 void PlatformUtilities::importDatasets() const
 {}
 
+void PlatformUtilities::importDatasetsToCurrentProject( const QString &projectFolderPath ) const
+{
+  Q_UNUSED( projectFolderPath )
+}
+
 void PlatformUtilities::updateProjectFromArchive( const QString &projectPath ) const
 {
   Q_UNUSED( projectPath )
@@ -704,6 +709,24 @@ QVariantMap PlatformUtilities::getFileInfo(const QString &filePath) const
   result["isDir"] = fileInfo.isDir();
   result["size"] = fileInfo.size();
   result["lastModified"] = fileInfo.lastModified();
+  
+  return result;
+}
+
+QStringList PlatformUtilities::getDirectoryContents( const QString &directory, const QString &pattern ) const
+{
+  QDir dir( directory );
+  if ( !dir.exists() )
+    return QStringList();
+
+  QStringList fileNames = dir.entryList( QStringList() << pattern, QDir::Files );
+  QStringList result;
+  
+  // Convert to full paths
+  for ( const QString &fileName : fileNames )
+  {
+    result.append( dir.absoluteFilePath( fileName ) );
+  }
   
   return result;
 }

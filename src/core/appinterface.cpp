@@ -38,6 +38,22 @@
 #include <qgslayoutmanager.h>
 #include <qgsprintlayout.h>
 
+// Add includes for GeoPackage layer support
+#include <qgsproviderregistry.h>
+#include <qgsvectorlayer.h>
+#include <qgsrasterlayer.h>
+#include <qgsprovidermetadata.h>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
+#include <qgslayertree.h>
+#include <qgslayertreegroup.h>
+#include <qgslayertreelayer.h>
+
+#include <QDateTime>
+#include <QProcess>
+#include <QStandardPaths>
+
 AppInterface *AppInterface::sAppInterface = nullptr;
 
 AppInterface::AppInterface( QgisMobileapp *app )
@@ -426,4 +442,617 @@ void AppInterface::importUrl( const QString &url )
 
     emit importEnded();
   } );
+}
+
+QVariantList AppInterface::getLayersInGeoPackage( const QString &gpkgPath ) const
+{
+  QVariantList result;
+  QFileInfo fileInfo( gpkgPath );
+  
+  if ( !fileInfo.exists() || !fileInfo.isFile() )
+    return result;
+  
+  // Create a unique connection name based on file path to avoid conflicts
+  QString connectionName = QString("gpkg_connection_%1").arg(fileInfo.fileName().replace(".", "_"));
+  
+  {
+    // Using a scope to ensure all queries are finished before removing the connection
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+    db.setDatabaseName(gpkgPath);
+    
+    if (db.open()) {
+      // Look for vector layers
+      {
+        QSqlQuery query(db);
+        if (query.exec("SELECT table_name FROM gpkg_contents WHERE data_type='features'")) {
+          while (query.next()) {
+            QString layerName = query.value(0).toString();
+            QVariantMap layerInfo;
+            layerInfo["name"] = layerName;
+            layerInfo["type"] = "vector";
+            result.append(layerInfo);
+          }
+        }
+        // Explicitly clear the query to release resources
+        query.clear();
+      }
+      
+      // Look for raster layers
+      {
+        QSqlQuery query(db);
+        if (query.exec("SELECT table_name FROM gpkg_contents WHERE data_type='tiles'")) {
+          while (query.next()) {
+            QString layerName = query.value(0).toString();
+            QVariantMap layerInfo;
+            layerInfo["name"] = layerName;
+            layerInfo["type"] = "raster";
+            result.append(layerInfo);
+          }
+        }
+        // Explicitly clear the query to release resources
+        query.clear();
+      }
+      
+      // Close the database connection
+      db.close();
+    }
+  }
+  
+  // Now remove the database connection after all queries and the db connection are out of scope
+  QSqlDatabase::removeDatabase(connectionName);
+  
+  // If we couldn't get layer info from the database, at least try to open it as a vector layer
+  if (result.isEmpty()) {
+    QgsVectorLayer testLayer(gpkgPath, "test", "ogr");
+    if (testLayer.isValid()) {
+      QVariantMap layerInfo;
+      layerInfo["name"] = fileInfo.baseName();
+      layerInfo["type"] = "vector";
+      result.append(layerInfo);
+    }
+  }
+  
+  return result;
+}
+
+bool AppInterface::addLayerFromGeoPackage( const QString &gpkgPath, const QString &layerName, const QString &layerType ) const
+{
+  QFileInfo fileInfo( gpkgPath );
+  
+  if ( !fileInfo.exists() || !fileInfo.isFile() )
+    return false;
+  
+  if ( !QgsProject::instance() )
+    return false;
+  
+  // Create the layer
+  QgsMapLayer *newLayer = nullptr;
+  
+  if ( layerType == "vector" )
+  {
+    // For vector layers, we need to create the URI with the layer name
+    QString uri = gpkgPath + "|layername=" + layerName;
+    newLayer = new QgsVectorLayer( uri, layerName, "ogr" );
+  }
+  else if ( layerType == "raster" )
+  {
+    // For raster layers in GPKG
+    QString uri = gpkgPath + "|layername=" + layerName;
+    newLayer = new QgsRasterLayer( uri, layerName, "gdal" );
+  }
+  
+  if ( !newLayer || !newLayer->isValid() )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "Failed to create layer from GeoPackage: %1, layer: %2" ).arg( gpkgPath, layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    delete newLayer;
+    return false;
+  }
+  
+  // Add the layer to the project
+  if ( !QgsProject::instance()->addMapLayer( newLayer ) )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "Failed to add layer to project: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    delete newLayer;
+    return false;
+  }
+  
+  // Save the project to persist the added layer
+  if ( !QgsProject::instance()->write() )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "Failed to save project after adding layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    // Continue anyway, the layer is still added to the current session
+  }
+  
+  QgsMessageLog::logMessage( QStringLiteral( "Successfully added layer from GeoPackage: %1, layer: %2" ).arg( gpkgPath, layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  return true;
+}
+
+bool AppInterface::removeLayerFromProject( const QString &layerId ) const
+{
+  if ( !QgsProject::instance() )
+    return false;
+  
+  QgsMapLayer *layer = QgsProject::instance()->mapLayer( layerId );
+  if ( !layer )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "Failed to find layer with ID: %1" ).arg( layerId ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    return false;
+  }
+  
+  // Store the layer name for the log message
+  QString layerName = layer->name();
+  
+  // Remove the layer from the project
+  // QgsProject::removeMapLayer doesn't return a boolean, so we can't check its return value directly
+  QgsProject::instance()->removeMapLayer( layerId );
+  
+  // Save the project to persist the removal of the layer
+  if ( !QgsProject::instance()->write() )
+  {
+    QgsMessageLog::logMessage( QStringLiteral( "Failed to save project after removing layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    // Continue anyway, the layer is still removed from the current session
+  }
+  
+  QgsMessageLog::logMessage( QStringLiteral( "Successfully removed layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  return true;
+}
+
+QVariantList AppInterface::getProjectLayers() const
+{
+  QVariantList result;
+  
+  if ( !QgsProject::instance() )
+    return result;
+  
+  // Get all map layers from the project
+  const QMap<QString, QgsMapLayer *> mapLayers = QgsProject::instance()->mapLayers();
+  
+  // Add each layer to the result list
+  for ( auto it = mapLayers.constBegin(); it != mapLayers.constEnd(); ++it )
+  {
+    QgsMapLayer *layer = it.value();
+    if ( !layer )
+      continue;
+    
+    QVariantMap layerInfo;
+    layerInfo["id"] = it.key();
+    layerInfo["name"] = layer->name();
+    
+    // Determine the layer type
+    if ( qobject_cast<QgsVectorLayer *>( layer ) )
+    {
+      layerInfo["type"] = "vector";
+    }
+    else if ( qobject_cast<QgsRasterLayer *>( layer ) )
+    {
+      layerInfo["type"] = "raster";
+    }
+    else
+    {
+      layerInfo["type"] = "other";
+    }
+    
+    result.append( layerInfo );
+  }
+  
+  return result;
+}
+
+QVariantList AppInterface::getLayerGroups() const
+{
+  QVariantList result;
+  
+  if ( !QgsProject::instance() )
+    return result;
+  
+  // Get the layer tree root
+  QgsLayerTreeGroup *root = QgsProject::instance()->layerTreeRoot();
+  if ( !root )
+    return result;
+  
+  // Add root group
+  QVariantMap rootInfo;
+  rootInfo["id"] = "root";
+  rootInfo["name"] = tr( "Root" );
+  rootInfo["path"] = "/";
+  result.append( rootInfo );
+  
+  // Function to recursively collect groups
+  std::function<void( QgsLayerTreeGroup *, const QString & )> collectGroups;
+  collectGroups = [&result, &collectGroups]( QgsLayerTreeGroup *group, const QString &parentPath )
+  {
+    if ( !group )
+      return;
+    
+    // Process all child groups
+    QList<QgsLayerTreeGroup *> childGroups = group->findGroups();
+    for ( QgsLayerTreeGroup *childGroup : childGroups )
+    {
+      QString path = parentPath + "/" + childGroup->name();
+      
+      QVariantMap groupInfo;
+      groupInfo["id"] = childGroup->name();
+      groupInfo["name"] = childGroup->name();
+      groupInfo["path"] = path;
+      result.append( groupInfo );
+      
+      // Process subgroups
+      collectGroups( childGroup, path );
+    }
+  };
+  
+  // Start collecting from root
+  collectGroups( root, "/" );
+  
+  return result;
+}
+
+bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &layerName, const QString &layerType, const QString &groupName ) const
+{
+  if ( !QgsProject::instance() )
+  {
+    QgsMessageLog::logMessage( tr( "No project loaded" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  QFileInfo fileInfo( gpkgPath );
+  if ( !fileInfo.exists() )
+  {
+    QgsMessageLog::logMessage( tr( "File does not exist: %1" ).arg( gpkgPath ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  // Get the layer tree root
+  QgsLayerTreeGroup *root = QgsProject::instance()->layerTreeRoot();
+  if ( !root )
+  {
+    QgsMessageLog::logMessage( tr( "Could not get layer tree root" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  // Find or create the target group
+  QgsLayerTreeGroup *targetGroup = nullptr;
+  
+  // Determine the group to use
+  QString targetGroupName;
+  
+  if ( groupName.isEmpty() || groupName == "root" )
+  {
+    // For layers being added to root, add them to a common "Imported Layers" group
+    targetGroupName = tr( "Imported Layers" );
+  }
+  else
+  {
+    // Use the provided group name
+    targetGroupName = groupName;
+  }
+  
+  // Find the target group by name 
+  QList<QgsLayerTreeGroup *> topLevelGroups = root->findGroups();
+  bool foundGroup = false;
+  
+  for ( QgsLayerTreeGroup *group : topLevelGroups )
+  {
+    if ( group->name() == targetGroupName )
+    {
+      targetGroup = group;
+      foundGroup = true;
+      QgsMessageLog::logMessage( tr( "Using existing group: %1" ).arg( targetGroupName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      break;
+    }
+  }
+  
+  // Create the group if it doesn't exist
+  if ( !foundGroup )
+  {
+    targetGroup = root->addGroup( targetGroupName );
+    if ( !targetGroup )
+    {
+      QgsMessageLog::logMessage( tr( "Failed to create group: %1, falling back to root" ).arg( targetGroupName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+      targetGroup = root;
+    }
+    else
+    {
+      QgsMessageLog::logMessage( tr( "Created new group: %1" ).arg( targetGroupName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    }
+  }
+  
+  // Check if a layer with the same name already exists in the target group
+  QList<QgsLayerTreeLayer*> existingLayers = targetGroup->findLayers();
+  for (QgsLayerTreeLayer* existingLayerNode : existingLayers)
+  {
+    if (existingLayerNode && existingLayerNode->layer())
+    {
+      // Check if we already have a layer with the same name
+      if (existingLayerNode->layer()->name() == layerName)
+      {
+        QgsMessageLog::logMessage( tr( "Layer with name '%1' already exists in group '%2', skipping" )
+                                   .arg( layerName, targetGroupName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+        return true; // Return true to indicate "success" since the layer already exists
+      }
+    }
+  }
+  
+  // Add the layer
+  QgsMapLayer *layer = nullptr;
+  
+  // Create a connection to the database
+  QString connectionName = QString( "gpkg_connection_%1" ).arg( fileInfo.fileName().replace( ".", "_" ) );
+  
+  {
+    QSqlDatabase db = QSqlDatabase::addDatabase( "QSQLITE", connectionName );
+    db.setDatabaseName( gpkgPath );
+    
+    if ( !db.open() )
+    {
+      QgsMessageLog::logMessage( tr( "Failed to open database: %1" ).arg( db.lastError().text() ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+      QSqlDatabase::removeDatabase( connectionName );
+      return false;
+    }
+    
+    // Load the layer
+    if ( layerType.toLower() == "vector" )
+    {
+      QString uri = QString( "%1|layername=%2" ).arg( gpkgPath ).arg( layerName );
+      layer = new QgsVectorLayer( uri, layerName, "ogr" );
+    }
+    else if ( layerType.toLower() == "raster" )
+    {
+      QString uri = QString( "GPKG:%1:%2" ).arg( gpkgPath ).arg( layerName );
+      layer = new QgsRasterLayer( uri, layerName, "gdal" );
+    }
+    
+    // Clean up the database connection
+    db.close();
+    QSqlDatabase::removeDatabase( connectionName );
+  }
+  
+  if ( !layer || !layer->isValid() )
+  {
+    QgsMessageLog::logMessage( tr( "Failed to load layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    delete layer;
+    return false;
+  }
+  
+  // Add layer to the project
+  QgsProject::instance()->addMapLayer( layer, false );
+  
+  // Add it to the specified group in the layer tree
+  targetGroup->addLayer( layer );
+  
+  QgsMessageLog::logMessage( tr( "Layer added successfully: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  
+  // Save the project
+  if ( !QgsProject::instance()->write() )
+  {
+    QgsMessageLog::logMessage( tr( "Failed to save project after adding layer" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+  }
+  
+  return true;
+}
+
+bool AppInterface::removeLayerGroup( const QString &groupName ) const
+{
+  if ( !QgsProject::instance() )
+  {
+    QgsMessageLog::logMessage( tr( "No project loaded" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  // Prevent removing the root group
+  if ( groupName == "root" )
+  {
+    QgsMessageLog::logMessage( tr( "Cannot remove root group" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    return false;
+  }
+  
+  // Get the layer tree root
+  QgsLayerTreeGroup *root = QgsProject::instance()->layerTreeRoot();
+  if ( !root )
+  {
+    QgsMessageLog::logMessage( tr( "Could not get layer tree root" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  // Find the group
+  QgsLayerTreeGroup *targetGroup = nullptr;
+  
+  // Recursive function to find a group by name
+  std::function<QgsLayerTreeGroup*(QgsLayerTreeGroup*, const QString&)> findGroup;
+  findGroup = [&findGroup](QgsLayerTreeGroup* group, const QString& name) -> QgsLayerTreeGroup* {
+    if (group->name() == name)
+      return group;
+    
+    const QList<QgsLayerTreeGroup*> childGroups = group->findGroups();
+    for (QgsLayerTreeGroup* childGroup : childGroups)
+    {
+      QgsLayerTreeGroup *result = findGroup(childGroup, name);
+      if (result)
+        return result;
+    }
+    
+    return nullptr;
+  };
+  
+  targetGroup = findGroup(root, groupName);
+  
+  if (!targetGroup)
+  {
+    QgsMessageLog::logMessage( tr( "Group not found: %1" ).arg( groupName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    return false;
+  }
+  
+  // Before removing the group, get its parent group
+  QgsLayerTreeGroup *parentGroup = qobject_cast<QgsLayerTreeGroup*>(targetGroup->parent());
+  if (!parentGroup)
+  {
+    QgsMessageLog::logMessage( tr( "Could not get parent group for: %1" ).arg( groupName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    return false;
+  }
+  
+  // Find all layers in the group and remove them from the project
+  QList<QgsLayerTreeLayer*> layerNodes = targetGroup->findLayers();
+  
+  for (QgsLayerTreeLayer* layerNode : layerNodes)
+  {
+    if (layerNode && layerNode->layer())
+    {
+      QString layerId = layerNode->layerId();
+      QString layerName = layerNode->layer()->name();
+      
+      QgsProject::instance()->removeMapLayer(layerId);
+      QgsMessageLog::logMessage(tr("Removed layer: %1 from group: %2").arg(layerName, groupName), QStringLiteral("SIGPACGO"), Qgis::Info);
+    }
+  }
+  
+  // Remove all subgroups recursively
+  QList<QgsLayerTreeGroup*> subGroups = targetGroup->findGroups();
+  for (QgsLayerTreeGroup* subGroup : subGroups)
+  {
+    if (subGroup)
+    {
+      // Recursively remove layers from subgroups
+      QList<QgsLayerTreeLayer*> subLayerNodes = subGroup->findLayers();
+      for (QgsLayerTreeLayer* layerNode : subLayerNodes)
+      {
+        if (layerNode && layerNode->layer())
+        {
+          QgsProject::instance()->removeMapLayer(layerNode->layerId());
+        }
+      }
+    }
+  }
+  
+  // Remove the group itself
+  parentGroup->removeChildNode(targetGroup);
+  
+  // Save the project
+  if ( !QgsProject::instance()->write() )
+  {
+    QgsMessageLog::logMessage( tr( "Failed to save project after removing group" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+  }
+  
+  QgsMessageLog::logMessage( tr( "Group and all its layers removed successfully: %1" ).arg( groupName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  return true;
+}
+
+QString AppInterface::createFolderBackup( const QString &sourceFolderPath, const QString &destinationFolderPath ) const
+{
+  QDir sourceDir( sourceFolderPath );
+  if ( !sourceDir.exists() )
+  {
+    QgsMessageLog::logMessage( tr( "Source folder does not exist: %1" ).arg( sourceFolderPath ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return QString();
+  }
+  
+  // Create a timestamp for the backup filename
+  QString timestamp = QDateTime::currentDateTime().toString( "yyyyMMdd_HHmmss" );
+  QString folderName = sourceDir.dirName();
+  
+  // Determine the destination folder
+  QString destFolder;
+  if ( destinationFolderPath.isEmpty() )
+  {
+    // If no destination specified, use the Documents/SIGPACGO_Backups folder
+    destFolder = QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) + "/SIGPACGO_Backups";
+    QDir().mkpath( destFolder );
+  }
+  else
+  {
+    destFolder = destinationFolderPath;
+    QDir destDir( destFolder );
+    if ( !destDir.exists() )
+    {
+      if ( !QDir().mkpath( destFolder ) )
+      {
+        QgsMessageLog::logMessage( tr( "Could not create destination folder: %1" ).arg( destFolder ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+        return QString();
+      }
+    }
+  }
+  
+  // Create the backup zip file path
+  QString zipFilePath = QString( "%1/%2_backup_%3.zip" ).arg( destFolder, folderName, timestamp );
+  
+  // Check if we can use the QgsZipUtils directly
+  bool success = false;
+  
+  // Try using QgsZipUtils first
+  try
+  {
+    QgsMessageLog::logMessage( tr( "Creating backup using QgsZipUtils: %1" ).arg( zipFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    
+    // Get all the files in the source folder recursively
+    QDir dir( sourceFolderPath );
+    QStringList files;
+    QDirIterator it( sourceFolderPath, QDir::Files | QDir::NoDotAndDotDot | QDir::Hidden, QDirIterator::Subdirectories );
+    const int sourceDirNameLength = sourceFolderPath.length() + 1; // +1 for the trailing slash
+    
+    while ( it.hasNext() )
+    {
+      QString filePath = it.next();
+      files << filePath;
+    }
+    
+    if ( files.isEmpty() )
+    {
+      QgsMessageLog::logMessage( tr( "No files found in source folder: %1" ).arg( sourceFolderPath ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+      return QString();
+    }
+    
+    success = QgsZipUtils::zip( zipFilePath, files, QDir( sourceFolderPath ) );
+  }
+  catch ( const std::exception &e )
+  {
+    QgsMessageLog::logMessage( tr( "Error in QgsZipUtils: %1" ).arg( e.what() ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    success = false;
+  }
+  
+  // If QgsZipUtils failed, try using a system command
+  if ( !success )
+  {
+    QgsMessageLog::logMessage( tr( "Falling back to system zip command" ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    
+    // Try to use the system's zip command
+    QProcess zipProcess;
+    QString command;
+    
+#ifdef Q_OS_WIN
+    // On Windows, try to use PowerShell's compression
+    command = QString( "powershell.exe -Command \"Compress-Archive -Path '%1\\*' -DestinationPath '%2' -Force\"" )
+              .arg( sourceFolderPath.replace( "/", "\\" ), zipFilePath.replace( "/", "\\" ) );
+#else
+    // On Linux/macOS, use the zip command
+    command = QString( "cd '%1' && zip -r '%2' ." )
+              .arg( sourceFolderPath, zipFilePath );
+#endif
+    
+    QgsMessageLog::logMessage( tr( "Running command: %1" ).arg( command ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    zipProcess.start( command );
+    
+    if ( !zipProcess.waitForFinished( 300000 ) ) // 5 minute timeout
+    {
+      QgsMessageLog::logMessage( tr( "Zip process timed out" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+      return QString();
+    }
+    
+    if ( zipProcess.exitCode() != 0 )
+    {
+      QgsMessageLog::logMessage( tr( "Zip process failed: %1" ).arg( QString::fromUtf8( zipProcess.readAllStandardError() ) ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+      return QString();
+    }
+    
+    success = true;
+  }
+  
+  if ( success )
+  {
+    QgsMessageLog::logMessage( tr( "Backup successfully created: %1" ).arg( zipFilePath ), QStringLiteral( "SIGPACGO" ), Qgis::Success );
+    return zipFilePath;
+  }
+  else
+  {
+    QgsMessageLog::logMessage( tr( "Failed to create backup" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return QString();
+  }
 }
