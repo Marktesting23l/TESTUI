@@ -1000,7 +1000,9 @@ QString AppInterface::createFolderBackup( const QString &sourceFolderPath, const
       return QString();
     }
     
-    success = QgsZipUtils::zip( zipFilePath, files, QDir( sourceFolderPath ) );
+    // Change directory to the source folder before zipping to maintain relative paths
+    QDir::setCurrent( sourceFolderPath );
+    success = QgsZipUtils::zip( zipFilePath, files );
   }
   catch ( const std::exception &e )
   {
