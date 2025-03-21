@@ -799,21 +799,7 @@ Page {
         }
       }
       
-      MenuItem {
-        id: manageGroupsMenu
-        
-        enabled: qgisProject
-        visible: enabled
-        font: Theme.defaultFont
-        width: parent.width
-        height: enabled ? 48 : 0
-        leftPadding: Theme.menuItemLeftPadding
-
-        text: qsTr("Gestionar grupos de capas")
-        onTriggered: {
-          manageGroupsDialog.open()
-        }
-      }
+     
     }
 
     Menu {
@@ -1739,55 +1725,7 @@ Page {
         }
       }
       
-      Column {
-        id: groupSelectorSection
-        width: parent.width
-        spacing: 5
-        visible: qgisProject !== null
-        
-        Label {
-          width: parent.width
-          text: qsTr("Añadir a grupo:")
-          wrapMode: Text.WordWrap
-          font: Theme.defaultFont
-          color: Theme.mainTextColor
-        }
-        
-        ComboBox {
-          id: groupSelector
-          width: parent.width
-          model: []
-          textRole: "name"
-          
-          onActivated: {
-            if (currentIndex >= 0) {
-              let selectedItem = model[currentIndex]
-              newGroupSection.visible = selectedItem.id === "new_group"
-            }
-          }
-        }
-        
-        Column {
-          id: newGroupSection
-          width: parent.width
-          spacing: 5
-          visible: false
-          
-          Label {
-            width: parent.width
-            text: qsTr("Nombre del nuevo grupo:")
-            wrapMode: Text.WordWrap
-            font: Theme.defaultFont
-            color: Theme.mainTextColor
-          }
-          
-          TextField {
-            id: newGroupNameField
-            width: parent.width
-            placeholderText: qsTr("Introduzca el nombre del grupo")
-          }
-        }
-      }
+
     }
     
     onAccepted: {
@@ -1971,109 +1909,7 @@ Page {
     }
   }
 
-  QfDialog {
-    id: manageGroupsDialog
-    title: qsTr("Gestionar grupos de capas")
-    focus: visible
-    parent: mainWindow.contentItem
-    
-    standardButtons: Dialog.Close
-    
-    onAboutToShow: {
-      // Get layer groups from the project
-      if (qgisProject) {
-        let groups = iface.getLayerGroups()
-        let groupNames = []
-        
-        // Add groups to model (exclude root)
-        for (let i = 0; i < groups.length; i++) {
-          if (groups[i].id !== "root") {
-            groupNames.push({
-              id: groups[i].id,
-              name: groups[i].name,
-              path: groups[i].path
-            })
-          }
-        }
-        
-        groupsList.model = groupNames
-      }
-    }
-
-    Column {
-      width: Math.min(600, mainWindow.width - 60)
-      height: childrenRect.height
-      spacing: 10
-      
-      Label {
-        width: parent.width
-        text: qsTr("Seleccione un grupo para gestionarlo:")
-        wrapMode: Text.WordWrap
-        font: Theme.defaultFont
-        color: Theme.mainTextColor
-        visible: groupsList.model && groupsList.model.length > 0
-      }
-      
-      Label {
-        width: parent.width
-        text: qsTr("No hay grupos en el proyecto actual.")
-        wrapMode: Text.WordWrap
-        font: Theme.defaultFont
-        color: "orange"
-        visible: !groupsList.model || groupsList.model.length === 0
-      }
-
-      Rectangle {
-        width: parent.width
-        height: Math.min(200, mainWindow.height / 3)
-        color: Theme.controlBackgroundColor
-        border.color: Theme.controlBorderColor
-        border.width: 1
-        visible: groupsList.model && groupsList.model.length > 0
-
-        ListView {
-          id: groupsList
-          anchors.fill: parent
-          anchors.margins: 2
-          clip: true
-          
-          delegate: Rectangle {
-            width: groupsList.width
-            height: 50
-            color: "transparent"
-            
-            Row {
-              anchors.fill: parent
-              anchors.margins: 5
-              spacing: 10
-              
-              Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: modelData.name
-                font: Theme.defaultFont
-                color: Theme.mainTextColor
-                width: parent.width - removeGroupButton.width - 10
-              }
-              
-              Button {
-                id: removeGroupButton
-                anchors.verticalCenter: parent.verticalCenter
-                width: 100
-                height: 40
-                text: qsTr("Eliminar")
-                
-                onClicked: {
-                  confirmRemoveGroupDialog.groupId = modelData.id
-                  confirmRemoveGroupDialog.groupName = modelData.name
-                  confirmRemoveGroupDialog.open()
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  
   
   QfDialog {
     id: confirmRemoveGroupDialog
@@ -2155,17 +1991,7 @@ Page {
           }
         }
         
-        Button {
-          width: parent.width
-          height: 50
-          text: qsTr("Gestionar grupos de capas")
-          enabled: qgisProject !== null
-          
-          onClicked: {
-            layerManagementDialog.close()
-            manageGroupsDialog.open()
-          }
-        }
+        
       }
     }
   }

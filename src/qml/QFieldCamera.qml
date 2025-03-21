@@ -105,6 +105,12 @@ Popup {
     property string stampBackgroundColor: "#80000000" // Semi-transparent black background
     property int stampFontSize: 24 // Font size for timestamp
     
+    // Drawing annotation properties
+    property int brushSize: 5 // Default brush size
+    property string brushColor: "#FF0000" // Default brush color (red)
+    property int textSize: 24 // Default text size
+    property string textColor: "#FFFFFF" // Default text color (white)
+    
     // GPS accuracy thresholds (in meters)
     property real accuracyThresholdGood: 5.0
     property real accuracyThresholdModerate: 20.0
@@ -1840,6 +1846,7 @@ Popup {
     // Text input
     property bool textInputActive: false
     property bool colorPickerVisible: false
+    property bool brushSettingsVisible: false
     
     // Canvas for drawing
     Canvas {
@@ -1850,6 +1857,7 @@ Popup {
       property point startPoint // For shape drawing
       property bool drawing: false
       property var temporaryPaths: [] // Store temporary shape paths for preview
+      property var permanentPaths: [] // Store permanent paths
       
       onPaint: {
         var ctx = getContext("2d");
@@ -1859,193 +1867,361 @@ Popup {
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
         
+        // Draw any permanent paths first
+        for (var i = 0; i < permanentPaths.length; i++) {
+          drawPath(ctx, permanentPaths[i]);
+        }
+        
         // Draw any temporary paths (for shapes in progress)
-        for (var i = 0; i < temporaryPaths.length; i++) {
-          var path = temporaryPaths[i];
-          drawPath(ctx, path);
+        for (var j = 0; j < temporaryPaths.length; j++) {
+          drawPath(ctx, temporaryPaths[j]);
         }
       }
       
-      function clear() {
-        var ctx = getContext("2d");
-        ctx.reset();
-        temporaryPaths = [];
-        requestPaint();
-      }
-      
       function drawPath(ctx, path) {
-        if (!path || !path.type) return;
+        if (!path) return;
         
-        ctx.save();
-        ctx.beginPath();
-        
+        // Handle different path types
         if (path.type === "freehand") {
+          if (path.points.length < 2) return;
+          
+          ctx.beginPath();
           ctx.moveTo(path.points[0].x, path.points[0].y);
+          
           for (var i = 1; i < path.points.length; i++) {
             ctx.lineTo(path.points[i].x, path.points[i].y);
           }
+          
           ctx.stroke();
         } 
         else if (path.type === "arrow") {
-          // Draw arrow line
+          if (!path.start || !path.end) return;
+          
+          // Draw the arrow line
+          ctx.beginPath();
           ctx.moveTo(path.start.x, path.start.y);
           ctx.lineTo(path.end.x, path.end.y);
           ctx.stroke();
           
           // Calculate arrowhead
           var angle = Math.atan2(path.end.y - path.start.y, path.end.x - path.start.x);
-          var arrowHeadLength = Math.min(20, Math.max(12, ctx.lineWidth * 2.5)); // Scale with line width
+          var headLength = Math.max(10, ctx.lineWidth * 3); // Scale arrow head with line width
           
           // Draw arrowhead based on style
-          if (annotationContainer.arrowStyle === "standard" || annotationContainer.arrowStyle === "filled") {
+          if (path.style === "filled") {
+            // Filled arrowhead
             ctx.beginPath();
             ctx.moveTo(path.end.x, path.end.y);
             ctx.lineTo(
-              path.end.x - arrowHeadLength * Math.cos(angle - Math.PI/6),
-              path.end.y - arrowHeadLength * Math.sin(angle - Math.PI/6)
+              path.end.x - headLength * Math.cos(angle - Math.PI/6),
+              path.end.y - headLength * Math.sin(angle - Math.PI/6)
             );
             ctx.lineTo(
-              path.end.x - arrowHeadLength * Math.cos(angle + Math.PI/6),
-              path.end.y - arrowHeadLength * Math.sin(angle + Math.PI/6)
-            );
-            
-            if (annotationContainer.arrowStyle === "filled") {
-              ctx.closePath();
-              ctx.fill();
-            } else {
-              ctx.closePath();
-              ctx.stroke();
-            }
-          } 
-          else if (annotationContainer.arrowStyle === "double") {
-            // First arrowhead at end
-            ctx.beginPath();
-            ctx.moveTo(path.end.x, path.end.y);
-            ctx.lineTo(
-              path.end.x - arrowHeadLength * Math.cos(angle - Math.PI/6),
-              path.end.y - arrowHeadLength * Math.sin(angle - Math.PI/6)
-            );
-            ctx.lineTo(
-              path.end.x - arrowHeadLength * Math.cos(angle + Math.PI/6),
-              path.end.y - arrowHeadLength * Math.sin(angle + Math.PI/6)
+              path.end.x - headLength * Math.cos(angle + Math.PI/6),
+              path.end.y - headLength * Math.sin(angle + Math.PI/6)
             );
             ctx.closePath();
             ctx.fill();
-            
-            // Second arrowhead at start (reversed direction)
+          } 
+          else if (path.style === "double") {
+            // Double arrow (both ends)
+            // First end
             ctx.beginPath();
+            ctx.moveTo(path.end.x, path.end.y);
+            ctx.lineTo(
+              path.end.x - headLength * Math.cos(angle - Math.PI/6),
+              path.end.y - headLength * Math.sin(angle - Math.PI/6)
+            );
+            ctx.moveTo(path.end.x, path.end.y);
+            ctx.lineTo(
+              path.end.x - headLength * Math.cos(angle + Math.PI/6),
+              path.end.y - headLength * Math.sin(angle + Math.PI/6)
+            );
+            
+            // Second end (opposite direction)
+            var oppositeAngle = angle + Math.PI;
             ctx.moveTo(path.start.x, path.start.y);
             ctx.lineTo(
-              path.start.x + arrowHeadLength * Math.cos(angle - Math.PI/6),
-              path.start.y + arrowHeadLength * Math.sin(angle - Math.PI/6)
+              path.start.x - headLength * Math.cos(oppositeAngle - Math.PI/6),
+              path.start.y - headLength * Math.sin(oppositeAngle - Math.PI/6)
             );
+            ctx.moveTo(path.start.x, path.start.y);
             ctx.lineTo(
-              path.start.x + arrowHeadLength * Math.cos(angle + Math.PI/6),
-              path.start.y + arrowHeadLength * Math.sin(angle + Math.PI/6)
+              path.start.x - headLength * Math.cos(oppositeAngle + Math.PI/6),
+              path.start.y - headLength * Math.sin(oppositeAngle + Math.PI/6)
             );
-            ctx.closePath();
-            ctx.fill();
+            
+            ctx.stroke();
+          } 
+          else { // standard
+            // Standard arrow
+            ctx.beginPath();
+            ctx.moveTo(path.end.x, path.end.y);
+            ctx.lineTo(
+              path.end.x - headLength * Math.cos(angle - Math.PI/6),
+              path.end.y - headLength * Math.sin(angle - Math.PI/6)
+            );
+            ctx.moveTo(path.end.x, path.end.y);
+            ctx.lineTo(
+              path.end.x - headLength * Math.cos(angle + Math.PI/6),
+              path.end.y - headLength * Math.sin(angle + Math.PI/6)
+            );
+            ctx.stroke();
           }
-        } 
+        }
         else if (path.type === "rectangle") {
+          if (!path.start || !path.end) return;
+          
           var x = Math.min(path.start.x, path.end.x);
           var y = Math.min(path.start.y, path.end.y);
           var width = Math.abs(path.end.x - path.start.x);
           var height = Math.abs(path.end.y - path.start.y);
           
+          ctx.beginPath();
           ctx.rect(x, y, width, height);
           ctx.stroke();
-        } 
+        }
         else if (path.type === "circle") {
+          if (!path.start || !path.end) return;
+          
           var centerX = (path.start.x + path.end.x) / 2;
           var centerY = (path.start.y + path.end.y) / 2;
           var radiusX = Math.abs(path.end.x - path.start.x) / 2;
           var radiusY = Math.abs(path.end.y - path.start.y) / 2;
           
-          ctx.ellipse(centerX, centerY, radiusX, radiusY);
+          ctx.beginPath();
+          ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
           ctx.stroke();
         }
-        
-        ctx.restore();
-      }
-      
-      function addTemporaryPath(path) {
-        temporaryPaths.push(path);
-        requestPaint();
-      }
-      
-      function commitTemporaryPaths() {
-        // For permanent drawing, we'll draw directly to the canvas
-        var ctx = getContext("2d");
-        
-        for (var i = 0; i < temporaryPaths.length; i++) {
-          drawPath(ctx, temporaryPaths[i]);
+        else if (path.type === "text") {
+          // Render text
+          ctx.font = path.fontSize + "px sans-serif";
+          ctx.fillStyle = path.color;
+          
+          // Set text alignment to center
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          
+          // If text is selected, draw a highlight background
+          if (path.selected) {
+            let textWidth = path.text.length * path.fontSize * 0.6;
+            let textHeight = path.fontSize * 1.2;
+            
+            ctx.fillStyle = "rgba(100, 100, 255, 0.3)";
+            ctx.fillRect(
+              path.position.x - textWidth/2 - 5,
+              path.position.y - textHeight/2 - 5,
+              textWidth + 10,
+              textHeight + 10
+            );
+            
+            // Reset fill style for text
+            ctx.fillStyle = path.color;
+          }
+          
+          // Apply text
+          ctx.fillText(path.text, path.position.x, path.position.y);
+          
+          // Draw a draggable handle or indicator
+          if (path.showHandle) {
+            // Draw a small circle to indicate the text can be moved
+            ctx.beginPath();
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.arc(path.position.x, path.position.y + path.fontSize/2 + 10, 6, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            // Draw move icon inside the handle
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.lineWidth = 1;
+            // Draw four small lines like a move icon
+            ctx.moveTo(path.position.x - 3, path.position.y + path.fontSize/2 + 10);
+            ctx.lineTo(path.position.x + 3, path.position.y + path.fontSize/2 + 10);
+            ctx.moveTo(path.position.x, path.position.y + path.fontSize/2 + 7);
+            ctx.lineTo(path.position.x, path.position.y + path.fontSize/2 + 13);
+            ctx.stroke();
+          }
         }
-        
-        temporaryPaths = [];
-        requestPaint();
       }
       
       MouseArea {
-        id: canvasMouseArea
         anchors.fill: parent
-        enabled: !annotationContainer.textInputActive && !annotationContainer.colorPickerVisible
+        
+        property var selectedTextPath: null
+        property bool isDraggingText: false
+        property point dragStartPoint
         
         onPressed: {
-          annotationCanvas.startPoint = Qt.point(mouseX, mouseY);
-          annotationCanvas.lastPoint = Qt.point(mouseX, mouseY);
-          annotationCanvas.drawing = true;
+          if (annotationContainer.textInputActive || annotationContainer.colorPickerVisible || annotationContainer.brushSettingsVisible) {
+            return;
+          }
           
-          if (annotationContainer.currentTool === "freehand") {
-            // For freehand, we'll start a new path
-            annotationCanvas.addTemporaryPath({
-              type: "freehand",
-              points: [annotationCanvas.lastPoint]
-            });
+          // Store tap position for potential text placement
+          annotationCanvas.startPoint = Qt.point(mouseX, mouseY);
+          
+          // Check if user is clicking on existing text to move it
+          let clickPoint = Qt.point(mouseX, mouseY);
+          let foundText = false;
+          
+          // Check in reverse order (top-most first)
+          for (let i = annotationCanvas.permanentPaths.length - 1; i >= 0; i--) {
+            let path = annotationCanvas.permanentPaths[i];
+            if (path.type === "text") {
+              // Create a rectangular hit area around the text
+              let textWidth = path.text.length * path.fontSize * 0.6; // Approximate width
+              let textHeight = path.fontSize * 1.2; // Approximate height
+              
+              let left = path.position.x - textWidth/2;
+              let right = path.position.x + textWidth/2;
+              let top = path.position.y - textHeight/2;
+              let bottom = path.position.y + textHeight/2;
+              
+              if (clickPoint.x >= left && clickPoint.x <= right && 
+                  clickPoint.y >= top && clickPoint.y <= bottom) {
+                // Found a text path to move
+                selectedTextPath = path;
+                isDraggingText = true;
+                dragStartPoint = clickPoint;
+                foundText = true;
+                
+                // Set all text handles to not show except the selected one
+                for (let j = 0; j < annotationCanvas.permanentPaths.length; j++) {
+                  if (annotationCanvas.permanentPaths[j].type === "text") {
+                    annotationCanvas.permanentPaths[j].showHandle = (j === i);
+                    annotationCanvas.permanentPaths[j].selected = (j === i);
+                  }
+                }
+                
+                // Update instruction text to indicate text can be moved
+                instructionText.text = qsTr("Drag the text to reposition it. Tap elsewhere to deselect.");
+                
+                annotationCanvas.requestPaint();
+                break;
+              }
+            }
+          }
+          
+          // If not clicking on text, deselect any selected text
+          if (!foundText) {
+            let hadSelectedText = false;
+            
+            for (let i = 0; i < annotationCanvas.permanentPaths.length; i++) {
+              if (annotationCanvas.permanentPaths[i].type === "text" && 
+                 (annotationCanvas.permanentPaths[i].selected || annotationCanvas.permanentPaths[i].showHandle)) {
+                annotationCanvas.permanentPaths[i].selected = false;
+                annotationCanvas.permanentPaths[i].showHandle = false;
+                hadSelectedText = true;
+              }
+            }
+            
+            if (hadSelectedText) {
+              // Reset instruction text
+              instructionText.text = qsTr("Tap a tool to begin annotating. Text can be dragged after adding.");
+              annotationCanvas.requestPaint();
+            }
+            
+            if (annotationContainer.currentTool === "text") {
+              // For text tool, activate text input dialog
+              annotationContainer.textInputActive = true;
+              // Store the tap position for later text placement
+              annotationTextField.textPosition = annotationCanvas.startPoint;
+              return;
+            }
+            
+            annotationCanvas.lastPoint = Qt.point(mouseX, mouseY);
+            
+            if (annotationContainer.currentTool === "freehand") {
+              // Start a new freehand drawing path
+              var newPath = {
+                type: "freehand",
+                points: [Qt.point(mouseX, mouseY)],
+                color: cameraSettings.brushColor,
+                width: cameraSettings.brushSize
+              };
+              
+              annotationCanvas.temporaryPaths.push(newPath);
+            } else {
+              // Start shape drawing (rectangle, circle, arrow)
+              var newShape = {
+                type: annotationContainer.currentTool,
+                start: Qt.point(mouseX, mouseY),
+                end: Qt.point(mouseX, mouseY),
+                color: cameraSettings.brushColor,
+                width: cameraSettings.brushSize
+              };
+              
+              // For arrows, include the style
+              if (annotationContainer.currentTool === "arrow") {
+                newShape.style = annotationContainer.arrowStyle;
+              }
+              
+              annotationCanvas.temporaryPaths.push(newShape);
+            }
+            
+            annotationCanvas.drawing = true;
+            annotationCanvas.requestPaint();
           }
         }
         
         onPositionChanged: {
+          // If dragging text, update its position
+          if (isDraggingText && selectedTextPath) {
+            selectedTextPath.position = Qt.point(mouseX, mouseY);
+            annotationCanvas.requestPaint();
+            return;
+          }
+          
           if (!annotationCanvas.drawing) return;
           
           if (annotationContainer.currentTool === "freehand") {
-            // Add point to the current freehand path
+            // For freehand drawing, add points to the current path
             var currentPath = annotationCanvas.temporaryPaths[annotationCanvas.temporaryPaths.length - 1];
             currentPath.points.push(Qt.point(mouseX, mouseY));
-            annotationCanvas.lastPoint = Qt.point(mouseX, mouseY);
-            annotationCanvas.requestPaint();
-          } 
-          else {
-            // For shapes, update the preview
-            annotationCanvas.temporaryPaths = []; // Clear any existing previews
-            
-            var newPath = {
-              type: annotationContainer.currentTool,
-              start: annotationCanvas.startPoint,
-              end: Qt.point(mouseX, mouseY)
-            };
-            
-            annotationCanvas.addTemporaryPath(newPath);
+          } else {
+            // For shapes, update the end point
+            var currentShape = annotationCanvas.temporaryPaths[annotationCanvas.temporaryPaths.length - 1];
+            currentShape.end = Qt.point(mouseX, mouseY);
           }
+          
+          annotationCanvas.requestPaint();
+          annotationCanvas.lastPoint = Qt.point(mouseX, mouseY);
         }
         
         onReleased: {
-          if (!annotationCanvas.drawing) return;
-          
-          if (annotationContainer.currentTool !== "freehand") {
-            // For shapes, finalize the shape when released
-            var finalPath = {
-              type: annotationContainer.currentTool,
-              start: annotationCanvas.startPoint,
-              end: Qt.point(mouseX, mouseY)
-            };
-            
-            annotationCanvas.temporaryPaths = [finalPath];
+          // End text dragging if active
+          if (isDraggingText) {
+            isDraggingText = false;
+            return;
           }
           
-          // Commit all temporary paths to the canvas
-          annotationCanvas.commitTemporaryPaths();
+          if (!annotationCanvas.drawing) return;
+          
+          // Finalize the drawing by moving from temporary to permanent paths
+          if (annotationCanvas.temporaryPaths.length > 0) {
+            var finishedPath = annotationCanvas.temporaryPaths.pop();
+            
+            // Only add if it's not just a click (check for minimal movement)
+            if (annotationContainer.currentTool === "freehand") {
+              if (finishedPath.points.length > 1) {
+                annotationCanvas.permanentPaths.push(finishedPath);
+              }
+            } else {
+              // For shapes, check if start and end are different enough
+              var dx = finishedPath.end.x - finishedPath.start.x;
+              var dy = finishedPath.end.y - finishedPath.start.y;
+              var distance = Math.sqrt(dx * dx + dy * dy);
+              
+              if (distance > 5) { // Minimum distance threshold
+                annotationCanvas.permanentPaths.push(finishedPath);
+              }
+            }
+          }
+          
           annotationCanvas.drawing = false;
+          annotationCanvas.requestPaint();
         }
       }
     }
@@ -2053,42 +2229,76 @@ Popup {
     // Annotation toolbar
     Rectangle {
       id: annotationToolbar
-      anchors.right: parent.right
-      anchors.top: parent.top
       anchors.bottom: parent.bottom
-      anchors.topMargin: 60 // Leave space for back button
-      anchors.rightMargin: 4
-      width: 60
-      color: "#80000000"
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: 10
+      height: 60
+      color: "#303030"
+      radius: 8
       
       property bool drawingMode: annotationContainer.currentTool !== "text"
       
-      Column {
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
+      Row {
+        anchors.centerIn: parent
         spacing: 10
         
-        // Freehand tool button
+        // Brush size/settings button
         Rectangle {
-          width: 50
-          height: 50
-          radius: 25
+          id: brushSettingsButton
+          width: 44
+          height: 44
+          radius: 4
+          color: "#555555"
+          
+          Image {
+            anchors.centerIn: parent
+            width: 28
+            height: 28
+            source: Theme.getThemeVectorIcon("ic_settings_black_24dp")
+            sourceSize.width: 28
+            sourceSize.height: 28
+            fillMode: Image.PreserveAspectFit
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationContainer.brushSettingsVisible = !annotationContainer.brushSettingsVisible;
+              annotationContainer.colorPickerVisible = false;
+              arrowStyleSelector.visible = false;
+              
+              // Update instruction text
+              instructionText.text = qsTr("Adjust brush size and color");
+            }
+          }
+        }
+        
+        // Freehand drawing tool
+        Rectangle {
+          id: freehandToolButton
+          width: 44
+          height: 44
+          radius: 4
           color: annotationContainer.currentTool === "freehand" ? Theme.mainColor : "#555555"
           
           Image {
             anchors.centerIn: parent
-            source: Theme.getThemeVectorIcon("ic_create_white_24dp")
-            width: 30
-            height: 30
+            width: 28
+            height: 28
+            source: Theme.getThemeVectorIcon("ic_edit_black_24dp")
+            sourceSize.width: 28
+            sourceSize.height: 28
+            fillMode: Image.PreserveAspectFit
           }
           
           MouseArea {
             anchors.fill: parent
             onClicked: {
               annotationContainer.currentTool = "freehand";
-              annotationContainer.textInputActive = false;
               arrowStyleSelector.visible = false;
+              annotationContainer.brushSettingsVisible = false;
+              instructionText.text = qsTr("Draw freehand on the image");
             }
           }
         }
@@ -2096,33 +2306,276 @@ Popup {
         // Arrow tool button
         Rectangle {
           id: arrowToolButton
-          width: 50
-          height: 50
-          radius: 25
+          width: 44
+          height: 44
+          radius: 4
           color: annotationContainer.currentTool === "arrow" ? Theme.mainColor : "#555555"
           
           Canvas {
             anchors.centerIn: parent
-            width: 30
-            height: 30
+            width: 36
+            height: 36
             
             onPaint: {
               var ctx = getContext("2d");
-              ctx.strokeStyle = "white";
-              ctx.fillStyle = "white";
               ctx.lineWidth = 2;
+              ctx.strokeStyle = "white";
               
               // Draw arrow shaft
               ctx.beginPath();
-              ctx.moveTo(5, 15);
-              ctx.lineTo(25, 15);
+              ctx.moveTo(5, 18);
+              ctx.lineTo(25, 18);
               ctx.stroke();
               
               // Draw arrowhead
               ctx.beginPath();
-              ctx.moveTo(25, 15);
-              ctx.lineTo(19, 9);
-              ctx.lineTo(19, 21);
+              ctx.moveTo(25, 18);
+              ctx.lineTo(20, 13);
+              ctx.moveTo(25, 18);
+              ctx.lineTo(20, 23);
+              ctx.stroke();
+            }
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationContainer.currentTool = "arrow";
+              
+              // Toggle arrow style selector visibility
+              arrowStyleSelector.visible = !arrowStyleSelector.visible;
+              annotationContainer.brushSettingsVisible = false;
+              
+              instructionText.text = qsTr("Tap and drag to draw an arrow. Tap the arrow button again to change arrow style.");
+            }
+          }
+        }
+
+        // Text tool button
+        Rectangle {
+          id: textToolButton
+          width: 44
+          height: 44
+          radius: 4
+          color: annotationContainer.currentTool === "text" ? Theme.mainColor : "#555555"
+          
+          Text {
+            anchors.centerIn: parent
+            text: "T"
+            color: "white"
+            font.bold: true
+            font.pixelSize: 24
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationContainer.currentTool = "text";
+              arrowStyleSelector.visible = false;
+              annotationContainer.brushSettingsVisible = false;
+              annotationContainer.textInputActive = true;
+              instructionText.text = qsTr("Add text to the image");
+            }
+          }
+        }
+        
+        // Shape tool button
+        Rectangle {
+          id: shapeToolButton
+          width: 44
+          height: 44
+          radius: 4
+          color: (annotationContainer.currentTool === "rectangle" || annotationContainer.currentTool === "circle") ? Theme.mainColor : "#555555"
+          
+          Canvas {
+            anchors.centerIn: parent
+            width: 36
+            height: 36
+            
+            onPaint: {
+              var ctx = getContext("2d");
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = "white";
+              
+              // Draw rectangle
+              ctx.beginPath();
+              ctx.rect(8, 8, 20, 20);
+              ctx.stroke();
+            }
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              // Toggle between rectangle and circle
+              if (annotationContainer.currentTool !== "rectangle" && annotationContainer.currentTool !== "circle") {
+                annotationContainer.currentTool = "rectangle";
+                instructionText.text = qsTr("Tap and drag to draw a rectangle");
+              } else if (annotationContainer.currentTool === "rectangle") {
+                annotationContainer.currentTool = "circle";
+                instructionText.text = qsTr("Tap and drag to draw a circle");
+              } else {
+                annotationContainer.currentTool = "rectangle";
+                instructionText.text = qsTr("Tap and drag to draw a rectangle");
+              }
+              
+              arrowStyleSelector.visible = false;
+              annotationContainer.brushSettingsVisible = false;
+            }
+          }
+        }
+
+        // Accept button
+        Rectangle {
+          id: acceptButton
+          width: 44
+          height: 44
+          radius: 4
+          color: "#008800"
+          
+          Image {
+            anchors.centerIn: parent
+            width: 28
+            height: 28
+            source: Theme.getThemeVectorIcon("ic_check_black_24dp")
+            sourceSize.width: 28
+            sourceSize.height: 28
+            fillMode: Image.PreserveAspectFit
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              // Save the annotated image
+              cameraItem.saveAnnotatedImage();
+            }
+          }
+        }
+        
+        // Cancel button
+        Rectangle {
+          id: cancelButton
+          width: 44
+          height: 44
+          radius: 4
+          color: "#AA0000"
+          
+          Image {
+            anchors.centerIn: parent
+            width: 28
+            height: 28
+            source: Theme.getThemeVectorIcon("ic_close_black_24dp")
+            sourceSize.width: 28
+            sourceSize.height: 28
+            fillMode: Image.PreserveAspectFit
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              // Cancel annotation mode
+              cameraItem.state = "PhotoCapture";
+              annotationCanvas.temporaryPaths = [];
+              annotationCanvas.permanentPaths = [];
+              annotationCanvas.requestPaint();
+            }
+          }
+        }
+      }
+    }
+    
+    // Arrow style selector
+    Rectangle {
+      id: arrowStyleSelector
+      visible: false
+      anchors {
+        bottom: annotationToolbar.top
+        horizontalCenter: parent.horizontalCenter
+        bottomMargin: 10
+      }
+      width: arrowStyleRow.width + 20
+      height: arrowStyleRow.height + 20
+      color: "#303030"
+      radius: 8
+      border.color: "#909090"
+      border.width: 1
+      
+      Row {
+        id: arrowStyleRow
+        anchors.centerIn: parent
+        spacing: 20
+        
+        // Standard arrow style
+        Rectangle {
+          width: 60
+          height: 40
+          radius: 4
+          color: annotationContainer.arrowStyle === "standard" ? "#555555" : "#404040"
+          
+          Canvas {
+            anchors.centerIn: parent
+            width: 50
+            height: 30
+            
+            onPaint: {
+              var ctx = getContext("2d");
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = "white";
+              
+              // Draw arrow shaft
+              ctx.beginPath();
+              ctx.moveTo(5, 15);
+              ctx.lineTo(35, 15);
+              ctx.stroke();
+              
+              // Draw arrowhead
+              ctx.beginPath();
+              ctx.moveTo(35, 15);
+              ctx.lineTo(30, 10);
+              ctx.moveTo(35, 15);
+              ctx.lineTo(30, 20);
+              ctx.stroke();
+            }
+          }
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              annotationContainer.arrowStyle = "standard";
+              arrowStyleSelector.visible = false;
+            }
+          }
+        }
+        
+        // Filled arrow style
+        Rectangle {
+          width: 60
+          height: 40
+          radius: 4
+          color: annotationContainer.arrowStyle === "filled" ? "#555555" : "#404040"
+          
+          Canvas {
+            anchors.centerIn: parent
+            width: 50
+            height: 30
+            
+            onPaint: {
+              var ctx = getContext("2d");
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = "white";
+              ctx.fillStyle = "white";
+              
+              // Draw arrow shaft
+              ctx.beginPath();
+              ctx.moveTo(5, 15);
+              ctx.lineTo(35, 15);
+              ctx.stroke();
+              
+              // Draw filled arrowhead
+              ctx.beginPath();
+              ctx.moveTo(35, 15);
+              ctx.lineTo(30, 10);
+              ctx.lineTo(30, 20);
               ctx.closePath();
               ctx.fill();
             }
@@ -2131,305 +2584,315 @@ Popup {
           MouseArea {
             anchors.fill: parent
             onClicked: {
-              annotationContainer.currentTool = "arrow";
-              annotationContainer.textInputActive = false;
-              // Toggle arrow style selector visibility
-              arrowStyleSelector.visible = !arrowStyleSelector.visible;
-              
-              // Show instruction
-              instructionText.text = "Tap and drag to draw an arrow. Tap the arrow button again to change arrow style.";
-              instructionText.visible = true;
-              instructionTimer.restart();
-            }
-          }
-        }
-        
-        // Arrow style selector popup
-        Rectangle {
-          id: arrowStyleSelector
-          visible: false
-          width: 180
-          height: 50
-          radius: 5
-          color: "#80000000"
-          anchors.right: arrowToolButton.left
-          anchors.verticalCenter: arrowToolButton.verticalCenter
-          anchors.rightMargin: 10
-          
-          Row {
-            anchors.centerIn: parent
-            spacing: 10
-            
-            // Standard arrow style
-            Rectangle {
-              width: 50
-              height: 40
-              radius: 5
-              color: annotationContainer.arrowStyle === "standard" ? "#ffffff" : "#40ffffff"
-              
-              Canvas {
-                anchors.centerIn: parent
-                width: 30
-                height: 20
-                onPaint: {
-                  var ctx = getContext("2d");
-                  ctx.strokeStyle = annotationContainer.arrowStyle === "standard" ? "black" : "white";
-                  ctx.lineWidth = 2;
-                  
-                  // Draw arrow line
-                  ctx.beginPath();
-                  ctx.moveTo(2, height/2);
-                  ctx.lineTo(width-8, height/2);
-                  ctx.stroke();
-                  
-                  // Draw arrowhead outline
-                  ctx.beginPath();
-                  ctx.moveTo(width-2, height/2);
-                  ctx.lineTo(width-8, height/2-4);
-                  ctx.lineTo(width-8, height/2+4);
-                  ctx.closePath();
-                  ctx.stroke();
-                }
-              }
-              
-              MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                  annotationContainer.arrowStyle = "standard";
-                  arrowStyleSelector.visible = false;
-                }
-              }
-            }
-            
-            // Filled arrow style
-            Rectangle {
-              width: 50
-              height: 40
-              radius: 5
-              color: annotationContainer.arrowStyle === "filled" ? "#ffffff" : "#40ffffff"
-              
-              Canvas {
-                anchors.centerIn: parent
-                width: 30
-                height: 20
-                onPaint: {
-                  var ctx = getContext("2d");
-                  ctx.strokeStyle = annotationContainer.arrowStyle === "filled" ? "black" : "white";
-                  ctx.fillStyle = annotationContainer.arrowStyle === "filled" ? "black" : "white";
-                  ctx.lineWidth = 2;
-                  
-                  // Draw arrow line
-                  ctx.beginPath();
-                  ctx.moveTo(2, height/2);
-                  ctx.lineTo(width-8, height/2);
-                  ctx.stroke();
-                  
-                  // Draw filled arrowhead
-                  ctx.beginPath();
-                  ctx.moveTo(width-2, height/2);
-                  ctx.lineTo(width-8, height/2-4);
-                  ctx.lineTo(width-8, height/2+4);
-                  ctx.closePath();
-                  ctx.fill();
-                }
-              }
-              
-              MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                  annotationContainer.arrowStyle = "filled";
-                  arrowStyleSelector.visible = false;
-                }
-              }
-            }
-            
-            // Double arrow style
-            Rectangle {
-              width: 50
-              height: 40
-              radius: 5
-              color: annotationContainer.arrowStyle === "double" ? "#ffffff" : "#40ffffff"
-              
-              Canvas {
-                anchors.centerIn: parent
-                width: 30
-                height: 20
-                onPaint: {
-                  var ctx = getContext("2d");
-                  ctx.strokeStyle = annotationContainer.arrowStyle === "double" ? "black" : "white";
-                  ctx.fillStyle = annotationContainer.arrowStyle === "double" ? "black" : "white";
-                  ctx.lineWidth = 2;
-                  
-                  // Draw arrow line
-                  ctx.beginPath();
-                  ctx.moveTo(4, height/2);
-                  ctx.lineTo(width-4, height/2);
-                  ctx.stroke();
-                  
-                  // Draw first arrowhead (right)
-                  ctx.beginPath();
-                  ctx.moveTo(width-2, height/2);
-                  ctx.lineTo(width-8, height/2-4);
-                  ctx.lineTo(width-8, height/2+4);
-                  ctx.closePath();
-                  ctx.fill();
-                  
-                  // Draw second arrowhead (left)
-                  ctx.beginPath();
-                  ctx.moveTo(2, height/2);
-                  ctx.lineTo(8, height/2-4);
-                  ctx.lineTo(8, height/2+4);
-                  ctx.closePath();
-                  ctx.fill();
-                }
-              }
-              
-              MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                  annotationContainer.arrowStyle = "double";
-                  arrowStyleSelector.visible = false;
-                }
-              }
-            }
-          }
-        }
-        
-        // Rectangle tool button
-        Rectangle {
-          width: 50
-          height: 50
-          radius: 25
-          color: annotationContainer.currentTool === "rectangle" ? Theme.mainColor : "#555555"
-          
-          Rectangle {
-            anchors.centerIn: parent
-            width: 26
-            height: 18
-            color: "transparent"
-            border.color: "white"
-            border.width: 2
-          }
-          
-          MouseArea {
-            anchors.fill: parent
-            onClicked: {
-              annotationContainer.currentTool = "rectangle";
-              annotationContainer.textInputActive = false;
+              annotationContainer.arrowStyle = "filled";
               arrowStyleSelector.visible = false;
             }
           }
         }
         
-        // Circle tool button
+        // Double arrow style
         Rectangle {
-          width: 50
-          height: 50
-          radius: 25
-          color: annotationContainer.currentTool === "circle" ? Theme.mainColor : "#555555"
+          width: 60
+          height: 40
+          radius: 4
+          color: annotationContainer.arrowStyle === "double" ? "#555555" : "#404040"
           
-          Rectangle {
+          Canvas {
             anchors.centerIn: parent
-            width: 22
-            height: 22
-            radius: 11
-            color: "transparent"
-            border.color: "white"
-            border.width: 2
-          }
-          
-          MouseArea {
-            anchors.fill: parent
-            onClicked: {
-              annotationContainer.currentTool = "circle";
-              annotationContainer.textInputActive = false;
-              arrowStyleSelector.visible = false;
-            }
-          }
-        }
-        
-        // Text tool button
-        Rectangle {
-          width: 50
-          height: 50
-          radius: 25
-          color: annotationContainer.currentTool === "text" ? Theme.mainColor : "#555555"
-          
-          Text {
-            anchors.centerIn: parent
-            text: "T"
-            color: "white"
-            font.pixelSize: 30
-            font.bold: true
-          }
-          
-          MouseArea {
-            anchors.fill: parent
-            onClicked: {
-              annotationContainer.currentTool = "text";
-              annotationContainer.textInputActive = true;
-              arrowStyleSelector.visible = false;
-            }
-          }
-        }
-        
-        // Color picker button
-        Rectangle {
-          width: 50
-          height: 50
-          radius: 25
-          color: "#555555"
-          
-          Rectangle {
-            anchors.centerIn: parent
-            width: 30
+            width: 50
             height: 30
-            radius: 15
-            color: annotationToolbar.drawingMode ? cameraSettings.brushColor : cameraSettings.textColor
-            border.color: "white"
-            border.width: 2
+            
+            onPaint: {
+              var ctx = getContext("2d");
+              ctx.lineWidth = 2;
+              ctx.strokeStyle = "white";
+              
+              // Draw arrow shaft
+              ctx.beginPath();
+              ctx.moveTo(5, 15);
+              ctx.lineTo(45, 15);
+              ctx.stroke();
+              
+              // Draw left arrowhead
+              ctx.beginPath();
+              ctx.moveTo(5, 15);
+              ctx.lineTo(10, 10);
+              ctx.moveTo(5, 15);
+              ctx.lineTo(10, 20);
+              
+              // Draw right arrowhead
+              ctx.moveTo(45, 15);
+              ctx.lineTo(40, 10);
+              ctx.moveTo(45, 15);
+              ctx.lineTo(40, 20);
+              ctx.stroke();
+            }
           }
           
           MouseArea {
             anchors.fill: parent
             onClicked: {
-              annotationContainer.colorPickerVisible = true;
+              annotationContainer.arrowStyle = "double";
               arrowStyleSelector.visible = false;
             }
           }
         }
       }
     }
-    
-    // Instruction text for tools
+
+    // Instructions text
     Rectangle {
-      id: instructionText
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.bottom: parent.bottom
-      anchors.bottomMargin: 80
-      width: parent.width * 0.8
-      height: instructionTextLabel.contentHeight + 20
+      id: instructionRect
+      anchors {
+        top: parent.top
+        left: parent.left
+        right: parent.right
+        margins: 10
+      }
+      height: instructionText.contentHeight + 16
       color: "#80000000"
-      radius: 10
-      visible: false
-      property string text: ""
+      radius: 4
+      visible: true
       
       Text {
-        id: instructionTextLabel
-        anchors.centerIn: parent
-        width: parent.width - 20
+        id: instructionText
+        anchors {
+          verticalCenter: parent.verticalCenter
+          left: parent.left
+          right: parent.right
+          margins: 8
+        }
         color: "white"
-        font.pixelSize: 16
-        horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 14
         wrapMode: Text.WordWrap
-        text: instructionText.text
+        text: qsTr("Tap a tool to begin annotating. Text can be dragged after adding.")
+      }
+    }
+  }
+
+  // Brush size and color settings panel
+  Rectangle {
+    id: brushSettingsPanel
+    visible: annotationContainer.brushSettingsVisible
+    anchors {
+      bottom: annotationToolbar.top
+      horizontalCenter: parent.horizontalCenter
+      bottomMargin: 10
+    }
+    width: Math.min(parent.width * 0.9, 400)
+    height: brushSettingsColumn.height + 20
+    color: "#303030"
+    radius: 8
+    border.color: "#909090"
+    border.width: 1
+    
+    Column {
+      id: brushSettingsColumn
+      anchors {
+        top: parent.top
+        left: parent.left
+        right: parent.right
+        margins: 10
+      }
+      spacing: 10
+      
+      Text {
+        text: annotationContainer.currentTool === "text" ? qsTr("Text Settings") : qsTr("Brush Settings")
+        color: "white"
+        font.bold: true
+        font.pixelSize: 16
+        anchors.horizontalCenter: parent.horizontalCenter
       }
       
-      Timer {
-        id: instructionTimer
-        interval: 4000
-        onTriggered: {
-          instructionText.visible = false;
+      // Size slider
+      Column {
+        width: parent.width
+        spacing: 5
+        
+        Text {
+          text: annotationContainer.currentTool === "text" ? 
+                qsTr("Text Size: %1").arg(annotationContainer.currentTool === "text" ? cameraSettings.textSize : cameraSettings.brushSize) : 
+                qsTr("Brush Size: %1").arg(cameraSettings.brushSize)
+          color: "white"
+          font.pixelSize: 14
+        }
+        
+        Slider {
+          id: sizeSlider
+          width: parent.width
+          from: annotationContainer.currentTool === "text" ? 12 : 1
+          to: annotationContainer.currentTool === "text" ? 72 : 50
+          stepSize: 1
+          value: annotationContainer.currentTool === "text" ? cameraSettings.textSize : cameraSettings.brushSize
+          
+          onValueChanged: {
+            if (annotationContainer.currentTool === "text") {
+              cameraSettings.textSize = value;
+            } else {
+              cameraSettings.brushSize = value;
+            }
+            annotationCanvas.requestPaint();
+          }
+        }
+      }
+      
+      // Color selection
+      Row {
+        width: parent.width
+        spacing: 10
+        
+        Text {
+          text: qsTr("Color:")
+          color: "white"
+          font.pixelSize: 14
+          anchors.verticalCenter: parent.verticalCenter
+        }
+        
+        // Color swatches row
+        Row {
+          spacing: 8
+          anchors.verticalCenter: parent.verticalCenter
+          
+          Repeater {
+            model: ["#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#0000FF", "#800080", "#FFFFFF", "#000000"]
+            
+            Rectangle {
+              width: 30
+              height: 30
+              radius: 15
+              color: modelData
+              border.color: (annotationContainer.currentTool === "text" && cameraSettings.textColor === modelData) || 
+                           (annotationContainer.currentTool !== "text" && cameraSettings.brushColor === modelData) ? 
+                           "#FFFFFF" : "#404040"
+              border.width: (annotationContainer.currentTool === "text" && cameraSettings.textColor === modelData) || 
+                           (annotationContainer.currentTool !== "text" && cameraSettings.brushColor === modelData) ? 
+                           3 : 1
+              
+              MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                  if (annotationContainer.currentTool === "text") {
+                    cameraSettings.textColor = modelData;
+                  } else {
+                    cameraSettings.brushColor = modelData;
+                  }
+                  annotationCanvas.requestPaint();
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // Close button
+      Button {
+        text: qsTr("Close")
+        anchors.horizontalCenter: parent.horizontalCenter
+        onClicked: annotationContainer.brushSettingsVisible = false
+      }
+    }
+  }
+
+  // Text entry dialog for annotations
+  Rectangle {
+    id: textEntryDialog
+    visible: annotationContainer.textInputActive
+    anchors.centerIn: parent
+    width: Math.min(parent.width * 0.9, 400)
+    height: textEntryColumn.height + 20
+    color: "#303030"
+    radius: 8
+    border.color: "#909090"
+    border.width: 1
+    
+    Column {
+      id: textEntryColumn
+      anchors {
+        top: parent.top
+        left: parent.left
+        right: parent.right
+        margins: 10
+      }
+      spacing: 10
+      
+      Text {
+        text: qsTr("Enter Text")
+        color: "white"
+        font.bold: true
+        font.pixelSize: 16
+        anchors.horizontalCenter: parent.horizontalCenter
+      }
+      
+      TextField {
+        id: annotationTextField
+        width: parent.width
+        placeholderText: qsTr("Type your text here")
+        color: "white"
+        font.pixelSize: 16
+        
+        property point textPosition: Qt.point(0, 0)
+        
+        background: Rectangle {
+          color: "#404040"
+          border.color: "#909090"
+          border.width: 1
+          radius: 4
+        }
+        
+        // Ensure keyboard shows up on Android
+        Component.onCompleted: {
+          forceActiveFocus()
+          if (Qt.platform.os === "android") {
+            Qt.inputMethod.show()
+          }
+        }
+        
+        onAccepted: {
+          acceptTextButton.clicked()
+        }
+      }
+      
+      Row {
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 20
+        
+        Button {
+          text: qsTr("Cancel")
+          onClicked: {
+            annotationContainer.textInputActive = false
+            annotationTextField.text = ""
+          }
+        }
+        
+        Button {
+          id: acceptTextButton
+          text: qsTr("Add Text")
+          onClicked: {
+            if (annotationTextField.text.trim() !== "") {
+              // Create a new text annotation at the tapped position rather than screen center
+              var newText = {
+                type: "text",
+                text: annotationTextField.text,
+                position: annotationTextField.textPosition,
+                color: cameraSettings.textColor,
+                fontSize: cameraSettings.textSize,
+                showHandle: true, // Add a handle to indicate it can be moved
+                selected: true // Initially select it so user can see it's movable
+              };
+              
+              // Add to permanent paths for rendering
+              annotationCanvas.permanentPaths.push(newText);
+              
+              // Update instruction to let user know they can move the text
+              instructionText.text = qsTr("Drag the text to reposition it. Tap elsewhere to deselect.");
+              
+              annotationCanvas.requestPaint();
+              
+              // Close the dialog
+              annotationContainer.textInputActive = false;
+              annotationTextField.text = "";
+            }
+          }
         }
       }
     }

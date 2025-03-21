@@ -839,94 +839,37 @@ void QgisMobileapp::readProjectFile()
       }
     }
   }
-
-  // Check for QGZ file validity before loading
-  bool projectLoaded = false;
-  
-  // When loading a QGZ file, first check if it's a valid zip archive
-  if (suffix == QStringLiteral("qgz")) {
-    // Try to open the file to check if it's a valid zip archive
-    QFile projectFile(mProjectFilePath);
-    if (!projectFile.open(QIODevice::ReadOnly)) {
-      QgsMessageLog::logMessage(tr("Failed to open project file: %1").arg(projectFile.errorString()), 
-                               QStringLiteral("SIGPACGO"), Qgis::Critical);
-      emit loadProjectEnded(mProjectFilePath, mProjectFileName);
-      return;
-    }
-    
-    // Read first few bytes to verify zip signature
-    const QByteArray header = projectFile.read(4);
-    projectFile.close();
-    
-    // Check for ZIP file signature (PK\x03\x04)
-    if (header.size() < 4 || header[0] != 0x50 || header[1] != 0x4B || 
-        header[2] != 0x03 || header[3] != 0x04) {
-      QgsMessageLog::logMessage(tr("File is not a valid ZIP archive: %1").arg(mProjectFilePath), 
-                               QStringLiteral("SIGPACGO"), Qgis::Critical);
-      
-      // Try to locate a backup file in the same directory
-      QString backupPath = mProjectFilePath + ".backup";
-      if (QFile::exists(backupPath)) {
-        QgsMessageLog::logMessage(tr("Trying to load backup file: %1").arg(backupPath), 
-                                 QStringLiteral("SIGPACGO"), Qgis::Warning);
-        // Replace corrupted file with the backup
-        if (QFile::remove(mProjectFilePath) && QFile::copy(backupPath, mProjectFilePath)) {
-          QgsMessageLog::logMessage(tr("Restored project from backup file"), 
-                                   QStringLiteral("SIGPACGO"), Qgis::Info);
-        } else {
-          QgsMessageLog::logMessage(tr("Failed to restore backup file"), 
-                                   QStringLiteral("SIGPACGO"), Qgis::Critical);
-          emit loadProjectEnded(mProjectFilePath, mProjectFileName);
-          return;
-        }
-      } else {
-        QgsMessageLog::logMessage(tr("No backup file found. Cannot load project."), 
-                                 QStringLiteral("SIGPACGO"), Qgis::Critical);
-        emit loadProjectEnded(mProjectFilePath, mProjectFileName);
-        return;
-      }
-    }
-  }
-
   // Load project file
-  try {
-    if (SUPPORTED_PROJECT_EXTENSIONS.contains(suffix)) {
-      mProject->read(mProjectFilePath, Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews);
-      mProject->writeEntry(QStringLiteral("QField"), QStringLiteral("isDataset"), false);
-      projectLoaded = true;
-      
-      // Create a backup copy of the successful project file
-      if (suffix == QStringLiteral("qgz")) {
-        QString backupPath = mProjectFilePath + ".backup";
-        QFile::copy(mProjectFilePath, backupPath);
+  bool projectLoaded = false;
+  if ( SUPPORTED_PROJECT_EXTENSIONS.contains( suffix ) )
+  {
+    mProject->read( mProjectFilePath, Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews );
+    mProject->writeEntry( QStringLiteral( "QField" ), QStringLiteral( "isDataset" ), false );
+    projectLoaded = true;
+  }
+  else if ( suffix == QStringLiteral( "gpkg" ) )
+  {
+    QgsProjectStorage *storage = QgsApplication::projectStorageRegistry()->projectStorageFromType( "geopackage" );
+    if ( storage )
+    {
+      const QStringList projectNames = storage->listProjects( mProjectFilePath );
+      if ( !projectNames.isEmpty() )
+      {
+        QgsGeoPackageProjectUri projectUri { true, mProjectFilePath, projectNames.at( 0 ) };
+        mProject->read( QgsGeoPackageProjectStorage::encodeUri( projectUri ), Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews );
+        mProject->writeEntry( QStringLiteral( "QField" ), QStringLiteral( "isDataset" ), false );
+        projectLoaded = true;
       }
     }
-    else if (suffix == QStringLiteral("gpkg")) {
-      QgsProjectStorage *storage = QgsApplication::projectStorageRegistry()->projectStorageFromType("geopackage");
-      if (storage) {
-        const QStringList projectNames = storage->listProjects(mProjectFilePath);
-        if (!projectNames.isEmpty()) {
-          QgsGeoPackageProjectUri projectUri{true, mProjectFilePath, projectNames.at(0)};
-          mProject->read(QgsGeoPackageProjectStorage::encodeUri(projectUri), Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews);
-          mProject->writeEntry(QStringLiteral("QField"), QStringLiteral("isDataset"), false);
-          projectLoaded = true;
-        }
-      }
-    }
-  } catch (const std::exception &e) {
-    QgsMessageLog::logMessage(tr("Exception loading project: %1").arg(e.what()), 
-                             QStringLiteral("SIGPACGO"), Qgis::Critical);
-    projectLoaded = false;
-  } catch (...) {
-    QgsMessageLog::logMessage(tr("Unknown exception loading project file"), 
-                             QStringLiteral("SIGPACGO"), Qgis::Critical);
-    projectLoaded = false;
   }
 
-  if (projectLoaded) {
-    if (!mProject->error().isEmpty()) {
-      QgsMessageLog::logMessage(mProject->error());
+  if ( projectLoaded )
+  {
+    if ( !mProject->error().isEmpty() )
+    {
+      QgsMessageLog::logMessage( mProject->error() );
     }
+ 
     
     // For Android, we need to give SQLite a moment to initialize before we start flushing
     // This prevents the "Pure virtual function called" crash when opening GPKG files for the first time
