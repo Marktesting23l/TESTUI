@@ -44,6 +44,7 @@
     <string name="import_overwrite_folder">Project folder exists. Overwrite data?</string>
     <string name="import_overwrite_dataset_single">Dataset exists. Overwrite it?</string>
     <string name="import_overwrite_dataset_multiple">Some datasets exist. Overwrite them?</string>
+    <string name="import_overwrite_dataset">Dataset exists. Do you want to overwrite it?</string>
     <string name="import_overwrite_confirm">Overwrite</string>
     <string name="import_overwrite_cancel">Cancel</string>
     <string name="export_error">Export Error</string>

@@ -42,6 +42,7 @@
     <string name="import_overwrite_folder">La carpeta ya existe. ¿Sobrescribir datos?</string>
     <string name="import_overwrite_dataset_single">El conjunto de datos ya existe. ¿Sobrescribir?</string>
     <string name="import_overwrite_dataset_multiple">Algunos datos ya existen. ¿Sobrescribirlos?</string>
+    <string name="import_overwrite_dataset">El conjunto de datos ya existe. ¿Desea sobrescribirlo?</string>
     <string name="import_overwrite_confirm">Sobrescribir</string>
     <string name="import_overwrite_cancel">Cancelar</string>
     <string name="export_error">Error de exportación</string>
