@@ -3280,7 +3280,11 @@ ApplicationWindow {
 
     onShowProjectFolder: {
       qfieldLocalDataPickerScreen.projectFolderView = true;
-      qfieldLocalDataPickerScreen.model.resetToProjectFolder();
+      if (qfieldLocalDataPickerScreen.model) {
+        qfieldLocalDataPickerScreen.model.resetToProjectFolder();
+      } else {
+        console.log("Warning: Local data picker model is not initialized!");
+      }
       qfieldLocalDataPickerScreen.visible = true;
     }
 
@@ -5647,11 +5651,12 @@ ApplicationWindow {
     function onImportEnded(path) {
       busyOverlay.state = "hidden";
       if (path !== '') {
-        qfieldLocalDataPickerScreen.model.currentPath = path;
+        if (qfieldLocalDataPickerScreen.model) {
+          qfieldLocalDataPickerScreen.model.currentPath = path;
+        } else {
+          console.log("Warning: Local data picker model is not initialized!");
+        }
         qfieldLocalDataPickerScreen.visible = true;
-        welcomeScreen.visible = false;
-      } else {
-        displayToast(qsTr('Import URL failed'));
       }
     }
 
@@ -5952,7 +5957,11 @@ ApplicationWindow {
 
     onOpenLocalDataPicker: {
       qfieldLocalDataPickerScreen.projectFolderView = false;
-      qfieldLocalDataPickerScreen.model.resetToRoot();
+      if (qfieldLocalDataPickerScreen.model) {
+        qfieldLocalDataPickerScreen.model.resetToRoot();
+      } else {
+        console.log("Warning: Local data picker model is not initialized!");
+      }
       qfieldLocalDataPickerScreen.visible = true;
     }
 

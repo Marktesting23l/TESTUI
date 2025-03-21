@@ -929,7 +929,6 @@ Page {
       }
     }
   }
-  }
 
   QfDialog {
     id: importUrlDialog
@@ -2335,7 +2334,7 @@ Page {
     target: iface
 
     function onOpenPath(path) {
-      if (visible) {
+      if (visible && table && table.model) {
         table.model.currentPath = path;
       }
     }
