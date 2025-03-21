@@ -1129,12 +1129,12 @@ void QgisMobileapp::readProjectFile()
   
   // Add Sentinel Imagery group if user has configured an instance ID
   QSettings sentinelSettings;
-  QString sentinelInstanceId = sentinelSettings.value(QStringLiteral("QField/Sentinel/InstanceId"), QString()).toString();
-  bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnableLayers"), true).toBool();
+  QString sentinelInstanceId = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/InstanceId"), QString()).toString();
+  bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EnableLayers"), true).toBool();
   
   // Read layer configuration from settings
   QStringList enabledLayers;
-  QString enabledLayersStr = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnabledLayers"), "TRUE_COLOR,FALSE_COLOR,NDVI").toString();
+  QString enabledLayersStr = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EnabledLayers"), "TRUE_COLOR,FALSE_COLOR,NDVI").toString();
   if (!enabledLayersStr.isEmpty()) {
     enabledLayers = enabledLayersStr.split(",");
   } else {
@@ -1142,23 +1142,23 @@ void QgisMobileapp::readProjectFile()
   }
   
   // Read style settings for each layer
-  QString ndviStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/NDVI"), "ON").toString();
-  QString falseColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/FALSE_COLOR"), "ON").toString();
-  QString trueColorStyle = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/TRUE_COLOR"), "ON").toString();
-  QString custom1Style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/CUSTOM1"), "DEFAULT").toString();
-  QString custom2Style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/CUSTOM2"), "DEFAULT").toString();
+  QString ndviStyle = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/NDVI"), "ON").toString();
+  QString falseColorStyle = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/FALSE_COLOR"), "ON").toString();
+  QString trueColorStyle = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/TRUE_COLOR"), "ON").toString();
+  QString custom1Style = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/CUSTOM1"), "DEFAULT").toString();
+  QString custom2Style = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/CUSTOM2"), "DEFAULT").toString();
   
   // Read custom layer IDs from settings
-  QString custom1LayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/Custom1LayerId"), "").toString();
-  QString custom2LayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/Custom2LayerId"), "").toString();
+  QString custom1LayerId = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Custom1LayerId"), "").toString();
+  QString custom2LayerId = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Custom2LayerId"), "").toString();
   
-  // Read layer IDs for the dropdown layers
-  QString trueColorLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/TrueColorLayerId"), "TRUE_COLOR").toString();
-  QString falseColorLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/FalseColorLayerId"), "FALSE_COLOR").toString();
-  QString ndviLayerId = sentinelSettings.value(QStringLiteral("QField/Sentinel/NdviLayerId"), "NDVI").toString();
+  // Read the IDs for standard layers
+  QString trueColorLayerId = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TrueColorLayerId"), "TRUE_COLOR").toString();
+  QString falseColorLayerId = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/FalseColorLayerId"), "FALSE_COLOR").toString();
+  QString ndviLayerId = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/NdviLayerId"), "NDVI").toString();
   
-  // Check if settings have been updated
-  bool settingsUpdated = sentinelSettings.value(QStringLiteral("QField/Sentinel/SettingsUpdated"), false).toBool();
+  // Track if we've updated Sentinel settings
+  bool settingsUpdated = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/SettingsUpdated"), false).toBool();
   
   // Log the layer configuration for debugging
   QgsMessageLog::logMessage(QStringLiteral("Sentinel enabled layers: %1").arg(enabledLayersStr), "SIGPACGO", Qgis::Info);
@@ -1172,78 +1172,75 @@ void QgisMobileapp::readProjectFile()
   QgsMessageLog::logMessage(QStringLiteral("NDVI layer ID: %1").arg(ndviLayerId), "SIGPACGO", Qgis::Info);
   
   // Read custom layer script parameters
-  QString evalScriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScriptUrl"), "").toString();
-  QString evalScript = sentinelSettings.value(QStringLiteral("QField/Sentinel/EvalScript"), "").toString();
+  QString evalScriptUrl = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EvalScriptUrl"), "").toString();
+  QString evalScript = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EvalScript"), "").toString();
   
   // Read WMS parameters from settings
-  QString crsSetting = sentinelSettings.value(QStringLiteral("QField/Sentinel/CRS"), "EPSG:4326").toString();
-  QString format = sentinelSettings.value(QStringLiteral("QField/Sentinel/Format"), "image/png").toString();
-  QString dpiMode = sentinelSettings.value(QStringLiteral("QField/Sentinel/DPIMode"), "7").toString();
-  QString tilePixelRatio = sentinelSettings.value(QStringLiteral("QField/Sentinel/TilePixelRatio"), "0").toString();
+  QString crsSetting = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/CRS"), "EPSG:4326").toString();
+  QString format = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Format"), "image/png").toString();
+  QString dpiMode = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/DPIMode"), "7").toString();
+  QString tilePixelRatio = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TilePixelRatio"), "0").toString();
   
   // Time parameters
-  bool timeEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/TimeEnabled"), false).toBool();
+  bool timeEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TimeEnabled"), false).toBool();
   QString timeParams;
   if (timeEnabled) {
-    QString startDate = sentinelSettings.value(QStringLiteral("QField/Sentinel/TimeStart"), "").toString();
-    QString endDate = sentinelSettings.value(QStringLiteral("QField/Sentinel/TimeEnd"), "").toString();
+    QString startDate = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TimeStart"), "").toString();
+    QString endDate = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TimeEnd"), "").toString();
     if (!startDate.isEmpty() && !endDate.isEmpty()) {
-      timeParams = QStringLiteral("&time=%1/%2").arg(startDate).arg(endDate);
+      timeParams = QStringLiteral("&TIME=%1/%2").arg(startDate).arg(endDate);
     }
   }
   
   // Advanced parameters
   QString advancedParams;
-  bool showAdvancedParams = sentinelSettings.value(QStringLiteral("QField/Sentinel/AdvancedParamsEnabled"), false).toBool();
+  bool showAdvancedParams = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/AdvancedParamsEnabled"), false).toBool();
   if (showAdvancedParams) {
-    QString maxCC = sentinelSettings.value(QStringLiteral("QField/Sentinel/MAXCC"), "100").toString();
+    QString maxCC = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/MAXCC"), "100").toString();
     if (maxCC != "100") {
       advancedParams += QStringLiteral("&MAXCC=%1").arg(maxCC);
     }
     
-    QString quality = sentinelSettings.value(QStringLiteral("QField/Sentinel/QUALITY"), "90").toString();
+    QString quality = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/QUALITY"), "90").toString();
     if (format == "image/jpeg" && quality != "90") {
       advancedParams += QStringLiteral("&QUALITY=%1").arg(quality);
     }
     
-    QString warnings = sentinelSettings.value(QStringLiteral("QField/Sentinel/WARNINGS"), "YES").toString();
+    QString warnings = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/WARNINGS"), "YES").toString();
     if (warnings != "YES") {
       advancedParams += QStringLiteral("&WARNINGS=%1").arg(warnings);
     }
     
-    QString priority = sentinelSettings.value(QStringLiteral("QField/Sentinel/PRIORITY"), "mostRecent").toString();
+    QString priority = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/PRIORITY"), "mostRecent").toString();
     if (priority != "mostRecent") {
       advancedParams += QStringLiteral("&PRIORITY=%1").arg(priority);
     }
   }
   
-  // BBOX limiting
+  // Handle bbox limiting
   QString bboxParams;
-  bool bboxLimitingEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/BboxLimitingEnabled"), false).toBool();
+  bool bboxLimitingEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/BboxLimitingEnabled"), false).toBool();
+  
   if (bboxLimitingEnabled) {
-    QString bboxWidth = sentinelSettings.value(QStringLiteral("QField/Sentinel/BboxWidth"), "10000").toString();
-    QString bboxHeight = sentinelSettings.value(QStringLiteral("QField/Sentinel/BboxHeight"), "10000").toString();
+    QString bboxWidth = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/BboxWidth"), "10000").toString();
+    QString bboxHeight = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/BboxHeight"), "10000").toString();
     
-    // For a real implementation, we would calculate the BBOX based on the current map center
-    // This is a simplified example using a dummy BBOX centered at 0,0
-    double width = bboxWidth.toDouble();
-    double height = bboxHeight.toDouble();
-    double halfWidth = width / 2;
-    double halfHeight = height / 2;
-    bboxParams = QStringLiteral("&BBOX=%1,%2,%3,%4").arg(-halfWidth).arg(-halfHeight).arg(halfWidth).arg(halfHeight);
+    // We will read these values but not implement BBOX limiting in this version
+    // This avoids using undefined class members
+    QgsMessageLog::logMessage(QStringLiteral("BBOX limiting configured with width=%1, height=%2").arg(bboxWidth, bboxHeight), "SIGPACGO", Qgis::Info);
   }
   
   // Custom script
   QString scriptParams;
-  bool customScriptEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/CustomScriptEnabled"), false).toBool();
+  bool customScriptEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/CustomScriptEnabled"), false).toBool();
   if (customScriptEnabled) {
-    QString scriptUrl = sentinelSettings.value(QStringLiteral("QField/Sentinel/ScriptUrl"), "").toString();
+    QString scriptUrl = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/ScriptUrl"), "").toString();
     if (!scriptUrl.isEmpty()) {
       scriptParams = QStringLiteral("&EVALSCRIPTURL=%1").arg(scriptUrl);
     }
     
     // Check if we have a direct script instead of URL
-    QString customScript = sentinelSettings.value(QStringLiteral("QField/Sentinel/CustomScript"), "").toString();
+    QString customScript = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/CustomScript"), "").toString();
     if (!customScript.isEmpty()) {
       // BASE64 encode the script
       QByteArray scriptBytes = customScript.toUtf8();
@@ -1253,9 +1250,9 @@ void QgisMobileapp::readProjectFile()
   }
   
   // Rate limiting
-  bool rateLimitingEnabled = sentinelSettings.value(QStringLiteral("QField/Sentinel/RateLimitingEnabled"), false).toBool();
+  bool rateLimitingEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/RateLimitingEnabled"), false).toBool();
   if (rateLimitingEnabled) {
-    int delayMs = sentinelSettings.value(QStringLiteral("QField/Sentinel/RateLimitDelay"), 1000).toInt();
+    int delayMs = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/RateLimitDelay"), 1000).toInt();
     WmsRateLimiter::instance()->setEnabled(true);
     WmsRateLimiter::instance()->setDelay(delayMs);
     
@@ -1274,6 +1271,103 @@ void QgisMobileapp::readProjectFile()
     QgsMessageLog::logMessage(QStringLiteral("Enabled layers: %1").arg(enabledLayersStr), "SIGPACGO", Qgis::Info);
     
     sentinelGroup = mProject->layerTreeRoot()->addGroup("Imágenes Sentinel");
+    sentinelGroup->setExpanded(false);
+    
+    // Determine if a custom eval script is being used
+    QString evalScriptUrl = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EvalScriptUrl"), "").toString();
+    QString evalScript = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EvalScript"), "").toString();
+    
+    // Read WMS settings
+    QString crsSetting = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/CRS"), "EPSG:4326").toString();
+    QString format = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Format"), "image/png").toString();
+    QString dpiMode = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/DPIMode"), "7").toString();
+    QString tilePixelRatio = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TilePixelRatio"), "0").toString();
+    
+    // Time filtering settings
+    bool timeEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TimeEnabled"), false).toBool();
+    QString timeParams;
+    
+    if (timeEnabled) {
+      QString startDate = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TimeStart"), "").toString();
+      QString endDate = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/TimeEnd"), "").toString();
+      
+      if (!startDate.isEmpty() && !endDate.isEmpty()) {
+        timeParams = QString("&TIME=%1/%2").arg(startDate, endDate);
+      }
+    }
+    
+    // Advanced parameters
+    QString advancedParams;
+    bool showAdvancedParams = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/AdvancedParamsEnabled"), false).toBool();
+    
+    if (showAdvancedParams) {
+      QString maxCC = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/MAXCC"), "100").toString();
+      if (!maxCC.isEmpty()) {
+        advancedParams += QString("&MAXCC=%1").arg(maxCC);
+      }
+      
+      QString quality = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/QUALITY"), "90").toString();
+      if (!quality.isEmpty()) {
+        advancedParams += QString("&QUALITY=%1").arg(quality);
+      }
+      
+      QString warnings = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/WARNINGS"), "YES").toString();
+      if (!warnings.isEmpty()) {
+        advancedParams += QString("&WARNINGS=%1").arg(warnings);
+      }
+      
+      QString priority = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/PRIORITY"), "mostRecent").toString();
+      if (!priority.isEmpty()) {
+        advancedParams += QString("&PRIORITY=%1").arg(priority);
+      }
+    }
+    
+    // Handle bbox limiting
+    QString bboxParams;
+    bool bboxLimitingEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/BboxLimitingEnabled"), false).toBool();
+    
+    if (bboxLimitingEnabled) {
+      QString bboxWidth = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/BboxWidth"), "10000").toString();
+      QString bboxHeight = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/BboxHeight"), "10000").toString();
+      
+      if (!bboxWidth.isEmpty() && !bboxHeight.isEmpty()) {
+        // We will read these values but not implement BBOX limiting in this version
+        // This avoids using undefined class members
+        QgsMessageLog::logMessage(QStringLiteral("BBOX limiting configured with width=%1, height=%2").arg(bboxWidth, bboxHeight), "SIGPACGO", Qgis::Info);
+      }
+    }
+    
+    // Handle custom eval script
+    bool customScriptEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/CustomScriptEnabled"), false).toBool();
+    QString customScriptParams;
+    
+    if (customScriptEnabled) {
+      QString scriptUrl = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/ScriptUrl"), "").toString();
+      
+      if (!scriptUrl.isEmpty()) {
+        customScriptParams = QString("&EVALSCRIPTURL=%1").arg(scriptUrl);
+      } else {
+        QString customScript = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/CustomScript"), "").toString();
+        
+        if (!customScript.isEmpty()) {
+          customScriptParams = QString("&EVALSCRIPT=%1").arg(customScript);
+        }
+      }
+    }
+    
+    // Rate limiting for WMS requests
+    bool rateLimitingEnabled = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/RateLimitingEnabled"), false).toBool();
+    
+    if (rateLimitingEnabled) {
+      int delayMs = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/RateLimitDelay"), 1000).toInt();
+      WmsRateLimiter::instance()->setEnabled(true);
+      WmsRateLimiter::instance()->setDelay(delayMs);
+      
+      // Log that rate limiting is enabled
+      QgsMessageLog::logMessage(QStringLiteral("Sentinel WMS rate limiting enabled with %1ms delay").arg(delayMs), "SIGPACGO", Qgis::Info);
+    } else {
+      WmsRateLimiter::instance()->setEnabled(false);
+    }
     
     // Create Sentinel WMS layers using the user's instance ID and configured settings
     if (enabledLayers.contains("NDVI"))
@@ -1712,7 +1806,7 @@ void QgisMobileapp::readProjectFile()
   if (sentinelGroup)
   {
     // Check if Sentinel layers are enabled at all
-    bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnableLayers"), true).toBool();
+    bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EnableLayers"), true).toBool();
     
     if (!enableSentinelLayers) {
       // If Sentinel layers are disabled, hide the entire group
@@ -1742,7 +1836,7 @@ void QgisMobileapp::readProjectFile()
         
         // If the layer is in the enabled layers list and its style is "ON" or "DEFAULT", make it visible
         if (!layerName.isEmpty() && enabledLayers.contains(layerName)) {
-          QString style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/%1").arg(layerName), "ON").toString();
+          QString style = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/%1").arg(layerName), "ON").toString();
           if (style == "ON" || (layerName == "CUSTOM" && style == "DEFAULT")) {
             layer->setItemVisibilityChecked(false); // Set to false by default
           } else {
@@ -1777,7 +1871,7 @@ void QgisMobileapp::readProjectFile()
   if (sentinelGroup)
   {
     // Check if Sentinel layers are enabled at all
-    bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("QField/Sentinel/EnableLayers"), true).toBool();
+    bool enableSentinelLayers = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/EnableLayers"), true).toBool();
     
     if (!enableSentinelLayers) {
       // If Sentinel layers are disabled, hide the entire group
@@ -1807,7 +1901,7 @@ void QgisMobileapp::readProjectFile()
         
         // If the layer is in the enabled layers list and its style is "ON" or "DEFAULT", make it visible
         if (!layerName.isEmpty() && enabledLayers.contains(layerName)) {
-          QString style = sentinelSettings.value(QStringLiteral("QField/Sentinel/Styles/%1").arg(layerName), "ON").toString();
+          QString style = sentinelSettings.value(QStringLiteral("SIGPACGO/Sentinel/Styles/%1").arg(layerName), "ON").toString();
           if (style == "ON" || (layerName == "CUSTOM" && style == "DEFAULT")) {
             layer->setItemVisibilityChecked(false); // Set to false by default
           } else {

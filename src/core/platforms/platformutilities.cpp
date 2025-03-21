@@ -544,7 +544,7 @@ ResourceSource *PlatformUtilities::createResource( const QString &prefix, const 
       }
     }
 
-    QgsMessageLog::logMessage( tr( "Failed to save file resource" ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Failed to save file resource" ), "SIGPACGO", Qgis::Critical );
   }
 
   return new ResourceSource( parent, prefix, QString() );

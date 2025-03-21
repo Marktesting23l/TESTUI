@@ -36,7 +36,7 @@ void AndroidProjectSource::handleActivityResult( int receiverRequestCode, int re
     QString path = uri.callObjectMethod( "getPath", "()Ljava/lang/String;" ).toString();
     if ( !QFile( path ).exists() )
     {
-      QgsMessageLog::logMessage( tr( "File %1 does not exist" ).arg( path ), QStringLiteral( "QField" ), Qgis::Warning );
+      QgsMessageLog::logMessage( tr( "File %1 does not exist" ).arg( path ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     }
 
     emit projectOpened( path );

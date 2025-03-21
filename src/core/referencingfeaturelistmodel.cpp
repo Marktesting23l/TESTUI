@@ -222,13 +222,13 @@ bool ReferencingFeatureListModel::deleteFeature( QgsFeatureId referencingFeature
 
   if ( !referencingLayer || !referencingLayer->isValid() )
   {
-    QgsMessageLog::logMessage( tr( "Invalid referencing layer" ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Invalid referencing layer" ), "SIGPACGO", Qgis::Critical );
     return false;
   }
 
   if ( !referencingLayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Critical );
     return false;
   }
 
@@ -237,20 +237,20 @@ bool ReferencingFeatureListModel::deleteFeature( QgsFeatureId referencingFeature
 
   if ( !referencingLayer->deleteFeature( referencingFeatureId ) )
   {
-    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Cannot delete feature" ), "SIGPACGO", Qgis::Critical );
 
     if ( !referencingLayer->rollBack() )
-      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
     return false;
   }
 
   if ( !referencingLayer->commitChanges() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot commit layer changes in layer %1." ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Cannot commit layer changes in layer %1." ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
     if ( !referencingLayer->rollBack() )
-      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
     return false;
   }

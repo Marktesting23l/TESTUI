@@ -215,7 +215,7 @@ bool LayerUtils::deleteFeature( QgsProject *project, QgsVectorLayer *layer, cons
 
   if ( !layer )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing, no layer" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing, no layer" ), "SIGPACGO", Qgis::Warning );
     return false;
   }
 
@@ -223,7 +223,7 @@ bool LayerUtils::deleteFeature( QgsProject *project, QgsVectorLayer *layer, cons
   {
     if ( !layer->startEditing() || !layer->editBuffer() )
     {
-      QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Warning );
+      QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Warning );
       return false;
     }
   }
@@ -247,7 +247,7 @@ bool LayerUtils::deleteFeature( QgsProject *project, QgsVectorLayer *layer, cons
       if ( !layer->commitChanges() )
       {
         const QString msgs = layer->commitErrors().join( QStringLiteral( "\n" ) );
-        QgsMessageLog::logMessage( tr( "Cannot commit deletion of feature %2 in layer \"%1\". Reason:\n%3" ).arg( layer->name() ).arg( fid ).arg( msgs ), QStringLiteral( "QField" ), Qgis::Warning );
+        QgsMessageLog::logMessage( tr( "Cannot commit deletion of feature %2 in layer \"%1\". Reason:\n%3" ).arg( layer->name() ).arg( fid ).arg( msgs ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
         isSuccess = false;
       }
     }
@@ -267,7 +267,7 @@ bool LayerUtils::deleteFeature( QgsProject *project, QgsVectorLayer *layer, cons
         if ( !vl->commitChanges() )
         {
           const QString msgs = vl->commitErrors().join( QStringLiteral( "\n" ) );
-          QgsMessageLog::logMessage( tr( "Cannot commit deletion in layer \"%1\". Reason:\n%3" ).arg( vl->name() ).arg( msgs ), QStringLiteral( "QField" ), Qgis::Warning );
+          QgsMessageLog::logMessage( tr( "Cannot commit deletion in layer \"%1\". Reason:\n%3" ).arg( vl->name() ).arg( msgs ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
           isSuccess = false;
           break;
         }
@@ -276,7 +276,7 @@ bool LayerUtils::deleteFeature( QgsProject *project, QgsVectorLayer *layer, cons
   }
   else
   {
-    QgsMessageLog::logMessage( tr( "Cannot delete feature %1" ).arg( fid ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot delete feature %1" ).arg( fid ), "SIGPACGO", Qgis::Warning );
 
     isSuccess = false;
   }
@@ -289,10 +289,10 @@ bool LayerUtils::deleteFeature( QgsProject *project, QgsVectorLayer *layer, cons
       for ( QgsVectorLayer *vl : constHandledLayers )
         if ( vl != layer )
           if ( !vl->rollBack() )
-            QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vl->name() ), "QField", Qgis::Critical );
+            QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vl->name() ), "SIGPACGO", Qgis::Critical );
 
       if ( !layer->rollBack() )
-        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( layer->name() ), "QField", Qgis::Critical );
+        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( layer->name() ), "SIGPACGO", Qgis::Critical );
     }
   }
 
@@ -303,19 +303,19 @@ QgsFeature LayerUtils::duplicateFeature( QgsVectorLayer *layer, const QgsFeature
 {
   if ( !layer )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing, no layer" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing, no layer" ), "SIGPACGO", Qgis::Warning );
     return QgsFeature();
   }
 
   if ( !feature.isValid() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot copy invalid feature" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot copy invalid feature" ), "SIGPACGO", Qgis::Warning );
     return QgsFeature();
   }
 
   if ( !layer->startEditing() || !layer->editBuffer() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Warning );
     return QgsFeature();
   }
 
@@ -333,7 +333,7 @@ QgsFeature LayerUtils::duplicateFeature( QgsVectorLayer *layer, const QgsFeature
   if ( !layer->commitChanges() )
   {
     const QString msgs = layer->commitErrors().join( QStringLiteral( "\n" ) );
-    QgsMessageLog::logMessage( tr( "Cannot add new feature in layer \"%1\". Reason:\n%2" ).arg( layer->name(), msgs ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot add new feature in layer \"%1\". Reason:\n%2" ).arg( layer->name(), msgs ), "SIGPACGO", Qgis::Warning );
 
     for ( QgsVectorLayer *chl : duplicateFeatureContextLayers )
     {

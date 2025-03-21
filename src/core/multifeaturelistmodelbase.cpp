@@ -484,7 +484,7 @@ bool MultiFeatureListModelBase::mergeSelection()
   {
     if ( !vlayer->startEditing() )
     {
-      QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Warning );
+      QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Warning );
       return false;
     }
 
@@ -514,7 +514,7 @@ bool MultiFeatureListModelBase::mergeSelection()
     if ( !isSuccess )
     {
       if ( !vlayer->rollBack() )
-        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "QField", Qgis::Critical );
+        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "SIGPACGO", Qgis::Critical );
     }
   }
 
@@ -537,7 +537,7 @@ bool MultiFeatureListModelBase::deleteSelection()
   QgsVectorLayer *vlayer = selectedLayer();
   if ( !vlayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Warning );
     return false;
   }
 
@@ -559,7 +559,7 @@ bool MultiFeatureListModelBase::deleteSelection()
   if ( !isSuccess )
   {
     if ( !vlayer->rollBack() )
-      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "SIGPACGO", Qgis::Critical );
   }
 
   return isSuccess;
@@ -623,7 +623,7 @@ bool MultiFeatureListModelBase::moveSelection( const double x, const double y )
   QgsVectorLayer *vlayer = mSelectedFeatures[0].first;
   if ( !vlayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Warning );
     return false;
   }
 
@@ -636,7 +636,7 @@ bool MultiFeatureListModelBase::moveSelection( const double x, const double y )
     isSuccess = vlayer->changeGeometry( pair.second.id(), geom );
     if ( !isSuccess )
     {
-      QgsMessageLog::logMessage( tr( "Cannot change geometry of feature %1 in %2" ).arg( pair.second.id() ).arg( vlayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot change geometry of feature %1 in %2" ).arg( pair.second.id() ).arg( vlayer->name() ), "SIGPACGO", Qgis::Critical );
       break;
     }
   }
@@ -650,7 +650,7 @@ bool MultiFeatureListModelBase::moveSelection( const double x, const double y )
   if ( !isSuccess )
   {
     if ( !vlayer->rollBack() )
-      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "SIGPACGO", Qgis::Critical );
   }
 
   return isSuccess;
@@ -664,7 +664,7 @@ bool MultiFeatureListModelBase::rotateSelection( const double angle )
   QgsVectorLayer *vlayer = mSelectedFeatures[0].first;
   if ( !vlayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Warning );
     return false;
   }
 
@@ -677,7 +677,7 @@ bool MultiFeatureListModelBase::rotateSelection( const double angle )
     isSuccess = vlayer->changeGeometry( pair.second.id(), geom );
     if ( !isSuccess )
     {
-      QgsMessageLog::logMessage( tr( "Cannot change geometry of feature %1 in %2" ).arg( pair.second.id() ).arg( vlayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot change geometry of feature %1 in %2" ).arg( pair.second.id() ).arg( vlayer->name() ), "SIGPACGO", Qgis::Critical );
       break;
     }
   }
@@ -690,7 +690,7 @@ bool MultiFeatureListModelBase::rotateSelection( const double angle )
   else
   {
     if ( !vlayer->rollBack() )
-      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( vlayer->name() ), "SIGPACGO", Qgis::Critical );
   }
 
   return isSuccess;

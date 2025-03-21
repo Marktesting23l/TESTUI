@@ -77,8 +77,8 @@ Page {
     property bool enableInfoCollection: false
     property bool enableMapRotation: true
     property double quality: 1.0
-    property string sentinelInstanceId: settings.value("QField/Sentinel/InstanceId", "")
-    property bool enableSentinelLayers: settings.valueBool("QField/Sentinel/EnableLayers", true)
+    property string sentinelInstanceId: settings ? settings.value("SIGPACGO/Sentinel/InstanceId", "") : ""
+    property bool enableSentinelLayers: settings ? settings.valueBool("SIGPACGO/Sentinel/EnableLayers", true) : true
 
     property bool snapToCommonAngleIsEnabled: false
     property bool snapToCommonAngleIsRelative: true
@@ -93,11 +93,11 @@ Page {
     }
 
     onSentinelInstanceIdChanged: {
-      settings.setValue("QField/Sentinel/InstanceId", sentinelInstanceId);
+      settings.setValue("SIGPACGO/Sentinel/InstanceId", sentinelInstanceId);
     }
 
     onEnableSentinelLayersChanged: {
-      settings.setValue("QField/Sentinel/EnableLayers", enableSentinelLayers);
+      settings.setValue("SIGPACGO/Sentinel/EnableLayers", enableSentinelLayers);
     }
   }
 
@@ -758,7 +758,7 @@ Page {
                 }
 
                 Component.onCompleted: {
-                  var customLanguageCode = settings.value('customLanguage', '');
+                  var customLanguageCode = settings.value('customLanguage', 'es');
                   var languages = iface.availableLanguages();
                   languageCodes = [""].concat(Object.keys(languages));
                   var systemLanguage = qsTr("sistema");
@@ -766,13 +766,13 @@ Page {
                   var items = [systemLanguage + systemLanguageSuffix];
                   languageComboBox.model = items.concat(Object.values(languages));
                   languageComboBox.currentIndex = languageCodes.indexOf(customLanguageCode);
-                  currentLanguageCode = customLanguageCode || '';
+                  currentLanguageCode = customLanguageCode || 'es';
                   languageTip.visible = false;
                 }
               }
 
               Label {
-                text: qsTr("Español e inglés disponibles")
+                text: qsTr("Español dispoible, Inglés en proceso")
                 font: Theme.tipFont
                 color: Theme.mainTextColor
                 textFormat: Qt.RichText
@@ -868,7 +868,7 @@ Page {
               }
 
               Label {
-                text: qsTr("Configurar capas y parámetros de Sentinel Hub WMS")
+                text: qsTr("Configurar capas y parámetros de Sentinel Copernicus Hub WMS")
                 font: Theme.tipFont
                 color: Theme.secondaryTextColor
                 wrapMode: Text.WordWrap

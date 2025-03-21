@@ -2333,7 +2333,7 @@ ApplicationWindow {
       }
      QfToolButton {
       id: sentinelButton
-      visible: settings.valueBool("QField/Sentinel/EnableLayers", true)
+      visible: settings ? settings.valueBool("SIGPACGO/Sentinel/EnableLayers", true) : true
       round: true
       bgcolor: Theme.toolButtonBackgroundColor
       iconSource: Theme.getThemeVectorIcon("satellite")
@@ -2352,7 +2352,7 @@ ApplicationWindow {
             var component = Qt.createComponent("SentinelConfigScreen.qml");
             if (component.status === Component.Ready) {
                 var sentinelConfig = component.createObject(mainWindow, {
-                    "instanceId": settings.value("QField/Sentinel/InstanceId", "")
+                    "instanceId": settings ? settings.value("SIGPACGO/Sentinel/InstanceId", "") : ""
                 });
                 sentinelConfig.open();
             } else {

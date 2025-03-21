@@ -689,6 +689,8 @@ QVariantList AppInterface::getLayerGroups() const
 
 bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &layerName, const QString &layerType, const QString &groupName ) const
 {
+  QgsMessageLog::logMessage( tr( "Adding layer '%1' to group: %2" ).arg( layerName, groupName.isEmpty() ? "default" : groupName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  
   if ( !QgsProject::instance() )
   {
     QgsMessageLog::logMessage( tr( "No project loaded" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
@@ -716,12 +718,15 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
   // Determine the group to use
   QString targetGroupName;
   
+  // List of protected group names that we shouldn't move layers from
+  QStringList protectedGroups = { "Mapas Base", "Servicios GIS España", "Capas Base GIS España", "Teselas Vectoriales GIS España", "Utilidades", "Imágenes Sentinel" };
+  
   if ( groupName.isEmpty() || groupName == "root" )
   {
     // For layers being added to root, add them to a common "Imported Layers" group
     targetGroupName = tr( "Imported Layers" );
   }
-  else
+  else 
   {
     // Use the provided group name
     targetGroupName = groupName;
@@ -773,6 +778,67 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
     }
   }
   
+  // NEW: Check if there's already a layer with this name in a protected group
+  // If there is, we'll create a new layer instead of moving the existing one
+  bool layerExistsInProtectedGroup = false;
+  QString existingLayerId;
+  
+  // First check if a layer with this name already exists in the project
+  const QMap<QString, QgsMapLayer*> projectLayers = QgsProject::instance()->mapLayers();
+  for (auto it = projectLayers.constBegin(); it != projectLayers.constEnd(); ++it) 
+  {
+    if (it.value()->name() == layerName) 
+    {
+      existingLayerId = it.key();
+      
+      // Define a recursive function to check if a layer is in a protected group or its subgroups
+      std::function<bool(QgsLayerTreeGroup*, const QString&)> isLayerInProtectedGroup;
+      isLayerInProtectedGroup = [&protectedGroups, &isLayerInProtectedGroup](QgsLayerTreeGroup* group, const QString& layerId) -> bool {
+        // Check if this group is protected
+        if (protectedGroups.contains(group->name())) {
+          // Check if the layer is directly in this group
+          QList<QgsLayerTreeLayer*> groupLayers = group->findLayers();
+          for (QgsLayerTreeLayer* layerNode : groupLayers) {
+            if (layerNode && layerNode->layerId() == layerId) {
+              return true;
+            }
+          }
+        }
+        
+        // Check all child groups recursively
+        QList<QgsLayerTreeGroup*> childGroups = group->findGroups();
+        for (QgsLayerTreeGroup* childGroup : childGroups) {
+          if (protectedGroups.contains(childGroup->name())) {
+            // Check if the layer is in this child group
+            QList<QgsLayerTreeLayer*> childLayers = childGroup->findLayers();
+            for (QgsLayerTreeLayer* layerNode : childLayers) {
+              if (layerNode && layerNode->layerId() == layerId) {
+                return true;
+              }
+            }
+          }
+          
+          // Recursively check deeper subgroups
+          if (isLayerInProtectedGroup(childGroup, layerId)) {
+            return true;
+          }
+        }
+        
+        return false;
+      };
+      
+      // Check if this layer is in any protected group or subgroup
+      layerExistsInProtectedGroup = isLayerInProtectedGroup(root, existingLayerId);
+      
+      // If we found the layer in a protected group, we can stop searching
+      if (layerExistsInProtectedGroup) {
+        QgsMessageLog::logMessage( tr( "Layer '%1' exists in a protected group - will create a duplicate instead of moving it" )
+                                 .arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+        break;
+      }
+    }
+  }
+  
   // Add the layer
   QgsMapLayer *layer = nullptr;
   
@@ -794,12 +860,37 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
     if ( layerType.toLower() == "vector" )
     {
       QString uri = QString( "%1|layername=%2" ).arg( gpkgPath ).arg( layerName );
-      layer = new QgsVectorLayer( uri, layerName, "ogr" );
+      
+      // If the layer exists in a protected group, create a new layer with a modified name
+      // This prevents moving the existing layer from its protected group
+      if (layerExistsInProtectedGroup) 
+      {
+        QString newLayerName = layerName + " (" + tr("imported") + ")";
+        layer = new QgsVectorLayer( uri, newLayerName, "ogr" );
+        QgsMessageLog::logMessage( tr( "Created duplicate layer '%1' to avoid moving protected layer" )
+                                 .arg( newLayerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      } 
+      else 
+      {
+        layer = new QgsVectorLayer( uri, layerName, "ogr" );
+      }
     }
     else if ( layerType.toLower() == "raster" )
     {
       QString uri = QString( "GPKG:%1:%2" ).arg( gpkgPath ).arg( layerName );
-      layer = new QgsRasterLayer( uri, layerName, "gdal" );
+      
+      // Same logic for raster layers
+      if (layerExistsInProtectedGroup) 
+      {
+        QString newLayerName = layerName + " (" + tr("imported") + ")";
+        layer = new QgsRasterLayer( uri, newLayerName, "gdal" );
+        QgsMessageLog::logMessage( tr( "Created duplicate layer '%1' to avoid moving protected layer" )
+                                 .arg( newLayerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      } 
+      else 
+      {
+        layer = new QgsRasterLayer( uri, layerName, "gdal" );
+      }
     }
     
     // Clean up the database connection

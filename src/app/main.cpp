@@ -97,7 +97,7 @@ int main( int argc, char **argv )
   QCoreApplication::setOrganizationDomain( "imagritools.com" );
   QCoreApplication::setApplicationName( qfield::appName );
   const QSettings settings;
-  const QString customLanguage = settings.value( "/customLanguage", QString() ).toString();
+  const QString customLanguage = settings.value( "/customLanguage", "es" ).toString();
 
 #if WITH_SENTRY
   const bool enableSentry = settings.value( "/enableInfoCollection", true ).toBool();

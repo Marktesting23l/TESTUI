@@ -149,42 +149,42 @@ Popup {
             saveLayerSettings()
             
             // Save WMS parameters
-            settings.setValue("QField/Sentinel/CRS", crsCombo.currentText)
-            settings.setValue("QField/Sentinel/Format", formatCombo.currentText)
-            settings.setValue("QField/Sentinel/DPIMode", dpiModeField.text)
-            settings.setValue("QField/Sentinel/TilePixelRatio", tilePixelRatioField.text)
+            settings.setValue("SIGPACGO/Sentinel/CRS", crsCombo.currentText)
+            settings.setValue("SIGPACGO/Sentinel/Format", formatCombo.currentText)
+            settings.setValue("SIGPACGO/Sentinel/DPIMode", dpiModeField.text)
+            settings.setValue("SIGPACGO/Sentinel/TilePixelRatio", tilePixelRatioField.text)
             
             if (enableTimeRange.checked) {
-              settings.setValue("QField/Sentinel/TimeEnabled", true)
-              settings.setValue("QField/Sentinel/TimeStart", startDateField.text)
-              settings.setValue("QField/Sentinel/TimeEnd", endDateField.text)
+              settings.setValue("SIGPACGO/Sentinel/TimeEnabled", true)
+              settings.setValue("SIGPACGO/Sentinel/TimeStart", startDateField.text)
+              settings.setValue("SIGPACGO/Sentinel/TimeEnd", endDateField.text)
             } else {
-              settings.setValue("QField/Sentinel/TimeEnabled", false)
+              settings.setValue("SIGPACGO/Sentinel/TimeEnabled", false)
             }
             
             // Save advanced parameters
-            settings.setValue("QField/Sentinel/AdvancedParamsEnabled", showAdvancedParams.checked)
+            settings.setValue("SIGPACGO/Sentinel/AdvancedParamsEnabled", showAdvancedParams.checked)
             if (showAdvancedParams.checked) {
-              settings.setValue("QField/Sentinel/MAXCC", maxCCField.text)
-              settings.setValue("QField/Sentinel/QUALITY", qualityField.text)
-              settings.setValue("QField/Sentinel/WARNINGS", warningsCombo.currentText)
-              settings.setValue("QField/Sentinel/PRIORITY", priorityCombo.currentText)
+              settings.setValue("SIGPACGO/Sentinel/MAXCC", maxCCField.text)
+              settings.setValue("SIGPACGO/Sentinel/QUALITY", qualityField.text)
+              settings.setValue("SIGPACGO/Sentinel/WARNINGS", warningsCombo.currentText)
+              settings.setValue("SIGPACGO/Sentinel/PRIORITY", priorityCombo.currentText)
             }
             
             // Save BBOX limiting settings
-            settings.setValue("QField/Sentinel/BboxLimitingEnabled", enableBboxLimiting.checked)
+            settings.setValue("SIGPACGO/Sentinel/BboxLimitingEnabled", enableBboxLimiting.checked)
             if (enableBboxLimiting.checked) {
-              settings.setValue("QField/Sentinel/BboxWidth", bboxWidthField.text)
-              settings.setValue("QField/Sentinel/BboxHeight", bboxHeightField.text)
+              settings.setValue("SIGPACGO/Sentinel/BboxWidth", bboxWidthField.text)
+              settings.setValue("SIGPACGO/Sentinel/BboxHeight", bboxHeightField.text)
             }
             
             // Save rate limiting settings
-            settings.setValue("QField/Sentinel/RateLimitingEnabled", enableRateLimiting.checked)
+            settings.setValue("SIGPACGO/Sentinel/RateLimitingEnabled", enableRateLimiting.checked)
             if (enableRateLimiting.checked) {
-              settings.setValue("QField/Sentinel/RateLimitDelay", rateLimitDelayField.text)
+              settings.setValue("SIGPACGO/Sentinel/RateLimitDelay", rateLimitDelayField.text)
             }
             
-            settings.setValue("QField/Sentinel/SettingsChanged", true)
+            settings.setValue("SIGPACGO/Sentinel/SettingsChanged", true)
             
             mainWindow.displayToast(qsTr("Sentinel settings saved. Restart QField or reload your project for changes to take effect."))
             
@@ -505,13 +505,13 @@ Popup {
                                 // Save the selected layer ID immediately
                                 if (typeof settings !== 'undefined' && settings !== null) {
                                   if (layerName === "TRUE_COLOR") {
-                                    settings.setValue("QField/Sentinel/TrueColorLayerId", selectedLayerId)
+                                    settings.setValue("SIGPACGO/Sentinel/TrueColorLayerId", selectedLayerId)
                                   } else if (layerName === "FALSE_COLOR") {
-                                    settings.setValue("QField/Sentinel/FalseColorLayerId", selectedLayerId)
+                                    settings.setValue("SIGPACGO/Sentinel/FalseColorLayerId", selectedLayerId)
                                   } else if (layerName === "NDVI") {
-                                    settings.setValue("QField/Sentinel/NdviLayerId", selectedLayerId)
+                                    settings.setValue("SIGPACGO/Sentinel/NdviLayerId", selectedLayerId)
                                   }
-                                  settings.setValue("QField/Sentinel/SettingsUpdated", true)
+                                  settings.setValue("SIGPACGO/Sentinel/SettingsUpdated", true)
                                 }
                               }
                             }
@@ -547,8 +547,8 @@ Popup {
                           
                           // Save the style setting immediately
                           if (typeof settings !== 'undefined' && settings !== null) {
-                            settings.setValue("QField/Sentinel/Styles/" + layerName, currentText)
-                            settings.setValue("QField/Sentinel/SettingsUpdated", true)
+                            settings.setValue("SIGPACGO/Sentinel/Styles/" + layerName, currentText)
+                            settings.setValue("SIGPACGO/Sentinel/SettingsUpdated", true)
                             saveLayerSettings()
                           }
                           
@@ -611,11 +611,11 @@ Popup {
                             // Save the custom layer ID immediately
                             if (typeof settings !== 'undefined' && settings !== null) {
                               if (layerName === "CUSTOM1") {
-                                settings.setValue("QField/Sentinel/Custom1LayerId", text)
+                                settings.setValue("SIGPACGO/Sentinel/Custom1LayerId", text)
                               } else if (layerName === "CUSTOM2") {
-                                settings.setValue("QField/Sentinel/Custom2LayerId", text)
+                                settings.setValue("SIGPACGO/Sentinel/Custom2LayerId", text)
                               }
-                              settings.setValue("QField/Sentinel/SettingsUpdated", true)
+                              settings.setValue("SIGPACGO/Sentinel/SettingsUpdated", true)
                             }
                           }
                         }
@@ -667,7 +667,7 @@ Popup {
                 item.isChecked = selectedLayers.includes("TRUE_COLOR")
                 item.currentStyle = layerStyles["TRUE_COLOR"] || "ON"
                 item.hasLayerDropdown = true
-                item.selectedLayerId = settings.value("QField/Sentinel/TrueColorLayerId", "TRUE_COLOR")
+                item.selectedLayerId = settings.value("SIGPACGO/Sentinel/TrueColorLayerId", "TRUE_COLOR")
               }
             }
             
@@ -682,7 +682,7 @@ Popup {
                 item.isChecked = selectedLayers.includes("FALSE_COLOR")
                 item.currentStyle = layerStyles["FALSE_COLOR"] || "ON"
                 item.hasLayerDropdown = true
-                item.selectedLayerId = settings.value("QField/Sentinel/FalseColorLayerId", "FALSE_COLOR")
+                item.selectedLayerId = settings.value("SIGPACGO/Sentinel/FalseColorLayerId", "FALSE_COLOR")
               }
             }
             
@@ -697,7 +697,7 @@ Popup {
                 item.isChecked = selectedLayers.includes("NDVI")
                 item.currentStyle = layerStyles["NDVI"] || "ON"
                 item.hasLayerDropdown = true
-                item.selectedLayerId = settings.value("QField/Sentinel/NdviLayerId", "NDVI")
+                item.selectedLayerId = settings.value("SIGPACGO/Sentinel/NdviLayerId", "NDVI")
               }
             }
             
@@ -1510,16 +1510,16 @@ Popup {
       
       // Save the script
       let scriptName = scriptNameField.text.trim()
-      settings.setValue("QField/Sentinel/SavedScripts/" + scriptName, customScriptField.text)
+      settings.setValue("SIGPACGO/Sentinel/SavedScripts/" + scriptName, customScriptField.text)
       
       // Update the scripts list by adding the new script name to the list
-      let scriptNames = settings.value("QField/Sentinel/SavedScriptsList", "").toString()
+      let scriptNames = settings.value("SIGPACGO/Sentinel/SavedScriptsList", "").toString()
       let scriptNamesList = scriptNames ? scriptNames.split(",") : []
       
       // Check if the script name already exists
       if (!scriptNamesList.includes(scriptName)) {
         scriptNamesList.push(scriptName)
-        settings.setValue("QField/Sentinel/SavedScriptsList", scriptNamesList.join(","))
+        settings.setValue("SIGPACGO/Sentinel/SavedScriptsList", scriptNamesList.join(","))
       }
       
       // Update the scripts list
@@ -1558,13 +1558,13 @@ Popup {
     
     // Determine the layer ID and style based on the selected layer
     if (selectedLayer === "TRUE_COLOR") {
-      layerId = settings.value("QField/Sentinel/TrueColorLayerId", "TRUE_COLOR")
+      layerId = settings.value("SIGPACGO/Sentinel/TrueColorLayerId", "TRUE_COLOR")
       style = layerStyles["TRUE_COLOR"] || "ON"
     } else if (selectedLayer === "FALSE_COLOR") {
-      layerId = settings.value("QField/Sentinel/FalseColorLayerId", "FALSE_COLOR")
+      layerId = settings.value("SIGPACGO/Sentinel/FalseColorLayerId", "FALSE_COLOR")
       style = layerStyles["FALSE_COLOR"] || "ON"
     } else if (selectedLayer === "NDVI") {
-      layerId = settings.value("QField/Sentinel/NdviLayerId", "NDVI")
+      layerId = settings.value("SIGPACGO/Sentinel/NdviLayerId", "NDVI")
       style = layerStyles["NDVI"] || "ON"
     } else if (selectedLayer === "CUSTOM1") {
       layerId = custom1LayerId
@@ -1669,7 +1669,7 @@ Popup {
     
     // Try to get scripts from settings using value() with empty default
     // This is a workaround since childKeys() is not available
-    let scriptNames = settings.value("QField/Sentinel/SavedScriptsList", "").toString()
+    let scriptNames = settings.value("SIGPACGO/Sentinel/SavedScriptsList", "").toString()
     if (scriptNames) {
       let scriptNamesList = scriptNames.split(",")
       for (let i = 0; i < scriptNamesList.length; i++) {
@@ -1693,14 +1693,14 @@ Popup {
     }
     
     // Load saved settings
-    let enabledLayersStr = settings.value("QField/Sentinel/EnabledLayers", "")
+    let enabledLayersStr = settings.value("SIGPACGO/Sentinel/EnabledLayers", "")
     let enabledLayersList = enabledLayersStr ? enabledLayersStr.split(",") : []
     
     // If no layers are enabled, select the default layers
     if (enabledLayersList.length === 0 || enabledLayersStr === "") {
       enabledLayersList = ["TRUE_COLOR", "FALSE_COLOR", "NDVI"]
       // Save these default selections
-      settings.setValue("QField/Sentinel/EnabledLayers", enabledLayersList.join(","))
+      settings.setValue("SIGPACGO/Sentinel/EnabledLayers", enabledLayersList.join(","))
     }
     
     // Initialize selectedLayers with the saved layers
@@ -1711,7 +1711,7 @@ Popup {
         
         // Set default style to "ON" for all layers except CUSTOM which is "DEFAULT"
         let defaultStyle = enabledLayersList[i].startsWith("CUSTOM") ? "DEFAULT" : "ON"
-        layerStyles[enabledLayersList[i]] = settings.value("QField/Sentinel/Styles/" + enabledLayersList[i], defaultStyle)
+        layerStyles[enabledLayersList[i]] = settings.value("SIGPACGO/Sentinel/Styles/" + enabledLayersList[i], defaultStyle)
         
         // Ensure we don't have empty or null styles
         if (!layerStyles[enabledLayersList[i]] || layerStyles[enabledLayersList[i]] === "") {
@@ -1722,60 +1722,60 @@ Popup {
     }
     
     // Load custom layer IDs
-    custom1LayerId = settings.value("QField/Sentinel/Custom1LayerId", "")
-    custom2LayerId = settings.value("QField/Sentinel/Custom2LayerId", "")
+    custom1LayerId = settings.value("SIGPACGO/Sentinel/Custom1LayerId", "")
+    custom2LayerId = settings.value("SIGPACGO/Sentinel/Custom2LayerId", "")
     
     // Set default layer IDs if not already set
-    if (!settings.value("QField/Sentinel/TrueColorLayerId", "")) {
-      settings.setValue("QField/Sentinel/TrueColorLayerId", "TRUE_COLOR")
+    if (!settings.value("SIGPACGO/Sentinel/TrueColorLayerId", "")) {
+      settings.setValue("SIGPACGO/Sentinel/TrueColorLayerId", "TRUE_COLOR")
     }
     
-    if (!settings.value("QField/Sentinel/FalseColorLayerId", "")) {
-      settings.setValue("QField/Sentinel/FalseColorLayerId", "FALSE_COLOR")
+    if (!settings.value("SIGPACGO/Sentinel/FalseColorLayerId", "")) {
+      settings.setValue("SIGPACGO/Sentinel/FalseColorLayerId", "FALSE_COLOR")
     }
     
-    if (!settings.value("QField/Sentinel/NdviLayerId", "")) {
-      settings.setValue("QField/Sentinel/NdviLayerId", "NDVI")
+    if (!settings.value("SIGPACGO/Sentinel/NdviLayerId", "")) {
+      settings.setValue("SIGPACGO/Sentinel/NdviLayerId", "NDVI")
     }
     
-    // Load WMS parameters
-    crsCombo.currentIndex = crsCombo.find(settings.value("QField/Sentinel/CRS", "EPSG:4326"))
-    formatCombo.currentIndex = formatCombo.find(settings.value("QField/Sentinel/Format", "image/png"))
-    dpiModeField.text = settings.value("QField/Sentinel/DPIMode", "7")
-    tilePixelRatioField.text = settings.value("QField/Sentinel/TilePixelRatio", "0")
+    // Load WMS parameters from settings
+    crsCombo.currentIndex = crsCombo.find(settings.value("SIGPACGO/Sentinel/CRS", "EPSG:4326"))
+    formatCombo.currentIndex = formatCombo.find(settings.value("SIGPACGO/Sentinel/Format", "image/png"))
+    dpiModeField.text = settings.value("SIGPACGO/Sentinel/DPIMode", "7")
+    tilePixelRatioField.text = settings.value("SIGPACGO/Sentinel/TilePixelRatio", "0")
     
-    // Load time settings
-    enableTimeRange.checked = settings.valueBool("QField/Sentinel/TimeEnabled", false)
+    // Time filtering
+    enableTimeRange.checked = settings.valueBool("SIGPACGO/Sentinel/TimeEnabled", false)
     if (enableTimeRange.checked) {
-      startDateField.text = settings.value("QField/Sentinel/TimeStart", startDateField.text)
-      endDateField.text = settings.value("QField/Sentinel/TimeEnd", endDateField.text)
+      startDateField.text = settings.value("SIGPACGO/Sentinel/TimeStart", startDateField.text)
+      endDateField.text = settings.value("SIGPACGO/Sentinel/TimeEnd", endDateField.text)
     }
     
-    // Load advanced parameters
-    showAdvancedParams.checked = settings.valueBool("QField/Sentinel/AdvancedParamsEnabled", false)
-    maxCCField.text = settings.value("QField/Sentinel/MAXCC", "100")
-    qualityField.text = settings.value("QField/Sentinel/QUALITY", "90")
-    warningsCombo.currentIndex = warningsCombo.find(settings.value("QField/Sentinel/WARNINGS", "SÍ"))
-    priorityCombo.currentIndex = priorityCombo.find(settings.value("QField/Sentinel/PRIORITY", "másReciente"))
+    // Advanced parameters
+    showAdvancedParams.checked = settings.valueBool("SIGPACGO/Sentinel/AdvancedParamsEnabled", false)
+    maxCCField.text = settings.value("SIGPACGO/Sentinel/MAXCC", "100")
+    qualityField.text = settings.value("SIGPACGO/Sentinel/QUALITY", "90")
+    warningsCombo.currentIndex = warningsCombo.find(settings.value("SIGPACGO/Sentinel/WARNINGS", "SÍ"))
+    priorityCombo.currentIndex = priorityCombo.find(settings.value("SIGPACGO/Sentinel/PRIORITY", "másReciente"))
     
-    // Load BBOX limiting settings
-    enableBboxLimiting.checked = settings.valueBool("QField/Sentinel/BboxLimitingEnabled", false)
+    // BBOX limiting
+    enableBboxLimiting.checked = settings.valueBool("SIGPACGO/Sentinel/BboxLimitingEnabled", false)
     if (enableBboxLimiting.checked) {
-      bboxWidthField.text = settings.value("QField/Sentinel/BboxWidth", "10000")
-      bboxHeightField.text = settings.value("QField/Sentinel/BboxHeight", "10000")
+      bboxWidthField.text = settings.value("SIGPACGO/Sentinel/BboxWidth", "10000")
+      bboxHeightField.text = settings.value("SIGPACGO/Sentinel/BboxHeight", "10000")
     }
     
-    // Load rate limiting settings
-    enableRateLimiting.checked = settings.valueBool("QField/Sentinel/RateLimitingEnabled", false)
+    // Rate limiting
+    enableRateLimiting.checked = settings.valueBool("SIGPACGO/Sentinel/RateLimitingEnabled", false)
     if (enableRateLimiting.checked) {
-      rateLimitDelayField.text = settings.value("QField/Sentinel/RateLimitDelay", "1000")
+      rateLimitDelayField.text = settings.value("SIGPACGO/Sentinel/RateLimitDelay", "1000")
     }
     
-    // Load custom script settings
-    enableCustomScript.checked = settings.valueBool("QField/Sentinel/CustomScriptEnabled", false)
+    // Custom script
+    enableCustomScript.checked = settings.valueBool("SIGPACGO/Sentinel/CustomScriptEnabled", false)
     if (enableCustomScript.checked) {
-      scriptUrlField.text = settings.value("QField/Sentinel/ScriptUrl", "")
-      customScriptField.text = settings.value("QField/Sentinel/CustomScript", "")
+      scriptUrlField.text = settings.value("SIGPACGO/Sentinel/ScriptUrl", "")
+      customScriptField.text = settings.value("SIGPACGO/Sentinel/CustomScript", "")
     }
     
     // Load saved scripts
@@ -1793,64 +1793,42 @@ Popup {
       return
     }
     
-    // Save instance ID
-    if (instanceIdField && instanceIdField.text) {
-      settings.setValue("QField/Sentinel/InstanceId", instanceIdField.text)
+    // Save the instanceId if it has changed
+    if (instanceIdField.text !== instanceId) {
+      settings.setValue("SIGPACGO/Sentinel/InstanceId", instanceIdField.text)
     }
     
-    // Save custom layer settings
-    settings.setValue("QField/Sentinel/Custom1LayerId", custom1LayerId)
-    settings.setValue("QField/Sentinel/Custom2LayerId", custom2LayerId)
+    // Save custom layer IDs
+    settings.setValue("SIGPACGO/Sentinel/Custom1LayerId", custom1LayerId)
+    settings.setValue("SIGPACGO/Sentinel/Custom2LayerId", custom2LayerId)
     
-    // Save layer configuration - only save layers that are actually enabled
-    // Convert to string to avoid QJSValue error
-    settings.setValue("QField/Sentinel/EnabledLayers", selectedLayers.join(","))
+    // Save the list of enabled layer names
+    settings.setValue("SIGPACGO/Sentinel/EnabledLayers", selectedLayers.join(","))
     
-    // Save all layer styles - but only for valid layers
-    const validLayers = ["TRUE_COLOR", "FALSE_COLOR", "NDVI", "CUSTOM1", "CUSTOM2"]
-    
-    // Debug: Log all keys in layerStyles to find the empty key
-    console.log("All keys in layerStyles:")
-    for (let layer in layerStyles) {
-      console.log("Key: '" + layer + "', Value: '" + layerStyles[layer] + "'")
-    }
-    
-    // Clean up layerStyles to remove any invalid entries
-    for (let layer in layerStyles) {
-      if (!validLayers.includes(layer) || layer === "") {
-        console.log("Removing invalid layer style key: '" + layer + "'")
-        delete layerStyles[layer]
-      }
-    }
-    
-    // Save only valid layer styles
-    for (let i = 0; i < validLayers.length; i++) {
-      const layer = validLayers[i]
-      if (layerStyles[layer]) {
-        settings.setValue("QField/Sentinel/Styles/" + layer, layerStyles[layer])
+    // Make a map of layer styles
+    // - key = layer name (e.g. TRUE_COLOR)
+    // - value = style (e.g. ON, OFF, DEFAULT)
+    for (let i = 0; i < layerItems.count; i++) {
+      let layer = layerItems.get(i).name
+      if (selectedLayers.includes(layer)) {
+        let style = layerItems.get(i).currentStyle
+        layerStyles[layer] = style
+        settings.setValue("SIGPACGO/Sentinel/Styles/" + layer, layerStyles[layer])
       } else {
-        // Set default style if missing
-        const defaultStyle = layer.startsWith("CUSTOM") ? "DEFAULT" : "ON"
-        settings.setValue("QField/Sentinel/Styles/" + layer, defaultStyle)
-        layerStyles[layer] = defaultStyle
+        // For unselected layers, set their style to "OFF"
+        layerStyles[layer] = "OFF"
+        settings.setValue("SIGPACGO/Sentinel/Styles/" + layer, defaultStyle)
       }
     }
     
-    // Also save a flag to indicate that settings have been updated
-    settings.setValue("QField/Sentinel/SettingsUpdated", true)
+    // Mark settings as updated so the main app knows to reload
+    settings.setValue("SIGPACGO/Sentinel/SettingsUpdated", true)
     
-    // Save a flag to force reload of layers
-    settings.setValue("QField/Sentinel/SettingsChanged", true)
+    // Record that settings have changed
+    settings.setValue("SIGPACGO/Sentinel/SettingsChanged", true)
     
-    // Enable or disable Sentinel layers based on whether any layers are selected
-    settings.setValue("QField/Sentinel/EnableLayers", selectedLayers.length > 0)
-    
-    // Log the settings for debugging
-    console.log("Saved Sentinel settings:")
-    console.log("EnabledLayers: " + selectedLayers.join(","))
-    for (let layer in layerStyles) {
-      console.log("Style for " + layer + ": " + layerStyles[layer])
-    }
+    // Save whether Sentinel layers are enabled at all
+    settings.setValue("SIGPACGO/Sentinel/EnableLayers", selectedLayers.length > 0)
     
     mainWindow.displayToast(qsTr("Configuración de Sentinel guardada. Reinicie QField o recargue su proyecto para que los cambios surtan efecto."))
   }

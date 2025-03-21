@@ -148,7 +148,7 @@ bool OrderedRelationModel::moveItems( const int fromIdx, const int toIdx )
 
   if ( !referencingLayer->startEditing() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Cannot start editing" ), "SIGPACGO", Qgis::Critical );
     return false;
   }
 
@@ -162,7 +162,7 @@ bool OrderedRelationModel::moveItems( const int fromIdx, const int toIdx )
     if ( !isSuccess )
     {
       if ( referencingLayer->rollBack() )
-        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
       emit failedReorder();
       return false;
@@ -171,10 +171,10 @@ bool OrderedRelationModel::moveItems( const int fromIdx, const int toIdx )
 
   if ( !referencingLayer->commitChanges() )
   {
-    QgsMessageLog::logMessage( tr( "Cannot commit layer changes in layer %1." ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+    QgsMessageLog::logMessage( tr( "Cannot commit layer changes in layer %1." ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
     if ( !referencingLayer->rollBack() )
-      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
     return false;
   }
@@ -214,10 +214,10 @@ bool OrderedRelationModel::beforeDeleteFeature( QgsVectorLayer *referencingLayer
 
     if ( !isSuccess )
     {
-      QgsMessageLog::logMessage( tr( "Cannot update features ordering" ), "QField", Qgis::Critical );
+      QgsMessageLog::logMessage( tr( "Cannot update features ordering" ), "SIGPACGO", Qgis::Critical );
 
       if ( !referencingLayer->rollBack() )
-        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "QField", Qgis::Critical );
+        QgsMessageLog::logMessage( tr( "Cannot rollback layer changes in layer %1" ).arg( referencingLayer->name() ), "SIGPACGO", Qgis::Critical );
 
       return false;
     }
