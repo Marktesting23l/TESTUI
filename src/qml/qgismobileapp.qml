@@ -860,9 +860,7 @@ ApplicationWindow {
       id: digitizingRubberband
 
       mapSettings: mapCanvas.mapSettings
-      // Change color from red to a more visible blue
-      color: '#3388FF'  // Bright blue for better visibility
-      // Make the line a bit wider
+      color: '#3388FF' 
       lineWidth: 5
 
       model: RubberbandModel {
@@ -902,7 +900,8 @@ ApplicationWindow {
     // Add segment labels for digitizing mode
     Item {
       id: digitizingSegmentLabels
-      visible: stateMachine.state === "digitize" && digitizingRubberband.model.vertexCount > 1
+      // Update visibility to hide labels when freehand digitizing is active
+      visible: stateMachine.state === "digitize" && digitizingRubberband.model.vertexCount > 1 && !(freehandButton.freehandDigitizing && freehandHandler.active)
       anchors.fill: parent
       
       // Add a DistanceArea object to calculate segment lengths
@@ -921,7 +920,7 @@ ApplicationWindow {
         
         delegate: Item {
           id: segmentLabelItem
-          visible: digitizingRubberband.model.vertexCount > 1 && index < digitizingRubberband.model.vertexCount - 1
+          visible: digitizingRubberband.model.vertexCount > 1 && index < digitizingRubberband.model.vertexCount - 1 && !(freehandButton.freehandDigitizing && freehandHandler.active)
           
           // Calculate the position of the current and next vertex
           property var currentVertex: digitizingRubberband.model.vertices[index]
@@ -6513,62 +6512,78 @@ ApplicationWindow {
 
   function savePhoto(path) {
     // folder name from camera settings or use DCIM as default
-    let folderName = "DCIM"
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
-      folderName = standaloneCameraLoader.item.cameraSettings.folderName
+    let folderName = "DCIM";
+    try {
+      if (standaloneCameraLoader.active && standaloneCameraLoader.item && 
+          standaloneCameraLoader.item.cameraSettings && 
+          standaloneCameraLoader.item.cameraSettings.folderName) {
+        folderName = standaloneCameraLoader.item.cameraSettings.folderName;
+      }
+    } catch (e) {
+      console.log("Error accessing camera folder name: " + e);
     }
     
     // Create the folder if it doesn't exist
-    platformUtilities.createDir(qgisProject.homePath, folderName)
+    platformUtilities.createDir(qgisProject.homePath, folderName);
     
     // Generate a unique filename with timestamp
-    let today = new Date()
+    let today = new Date();
     let dateStr = today.getFullYear().toString() +
                  (today.getMonth() + 1).toString().padStart(2, '0') +
-                 today.getDate().toString().padStart(2, '0')
+                 today.getDate().toString().padStart(2, '0');
     
     let timestamp = today.getHours().toString().padStart(2, '0') +
                    today.getMinutes().toString().padStart(2, '0') +
-                   today.getSeconds().toString().padStart(2, '0')
+                   today.getSeconds().toString().padStart(2, '0');
     
     // Get the photo prefix if it exists
-    let prefix = ""
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item && 
-        standaloneCameraLoader.item.cameraSettings.photoPrefix) {
-      prefix = standaloneCameraLoader.item.cameraSettings.photoPrefix + "_"
+    let prefix = "";
+    try {
+      if (standaloneCameraLoader.active && standaloneCameraLoader.item && 
+          standaloneCameraLoader.item.cameraSettings && 
+          standaloneCameraLoader.item.cameraSettings.photoPrefix) {
+        prefix = standaloneCameraLoader.item.cameraSettings.photoPrefix + "_";
+      }
+    } catch (e) {
+      console.log("Error accessing camera photo prefix: " + e);
     }
     
-    let relativePath = folderName + '/' + prefix + 'IMG_' + dateStr + '_' + timestamp + '.' + FileUtils.fileSuffix(path)
+    let relativePath = folderName + '/' + prefix + 'IMG_' + dateStr + '_' + timestamp + '.' + FileUtils.fileSuffix(path);
     
     // Move the file to the destination folder
-    platformUtilities.renameFile(path, qgisProject.homePath + '/' + relativePath)
+    platformUtilities.renameFile(path, qgisProject.homePath + '/' + relativePath);
     
     // Add metadata and stamping if enabled
-    if (standaloneCameraLoader.active && standaloneCameraLoader.item) {
-      let camera = standaloneCameraLoader.item
-      
-      if (camera.cameraSettings.geoTagging && positionSource.active) {
-        FileUtils.addImageMetadata(qgisProject.homePath + '/' + relativePath, camera.currentPosition)
-        // Set the Make to SIGPACGO
-        platformUtilities.setExifTag(qgisProject.homePath + '/' + relativePath, "Exif.Image.Make", "SIGPACGO")
-        platformUtilities.setExifTag(qgisProject.homePath + '/' + relativePath, "Xmp.tiff.Make", "SIGPACGO")
+    try {
+      if (standaloneCameraLoader.active && standaloneCameraLoader.item && 
+          standaloneCameraLoader.item.cameraSettings) {
+        let camera = standaloneCameraLoader.item;
+        
+        if (camera.cameraSettings.geoTagging && positionSource.active && camera.currentPosition) {
+          FileUtils.addImageMetadata(qgisProject.homePath + '/' + relativePath, camera.currentPosition);
+          // Set the Make to SIGPACGO
+          platformUtilities.setExifTag(qgisProject.homePath + '/' + relativePath, "Exif.Image.Make", "SIGPACGO");
+          platformUtilities.setExifTag(qgisProject.homePath + '/' + relativePath, "Xmp.tiff.Make", "SIGPACGO");
+        }
+        
+        if (camera.cameraSettings.stamping && camera.stampExpressionEvaluator) {
+          let stampText = camera.stampExpressionEvaluator.evaluate();
+          let styledStamp = {
+            "color": camera.cameraSettings.stampTextColor || "#FFFF00",
+            "backgroundColor": camera.cameraSettings.stampBackgroundColor || "#80000000",
+            "fontSize": camera.cameraSettings.stampFontSize || 24,
+            "padding": 10,
+            "position": "bottomLeft"
+          };
+          FileUtils.addImageStamp(qgisProject.homePath + '/' + relativePath, stampText, styledStamp);
+        }
       }
-      
-      if (camera.cameraSettings.stamping) {
-        let stampText = camera.stampExpressionEvaluator.evaluate();
-        let styledStamp = {
-          "color": camera.cameraSettings.stampTextColor,
-          "backgroundColor": camera.cameraSettings.stampBackgroundColor,
-          "fontSize": camera.cameraSettings.stampFontSize,
-          "padding": 10,
-          "position": "bottomLeft"
-        };
-        FileUtils.addImageStamp(qgisProject.homePath + '/' + relativePath, stampText, styledStamp);
-      }
+    } catch (e) {
+      console.log("Error applying metadata or stamping: " + e);
     }
     
     // Display a toast with the saved location
-    displayToast(qsTr("Foto guardada en ") + folderName)
+    displayToast(qsTr("Foto guardada en ") + folderName);
   }
 
   function openPhotoGallery() {

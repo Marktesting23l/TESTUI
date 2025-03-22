@@ -18,6 +18,38 @@ Item {
   property var projectInfo: qgisProject ? qgisProject.projectInfo : null
   property var distanceUnits: projectInfo ? projectInfo.distanceUnits : Qgis.DistanceUnit.Meters
 
+  // Add a TapHandler to allow direct finger tap to add vertices
+  // Note: This deliberately ignores the global fingerTapDigitizing setting to provide
+  // a more intuitive measuring experience on touch devices as requested by users
+  TapHandler {
+    id: directTapHandler
+    enabled: stateMachine.state === 'measure' && !rubberband.model.frozen // Always enable in the measuring tool, regardless of global setting
+    acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Mouse
+    acceptedPointerTypes: PointerDevice.Finger | PointerDevice.GenericPointer
+    acceptedButtons: Qt.LeftButton
+    grabPermissions: PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything | PointerHandler.ApprovesCancellation
+    
+    onTapped: (eventPoint) => {
+      if (enabled) {
+        // Set the coordinate locator to the tapped position
+        coordinateLocator.sourceLocation = eventPoint.position;
+        
+        // Add vertex at the tapped position after a short delay to allow coordinate locator to update
+        addVertexTimer.start();
+      }
+    }
+  }
+  
+  Timer {
+    id: addVertexTimer
+    interval: 50 // Short delay to ensure coordinate is updated
+    repeat: false
+    onTriggered: {
+      // Add the vertex at the current coordinate
+      rubberband.model.addVertex();
+    }
+  }
+
   MapToScreen {
     id: vertexFirstLastDistance
     mapSettings: rubberband.mapSettings
@@ -86,8 +118,14 @@ Item {
     // We need one less label than vertices (for segments between vertices)
     model: Math.max(0, rubberband.model.vertexCount - 1)
     
+    // Don't show any labels if we have too many vertices (indicates freehand drawing)
+    // Freehand drawing typically adds many vertices very quickly (>100), while manual
+    // vertex placement typically has far fewer vertices
+    visible: rubberband.model.vertexCount < 100
+    
     delegate: Item {
       id: segmentLabelItem
+      // Hide labels when they go beyond available vertices
       visible: rubberband.model.vertexCount > 1 && index < rubberband.model.vertexCount - 1
       
       // Calculate the position of the current and next vertex

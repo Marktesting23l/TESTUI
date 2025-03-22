@@ -212,12 +212,12 @@ Popup {
     expressionText: "format_date(now(), 'dd-MM-yyyy HH:mm:ss') || if(@gnss_coordinate is not null, format('\n" + qsTr("Latitude") + " %1 | " + qsTr("Longitude") + " %2 | " + qsTr("Altitude") + " %3\n" + qsTr("Speed") + " %4 | " + qsTr("Orientation") + " %5', coalesce(format_number(y(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(x(@gnss_coordinate), 7), 'N/A'), coalesce(format_number(z(@gnss_coordinate), 3) || ' m', 'N/A'), if(@gnss_ground_speed != 'nan', format_number(@gnss_ground_speed, 3) || ' m/s', 'N/A'), if(@gnss_orientation != 'nan', format_number(@gnss_orientation, 1) || ' °', 'N/A')), '')" + 
         " || if(@horizontal_accuracy != 'nan', '\n" + qsTr("Accuracy") + ": ' || format_number(@horizontal_accuracy, 1) || ' m', '')" +
         " || '\n" + qsTr("Project") + ": ' || @project_title" +
-        " || '\n" + qsTr("Folder") + ": ' || '" + cameraSettings.folderName + "'" +
-        (cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
+        " || '\n" + qsTr("Folder") + ": ' || '" + (cameraSettings ? cameraSettings.folderName : "DCIM") + "'" +
+        (cameraSettings && cameraSettings.photoPrefix ? " || '\n" + qsTr("Series") + ": ' || '" + cameraSettings.photoPrefix + "'" : "") +
         " || '\nSIGPACGO - Agricultural Field Survey'"
 
-    project: qgisProject
-    positionInformation: currentPosition
+    project: qgisProject ? qgisProject : null
+    positionInformation: currentPosition ? currentPosition : null
   }
 
   Page {
