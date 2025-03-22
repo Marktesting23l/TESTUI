@@ -77,16 +77,34 @@ AndroidPlatformUtilities::AndroidPlatformUtilities()
   : mActivity( qtAndroidContext() )
   , mSystemGenericDataLocation( QStandardPaths::writableLocation( QStandardPaths::AppDataLocation ) + QStringLiteral( "/share" ) )
 {
-  // Ensure assets are copied when the app starts
-  if ( mActivity.isValid() )
+  // Only copy assets on first run or after update
+  QSettings settings;
+  bool isFirstRun = !settings.contains("appVersion"); // True if no version is stored
+  QString lastVersion = settings.value("appVersion").toString();
+  QString currentVersion = QCoreApplication::applicationVersion();
+  
+  if (isFirstRun || lastVersion != currentVersion)
   {
-    runOnAndroidMainThread( [] {
-      auto activity = qtAndroidContext();
-      if ( activity.isValid() )
-      {
-        activity.callMethod<void>( "copyAssets" );
-      }
-    } );
+    qDebug() << "First run or version changed - copying assets";
+    qDebug() << "Last version:" << lastVersion;
+    qDebug() << "Current version:" << currentVersion;
+    
+    if ( mActivity.isValid() )
+    {
+      runOnAndroidMainThread( [] {
+        auto activity = qtAndroidContext();
+        if ( activity.isValid() )
+        {
+          activity.callMethod<void>( "copyAssets" );
+        }
+      } );
+    }
+    
+    // Update the version after successful copy
+    settings.setValue("appVersion", currentVersion);
+    settings.sync(); // Ensure settings are saved immediately
+  } else {
+    qDebug() << "Not copying assets - not first run and version unchanged";
   }
 }
 

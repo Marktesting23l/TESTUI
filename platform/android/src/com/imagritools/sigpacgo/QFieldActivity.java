@@ -626,15 +626,32 @@ public class QFieldActivity extends QtActivity {
     private void copyAssetFile(String assetPath, String destPath) throws IOException {
         Log.i("SIGPACGO", "Attempting to copy asset file from: " + assetPath + " to: " + destPath);
         
+        // Check if destination file already exists
+        File destFile = new File(destPath);
+        if (destFile.exists()) {
+            // Only copy files on first run
+            SharedPreferences prefs = getSharedPreferences("SIGPACGO", MODE_PRIVATE);
+            boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+            
+            if (!isFirstRun) {
+                Log.i("SIGPACGO", "Skipping copy as file exists and not first run: " + destPath);
+                return;
+            }
+            
+            // Mark that first run is complete
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isFirstRun", false);
+            editor.apply();
+        }
+        
         InputStream in = null;
         OutputStream out = null;
         
         try {
             in = getAssets().open(assetPath);
-            File outFile = new File(destPath);
             
             // Create parent directories if they don't exist
-            File parentDir = outFile.getParentFile();
+            File parentDir = destFile.getParentFile();
             if (!parentDir.exists()) {
                 boolean created = parentDir.mkdirs();
                 if (!created) {
@@ -642,8 +659,8 @@ public class QFieldActivity extends QtActivity {
                 }
             }
             
-            out = new FileOutputStream(outFile);
-            byte[] buffer = new byte[8192]; // Increased buffer size for better performance
+            out = new FileOutputStream(destFile);
+            byte[] buffer = new byte[8192];
             int read;
             long total = 0;
             

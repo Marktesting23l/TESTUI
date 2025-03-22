@@ -119,8 +119,6 @@ Item {
     model: Math.max(0, rubberband.model.vertexCount - 1)
     
     // Don't show any labels if we have too many vertices (indicates freehand drawing)
-    // Freehand drawing typically adds many vertices very quickly (>100), while manual
-    // vertex placement typically has far fewer vertices
     visible: rubberband.model.vertexCount < 100
     
     delegate: Item {
@@ -159,7 +157,7 @@ Item {
       property real offsetX: (index % 2 === 0 ? -1 : 1) * Math.sin(angle) * offsetDistance
       property real offsetY: (index % 2 === 0 ? 1 : -1) * Math.cos(angle) * offsetDistance
       
-      // Calculate the segment length
+      // Calculate the segment length using DistanceArea for accurate measurements
       property real segmentLength: calculateSegmentLength(currentVertex, nextVertex)
       
       // Format the segment length with appropriate units
@@ -204,13 +202,31 @@ Item {
       
       function calculateSegmentLength(vertex1, vertex2) {
         if (!vertex1 || !vertex2) return 0
-        return GeometryUtils.distanceBetweenPoints(vertex1, vertex2)
+        
+        // Use DistanceArea for accurate measurements
+        var length = distanceArea.measureLine([vertex1, vertex2])
+        
+        // If the measurement is very small (less than 0.01 units), it might be due to 
+        // coordinate transformation issues - try using direct distance calculation
+        if (length < 0.01) {
+          length = GeometryUtils.distanceBetweenPoints(vertex1, vertex2)
+        }
+        
+        return length
       }
       
       function formatSegmentLength(length) {
-        if (typeof UnitTypes !== 'undefined' && distanceUnits) {
-          return UnitTypes.formatDistance(distanceArea.convertLengthMeansurement(length, distanceUnits), 2, distanceUnits)
-        } else {
+        if (typeof UnitTypes === 'undefined' || !distanceUnits) {
+          // Fallback to meters if units are not available
+          return (Math.round(length * 100) / 100) + " m"
+        }
+        
+        try {
+          // Convert the length to the project's distance units
+          var convertedLength = distanceArea.convertLengthMeansurement(length, distanceUnits)
+          return UnitTypes.formatDistance(convertedLength, 2, distanceUnits)
+        } catch (e) {
+          // If conversion fails, return the raw length in meters
           return (Math.round(length * 100) / 100) + " m"
         }
       }

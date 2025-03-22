@@ -283,3 +283,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif()
 
 include(Package)
+
+set(QFIELD_SRCS
+    # ... existing code ...
+    src/core/projectbackupmanager.cpp
+    src/core/projectbackupmanager.h
+    # ... existing code ...
+)

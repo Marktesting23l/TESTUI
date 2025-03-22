@@ -127,6 +127,7 @@
 #include "valuemapmodel.h"
 #include "vertexmodel.h"
 #include "webdavconnection.h"
+#include "projectbackupmanager.h"
 
 #include <QDateTime>
 #include <QFileInfo>
@@ -581,8 +582,10 @@ void QgisMobileapp::initDeclarative( QQmlEngine *engine )
   qmlRegisterUncreatableType<DeltaFileWrapper>( "org.qfield", 1, 0, "DeltaFileWrapper", "" );
   qmlRegisterUncreatableType<BookmarkModel>( "org.qfield", 1, 0, "BookmarkModel", "The BookmarkModel is available as context property `bookmarkModel`" );
   qmlRegisterUncreatableType<MessageLogModel>( "org.qfield", 1, 0, "MessageLogModel", "The MessageLogModel is available as context property `messageLogModel`." );
+  qmlRegisterUncreatableType<ProjectBackupManager>( "org.qfield", 1, 0, "ProjectBackupManager", "The ProjectBackupManager is available as context property `projectBackupManager`." );
 
   qRegisterMetaType<SnappingResult>( "SnappingResult" );
+  qRegisterMetaType<ProjectBackupManager::BackupMode>("ProjectBackupManager::BackupMode");
 
   // Register some globally available variables
   engine->rootContext()->setContextProperty( "qVersion", qVersion() );
@@ -595,6 +598,10 @@ void QgisMobileapp::initDeclarative( QQmlEngine *engine )
   engine->rootContext()->setContextProperty( "appVersionStr", qfield::appVersionStr );
   engine->rootContext()->setContextProperty( "gitRev", qfield::gitRev );
   engine->rootContext()->setContextProperty( "platformUtilities", PlatformUtilities::instance() );
+  
+  // Register backup manager
+  ProjectBackupManager* backupManager = new ProjectBackupManager(engine);
+  engine->rootContext()->setContextProperty("projectBackupManager", backupManager);
 }
 
 void QgisMobileapp::registerGlobalVariables()
