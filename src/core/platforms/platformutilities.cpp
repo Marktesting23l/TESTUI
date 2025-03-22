@@ -437,6 +437,16 @@ void PlatformUtilities::importDatasetsToCurrentProject( const QString &projectFo
   Q_UNUSED( projectFolderPath )
 }
 
+void PlatformUtilities::importSingleFile( const QString &targetPath ) const
+{
+  Q_UNUSED( targetPath )
+}
+
+void PlatformUtilities::updateProject( const QString &projectPath ) const
+{
+  Q_UNUSED( projectPath )
+}
+
 void PlatformUtilities::updateProjectFromArchive( const QString &projectPath ) const
 {
   Q_UNUSED( projectPath )

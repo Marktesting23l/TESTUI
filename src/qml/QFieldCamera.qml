@@ -114,6 +114,9 @@ Popup {
     // GPS accuracy thresholds (in meters)
     property real accuracyThresholdGood: 5.0
     property real accuracyThresholdModerate: 20.0
+    
+    // Initialize arrow style
+    property string arrowStyle: "standard" // Default arrow style
   }
 
   // Dialog for setting folder name
@@ -1793,9 +1796,9 @@ Popup {
 
   Rectangle {
     id: stampBackground
-    visible: stampCheckBox.checked
+    visible: cameraSettings.stamping  // Changed from stampCheckBox.checked to cameraSettings.stamping
     color: "#80000000"
-    height: dateStamp.height + 10 // Increased height to fully show the date
+    height: 40  // Fixed height instead of using dateStamp.height
     width: parent.width
     anchors.bottom: parent.bottom
   }
@@ -1841,7 +1844,7 @@ Popup {
     
     // Define annotation modes
     property string currentTool: "freehand" // Options: "freehand", "arrow", "rectangle", "circle", "text"
-    property string arrowStyle: "standard" // Options: "standard", "filled", "double"
+    property string arrowStyle: cameraSettings.arrowStyle // Link to the setting
     
     // Text input
     property bool textInputActive: false
@@ -1861,6 +1864,11 @@ Popup {
       
       onPaint: {
         var ctx = getContext("2d");
+        
+        // Clear canvas first - this ensures we're not stacking drawings
+        ctx.clearRect(0, 0, width, height);
+        
+        // Set default styles
         ctx.lineWidth = cameraSettings.brushSize;
         ctx.strokeStyle = cameraSettings.brushColor;
         ctx.fillStyle = cameraSettings.brushColor;
@@ -1880,6 +1888,11 @@ Popup {
       
       function drawPath(ctx, path) {
         if (!path) return;
+        
+        // Set line width based on path settings or current settings
+        ctx.lineWidth = path.width || cameraSettings.brushSize;
+        ctx.strokeStyle = path.color || cameraSettings.brushColor;
+        ctx.fillStyle = path.color || cameraSettings.brushColor;
         
         // Handle different path types
         if (path.type === "freehand") {
@@ -1907,8 +1920,11 @@ Popup {
           var angle = Math.atan2(path.end.y - path.start.y, path.end.x - path.start.x);
           var headLength = Math.max(10, ctx.lineWidth * 3); // Scale arrow head with line width
           
+          // Get arrow style
+          var arrowStyle = path.style || annotationContainer.arrowStyle || "standard";
+          
           // Draw arrowhead based on style
-          if (path.style === "filled") {
+          if (arrowStyle === "filled") {
             // Filled arrowhead
             ctx.beginPath();
             ctx.moveTo(path.end.x, path.end.y);
@@ -1923,7 +1939,7 @@ Popup {
             ctx.closePath();
             ctx.fill();
           } 
-          else if (path.style === "double") {
+          else if (arrowStyle === "double") {
             // Double arrow (both ends)
             // First end
             ctx.beginPath();
@@ -2155,7 +2171,7 @@ Popup {
               
               // For arrows, include the style
               if (annotationContainer.currentTool === "arrow") {
-                newShape.style = annotationContainer.arrowStyle;
+                newShape.style = annotationContainer.arrowStyle || "standard";
               }
               
               annotationCanvas.temporaryPaths.push(newShape);
@@ -2341,6 +2357,11 @@ Popup {
             anchors.fill: parent
             onClicked: {
               annotationContainer.currentTool = "arrow";
+              
+              // Make sure arrowStyle is properly initialized
+              if (!annotationContainer.arrowStyle) {
+                annotationContainer.arrowStyle = "standard";
+              }
               
               // Toggle arrow style selector visibility
               arrowStyleSelector.visible = !arrowStyleSelector.visible;
@@ -2731,6 +2752,7 @@ Popup {
             } else {
               cameraSettings.brushSize = value;
             }
+            // Force a repaint of the canvas when size changes
             annotationCanvas.requestPaint();
           }
         }

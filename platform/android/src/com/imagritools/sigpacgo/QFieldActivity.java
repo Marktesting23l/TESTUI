@@ -108,6 +108,7 @@ public class QFieldActivity extends QtActivity {
     private static final int IMPORT_PROJECT_FOLDER = 301;
     private static final int IMPORT_PROJECT_ARCHIVE = 302;
     private static final int IMPORT_DATASET_TO_PROJECT = 303;
+    private static final int IMPORT_SINGLE_FILE = 304;
 
     private static final int UPDATE_PROJECT_FROM_ARCHIVE = 400;
 
@@ -1143,6 +1144,26 @@ public class QFieldActivity extends QtActivity {
         return;
     }
 
+    private void triggerImportSingleFile(String targetPath) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false); // Only single file
+        intent.setType("*/*");
+        projectPath = targetPath; // Reuse projectPath variable for target path
+        try {
+            startActivityForResult(intent, IMPORT_SINGLE_FILE);
+        } catch (ActivityNotFoundException e) {
+            displayAlertDialog(
+                getString(R.string.operation_unsupported),
+                getString(R.string.import_operation_unsupported));
+            Log.w("SIGPACGO", "No activity found for ACTION_OPEN_DOCUMENT.");
+        }
+        return;
+    }
+
     private void triggerImportProjectFolder() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
@@ -1534,53 +1555,67 @@ public class QFieldActivity extends QtActivity {
     }
     
     void importDatasetsToProject(Uri[] datasetUris, String projectFolder) {
-        if (datasetUris.length == 0 || projectFolder == null || projectFolder.isEmpty()) {
+        if (datasetUris == null || datasetUris.length == 0) {
             return;
         }
 
-        ProgressDialog progressDialog =
-            new ProgressDialog(this, R.style.DialogTheme);
-        progressDialog.setMessage(getString(R.string.import_dataset_wait));
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if (projectFolder == null || projectFolder.isEmpty()) {
+            return;
+        }
 
-        Context context = getApplication().getApplicationContext();
-        ContentResolver resolver = getContentResolver();
+        showBlockingProgressDialog(getString(R.string.processing_message));
 
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                boolean imported = false;
+                String currentDir = projectFolder;
+                File targetDir = new File(currentDir);
+                boolean success = true;
+
                 for (Uri datasetUri : datasetUris) {
-                    DocumentFile documentFile =
-                        DocumentFile.fromSingleUri(context, datasetUri);
-                    String importFilePath =
-                        projectFolder + "/" + documentFile.getName();
-                    try {
-                        InputStream input =
-                            resolver.openInputStream(datasetUri);
-                        imported = QFieldUtils.inputStreamToFile(
-                            input, importFilePath, documentFile.length());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        imported = false;
-                    }
-                    if (!imported) {
-                        break;
-                    }
+                    success &= QFieldUtils.copyUriToFolder(QFieldActivity.this,
+                                                           datasetUri, targetDir);
                 }
 
-                progressDialog.dismiss();
-                if (!imported) {
-                    if (!isFinishing()) {
-                        displayAlertDialog(
-                            getString(R.string.import_error),
-                            getString(R.string.import_dataset_error));
-                    }
+                dismissBlockingProgressDialog();
+
+                if (!success) {
+                    displayAlertDialog(
+                        getString(R.string.import_error_title),
+                        getString(R.string.import_error_message));
                 } else {
-                    // Return to the same folder
-                    openPath(projectFolder);
+                    openPath(currentDir);
+                }
+            }
+        });
+    }
+
+    void importSingleFile(Uri fileUri, String targetPath) {
+        if (fileUri == null) {
+            return;
+        }
+
+        if (targetPath == null || targetPath.isEmpty()) {
+            return;
+        }
+
+        showBlockingProgressDialog(getString(R.string.processing_message));
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                File targetDir = new File(targetPath);
+                boolean success = QFieldUtils.copyUriToFolder(QFieldActivity.this, 
+                                                            fileUri, targetDir);
+                
+                dismissBlockingProgressDialog();
+
+                if (!success) {
+                    displayAlertDialog(
+                        getString(R.string.import_error_title),
+                        getString(R.string.import_error_message));
+                } else {
+                    openPath(targetPath);
                 }
             }
         });
@@ -2238,6 +2273,17 @@ public class QFieldActivity extends QtActivity {
                 dialog.show();
             } else {
                 importDatasetsToProject(datasetUris, projectPath);
+            }
+        } else if (requestCode == IMPORT_SINGLE_FILE &&
+                   resultCode == Activity.RESULT_OK) {
+            Log.d("SIGPACGO", "handling import single file");
+            if (projectPath == null || projectPath.isEmpty() || data == null) {
+                return;
+            }
+
+            Uri uri = data.getData();
+            if (uri != null) {
+                importSingleFile(uri, projectPath);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

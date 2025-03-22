@@ -45,6 +45,7 @@ class AndroidPlatformUtilities : public PlatformUtilities
     void importProjectArchive() const override;
     void importDatasets() const override;
     void importDatasetsToCurrentProject( const QString &projectFolderPath ) const override;
+    void importSingleFile( const QString &targetPath ) const override;
 
     void updateProjectFromArchive( const QString &projectPath ) const override;
 

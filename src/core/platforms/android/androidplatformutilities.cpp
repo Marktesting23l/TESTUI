@@ -321,6 +321,21 @@ void AndroidPlatformUtilities::importDatasetsToCurrentProject( const QString &pr
   }
 }
 
+void AndroidPlatformUtilities::importSingleFile( const QString &targetPath ) const
+{
+  if ( mActivity.isValid() )
+  {
+    runOnAndroidMainThread( [targetPath] {
+      auto activity = qtAndroidContext();
+      if ( activity.isValid() )
+      {
+        QJniObject pathJni = QJniObject::fromString( targetPath );
+        activity.callMethod<void>( "triggerImportSingleFile", "(Ljava/lang/String;)V", pathJni.object<jstring>() );
+      }
+    } );
+  }
+}
+
 void AndroidPlatformUtilities::updateProjectFromArchive( const QString &projectPath ) const
 {
   if ( mActivity.isValid() )

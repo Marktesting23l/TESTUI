@@ -21,11 +21,13 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import androidx.documentfile.provider.DocumentFile;
@@ -35,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.SecurityException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -594,5 +597,94 @@ public class QFieldUtils {
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(
             uri.getAuthority());
+    }
+
+    /**
+     * Copies a file from a Uri to a given folder
+     *
+     * @param context Android context
+     * @param sourceUri The source Uri of the file to copy
+     * @param targetDir The target directory to copy the file to
+     * @return true if successful, false otherwise
+     */
+    public static boolean copyUriToFolder(Context context, Uri sourceUri, File targetDir) {
+        try {
+            if (sourceUri == null || !targetDir.exists() || !targetDir.isDirectory()) {
+                return false;
+            }
+
+            ContentResolver contentResolver = context.getContentResolver();
+            DocumentFile documentFile = DocumentFile.fromSingleUri(context, sourceUri);
+            if (documentFile == null || !documentFile.exists()) {
+                return false;
+            }
+
+            String fileName = documentFile.getName();
+            if (fileName == null || fileName.isEmpty()) {
+                // Extract filename from uri if not available from DocumentFile
+                String uriPath = sourceUri.getPath();
+                if (uriPath != null) {
+                    int lastSlashIndex = uriPath.lastIndexOf('/');
+                    if (lastSlashIndex != -1 && lastSlashIndex < uriPath.length() - 1) {
+                        fileName = uriPath.substring(lastSlashIndex + 1);
+                    } else {
+                        fileName = "imported_file_" + System.currentTimeMillis();
+                    }
+                } else {
+                    fileName = "imported_file_" + System.currentTimeMillis();
+                }
+            }
+
+            // Create target file in the target directory
+            File targetFile = new File(targetDir, fileName);
+            
+            // Copy the file content
+            InputStream inputStream = null;
+            FileOutputStream outputStream = null;
+            try {
+                inputStream = contentResolver.openInputStream(sourceUri);
+                if (inputStream == null) {
+                    return false;
+                }
+                
+                outputStream = new FileOutputStream(targetFile);
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                
+                outputStream.flush();
+                
+                // Make the file readable and writable
+                targetFile.setReadable(true);
+                targetFile.setWritable(true);
+                
+                // Let the Android scan the new file to make it visible through MTP
+                MediaScannerConnection.scanFile(
+                    context, new String[] {targetFile.getAbsolutePath()}, null, null);
+                
+                return true;
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (outputStream != null) {
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -416,26 +416,6 @@ Page {
         }
       }
       
-      // Import file button (appears when not at root)
-      QfToolButton {
-        id: directoryImportFileButton
-        round: false
-        visible: table.model.currentPath !== 'root' && !projectFolderView
-
-        anchors.bottom: parent.bottom
-        anchors.right: actionButton.left
-        anchors.bottomMargin: 10
-        anchors.rightMargin: 10
-
-        bgcolor: Theme.accentColor
-        iconSource: Theme.getThemeVectorIcon("ic_file_upload_black_24dp")
-        iconColor: Theme.toolButtonColor
-
-        onClicked: {
-          importFileToCurrentDir()
-        }
-      }
-      
       // Layer management button
       QfToolButton {
         id: layerManagementButton
@@ -443,7 +423,7 @@ Page {
         visible: qgisProject
 
         anchors.bottom: parent.bottom
-        anchors.right: directoryImportFileButton.visible ? directoryImportFileButton.left : actionButton.left
+        anchors.right: actionButton.left
         anchors.bottomMargin: 10
         anchors.rightMargin: 10
 
@@ -735,6 +715,22 @@ Page {
         text: qsTr("Importar conjunto(s) de datos")
         onTriggered: {
           platformUtilities.importDatasets();
+        }
+      }
+
+      MenuItem {
+        id: importSingleFile
+
+        enabled: platformUtilities.capabilities & PlatformUtilities.CustomImport
+        visible: enabled
+        font: Theme.defaultFont
+        width: parent.width
+        height: enabled ? 48 : 0
+        leftPadding: Theme.menuItemLeftPadding
+
+        text: qsTr("Importar archivo único")
+        onTriggered: {
+          platformUtilities.importSingleFile(table.model.currentPath);
         }
       }
 
@@ -1642,77 +1638,48 @@ Page {
         color: Theme.mainTextColor
       }
 
-      // Add a row for the file list and import button
-      RowLayout {
+      Rectangle {
         width: parent.width
-        spacing: 5
+        height: Math.min(150, mainWindow.height / 4)
+        color: Theme.controlBackgroundColor
+        border.color: Theme.controlBorderColor
+        border.width: 1
 
-        Rectangle {
-          Layout.fillWidth: true
-          height: Math.min(150, mainWindow.height / 4)
-          color: Theme.controlBackgroundColor
-          border.color: Theme.controlBorderColor
-          border.width: 1
-
-          ListView {
-            id: filesList
-            anchors.fill: parent
-            anchors.margins: 2
-            clip: true
-            focus: true
-            model: []  // Initialize with empty model
+        ListView {
+          id: filesList
+          anchors.fill: parent
+          anchors.margins: 2
+          clip: true
+          focus: true
+          model: []  // Initialize with empty model
+          
+          delegate: Rectangle {
+            width: filesList.width
+            height: 40
+            color: filesList.currentIndex === index ? Theme.mainColor : "transparent"
             
-            delegate: Rectangle {
-              width: filesList.width
-              height: 40
-              color: filesList.currentIndex === index ? Theme.mainColor : "transparent"
-              
-              MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                  filesList.currentIndex = index
-                  // Get layers in the selected GPKG file
-                  if (modelData) {
-                    let layers = iface.getLayersInGeoPackage(modelData)
-                    layerList.model = layers || []  // Ensure we always set a valid model
-                    layerList.currentIndex = -1
-                    // Always reset acceptance state when file selection changes
-                    addLayerFromFileDialog.canAccept = false
-                  }
+            MouseArea {
+              anchors.fill: parent
+              onClicked: {
+                filesList.currentIndex = index
+                // Get layers in the selected GPKG file
+                if (modelData) {
+                  let layers = iface.getLayersInGeoPackage(modelData)
+                  layerList.model = layers || []  // Ensure we always set a valid model
+                  layerList.currentIndex = -1
+                  // Always reset acceptance state when file selection changes
+                  addLayerFromFileDialog.canAccept = false
                 }
               }
-              
-              Text {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-                text: modelData ? modelData.split('/').pop() : ""  // Only show filename, not path
-                font: Theme.defaultFont
-                color: filesList.currentIndex === index ? Theme.toolButtonColor : Theme.mainTextColor
-              }
             }
-          }
-        }
-
-        // Import button column
-        Column {
-          Layout.preferredWidth: 48
-          Layout.alignment: Qt.AlignTop
-          spacing: 5
-
-          // Import file button
-          QfToolButton {
-            id: importFileButton
-            width: 48
-            height: 48
-            round: false
             
-            bgcolor: Theme.mainColor
-            iconSource: Theme.getThemeVectorIcon("ic_file_upload_black_24dp")
-            iconColor: Theme.toolButtonColor
-            
-            onClicked: {
-              importGpkgFileToCurrentDir()
+            Text {
+              anchors.verticalCenter: parent.verticalCenter
+              anchors.left: parent.left
+              anchors.leftMargin: 5
+              text: modelData ? modelData.split('/').pop() : ""  // Only show filename, not path
+              font: Theme.defaultFont
+              color: filesList.currentIndex === index ? Theme.toolButtonColor : Theme.mainTextColor
             }
           }
         }
@@ -2221,79 +2188,6 @@ Page {
     }
   }
 
-  // Function to import a GPKG file to the current directory
-  function importGpkgFileToCurrentDir() {
-    let currentDir = table.model.currentPath
-    console.log("Importing GPKG file to directory:", currentDir)
-    
-    // Make sure we have a valid directory path
-    if (!currentDir || currentDir === 'root') {
-      displayToast(qsTr("No se puede importar a este directorio. Navegue a un directorio válido."))
-      return
-    }
-    
-    // Ensure directory path ends with slash
-    if (!currentDir.endsWith('/')) {
-      currentDir += '/'
-    }
-    
-    // First, check if we have the CustomImport capability (Android specific)
-    if (platformUtilities.capabilities & PlatformUtilities.CustomImport) {
-      console.log("Using CustomImport capability for GPKG import")
-      // This will use the Android-specific import method
-      platformUtilities.importDatasetsToCurrentProject(currentDir)
-      return
-    }
-    
-    try {
-      // Use the native file picker to select a GPKG file
-      // The file picker will use the mimeType filter to only show GPKG files
-      let resourceSource = platformUtilities.getFile(currentDir, generateUniqueFilename(), PlatformUtilities.AllFiles)
-      
-      // Check if resourceSource exists and has the necessary signals before connecting
-      if (resourceSource && resourceSource.received && typeof resourceSource.received.connect === 'function') {
-        resourceSource.received.connect(function(filePath) {
-          console.log("File received:", filePath)
-          
-          // Refresh the file list
-          qfieldLocalDataPickerScreen.files = getGpkgFiles(currentDir)
-          filesList.model = qfieldLocalDataPickerScreen.files
-          filesList.currentIndex = -1
-          layerList.model = []
-          layerList.currentIndex = -1
-          
-          // Show success message
-          displayToast(qsTr("Archivo importado correctamente"))
-        })
-        
-        if (resourceSource.canceled && typeof resourceSource.canceled.connect === 'function') {
-          resourceSource.canceled.connect(function() {
-            console.log("File import canceled")
-          })
-        }
-      } else {
-        console.error("Platform file picker not available or supported")
-        // Show a Linux-specific message for desktop testing
-        if (Qt.platform.os === "linux") {
-          displayToast(qsTr("En Linux: Esta función requiere un selector de archivos nativo que no está disponible para pruebas de escritorio. En Android funcionará correctamente."))
-        } else {
-          displayToast(qsTr("Error: El selector de archivos no está disponible en esta plataforma"))
-        }
-      }
-    } catch (e) {
-      console.error("Exception during file import:", e)
-      // More detailed error for debugging purposes
-      displayToast(qsTr("Error al importar el archivo: ") + e.toString())
-    }
-  }
-  
-  // Generate a unique filename for imported files
-  function generateUniqueFilename() {
-    let timestamp = new Date().toISOString().replace(/[-:]/g, "").replace("T", "_").split(".")[0]
-    return "imported_" + timestamp + ".gpkg"
-  }
-  
-  // Function to get GPKG files from a directory
   function getGpkgFiles(directory) {
     let result = []
     if (directory) {
@@ -2326,67 +2220,5 @@ Page {
       console.log("No directory provided to search for GPKG files")
     }
     return result
-  }
-
-  // Function to import a file to the current directory
-  function importFileToCurrentDir() {
-    let currentDir = table.model.currentPath
-    console.log("Importing file to directory:", currentDir)
-    
-    // Make sure we have a valid directory path
-    if (!currentDir || currentDir === 'root') {
-      displayToast(qsTr("No se puede importar a este directorio. Navegue a un directorio válido."))
-      return
-    }
-    
-    // Ensure directory path ends with slash
-    if (!currentDir.endsWith('/')) {
-      currentDir += '/'
-    }
-    
-    // First, check if we have the CustomImport capability (Android specific)
-    if (platformUtilities.capabilities & PlatformUtilities.CustomImport) {
-      console.log("Using CustomImport capability for file import")
-      // This will use the Android-specific import method
-      platformUtilities.importDatasetsToCurrentProject(currentDir)
-      return
-    }
-    
-    try {
-      // Use the native file picker to select a file
-      // We use a null fileName parameter to let the file picker handle the final filename
-      let resourceSource = platformUtilities.getFile(currentDir, "", PlatformUtilities.AllFiles)
-      
-      // Check if resourceSource exists and has the necessary signals before connecting
-      if (resourceSource && resourceSource.received && typeof resourceSource.received.connect === 'function') {
-        resourceSource.received.connect(function(filePath) {
-          console.log("File imported:", filePath)
-          
-          // Refresh the directory to show the new file
-          table.model.refresh()
-          
-          // Show success message
-          displayToast(qsTr("Archivo importado correctamente"))
-        })
-        
-        if (resourceSource.canceled && typeof resourceSource.canceled.connect === 'function') {
-          resourceSource.canceled.connect(function() {
-            console.log("File import canceled")
-          })
-        }
-      } else {
-        console.error("Platform file picker not available or supported")
-        // Linux-specific message for desktop testing
-        if (Qt.platform.os === "linux") {
-          displayToast(qsTr("En Linux: Esta función requiere un selector de archivos nativo que no está disponible para pruebas de escritorio. En Android funcionará correctamente."))
-        } else {
-          displayToast(qsTr("Error: El selector de archivos no está disponible en esta plataforma"))
-        }
-      }
-    } catch (e) {
-      console.error("Exception during file import:", e)
-      // More detailed error for debugging purposes
-      displayToast(qsTr("Error al importar el archivo: ") + e.toString())
-    }
   }
 }

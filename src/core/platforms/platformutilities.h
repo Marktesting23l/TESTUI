@@ -154,6 +154,16 @@ class QFIELD_CORE_EXPORT PlatformUtilities : public QObject
     Q_INVOKABLE virtual void importDatasetsToCurrentProject( const QString &projectFolderPath ) const;
 
     /**
+     * Import a single file to the specified path
+     */
+    Q_INVOKABLE virtual void importSingleFile( const QString &targetPath ) const;
+
+    /**
+     * Update the active project
+     */
+    Q_INVOKABLE virtual void updateProject( const QString &projectPath ) const;
+
+    /**
      * Update a local project content from a user-picked archive file action
      * \param projectPath the project file path
      */
