@@ -148,11 +148,20 @@ class AppInterface : public QObject
     Q_INVOKABLE bool addLayerFromGeoPackage( const QString &gpkgPath, const QString &layerName, const QString &layerType ) const;
     
     /**
+     * Adds a layer from a GeoPackage file to the root of the layer tree in the current project
+     * @param gpkgPath The path to the GeoPackage file
+     * @param layerName The name of the layer to add
+     * @param layerType The type of the layer (vector or raster)
+     * @return True if the layer was successfully added, false otherwise
+     */
+    Q_INVOKABLE bool addLayerToProject( const QString &gpkgPath, const QString &layerName, const QString &layerType ) const;
+    
+    /**
      * Removes a layer from the current project
      * @param layerId The ID of the layer to remove
      * @return True if the layer was successfully removed, false otherwise
      */
-    Q_INVOKABLE bool removeLayerFromProject( const QString &layerId ) const;
+    Q_INVOKABLE bool removeLayerFromProject( const QString &layerId );
     
     /**
      * Returns a list of all layers in the current project
@@ -250,6 +259,9 @@ class AppInterface : public QObject
 
     //! Emitted when a volume key is pressed while QField is set to handle those keys.
     void volumeKeyUp( int volumeKeyCode );
+
+    //! Emitted when a layer has been removed that requires special reload handling
+    void layerRemovalRequiringReload();
 
   private:
     static AppInterface *sAppInterface;

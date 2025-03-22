@@ -108,6 +108,16 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
     void reloadProjectFile();
 
     /**
+     * Saves the current layer visibility states to be restored after project reload
+     */
+    void saveLayerVisibilityState();
+
+    /**
+     * This will restore the layer visibility state from the saved map
+     */
+    void restoreLayerVisibilityState();
+
+    /**
      * Reads and opens the project file set in the loadProjectFile function
      */
     void readProjectFile();
@@ -187,9 +197,11 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
     /**
      * Clear the currently opened project back to a blank project
      */
-    void clearProject();
+    Q_INVOKABLE void clearProject();
 
     static void initDeclarative( QQmlEngine *engine );
+
+    void loadTestingData(); // Only for desktop builds - will be removed
 
   signals:
     /**
@@ -266,6 +278,23 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
 
     std::unique_ptr<ScreenDimmer> mScreenDimmer;
     QgsApplication *mApp;
+
+    // Map to store layer visibility states
+    QMap<QString, bool> mSavedLayerVisibility;
+
+    QPointF mStartPointMapCoordinates;
+    QPointF mPreviousMovePointMapCoordinates;
+    QPoint mStartPointScreenCoordinates;
+    QgsVectorLayer *mMovingLayer = nullptr;
+    const QgsFeature *mMovingFeature = nullptr;
+    QgsFeatureId mMovingFeatureId;
+    
+    bool mSkipHardcodedLayers = false;
+
+    // Comment out these problematic lines that are causing compilation errors
+    // std::unique_ptr<QgsVertexMarker> mCenter = nullptr;
+    // std::unique_ptr<QgsGpsConnection> mGpsConnection = nullptr;
+    // QgsQuickCoordinateTransformerGpsDataProvider mGpsProvider;
 };
 
 /**

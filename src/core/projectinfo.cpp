@@ -259,23 +259,22 @@ void ProjectInfo::saveLayerTreeState()
     return;
 
   const bool isDataset = QgsProject::instance()->readBoolEntry( QStringLiteral( "QField" ), QStringLiteral( "isDataset" ), false );
-  if ( !isDataset )
-  {
-    QgsMapThemeCollection mapCollection( QgsProject::instance() );
-    const QgsMapThemeCollection::MapThemeRecord rec = QgsMapThemeCollection::createThemeFromCurrentState( mLayerTree->layerTreeModel()->rootGroup(), mLayerTree->layerTreeModel() );
-    mapCollection.insert( QStringLiteral( "::QFieldLayerTreeState" ), rec );
+  
+  // Create and save the layer tree state regardless of whether it's a dataset or not
+  QgsMapThemeCollection mapCollection( QgsProject::instance() );
+  const QgsMapThemeCollection::MapThemeRecord rec = QgsMapThemeCollection::createThemeFromCurrentState( mLayerTree->layerTreeModel()->rootGroup(), mLayerTree->layerTreeModel() );
+  mapCollection.insert( QStringLiteral( "::QFieldLayerTreeState" ), rec );
 
-    const QDomDocumentType documentType = QDomImplementation().createDocumentType( QStringLiteral( "qgis" ), QStringLiteral( "http://mrcc.com/qgis.dtd" ), QStringLiteral( "SYSTEM" ) );
-    QDomDocument document( documentType );
+  const QDomDocumentType documentType = QDomImplementation().createDocumentType( QStringLiteral( "qgis" ), QStringLiteral( "http://mrcc.com/qgis.dtd" ), QStringLiteral( "SYSTEM" ) );
+  QDomDocument document( documentType );
 
-    document.appendChild( document.createElement( QStringLiteral( "qgis" ) ) );
-    mapCollection.writeXml( document );
+  document.appendChild( document.createElement( QStringLiteral( "qgis" ) ) );
+  mapCollection.writeXml( document );
 
-    mSettings.beginGroup( QStringLiteral( "/qgis/projectInfo/%1" ).arg( mFilePath ) );
-    mSettings.setValue( QStringLiteral( "layertreestate" ), document.toString() );
-    mSettings.remove( QStringLiteral( "maptheme" ) );
-    mSettings.endGroup();
-  }
+  mSettings.beginGroup( QStringLiteral( "/qgis/projectInfo/%1" ).arg( mFilePath ) );
+  mSettings.setValue( QStringLiteral( "layertreestate" ), document.toString() );
+  mSettings.remove( QStringLiteral( "maptheme" ) );
+  mSettings.endGroup();
 }
 
 bool ProjectInfo::snappingEnabled() const

@@ -148,7 +148,18 @@ bool AppInterface::hasProjectOnLaunch() const
 bool AppInterface::loadFile( const QString &path, const QString &name )
 {
   qInfo() << QStringLiteral( "AppInterface loading file: %1" ).arg( path );
-  if ( QFileInfo::exists( path ) )
+  
+  // Add additional logging for debugging the #nohardcoded flag
+  if (path.contains("#nohardcoded")) {
+    QgsMessageLog::logMessage(
+      QStringLiteral("AppInterface detected #nohardcoded flag in path: %1")
+        .arg(path),
+      QStringLiteral("SIGPACGO"),
+      Qgis::Info
+    );
+  }
+  
+  if ( QFileInfo::exists( path.split("#").first() ) )  // Use split to handle paths with '#nohardcoded' flag
   {
     return mApp->loadProjectFile( path, name );
   }
@@ -159,7 +170,41 @@ bool AppInterface::loadFile( const QString &path, const QString &name )
 
 void AppInterface::reloadProject()
 {
-  return mApp->reloadProjectFile();
+  // Add a #nohardcoded flag to ensure no duplicate layers are created when reloading
+  QgsMessageLog::logMessage(
+    QStringLiteral("AppInterface reloadProject called - forcing #nohardcoded flag to prevent duplication"),
+    QStringLiteral("SIGPACGO"),
+    Qgis::Info
+  );
+  
+  // Prepend the #nohardcoded flag to the project file path
+  QString projectPath = QgsProject::instance()->fileName();
+  if (!projectPath.isEmpty()) {
+    QgsMessageLog::logMessage(
+      QStringLiteral("Current project path: %1")
+        .arg(projectPath),
+      QStringLiteral("SIGPACGO"),
+      Qgis::Info
+    );
+    
+    // Adding #nohardcoded flag to project path and reloading
+    projectPath += "#nohardcoded";
+    
+    QgsMessageLog::logMessage(
+      QStringLiteral("Reloading with modified path: %1")
+        .arg(projectPath),
+      QStringLiteral("SIGPACGO"),
+      Qgis::Info
+    );
+    
+    // Load the file with the modified path
+    QString projectName = QFileInfo(QgsProject::instance()->fileName()).fileName();
+    mApp->loadProjectFile(projectPath, projectName);
+    return;
+  }
+  
+  // Fallback to normal reload if no project path available
+  mApp->reloadProjectFile();
 }
 
 void AppInterface::readProject()
@@ -567,7 +612,69 @@ bool AppInterface::addLayerFromGeoPackage( const QString &gpkgPath, const QStrin
   return true;
 }
 
-bool AppInterface::removeLayerFromProject( const QString &layerId ) const
+bool AppInterface::addLayerToProject( const QString &gpkgPath, const QString &layerName, const QString &layerType ) const
+{
+  QgsMessageLog::logMessage( tr( "Adding layer '%1' to project root" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  
+  QFileInfo fileInfo( gpkgPath );
+  
+  if ( !fileInfo.exists() || !fileInfo.isFile() )
+  {
+    QgsMessageLog::logMessage( tr( "File does not exist: %1" ).arg( gpkgPath ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  if ( !QgsProject::instance() )
+  {
+    QgsMessageLog::logMessage( tr( "No project loaded" ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    return false;
+  }
+  
+  // Create the layer
+  QgsMapLayer *newLayer = nullptr;
+  
+  if ( layerType == "vector" )
+  {
+    // For vector layers, we need to create the URI with the layer name
+    QString uri = gpkgPath + "|layername=" + layerName;
+    QgsMessageLog::logMessage( tr( "Creating vector layer with URI: %1" ).arg( uri ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    newLayer = new QgsVectorLayer( uri, layerName, "ogr" );
+  }
+  else if ( layerType == "raster" )
+  {
+    // For raster layers in GPKG
+    QString uri = "GPKG:" + gpkgPath + ":" + layerName;
+    QgsMessageLog::logMessage( tr( "Creating raster layer with URI: %1" ).arg( uri ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    newLayer = new QgsRasterLayer( uri, layerName, "gdal" );
+  }
+  
+  if ( !newLayer || !newLayer->isValid() )
+  {
+    QgsMessageLog::logMessage( tr( "Failed to create layer from GeoPackage: %1, layer: %2" ).arg( gpkgPath, layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    delete newLayer;
+    return false;
+  }
+  
+  // Add the layer to the project (this adds it to the root by default)
+  if ( !QgsProject::instance()->addMapLayer( newLayer ) )
+  {
+    QgsMessageLog::logMessage( tr( "Failed to add layer to project: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    delete newLayer;
+    return false;
+  }
+  
+  // Save the project to persist the added layer
+  if ( !QgsProject::instance()->write() )
+  {
+    QgsMessageLog::logMessage( tr( "Failed to save project after adding layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    // Continue anyway, the layer is still added to the current session
+  }
+  
+  QgsMessageLog::logMessage( tr( "Layer added successfully to project: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  return true;
+}
+
+bool AppInterface::removeLayerFromProject( const QString &layerId )
 {
   if ( !QgsProject::instance() )
     return false;
@@ -581,6 +688,16 @@ bool AppInterface::removeLayerFromProject( const QString &layerId ) const
   
   // Store the layer name for the log message
   QString layerName = layer->name();
+  
+  // Check if this is a GPKG layer
+  bool isGpkgLayer = false;
+  if (layer->providerType() == "ogr" || layer->source().toLower().endsWith(".gpkg")) {
+    isGpkgLayer = true;
+    QgsMessageLog::logMessage( QStringLiteral( "Removed layer is a GPKG layer, setting flag for hardcoded layer preservation" ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+    
+    // Emit the signal to notify that we need to handle this special case
+    emit layerRemovalRequiringReload();
+  }
   
   // Remove the layer from the project
   // QgsProject::removeMapLayer doesn't return a boolean, so we can't check its return value directly
@@ -712,103 +829,32 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
     return false;
   }
   
-  // Find or create the target group
+  // Find or create the "Capas importadas" group
+  QString targetGroupName = tr("Capas importadas");
   QgsLayerTreeGroup *targetGroup = nullptr;
   
-  // Determine the group to use
-  QString targetGroupName;
-  
-  // List of protected group names that we shouldn't move layers from or modify
-  QStringList protectedGroups = { "Mapas Base", "Servicios GIS España", "Capas Base GIS España", "Teselas Vectoriales GIS España", "Utilidades", "Imágenes Sentinel" };
-  
-  // Check if the requested group name is a protected group
-  bool isProtectedGroupRequested = protectedGroups.contains(groupName);
-  
-  if (isProtectedGroupRequested) {
-    // If trying to add to a protected group, redirect to Imported Layers instead
-    QgsMessageLog::logMessage(tr("Cannot add layer directly to protected group '%1', redirecting to 'Imported Layers'").arg(groupName), 
-                            QStringLiteral("SIGPACGO"), Qgis::Warning);
-    targetGroupName = tr("Imported Layers");
-  }
-  else if (groupName.isEmpty() || groupName == "root") {
-    // For layers being added to root, add them to a common "Imported Layers" group
-    targetGroupName = tr("Imported Layers");
-  }
-  else {
-    // Use the provided group name if not protected
-    targetGroupName = groupName;
-  }
-  
-  // Find the target group by name 
-  QList<QgsLayerTreeGroup *> topLevelGroups = root->findGroups();
-  bool foundGroup = false;
-  
-  // First, iterate only through the top-level groups to find the target group
-  for (QgsLayerTreeGroup *group : topLevelGroups) {
-    if (group->name() == targetGroupName) {
+  // First try to find the group
+  QList<QgsLayerTreeGroup *> groups = root->findGroups();
+  for (QgsLayerTreeGroup *group : groups)
+  {
+    if (group->name() == targetGroupName)
+    {
       targetGroup = group;
-      foundGroup = true;
-      QgsMessageLog::logMessage(tr("Using existing group: %1").arg(targetGroupName), QStringLiteral("SIGPACGO"), Qgis::Info);
       break;
     }
   }
   
-  // If not found at top level, try to find it at any level - this helps to avoid duplicate groups with the same name
-  if (!foundGroup) {
-    std::function<QgsLayerTreeGroup*(QgsLayerTreeGroup*, const QString&)> findGroupByName;
-    findGroupByName = [&findGroupByName](QgsLayerTreeGroup* parentGroup, const QString& name) -> QgsLayerTreeGroup* {
-      // Check if this group matches
-      if (parentGroup->name() == name) {
-        return parentGroup;
-      }
-      
-      // Check all child groups
-      for (QgsLayerTreeGroup* childGroup : parentGroup->findGroups()) {
-        QgsLayerTreeGroup* foundGroup = findGroupByName(childGroup, name);
-        if (foundGroup) {
-          return foundGroup;
-        }
-      }
-      
-      return nullptr;
-    };
-    
-    targetGroup = findGroupByName(root, targetGroupName);
-    if (targetGroup) {
-      foundGroup = true;
-      QgsMessageLog::logMessage(tr("Found existing group at nested level: %1").arg(targetGroupName), 
-                              QStringLiteral("SIGPACGO"), Qgis::Info);
-    }
+  // If group doesn't exist, create it
+  if (!targetGroup)
+  {
+    targetGroup = root->addGroup(targetGroupName);
+    QgsMessageLog::logMessage(tr("Created new group: %1").arg(targetGroupName), QStringLiteral("SIGPACGO"), Qgis::Info);
   }
   
-  // Create the group if it doesn't exist
-  if (!foundGroup)
+  if (!targetGroup)
   {
-    // Before creating a new group, check if there are any existing groups that should not be touched
-    // Get all the existing groups in the project to ensure we don't interfere with existing structure
-    QList<QgsLayerTreeGroup*> allGroups;
-    std::function<void(QgsLayerTreeGroup*, QList<QgsLayerTreeGroup*>&)> collectGroups;
-    collectGroups = [&collectGroups](QgsLayerTreeGroup* group, QList<QgsLayerTreeGroup*>& groupsList) {
-      groupsList.append(group);
-      for (QgsLayerTreeGroup* childGroup : group->findGroups()) {
-        collectGroups(childGroup, groupsList);
-      }
-    };
-    
-    collectGroups(root, allGroups);
-    
-    // Create the Imported Layers group at the root level
-    targetGroup = root->addGroup(targetGroupName);
-    if (!targetGroup)
-    {
-      QgsMessageLog::logMessage(tr("Failed to create group: %1, falling back to root").arg(targetGroupName), 
-                              QStringLiteral("SIGPACGO"), Qgis::Warning);
-      targetGroup = root;
-    }
-    else
-    {
-      QgsMessageLog::logMessage(tr("Created new group: %1").arg(targetGroupName), QStringLiteral("SIGPACGO"), Qgis::Info);
-    }
+    QgsMessageLog::logMessage(tr("Failed to get or create group: %1").arg(targetGroupName), QStringLiteral("SIGPACGO"), Qgis::Critical);
+    return false;
   }
   
   // Check if a layer with the same name already exists in the target group
@@ -817,93 +863,33 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
   {
     if (existingLayerNode && existingLayerNode->layer())
     {
-      // Check if we already have a layer with the same name
       if (existingLayerNode->layer()->name() == layerName)
       {
         QgsMessageLog::logMessage(tr("Layer with name '%1' already exists in group '%2', skipping")
                                 .arg(layerName, targetGroupName), QStringLiteral("SIGPACGO"), Qgis::Warning);
-        return true; // Return true to indicate "success" since the layer already exists
+        return true;
       }
-    }
-  }
-  
-  // Check if any layer with this name exists anywhere in the project
-  bool shouldRenameNewLayer = false;
-  QString existingLayerId;
-  
-  // Scan all existing layers to check if we need a different name
-  const QMap<QString, QgsMapLayer*> projectLayers = QgsProject::instance()->mapLayers();
-  for (auto it = projectLayers.constBegin(); it != projectLayers.constEnd(); ++it) 
-  {
-    if (it.value()->name() == layerName) 
-    {
-      // If a layer with this name exists anywhere in the project, we'll rename the new one
-      existingLayerId = it.key();
-      shouldRenameNewLayer = true;
-      
-      QgsMessageLog::logMessage(tr("A layer named '%1' already exists in the project - will use a different name")
-                              .arg(layerName), QStringLiteral("SIGPACGO"), Qgis::Info);
-      break;
     }
   }
   
   // Add the layer
   QgsMapLayer *layer = nullptr;
+  QString uri;
   
-  // Create a connection to the database
-  QString connectionName = QString("gpkg_connection_%1").arg(fileInfo.fileName().replace(".", "_"));
-  
+  if (layerType.toLower() == "vector")
   {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
-    db.setDatabaseName(gpkgPath);
-    
-    if (!db.open())
-    {
-      QgsMessageLog::logMessage(tr("Failed to open database: %1").arg(db.lastError().text()), 
-                              QStringLiteral("SIGPACGO"), Qgis::Critical);
-      QSqlDatabase::removeDatabase(connectionName);
-      return false;
-    }
-    
-    // Create the layer with an appropriate name
-    if (layerType.toLower() == "vector")
-    {
-      QString uri = QString("%1|layername=%2").arg(gpkgPath).arg(layerName);
-      
-      // If we need to rename it, give it a unique name
-      if (shouldRenameNewLayer) {
-        QString newLayerName = layerName + " (" + tr("imported") + ")";
-        layer = new QgsVectorLayer(uri, newLayerName, "ogr");
-        QgsMessageLog::logMessage(tr("Created layer with modified name: %1")
-                                .arg(newLayerName), QStringLiteral("SIGPACGO"), Qgis::Info);
-      } else {
-        layer = new QgsVectorLayer(uri, layerName, "ogr");
-      }
-    }
-    else if (layerType.toLower() == "raster")
-    {
-      QString uri = QString("GPKG:%1:%2").arg(gpkgPath).arg(layerName);
-      
-      // Same logic for raster layers
-      if (shouldRenameNewLayer) {
-        QString newLayerName = layerName + " (" + tr("imported") + ")";
-        layer = new QgsRasterLayer(uri, newLayerName, "gdal");
-        QgsMessageLog::logMessage(tr("Created layer with modified name: %1")
-                                .arg(newLayerName), QStringLiteral("SIGPACGO"), Qgis::Info);
-      } else {
-        layer = new QgsRasterLayer(uri, layerName, "gdal");
-      }
-    }
-    
-    // Clean up the database connection
-    db.close();
-    QSqlDatabase::removeDatabase(connectionName);
+    uri = QString("%1|layername=%2").arg(gpkgPath, layerName);
+    layer = new QgsVectorLayer(uri, layerName, "ogr");
+  }
+  else if (layerType.toLower() == "raster")
+  {
+    uri = QString("GPKG:%1:%2").arg(gpkgPath, layerName);
+    layer = new QgsRasterLayer(uri, layerName, "gdal");
   }
   
   if (!layer || !layer->isValid())
   {
-    QgsMessageLog::logMessage(tr("Failed to load layer: %1").arg(layerName), 
-                            QStringLiteral("SIGPACGO"), Qgis::Critical);
+    QgsMessageLog::logMessage(tr("Failed to create layer: %1 (URI: %2)").arg(layerName, uri), QStringLiteral("SIGPACGO"), Qgis::Critical);
     delete layer;
     return false;
   }
@@ -911,18 +897,16 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
   // Add layer to the project without adding it to the layer tree yet
   QgsProject::instance()->addMapLayer(layer, false);
   
-  // Now add the layer to the target group
+  // Add the layer to the target group
   targetGroup->addLayer(layer);
   
   QgsMessageLog::logMessage(tr("Layer added successfully: %1 to group: %2")
-                          .arg(layer->name(), targetGroup->name()), 
-                          QStringLiteral("SIGPACGO"), Qgis::Info);
+                          .arg(layer->name(), targetGroup->name()), QStringLiteral("SIGPACGO"), Qgis::Info);
   
   // Save the project to ensure changes are persisted
   if (!QgsProject::instance()->write())
   {
-    QgsMessageLog::logMessage(tr("Failed to save project after adding layer"), 
-                            QStringLiteral("SIGPACGO"), Qgis::Warning);
+    QgsMessageLog::logMessage(tr("Failed to save project after adding layer"), QStringLiteral("SIGPACGO"), Qgis::Warning);
   }
   
   return true;

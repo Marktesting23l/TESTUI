@@ -52,6 +52,7 @@ ApplicationWindow {
   property bool sceneBorderless: false
   property double sceneTopMargin: platformUtilities.sceneMargins(mainWindow)["top"]
   property double sceneBottomMargin: platformUtilities.sceneMargins(mainWindow)["bottom"]
+  property bool gpkgLayerDeleted: false  // Track GPKG layer deletion state
 
   onSceneLoadedChanged: {
     // This requires the scene to be fully loaded not to crash due to possibility of
@@ -1431,7 +1432,7 @@ ApplicationWindow {
       anchors.right: locatorItem.right
       anchors.top: locatorItem.top
       anchors.topMargin: 48 + 4
-      spacing: 4
+      spacing: 8
     }
 
     QfToolButton {
@@ -1465,6 +1466,70 @@ ApplicationWindow {
 
       onClicked: informationPanel.visible = true
     }
+    QfToolButton {
+    id: accuracyIndicator
+    visible: positioningSettings.accuracyIndicator && positionSource.active && 
+             !welcomeScreen.visible && !qfieldSettings.visible && !aboutDialog.visible && 
+             !qfieldLocalDataPickerScreen.visible && !overlayFeatureFormDrawer.visible && 
+             !informationPanel.visible
+    width: 30
+    height: 30
+    radius: 15
+    round: true
+    
+    // Force correct position by setting it immediately after the information button
+    anchors.right: informationButton.right
+    anchors.top: informationButton.bottom 
+    anchors.topMargin: 4
+    
+    // Use the bgcolor property for the indicator color
+    bgcolor: {
+      if (!positionSource.positionInformation || 
+          !positionSource.positionInformation.haccValid || 
+          positionSource.positionInformation.hacc > positioningSettings.accuracyBad)
+        return Theme.accuracyBad
+      else if (positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent)
+        return Theme.accuracyTolerated
+      else
+        return Theme.accuracyExcellent
+    }
+    
+    // Set text content
+    text: "GPS"
+    font.pixelSize: 9
+    font.bold: true
+    Material.foreground: "white"  // Use Material.foreground instead of textColor
+    
+    z: 1000
+    
+    // Add tooltip for the accuracy indicator
+    ToolTip {
+      visible: accuracyMouseArea.containsMouse
+      text: {
+        if (!positionSource.positionInformation || !positionSource.positionInformation.haccValid) {
+          return qsTr("Precisión: Desconocida")
+        }
+        let accuracy = positionSource.positionInformation.hacc.toFixed(1)
+        return qsTr("Precisión: ") + accuracy + " m"
+      }
+    }
+    
+    // Add mouse area for the tooltip and interaction
+    MouseArea {
+      id: accuracyMouseArea
+      anchors.fill: parent
+      hoverEnabled: true
+      // Show position information when clicked instead of toggling GPS
+      onClicked: {
+        if (positioningSettings.showPositionInformation) {
+          informationPanel.visible = true
+        } else {
+          // If position information panel is not enabled, show a message
+          displayToast(qsTr("Haga clic en el botón de GNSS para activar/desactivar el GPS"))
+        }
+      }
+    }
+  }
 
     Column {
       id: zoomToolbar
@@ -5843,7 +5908,21 @@ ApplicationWindow {
       }
 
       function onReloadEverything() {
-        iface.reloadProject();
+        if (mainWindow.gpkgLayerDeleted) {
+          console.log("Reloading project after GPKG layer deletion with #nohardcoded flag");
+          // Reset the flag
+          mainWindow.gpkgLayerDeleted = false;
+          // Get the current project path and add flag
+          var projectPath = projectInfo.filePath;
+          if (!projectPath.includes("#nohardcoded")) {
+            projectPath += "#nohardcoded";
+          }
+          // Load with the flag
+          iface.loadFile(projectPath, projectInfo.fileName);
+        } else {
+          // Normal reload
+          iface.reloadProject();
+        }
       }
 
       function onShowLoginBrowser(url) {
@@ -6086,7 +6165,7 @@ ApplicationWindow {
 
   property bool closeAlreadyRequested: false
 
-  onClosing: close => {
+  onClosing: function(close) {
     if (screenLocker.enabled) {
       close.accepted = false;
       displayToast(qsTr("Unlock the screen to close project and app"));
@@ -6433,70 +6512,7 @@ ApplicationWindow {
   property var cultivoDeclaradoDialog: null
 
   // Global accuracy indicator
-  QfToolButton {
-    id: accuracyIndicator
-    visible: positioningSettings.accuracyIndicator && positionSource.active && 
-             !welcomeScreen.visible && !qfieldSettings.visible && !aboutDialog.visible && 
-             !qfieldLocalDataPickerScreen.visible && !overlayFeatureFormDrawer.visible && 
-             !informationPanel.visible
-    width: 30
-    height: 30
-    radius: 15
-    round: true
-    
-    // Force correct position by setting it immediately after the information button
-    anchors.right: informationButton.right
-    anchors.top: informationButton.bottom 
-    anchors.topMargin: 4
-    
-    // Use the bgcolor property for the indicator color
-    bgcolor: {
-      if (!positionSource.positionInformation || 
-          !positionSource.positionInformation.haccValid || 
-          positionSource.positionInformation.hacc > positioningSettings.accuracyBad)
-        return Theme.accuracyBad
-      else if (positionSource.positionInformation.hacc > positioningSettings.accuracyExcellent)
-        return Theme.accuracyTolerated
-      else
-        return Theme.accuracyExcellent
-    }
-    
-    // Set text content
-    text: "GPS"
-    font.pixelSize: 9
-    font.bold: true
-    Material.foreground: "white"  // Use Material.foreground instead of textColor
-    
-    z: 1000
-    
-    // Add tooltip for the accuracy indicator
-    ToolTip {
-      visible: accuracyMouseArea.containsMouse
-      text: {
-        if (!positionSource.positionInformation || !positionSource.positionInformation.haccValid) {
-          return qsTr("Precisión: Desconocida")
-        }
-        let accuracy = positionSource.positionInformation.hacc.toFixed(1)
-        return qsTr("Precisión: ") + accuracy + " m"
-      }
-    }
-    
-    // Add mouse area for the tooltip and interaction
-    MouseArea {
-      id: accuracyMouseArea
-      anchors.fill: parent
-      hoverEnabled: true
-      // Show position information when clicked instead of toggling GPS
-      onClicked: {
-        if (positioningSettings.showPositionInformation) {
-          informationPanel.visible = true
-        } else {
-          // If position information panel is not enabled, show a message
-          displayToast(qsTr("Haga clic en el botón de GNSS para activar/desactivar el GPS"))
-        }
-      }
-    }
-  }
+  
 
   // Add center reticle
   Item {
@@ -6565,6 +6581,21 @@ ApplicationWindow {
 
     onClosed: {
       mainMenu.close()
+    }
+  }
+
+  // Handle the signal from C++ when a layer is removed
+  function onLayerRemovalRequiringReload() {
+    console.log("Layer removal requiring reload detected");
+    // Set application property flag to be used when reloading the project
+    mainWindow.gpkgLayerDeleted = true;
+  }
+  
+  // Connect to the AppInterface signal
+  Connections {
+    target: iface
+    function onLayerRemovalRequiringReload() {
+      mainWindow.onLayerRemovalRequiringReload();
     }
   }
 

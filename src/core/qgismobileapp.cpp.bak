@@ -737,25 +737,10 @@ void QgisMobileapp::onMapCanvasRefreshed()
 
 bool QgisMobileapp::loadProjectFile( const QString &path, const QString &name )
 {
-  // Check if this is a special reload with a flag to skip hardcoded layers
-  bool skipHardcodedLayers = false;
-  QString cleanPath = path;
-  if (path.contains("#nohardcoded")) {
-    skipHardcodedLayers = true;
-    // Remove the flag from the path
-    cleanPath = path;
-    cleanPath.replace("#nohardcoded", "");
-    QgsMessageLog::logMessage(
-      QStringLiteral("Special project load detected with #nohardcoded flag - will skip adding hardcoded layers"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-  }
-
-  QFileInfo fi( cleanPath );
+  QFileInfo fi( path );
   if ( !fi.exists() )
   {
-    QgsMessageLog::logMessage( tr( "Can't load project, file \"%1\" does not exist" ).arg( cleanPath ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
+    QgsMessageLog::logMessage( tr( "Can't load project, file \"%1\" does not exist" ).arg( path ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     return false;
   }
 
@@ -770,11 +755,8 @@ bool QgisMobileapp::loadProjectFile( const QString &path, const QString &name )
     }
     mAuthRequestHandler->clearStoredRealms();
 
-    mProjectFilePath = cleanPath;
+    mProjectFilePath = path;
     mProjectFileName = !name.isEmpty() ? name : fi.completeBaseName();
-    
-    // Store the skipHardcodedLayers flag for when readProjectFile is called
-    mSkipHardcodedLayers = skipHardcodedLayers;
 
     emit loadProjectTriggered( mProjectFilePath, mProjectFileName );
     return true;
@@ -806,16 +788,8 @@ void QgisMobileapp::reloadProjectFile()
   saveLayerVisibilityState();
   
   // Store the project path locally to ensure it's available during reload
-  // Add the #nohardcoded flag to prevent hardcoded layers from being recreated during reload
-  // This prevents duplication when a layer has been deleted
-  const QString projectPath = mProjectFilePath + "#nohardcoded";
+  const QString projectPath = mProjectFilePath;
   const QString projectName = mProjectFileName;
-  
-  QgsMessageLog::logMessage(
-    QStringLiteral("Adding #nohardcoded flag for reload to prevent layer duplication"),
-    QStringLiteral("SIGPACGO"),
-    Qgis::Info
-  );
   
   emit loadProjectTriggered( projectPath, projectName );
 }
@@ -828,15 +802,6 @@ void QgisMobileapp::readProjectFile()
     QStringLiteral("SIGPACGO"),
     Qgis::Info
   );
-
-  // Log if we are skipping hardcoded layers due to the flag being set in loadProjectFile
-  if (mSkipHardcodedLayers) {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Special project reload detected with skipHardcodedLayers flag - will skip adding hardcoded layers"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-  }
 
   QFileInfo fi( mProjectFilePath );
   if ( !fi.exists() ) {
@@ -1152,18 +1117,7 @@ void QgisMobileapp::readProjectFile()
   // Add all the required basemaps to every project, regardless of whether it's a project file or a datasheet
   // Create the basemap layers
   QgsRasterLayer *osmLayer = new QgsRasterLayer( QStringLiteral( "type=xyz&tilePixelRatio=1&url=https://tile.openstreetmap.org/%7Bz%7D/%7Bx%7D/%7By%7D.png&zmax=19&zmin=0&crs=EPSG3857" ), QStringLiteral( "OpenStreetMap" ), QLatin1String( "wms" ) );
-  
-  // Only create Google Satellite if we're not skipping hardcoded layers
-  QgsRasterLayer *satelliteLayer = nullptr;
-  if (!mSkipHardcodedLayers) {
-    satelliteLayer = new QgsRasterLayer( QStringLiteral( "crs=EPSG:3857&format&type=xyz&url=http://www.google.cn/maps/vt?lyrs=s@189%26gl=cn%26x%3D{x}%26y%3D{y}%26z%3D{z}&zmax=21&zmin=0" ), QStringLiteral( "Google Satellite" ), QLatin1String( "wms" ) );
-  } else {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Skipping creation of Google Satellite layer due to skipHardcodedLayers flag"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-  }
+  QgsRasterLayer *satelliteLayer = new QgsRasterLayer( QStringLiteral( "crs=EPSG:3857&format&type=xyz&url=http://www.google.cn/maps/vt?lyrs=s@189%26gl=cn%26x%3D{x}%26y%3D{y}%26z%3D{z}&zmax=21&zmin=0" ), QStringLiteral( "Google Satellite" ), QLatin1String( "wms" ) );
   
   // Add IGN (Instituto Geográfico Nacional) map
   QgsRasterLayer *ignLayer = new QgsRasterLayer(
@@ -1183,19 +1137,10 @@ void QgisMobileapp::readProjectFile()
       QLatin1String( "wms" ) );
   
   // Add Recintos SIGPAC FEGA layer
-  QgsRasterLayer *sigpacLayer = nullptr;
-  if (!mSkipHardcodedLayers) {
-    sigpacLayer = new QgsRasterLayer(
-        QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=AU.Sigpac:recinto&styles=recinto&tilePixelRatio=0&url=https://wms.mapa.gob.es/sigpac/wms" ),
-        QStringLiteral( "Recintos SIGPAC FEGA" ),
-        QLatin1String( "wms" ) );
-  } else {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Skipping creation of Recintos SIGPAC FEGA layer due to skipHardcodedLayers flag"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-  }
+  QgsRasterLayer *sigpacLayer = new QgsRasterLayer(
+      QStringLiteral( "contextualWMSLegend=1&crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=AU.Sigpac:recinto&styles=recinto&tilePixelRatio=0&url=https://wms.mapa.gob.es/sigpac/wms" ),
+      QStringLiteral( "Recintos SIGPAC FEGA" ),
+      QLatin1String( "wms" ) );
   
   // Add flood risk WMS layer
   QgsRasterLayer *floodRiskLayer = new QgsRasterLayer(
@@ -1749,38 +1694,20 @@ void QgisMobileapp::readProjectFile()
       QStringLiteral( "cultivos declarados" ) );
   
   // Create and add TeselaRECINTOS FEGA layer
-  QgsVectorTileLayer *teselaRecintosLayer = nullptr;
-  if (!mSkipHardcodedLayers) {
-    teselaRecintosLayer = new QgsVectorTileLayer(
-        QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmax=14&zmin=0&http-header:referer=" ),
-        QStringLiteral( "TeselaRECINTOS FEGA" ) );
-  } else {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Skipping creation of TeselaRECINTOS FEGA layer due to skipHardcodedLayers flag"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-  }
+  QgsVectorTileLayer *teselaRecintosLayer = new QgsVectorTileLayer(
+      QStringLiteral( "type=xyz&url=https://sigpac-hubcloud.es/mvt/recinto@3857@pbf/%7Bz%7D/%7Bx%7D/%7By%7D.pbf&zmax=14&zmin=0&http-header:referer=" ),
+      QStringLiteral( "TeselaRECINTOS FEGA" ) );
   
   // Add vector tile layers to the project and to the Spain GIS VectorTiles group
   mProject->addMapLayer(cultivoLayer, false);
-  
-  // Only add TeselaRECINTOS if it exists
-  if (teselaRecintosLayer) {
-    mProject->addMapLayer(teselaRecintosLayer, false);
-    spainGisVectorTilesGroup->addLayer(teselaRecintosLayer);
-  }
-  
+  mProject->addMapLayer(teselaRecintosLayer, false);
   spainGisVectorTilesGroup->addLayer(cultivoLayer);
+  spainGisVectorTilesGroup->addLayer(teselaRecintosLayer);
   
   // Add Spain GIS Services layers to the project and to the Spain GIS Services group
-  // Only add SIGPAC layer if it exists
-  if (sigpacLayer) {
-    mProject->addMapLayer(sigpacLayer, false);
-    spainGisBaseLayersGroup->addLayer(sigpacLayer);
-  }
-  
+  mProject->addMapLayer(sigpacLayer, false);
   mProject->addMapLayer(catastroLayer, false);
+  spainGisBaseLayersGroup->addLayer(sigpacLayer);
   spainGisBaseLayersGroup->addLayer(catastroLayer);
   
   // Create and add the Zonas Vul Nitratos 2023 layer
@@ -1888,100 +1815,29 @@ void QgisMobileapp::readProjectFile()
   mProject->addMapLayer(cultivoDeclarado2024Layer, false);
   spainGisBaseLayersGroup->addLayer(cultivoDeclarado2024Layer);
   
-  // Set TeselaRecintos FEGA opacity to 50% with safety check
-  if (teselaRecintosLayer)
-  {
-    teselaRecintosLayer->setOpacity(0.5);
-    QgsMessageLog::logMessage(
-      QStringLiteral("Set TeselaRecintos FEGA opacity to 50%"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-  }
-  else
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("TeselaRecintos FEGA layer not found or invalid when setting opacity"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-  }
+  // Set TeselaRecintos FEGA opacity to 50%
+  teselaRecintosLayer->setOpacity(0.5);
   
   // Make sure all groups are visible by default - using multiple approaches to ensure visibility
-  if (spainGisServicesGroup)
-  {
-    spainGisServicesGroup->setItemVisibilityCheckedParentRecursive(true);
-    spainGisServicesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
-    spainGisServicesGroup->setItemVisibilityChecked(true);
-  }
-  else
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Services GIS España group not found when setting visibility"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-  }
+  spainGisServicesGroup->setItemVisibilityCheckedParentRecursive(true);
+  spainGisServicesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
+  spainGisServicesGroup->setItemVisibilityChecked(true);
   
-  if (spainGisBaseLayersGroup)
-  {
-    spainGisBaseLayersGroup->setItemVisibilityCheckedParentRecursive(true);
-    spainGisBaseLayersGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
-    spainGisBaseLayersGroup->setItemVisibilityChecked(true);
-  }
-  else
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Base Layers GIS España group not found when setting visibility"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-  }
+  spainGisBaseLayersGroup->setItemVisibilityCheckedParentRecursive(true);
+  spainGisBaseLayersGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
+  spainGisBaseLayersGroup->setItemVisibilityChecked(true);
   
-  if (spainGisVectorTilesGroup)
-  {
-    spainGisVectorTilesGroup->setItemVisibilityCheckedParentRecursive(true);
-    spainGisVectorTilesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
-    spainGisVectorTilesGroup->setItemVisibilityChecked(true);
-  }
-  else
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Vector Tiles GIS España group not found when setting visibility"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-  }
+  spainGisVectorTilesGroup->setItemVisibilityCheckedParentRecursive(true);
+  spainGisVectorTilesGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except those we explicitly set
+  spainGisVectorTilesGroup->setItemVisibilityChecked(true);
   
-  if (utilsGroup)
-  {
-    utilsGroup->setItemVisibilityCheckedParentRecursive(true);
-    utilsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
-    utilsGroup->setItemVisibilityChecked(true);
-  }
-  else
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Utilidades group not found when setting visibility"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-  }
+  utilsGroup->setItemVisibilityCheckedParentRecursive(true);
+  utilsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default
+  utilsGroup->setItemVisibilityChecked(true);
   
-  if (basemapsGroup)
-  {
-    basemapsGroup->setItemVisibilityCheckedParentRecursive(true);
-    basemapsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except satellite
-    basemapsGroup->setItemVisibilityChecked(true);
-  }
-  else
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Basemaps group not found when setting visibility"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-  }
+  basemapsGroup->setItemVisibilityCheckedParentRecursive(true);
+  basemapsGroup->setItemVisibilityCheckedRecursive(false); // Set all layers to not visible by default except satellite
+  basemapsGroup->setItemVisibilityChecked(true);
   
   // Set Sentinel group visibility if it exists
   if (sentinelGroup)
@@ -2033,17 +1889,9 @@ void QgisMobileapp::readProjectFile()
   }
   
   // Then set only the requested layers to be visible
-  if (satelliteLayer) {
-    mProject->layerTreeRoot()->findLayer(satelliteLayer->id())->setItemVisibilityChecked(true); // Google Satellite
-  }
-  
-  if (sigpacLayer) {
-    mProject->layerTreeRoot()->findLayer(sigpacLayer->id())->setItemVisibilityChecked(true); // Recintos SIGPAC FEGA
-  }
-  
-  if (teselaRecintosLayer) {
-    mProject->layerTreeRoot()->findLayer(teselaRecintosLayer->id())->setItemVisibilityChecked(true); // TeselaRECINTOS FEGA
-  }
+  mProject->layerTreeRoot()->findLayer(satelliteLayer->id())->setItemVisibilityChecked(true); // Google Satellite
+  mProject->layerTreeRoot()->findLayer(sigpacLayer->id())->setItemVisibilityChecked(true); // Recintos SIGPAC FEGA
+  mProject->layerTreeRoot()->findLayer(teselaRecintosLayer->id())->setItemVisibilityChecked(true); // TeselaRECINTOS FEGA
   
   // Set groups to be expanded by default
   spainGisServicesGroup->setExpanded(true);
@@ -2290,7 +2138,6 @@ void QgisMobileapp::readProjectFile()
   }
   
   // Now restore layer visibility states for custom layers AFTER all other setup is done
-  // The mSkipHardcodedLayers flag is now a member variable and used internally
   restoreLayerVisibilityState();
   
   // Only emit the loadProjectEnded signal at the very end
@@ -2767,7 +2614,7 @@ void QgisMobileapp::saveLayerVisibilityState()
 // Add this function to restore layer visibility after reload
 void QgisMobileapp::restoreLayerVisibilityState()
 {
-  // Enhanced safety checks - make sure we have everything we need
+  // First check if project path is valid
   if (mProjectFilePath.isEmpty())
   {
     QgsMessageLog::logMessage(
@@ -2777,724 +2624,160 @@ void QgisMobileapp::restoreLayerVisibilityState()
     );
     return;
   }
-  
-  if (!mProject)
-  {
-    QgsMessageLog::logMessage(
-      QStringLiteral("Cannot restore layer visibility - project is null"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Warning
-    );
-    return;
-  }
 
   QgsMessageLog::logMessage(
-    QStringLiteral("Restoring layer visibility for project: %1%2")
-      .arg(mProjectFilePath)
-      .arg(mSkipHardcodedLayers ? " (skipping hardcoded layers)" : ""),
+    QStringLiteral("Restoring layer visibility for project: %1")
+      .arg(mProjectFilePath),
     QStringLiteral("SIGPACGO"),
     Qgis::Info
   );
 
-  if (!mProject->layerTreeRoot())
+  if (!mProject || !mProject->layerTreeRoot())
   {
     QgsMessageLog::logMessage(
-      QStringLiteral("Cannot restore layer visibility - layer tree root is null"),
+      QStringLiteral("Cannot restore layer visibility - project or layer tree root is null"),
       QStringLiteral("SIGPACGO"),
       Qgis::Warning
     );
     return;
   }
   
-  // Get all layers from the current project's layer tree
-  QList<QgsLayerTreeLayer*> allLayers = mProject->layerTreeRoot()->findLayers();
+  // Get list of hardcoded layers that should always be visible
+  QStringList hardcodedVisibleLayerNames;
+  hardcodedVisibleLayerNames << "Google Satellite" << "Recintos SIGPAC FEGA" << "TeselaRECINTOS FEGA";
   
-  // Master map to track all layers by their name to detect duplicates
-  QMap<QString, QList<QgsLayerTreeLayer*>> allLayersByName;
+  // Get list of Sentinel layers that should follow saved settings - don't override these
+  QStringList sentinelLayerPrefixes;
+  sentinelLayerPrefixes << "Sentinel ";
   
-  // Track layers to be removed for deferred removal (to avoid iterator invalidation)
-  QList<QPair<QgsLayerTreeGroup*, QgsLayerTreeLayer*>> layersToRemove;
-  QList<QString> layerIdsToRemove;
+  QgsMessageLog::logMessage(
+    QStringLiteral("Searching for hardcoded layers to set visibility"),
+    QStringLiteral("SIGPACGO"),
+    Qgis::Info
+  );
   
-  // Our hardcoded layers by type - these will always be visible
-  QStringList alwaysVisibleLayers;
-  alwaysVisibleLayers << QStringLiteral("Google Satellite") 
-                     << QStringLiteral("Recintos SIGPAC FEGA") 
-                     << QStringLiteral("TeselaRECINTOS FEGA");
-  
-  // Group names that might contain duplicate layers
-  QStringList hardcodedGroups;
-  hardcodedGroups << QStringLiteral("Capas Base GIS España") 
-                 << QStringLiteral("Utilidades")
-                 << QStringLiteral("Imágenes Sentinel")
-                 << QStringLiteral("Servicios GIS España");  // Add this group
-                 
-  // Specific groups to check and remove if empty
-  QStringList groupsToCheckForEmpty;
-  groupsToCheckForEmpty << QStringLiteral("Servicios GIS España")
-                       << QStringLiteral("Capas Base GIS España") 
-                       << QStringLiteral("Utilidades");
-  
-  // First, categorize all layers by name
-  for (QgsLayerTreeLayer* layer : allLayers)
-  {
-    // Skip null layers or layers without valid QgsMapLayer
-    if (!layer || !layer->layer())
-      continue;
-      
-    QString layerName = layer->name();
-    
-    // Add the layer to our tracking map
-    if (!allLayersByName.contains(layerName))
-    {
-      allLayersByName[layerName] = QList<QgsLayerTreeLayer*>();
-    }
-    
-    // Check if it's already in the list to avoid duplicates
-    bool alreadyInList = false;
-    for (QgsLayerTreeLayer* existingLayer : allLayersByName[layerName])
-    {
-      if (existingLayer == layer)
-      {
-        alreadyInList = true;
-        break;
-      }
-    }
-    
-    if (!alreadyInList)
-    {
-      allLayersByName[layerName].append(layer);
-      
-      // Log special hardcoded layer types
-      if (alwaysVisibleLayers.contains(layerName))
-      {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Found hardcoded layer: %1 (ID: %2)")
-            .arg(layerName)
-            .arg(layer->layer()->id()),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Info
-        );
-      }
-    }
-  }
-  
-  // Additional pass to classify layers by group and source URL
-  QMap<QString, QMap<QString, QList<QgsLayerTreeLayer*>>> layersBySourceInGroup;
-  
-  // Find all layers within hardcoded groups and organize them by source URL
-  for (QgsLayerTreeLayer* layer : allLayers)
-  {
-    if (!layer || !layer->layer())
-      continue;
-      
-    // Get the parent group of this layer
-    QgsLayerTreeGroup* parentGroup = nullptr;
-    QgsLayerTreeNode* parent = layer->parent();
-    while (parent)
-    {
-      parentGroup = qobject_cast<QgsLayerTreeGroup*>(parent);
-      if (parentGroup && hardcodedGroups.contains(parentGroup->name()))
-      {
-        // Found one of our hardcoded groups as a parent
-        const QString groupName = parentGroup->name();
-        
-        // Get the layer source URL
-        QString sourceUrl;
-        if (QgsRasterLayer* rasterLayer = qobject_cast<QgsRasterLayer*>(layer->layer()))
-        {
-          sourceUrl = rasterLayer->source();
-        }
-        else if (QgsVectorLayer* vectorLayer = qobject_cast<QgsVectorLayer*>(layer->layer()))
-        {
-          sourceUrl = vectorLayer->source();
-        }
-        
-        if (!sourceUrl.isEmpty())
-        {
-          // Initialize the group map if not existing
-          if (!layersBySourceInGroup.contains(groupName))
-          {
-            layersBySourceInGroup[groupName] = QMap<QString, QList<QgsLayerTreeLayer*>>();
-          }
-          
-          // Initialize the source list if not existing
-          if (!layersBySourceInGroup[groupName].contains(sourceUrl))
-          {
-            layersBySourceInGroup[groupName][sourceUrl] = QList<QgsLayerTreeLayer*>();
-          }
-          
-          // First check if the layer is already in the list to avoid duplicates
-          bool alreadyInList = false;
-          for (QgsLayerTreeLayer* existingLayer : layersBySourceInGroup[groupName][sourceUrl]) {
-            if (existingLayer == layer) {
-              alreadyInList = true;
-              break;
-            }
-          }
-          
-          // Only add if not already in the list
-          if (!alreadyInList) {
-            layersBySourceInGroup[groupName][sourceUrl].append(layer);
-            
-            QgsMessageLog::logMessage(
-              QStringLiteral("Found layer in hardcoded group: %1 (Group: %2, URL: %3)")
-                .arg(layer->name())
-                .arg(groupName)
-                .arg(sourceUrl),
-              QStringLiteral("SIGPACGO"),
-              Qgis::Info  // Changed from Debug to Info since Debug doesn't exist in this version
-            );
-          } else {
-            QgsMessageLog::logMessage(
-              QStringLiteral("Skipping duplicate entry for layer: %1 (already in list)")
-                .arg(layer->name()),
-              QStringLiteral("SIGPACGO"),
-              Qgis::Info
-            );
-          }
-        }
-        
-        break; // No need to check higher-level parents
-      }
-      
-      parent = parent->parent();
-    }
-  }
-  
-  // Count of layers handled
   int hardcodedCount = 0;
-  int duplicatesRemoved = 0;
   int restoredCount = 0;
-  // Track total empty groups removed
-  int totalEmptyGroupsRemoved = 0;
   
-  // Skip this step if skipHardcodedLayers is true
-  if (!mSkipHardcodedLayers)
+  // Process all layers in the tree
+  const QList<QgsLayerTreeLayer*> allLayers = mProject->layerTreeRoot()->findLayers();
+  
+  // First handle hardcoded layers - these always have specific visibility
+  for (QgsLayerTreeLayer* layer : allLayers)
   {
-    // First handle the special always-visible hardcoded layers
-    for (const QString& hardcodedType : alwaysVisibleLayers)
+    if (!layer || !layer->layer())
+      continue;
+      
+    const QString layerName = layer->name();
+    const QString layerId = layer->layer()->id();
+    
+    bool isHardcodedLayer = false;
+    bool shouldBeVisible = false;
+    
+    // Check if this is a hardcoded visible layer
+    for (const QString& visibleLayerName : hardcodedVisibleLayerNames)
     {
-      if (!allLayersByName.contains(hardcodedType))
-        continue;
-        
-      const QList<QgsLayerTreeLayer*>& layers = allLayersByName[hardcodedType];
-      
-      // If we have duplicates of this hardcoded layer type
-      if (layers.size() > 1)
+      if (layerName.contains(visibleLayerName))
       {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Found %1 duplicate layers for type: %2 - will keep only the first one")
-            .arg(layers.size())
-            .arg(hardcodedType),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Warning
-        );
-        
-        // Keep the first one and remove the rest
-        QgsLayerTreeLayer* layerToKeep = layers.first();
-        
-        // Set the one we're keeping to visible
-        if (layerToKeep && layerToKeep->layer())
-        {
-          layerToKeep->setItemVisibilityChecked(true);
-          
-          QgsMessageLog::logMessage(
-            QStringLiteral("Keeping hardcoded layer: %1 (ID: %2)")
-              .arg(layerToKeep->name())
-              .arg(layerToKeep->layer()->id()),
-            QStringLiteral("SIGPACGO"),
-            Qgis::Info
-          );
-          hardcodedCount++;
-          
-          // Mark all duplicates for deferred removal
-          for (int i = 1; i < layers.size(); i++)
-          {
-            QgsLayerTreeLayer* layerToRemove = layers[i];
-            if (layerToRemove && layerToRemove->layer())
-            {
-              QgsMessageLog::logMessage(
-                QStringLiteral("Removing duplicate hardcoded layer: %1 (ID: %2)")
-                  .arg(layerToRemove->name())
-                  .arg(layerToRemove->layer()->id()),
-                QStringLiteral("SIGPACGO"),
-                Qgis::Info
-              );
-              
-              // Get the ID before removing
-              QString layerId = layerToRemove->layerId();
-              
-              // Add safety checks to prevent crashes
-              if (layerId.isEmpty()) {
-                QgsMessageLog::logMessage(
-                  QStringLiteral("Cannot remove hardcoded layer with empty ID"),
-                  QStringLiteral("SIGPACGO"),
-                  Qgis::Warning
-                );
-                continue;
-              }
-              
-              // Check if the layer is still in the project
-              if (!mProject->mapLayer(layerId)) {
-                QgsMessageLog::logMessage(
-                  QStringLiteral("Hardcoded layer %1 not found in project, skipping removal")
-                    .arg(layerId),
-                  QStringLiteral("SIGPACGO"),
-                  Qgis::Warning
-                );
-                continue;
-              }
-              
-              // Instead of removing immediately, add to list for deferred removal
-              QgsLayerTreeGroup* parent = qobject_cast<QgsLayerTreeGroup*>(layerToRemove->parent());
-              if (parent)
-              {
-                layersToRemove.append(qMakePair(parent, layerToRemove));
-                layerIdsToRemove.append(layerId);
-              }
-            }
-          }
-        }
-      }
-      else if (layers.size() == 1)
-      {
-        // Just one layer of this type - set it to visible
-        QgsLayerTreeLayer* layer = layers.first();
-        if (layer && layer->layer())
-        {
-          // Always set these layers to visible
-          layer->setItemVisibilityChecked(true);
-          
-          QgsMessageLog::logMessage(
-            QStringLiteral("Set hardcoded layer to visible: %1 (ID: %2)")
-              .arg(layer->name())
-              .arg(layer->layer()->id()),
-            QStringLiteral("SIGPACGO"),
-            Qgis::Info
-          );
-          hardcodedCount++;
-        }
-      }
-    }
-    
-    // Handle all other layers by name
-    for (const QString& layerName : allLayersByName.keys())
-    {
-      // Skip the special hardcoded layers we already processed
-      if (alwaysVisibleLayers.contains(layerName))
-        continue;
-      
-      const QList<QgsLayerTreeLayer*>& layers = allLayersByName[layerName];
-      
-      // Only process if there are duplicates
-      if (layers.size() <= 1)
-        continue;
-      
-      QgsMessageLog::logMessage(
-        QStringLiteral("Found %1 duplicate layers with name: %2 - will keep only the first one")
-          .arg(layers.size())
-          .arg(layerName),
-        QStringLiteral("SIGPACGO"),
-        Qgis::Warning
-      );
-      
-      // Keep the first layer and mark the rest for removal
-      QgsLayerTreeLayer* layerToKeep = layers.first();
-      
-      // Make sure the layer to keep is valid
-      if (!layerToKeep || !layerToKeep->layer()) {
-        QgsMessageLog::logMessage(
-          QStringLiteral("First layer in duplicates list is invalid, skipping layer: %1")
-            .arg(layerName),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Warning
-        );
-        continue;
-      }
-      
-      // Keep the visibility state of the first layer
-      bool isVisible = layerToKeep->itemVisibilityChecked();
-      
-      QgsMessageLog::logMessage(
-        QStringLiteral("Keeping layer: %1 (visibility: %2)")
-          .arg(layerToKeep->name())
-          .arg(isVisible ? "visible" : "hidden"),
-        QStringLiteral("SIGPACGO"),
-        Qgis::Info
-      );
-      
-      // Mark all duplicates for deferred removal
-      for (int i = 1; i < layers.size(); i++)
-      {
-        QgsLayerTreeLayer* layerToRemove = layers[i];
-        if (layerToRemove && layerToRemove->layer())
-        {
-          QgsMessageLog::logMessage(
-            QStringLiteral("Removing duplicate layer: %1 (ID: %2)")
-              .arg(layerToRemove->name())
-              .arg(layerToRemove->layer()->id()),
-            QStringLiteral("SIGPACGO"),
-            Qgis::Info
-          );
-          
-          // Get the ID before removing
-          QString layerId = layerToRemove->layerId();
-          
-          // Add safety checks to prevent crashes
-          if (layerId.isEmpty()) {
-            QgsMessageLog::logMessage(
-              QStringLiteral("Cannot remove layer with empty ID"),
-              QStringLiteral("SIGPACGO"),
-              Qgis::Warning
-            );
-            continue;
-          }
-          
-          // Check if the layer is still in the project
-          if (!mProject->mapLayer(layerId)) {
-            QgsMessageLog::logMessage(
-              QStringLiteral("Layer %1 not found in project, skipping removal")
-                .arg(layerId),
-              QStringLiteral("SIGPACGO"),
-              Qgis::Warning
-            );
-            continue;
-          }
-          
-          // Instead of removing immediately, add to list for deferred removal
-          QgsLayerTreeGroup* parent = qobject_cast<QgsLayerTreeGroup*>(layerToRemove->parent());
-          if (parent)
-          {
-            layersToRemove.append(qMakePair(parent, layerToRemove));
-            layerIdsToRemove.append(layerId);
-          }
-        }
-      }
-    }
-    
-    // As a backup, also process layers by source URL within groups
-    // This might be unnecessary with the above approach but keeping it for safety
-    for (const QString& groupName : layersBySourceInGroup.keys())
-    {
-      QMap<QString, QList<QgsLayerTreeLayer*>> sourceMap = layersBySourceInGroup[groupName];
-      
-      QgsMessageLog::logMessage(
-        QStringLiteral("Processing group: %1 with %2 different layer sources")
-          .arg(groupName)
-          .arg(sourceMap.size()),
-        QStringLiteral("SIGPACGO"),
-        Qgis::Info
-      );
-      
-      // For each source URL in this group
-      for (const QString& sourceUrl : sourceMap.keys())
-      {
-        QList<QgsLayerTreeLayer*> layersWithSameSource = sourceMap[sourceUrl];
-        
-        // Skip sources with only one layer (no duplicates)
-        if (layersWithSameSource.size() <= 1)
-          continue;
-        
-        // Check if we already added these layers to the removal list by name
-        bool alreadyProcessed = true;
-        for (int i = 1; i < layersWithSameSource.size(); i++)
-        {
-          QgsLayerTreeLayer* layer = layersWithSameSource[i];
-          if (layer && layer->layer())
-          {
-            QString layerId = layer->layerId();
-            if (!layerIdsToRemove.contains(layerId))
-            {
-              alreadyProcessed = false;
-              break;
-            }
-          }
-        }
-        
-        if (alreadyProcessed)
-        {
-          QgsMessageLog::logMessage(
-            QStringLiteral("Skipping already processed layers with source: %1")
-              .arg(sourceUrl),
-            QStringLiteral("SIGPACGO"),
-            Qgis::Info
-          );
-          continue;
-        }
-          
-        QgsMessageLog::logMessage(
-          QStringLiteral("Found %1 duplicate layers with same source in group %2")
-            .arg(layersWithSameSource.size())
-            .arg(groupName),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Warning
-        );
-        
-        // Keep the first layer, remove the rest
-        QgsLayerTreeLayer* layerToKeep = layersWithSameSource.first();
-        
-        // Make sure the layer to keep is valid
-        if (!layerToKeep || !layerToKeep->layer()) {
-          QgsMessageLog::logMessage(
-            QStringLiteral("First layer in duplicates list is invalid, skipping source: %1")
-              .arg(sourceUrl),
-            QStringLiteral("SIGPACGO"),
-            Qgis::Warning
-          );
-          continue;
-        }
-        
-        // Keep the visibility state of the first layer
-        bool isVisible = layerToKeep->itemVisibilityChecked();
-        
-        QgsMessageLog::logMessage(
-          QStringLiteral("Keeping layer: %1 (visibility: %2)")
-            .arg(layerToKeep->name())
-            .arg(isVisible ? "visible" : "hidden"),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Info
-        );
-        
-        // Mark all duplicates for deferred removal
-        for (int i = 1; i < layersWithSameSource.size(); i++)
-        {
-          QgsLayerTreeLayer* layerToRemove = layersWithSameSource[i];
-          if (layerToRemove && layerToRemove->layer())
-          {
-            QgsMessageLog::logMessage(
-              QStringLiteral("Removing duplicate layer: %1 from group %2")
-                .arg(layerToRemove->name())
-                .arg(groupName),
-              QStringLiteral("SIGPACGO"),
-              Qgis::Info
-            );
-            
-            // Get the ID before removing
-            QString layerId = layerToRemove->layerId();
-            
-            // Add safety checks to prevent crashes
-            if (layerId.isEmpty()) {
-              QgsMessageLog::logMessage(
-                QStringLiteral("Cannot remove layer with empty ID"),
-                QStringLiteral("SIGPACGO"),
-                Qgis::Warning
-              );
-              continue;
-            }
-            
-            // Check if the layer is still in the project
-            if (!mProject->mapLayer(layerId)) {
-              QgsMessageLog::logMessage(
-                QStringLiteral("Layer %1 not found in project, skipping removal")
-                  .arg(layerId),
-                QStringLiteral("SIGPACGO"),
-                Qgis::Warning
-              );
-              continue;
-            }
-            
-            // Check if we've already marked this layer for removal
-            if (layerIdsToRemove.contains(layerId)) {
-              QgsMessageLog::logMessage(
-                QStringLiteral("Layer %1 already marked for removal")
-                  .arg(layerId),
-                QStringLiteral("SIGPACGO"),
-                Qgis::Info
-              );
-              continue;
-            }
-            
-            // Instead of removing immediately, add to list for deferred removal
-            QgsLayerTreeGroup* parent = qobject_cast<QgsLayerTreeGroup*>(layerToRemove->parent());
-            if (parent)
-            {
-              layersToRemove.append(qMakePair(parent, layerToRemove));
-              layerIdsToRemove.append(layerId);
-            }
-          }
-        }
-      }
-    }
-    
-    // Deferred removal to avoid iterator invalidation
-    for (int i = 0; i < layersToRemove.size(); i++) {
-      QgsLayerTreeGroup* parent = layersToRemove[i].first;
-      QgsLayerTreeLayer* layerToRemove = layersToRemove[i].second;
-      QString layerId = layerIdsToRemove[i];
-      
-      // Final safety check
-      if (!parent || !layerToRemove || !layerToRemove->layer()) {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Invalid layer or parent for deferred removal, skipping."),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Warning
-        );
-        continue;
-      }
-      
-      try {
-        parent->removeChildNode(layerToRemove);
-        mProject->removeMapLayer(layerId);
-        duplicatesRemoved++;
-        
-        QgsMessageLog::logMessage(
-          QStringLiteral("Successfully removed duplicate layer with ID: %1")
-            .arg(layerId),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Info
-        );
-      } catch (const std::exception& e) {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Error removing layer %1: %2")
-            .arg(layerId)
-            .arg(e.what()),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Critical
-        );
-      } catch (...) {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Unknown error removing layer %1")
-            .arg(layerId),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Critical
-        );
-      }
-    }
-    
-    // After removing all duplicate layers, cleanup empty groups
-    QgsMessageLog::logMessage(
-      QStringLiteral("Scanning for empty groups to remove"),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
-    
-    // Get the root group
-    QgsLayerTreeGroup* root = mProject->layerTreeRoot();
-    
-    // Function to check if a group is truly empty (no layers, including in subgroups)
-    std::function<bool(QgsLayerTreeGroup*)> isGroupEmpty = [](QgsLayerTreeGroup* group) -> bool {
-      if (!group) return true;
-      
-      QList<QgsLayerTreeLayer*> layers = group->findLayers();
-      return layers.isEmpty();
-    };
-    
-    // Function to remove empty groups
-    std::function<void(QgsLayerTreeGroup*)> removeEmptyGroup = [&](QgsLayerTreeGroup* group) {
-      if (!group || group == root) return;
-      
-      QString groupName = group->name();
-      QgsLayerTreeGroup* parent = qobject_cast<QgsLayerTreeGroup*>(group->parent());
-      if (!parent) return;
-      
-      try {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Removing empty group: %1")
-            .arg(groupName),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Info
-        );
-        
-        parent->removeChildNode(group);
-        totalEmptyGroupsRemoved++;
-        
-        QgsMessageLog::logMessage(
-          QStringLiteral("Successfully removed empty group: %1")
-            .arg(groupName),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Info
-        );
-      } catch (const std::exception& e) {
-        QgsMessageLog::logMessage(
-          QStringLiteral("Error removing empty group %1: %2")
-            .arg(groupName)
-            .arg(e.what()),
-          QStringLiteral("SIGPACGO"),
-          Qgis::Critical
-        );
-      }
-    };
-    
-    // Get all groups in the project
-    QList<QgsLayerTreeGroup*> allGroups = root->findGroups();
-    
-    // First, handle Servicios GIS España and its subgroups
-    QgsLayerTreeGroup* serviciosGroup = nullptr;
-    for (QgsLayerTreeGroup* group : allGroups) {
-      if (group && group->name() == "Servicios GIS España") {
-        serviciosGroup = group;
+        isHardcodedLayer = true;
+        shouldBeVisible = true;
         break;
       }
     }
     
-    if (serviciosGroup) {
-      QgsMessageLog::logMessage(
-        QStringLiteral("Found Servicios GIS España group for special handling"),
-        QStringLiteral("SIGPACGO"),
-        Qgis::Info
-      );
-      
-      // First remove empty subgroups
-      QList<QgsLayerTreeGroup*> subgroups = serviciosGroup->findGroups();
-      for (QgsLayerTreeGroup* subgroup : subgroups) {
-        if (isGroupEmpty(subgroup)) {
-          removeEmptyGroup(subgroup);
-        }
-      }
-      
-      // Then check if main group is empty
-      if (isGroupEmpty(serviciosGroup)) {
-        removeEmptyGroup(serviciosGroup);
+    // Check if this is a Sentinel layer (which follows its own rules)
+    for (const QString& prefix : sentinelLayerPrefixes)
+    {
+      if (layerName.startsWith(prefix))
+      {
+        isHardcodedLayer = true;
+        // Sentinel layers follow their own visibility rules set elsewhere
+        break;
       }
     }
     
-    // Handle other main groups
-    QStringList groupsToCheck = {"Utilidades", "Mapas Base"};
-    for (const QString& groupName : groupsToCheck) {
-      for (QgsLayerTreeGroup* group : allGroups) {
-        if (group && group->name() == groupName) {
-          // Check subgroups first
-          QList<QgsLayerTreeGroup*> subgroups = group->findGroups();
-          for (QgsLayerTreeGroup* subgroup : subgroups) {
-            if (isGroupEmpty(subgroup)) {
-              removeEmptyGroup(subgroup);
-            }
-          }
-          
-          // Then check main group
-          if (isGroupEmpty(group)) {
-            removeEmptyGroup(group);
-          }
+    if (isHardcodedLayer)
+    {
+      if (shouldBeVisible)
+      {
+        layer->setItemVisibilityChecked(true);
+        QgsMessageLog::logMessage(
+          QStringLiteral("Set hardcoded layer visible: %1 (ID: %2)")
+            .arg(layerName)
+            .arg(layerId),
+          QStringLiteral("SIGPACGO"),
+          Qgis::Info
+        );
+      }
+      hardcodedCount++;
+    }
+  }
+  
+  // Now try to restore visibility for non-hardcoded layers from saved state
+  if (!mSavedLayerVisibility.isEmpty())
+  {
+    // Use in-memory saved states if available
+    for (QgsLayerTreeLayer* layer : allLayers)
+    {
+      if (!layer || !layer->layer())
+        continue;
+        
+      const QString layerName = layer->name();
+      const QString layerId = layer->layer()->id();
+      
+      // Skip hardcoded layers - they've already been handled
+      bool isHardcodedLayer = false;
+      for (const QString& visibleLayerName : hardcodedVisibleLayerNames)
+      {
+        if (layerName.contains(visibleLayerName))
+        {
+          isHardcodedLayer = true;
           break;
         }
       }
-    }
-    
-    // Final pass to remove any remaining empty groups
-    allGroups = root->findGroups(); // Refresh the list
-    for (QgsLayerTreeGroup* group : allGroups) {
-      if (group && group != root && isGroupEmpty(group)) {
-        removeEmptyGroup(group);
+      
+      // Also skip Sentinel layers
+      for (const QString& prefix : sentinelLayerPrefixes)
+      {
+        if (layerName.startsWith(prefix))
+        {
+          isHardcodedLayer = true;
+          break;
+        }
+      }
+      
+      // Only restore non-hardcoded layers
+      if (!isHardcodedLayer && mSavedLayerVisibility.contains(layerId))
+      {
+        bool savedState = mSavedLayerVisibility[layerId];
+        layer->setItemVisibilityChecked(savedState);
+        
+        QgsMessageLog::logMessage(
+          QStringLiteral("Restored custom layer: %1 (ID: %2) = %3")
+            .arg(layerName)
+            .arg(layerId)
+            .arg(savedState ? "visible" : "hidden"),
+          QStringLiteral("SIGPACGO"),
+          Qgis::Info
+        );
+        restoredCount++;
       }
     }
-    
-    QgsMessageLog::logMessage(
-      QStringLiteral("Layer visibility restoration complete: %1 hardcoded layers set visible, %2 custom layers restored, %3 duplicate layers removed, %4 empty groups removed")
-        .arg(hardcodedCount)
-        .arg(restoredCount)
-        .arg(duplicatesRemoved)
-        .arg(totalEmptyGroupsRemoved),
-      QStringLiteral("SIGPACGO"),
-      Qgis::Info
-    );
   }
   else
   {
     QgsMessageLog::logMessage(
-      QStringLiteral("Skipping visibility setting for hardcoded layers as requested"),
+      QStringLiteral("No saved layer visibility states found to restore for custom layers"),
       QStringLiteral("SIGPACGO"),
       Qgis::Info
     );
   }
+  
+  QgsMessageLog::logMessage(
+    QStringLiteral("Layer visibility restoration complete: %1 hardcoded layers processed, %2 custom layers restored")
+      .arg(hardcodedCount)
+      .arg(restoredCount),
+    QStringLiteral("SIGPACGO"),
+    Qgis::Info
+  );
 }
