@@ -5909,7 +5909,7 @@ ApplicationWindow {
 
       function onReloadEverything() {
         if (mainWindow.gpkgLayerDeleted) {
-          console.log("Reloading project after GPKG layer deletion with #nohardcoded flag");
+          console.log("Reloading project after SIGPACGO GPKG layer deletion with #nohardcoded flag");
           // Reset the flag
           mainWindow.gpkgLayerDeleted = false;
           // Get the current project path and add flag

@@ -948,7 +948,6 @@ Popup {
                   if (cameraItem.state == "PhotoPreview") {
                     if (cameraSettings.geoTagging && positionSource.active) {
                       FileUtils.addImageMetadata(currentPath, currentPosition);
-                      // Set the Make to SIGPACGO instead of QField
                       platformUtilities.setExifTag(currentPath, "Exif.Image.Make", "SIGPACGO");
                       platformUtilities.setExifTag(currentPath, "Xmp.tiff.Make", "SIGPACGO");
                     }

@@ -454,7 +454,6 @@ void QgisMobileapp::initDeclarative( QQmlEngine *engine )
   qmlRegisterType<QgsQuickElevationProfileCanvas>( "org.qgis", 1, 0, "ElevationProfileCanvas" );
   qmlRegisterType<QgsQuickMapTransform>( "org.qgis", 1, 0, "MapTransform" );
 
-  // Register QField QML types
   qRegisterMetaType<PlatformUtilities::Capabilities>( "PlatformUtilities::Capabilities" );
   qRegisterMetaType<GeometryUtils::GeometryOperationResult>( "GeometryOperationResult" );
   qRegisterMetaType<Tracker::MeasureType>( "Tracker::MeasureType" );
@@ -911,7 +910,7 @@ void QgisMobileapp::readProjectFile()
   if ( SUPPORTED_PROJECT_EXTENSIONS.contains( suffix ) )
   {
     mProject->read( mProjectFilePath, Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews );
-    mProject->writeEntry( QStringLiteral( "QField" ), QStringLiteral( "isDataset" ), false );
+    mProject->writeEntry( QStringLiteral( "SIGPACGO" ), QStringLiteral( "isDataset" ), false );
     projectLoaded = true;
   }
   else if ( suffix == QStringLiteral( "gpkg" ) )
@@ -924,7 +923,7 @@ void QgisMobileapp::readProjectFile()
       {
         QgsGeoPackageProjectUri projectUri { true, mProjectFilePath, projectNames.at( 0 ) };
         mProject->read( QgsGeoPackageProjectStorage::encodeUri( projectUri ), Qgis::ProjectReadFlag::DontLoadProjectStyles | Qgis::ProjectReadFlag::DontLoad3DViews );
-        mProject->writeEntry( QStringLiteral( "QField" ), QStringLiteral( "isDataset" ), false );
+        mProject->writeEntry( QStringLiteral( "SIGPACGO" ), QStringLiteral( "isDataset" ), false );
         projectLoaded = true;
       }
     }
@@ -2111,7 +2110,7 @@ void QgisMobileapp::readProjectFile()
     mProject->setEllipsoid( crs.ellipsoidAcronym() );
     mProject->setTitle( mProjectFileName );
     mProject->setPresetHomePath( fi.absolutePath() );
-    mProject->writeEntry( QStringLiteral( "QField" ), QStringLiteral( "isDataset" ), true );
+    mProject->writeEntry( QStringLiteral( "SIGPACGO" ), QStringLiteral( "isDataset" ), true );
 
     for ( QgsMapLayer *l : std::as_const( rasterLayers ) )
     {

@@ -1581,8 +1581,8 @@ public class QFieldActivity extends QtActivity {
 
                 if (!success) {
                     displayAlertDialog(
-                        getString(R.string.import_error_title),
-                        getString(R.string.import_error_message));
+                        getString(R.string.import_error),
+                        getString(R.string.import_dataset_error));
                 } else {
                     openPath(currentDir);
                 }
@@ -1612,8 +1612,8 @@ public class QFieldActivity extends QtActivity {
 
                 if (!success) {
                     displayAlertDialog(
-                        getString(R.string.import_error_title),
-                        getString(R.string.import_error_message));
+                        getString(R.string.import_error),
+                        getString(R.string.import_dataset_error));
                 } else {
                     openPath(targetPath);
                 }
