@@ -9189,7 +9189,7 @@ Drawer {
         anchors.fill: parent
         
         header: QfPageHeader {
-            title: qsTr("SIGPAC Offline Search")
+            title: qsTr("Buscador Offline SIGPAC (leer información)")
             showBackButton: false
             showApplyButton: false
             showCancelButton: false // Changed to false since we'll add our own reset button
@@ -9216,19 +9216,18 @@ Drawer {
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: qsTr("Reset")
+                        text: qsTr("Reiniciar")
                         color: Theme.mainTextColor
                         font: Theme.defaultFont
                     }
                 }
                 
-                ToolTip.text: qsTr("Reset all selections")
+                ToolTip.text: qsTr("Reinicia selección")
                 ToolTip.visible: hovered
                 
                 onClicked: {
                     // Reset all selections and search fields
                     resetSelections();
-                    // Show all options in all list views
                     for (var i = 0; i < provinceListView.count; i++) {
                         var item = provinceListView.itemAtIndex(i);
                         if (item) {
@@ -9242,11 +9241,10 @@ Drawer {
                 }
             }
             
-            // Add close button
             ToolButton {
                 id: closeButton
                 anchors.right: parent.right
-                anchors.rightMargin: 10
+                anchors.rightMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 icon.source: Theme.getThemeIcon("ic_close_black_24dp")
                 icon.color: Theme.mainTextColor
@@ -9280,7 +9278,7 @@ Drawer {
                     id: provinceSelector
                     Layout.fillWidth: true
                     Layout.margins: 5
-                    title: selectedProvince ? qsTr("Province: %1").arg(formatProvinceDisplay(selectedProvince)) : qsTr("Select Province (CD_PROV)")
+                    title: selectedProvince ? qsTr("Provincia: %1").arg(formatProvinceDisplay(selectedProvince)) : qsTr("Selecciona provincia (CD_PROV)")
                     padding: 5
                     
                     // Dynamically adjust height based on content
@@ -9295,7 +9293,7 @@ Drawer {
                             id: provinceSearchBar
                             Layout.fillWidth: true
                             height: 36
-                            placeHolderText: selectedProvince ? formatProvinceDisplay(selectedProvince) : qsTr("Search province")
+                            placeHolderText: selectedProvince ? formatProvinceDisplay(selectedProvince) : qsTr("Busca provincia")
                             visible: true // Always visible
                             enabled: !isSearching // Disable during search
                             
@@ -9418,7 +9416,7 @@ Drawer {
                         Text {
                             Layout.fillWidth: true
                             visible: !selectedProvince && provinceModel.count > maxVisibleItems
-                            text: qsTr("Scroll for more options (%1 total)").arg(provinceModel.count)
+                            text: qsTr("Scroll para más resultados (%1 total)").arg(provinceModel.count)
                             font.italic: true
                             font.pointSize: Theme.tipFont.pointSize
                             color: Theme.secondaryTextColor
@@ -9432,7 +9430,7 @@ Drawer {
                     id: municipalitySelector
                     Layout.fillWidth: true
                     Layout.margins: 5
-                    title: selectedMunicipality ? qsTr("Municipality: %1").arg(formatMunicipalityDisplay(selectedMunicipality)) : qsTr("Select Municipality (CD_MUN)")
+                    title: selectedMunicipality ? qsTr("Municpio: %1").arg(formatMunicipalityDisplay(selectedMunicipality)) : qsTr("Selecciona Municpio (CD_MUN)")
                     visible: false
                     padding: 5
                     
@@ -9448,7 +9446,7 @@ Drawer {
                             id: municipalitySearchBar
                             Layout.fillWidth: true
                             height: 36
-                            placeHolderText: selectedMunicipality ? formatMunicipalityDisplay(selectedMunicipality) : qsTr("Search municipality")
+                            placeHolderText: selectedMunicipality ? formatMunicipalityDisplay(selectedMunicipality) : qsTr("Búsqueda de municpios")
                             visible: true // Always visible
                             enabled: !isSearching // Disable during search
                             

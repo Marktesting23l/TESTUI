@@ -1421,8 +1421,8 @@ ApplicationWindow {
       mapSettings: mapCanvas.mapSettings
       anchors.left: parent.left
       anchors.bottom: parent.bottom
-      anchors.leftMargin: 8
-      anchors.bottomMargin: 50
+      anchors.leftMargin: 4
+      anchors.bottomMargin: 55
     }
 
     Column {
@@ -1432,7 +1432,7 @@ ApplicationWindow {
       anchors.right: locatorItem.right
       anchors.top: locatorItem.top
       anchors.topMargin: 48 + 4
-      spacing: 8
+      spacing: 10
     }
 
     QfToolButton {
@@ -1446,7 +1446,7 @@ ApplicationWindow {
       padding: 2
       anchors.right: pluginsToolbar.right
       anchors.top: pluginsToolbar.bottom
-      anchors.topMargin: 4
+      anchors.topMargin: 8
 
       onClicked: messageLog.visible = true
     }
@@ -1687,8 +1687,8 @@ ApplicationWindow {
       // Add Weather Forecast button
       QfToolButton {
         id: weatherButton
-        width: 48
-        height: 48
+        width: 42
+        height: 42
         round: true
         bgcolor: Theme.toolButtonBackgroundColor
         iconSource: Theme.getThemeVectorIcon('weather')
@@ -1729,7 +1729,7 @@ ApplicationWindow {
             cascadeSearchPanel.vectorLayer = dashBoard.activeLayer;
             cascadeSearchPanel.open();
           } else {
-            displayToast(qsTr("Please select a vector layer first"), "warning");
+            displayToast(qsTr("Selecciona una capa vector con la información de SIGPAC offline (leer guía)"), "warning");
           }
         }
       }
@@ -3422,8 +3422,9 @@ ApplicationWindow {
         }
     
         onFinished: (path) => {
-          // Don't close the camera after taking a photo
+          // Fix: Snap camera should close immediately after taking a photo
           savePhoto(path)
+          close() // Close camera after saving the photo
         }
     
         onCanceled: {
@@ -6375,7 +6376,9 @@ ApplicationWindow {
         }
     
         onFinished: (path) => {
+          // Fix: Standalone camera should stay open after taking a photo
           savePhoto(path)
+          state = "PhotoCapture" // Return to capture mode instead of closing
         }
     
         onCanceled: {
