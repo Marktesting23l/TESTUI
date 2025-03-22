@@ -357,7 +357,10 @@ Popup {
               Image {
                 width: 20
                 height: 20
-                source: Theme.getThemeVectorIcon("ic_access_time_white_24dp")
+                source: {
+                  let icon = Theme.getThemeVectorIcon("ic_access_time_white_24dp")
+                  return icon || "qrc:/images/themes/default/mActionClock.svg"
+                }
                 sourceSize.width: 20
                 sourceSize.height: 20
               }
@@ -392,7 +395,10 @@ Popup {
               Image {
                 width: 20
                 height: 20
-                source: Theme.getThemeVectorIcon("ic_my_location_white_24dp")
+                source: {
+                  let icon = Theme.getThemeVectorIcon("ic_my_location_white_24dp")
+                  return icon || "qrc:/images/themes/default/mActionGPS.svg"
+                }
                 sourceSize.width: 20
                 sourceSize.height: 20
                 anchors.verticalCenter: parent.verticalCenter
@@ -571,7 +577,10 @@ Popup {
               Image {
                 width: 20
                 height: 20
-                source: Theme.getThemeVectorIcon("ic_wb_sunny_white_24dp")
+                source: {
+                  let icon = Theme.getThemeVectorIcon("ic_wb_sunny_white_24dp")
+                  return icon || "qrc:/images/themes/default/mActionSun.svg"
+                }
                 sourceSize.width: 20
                 sourceSize.height: 20
               }
@@ -606,12 +615,23 @@ Popup {
                 source: {
                   try {
                     let level = platformUtilities.batteryLevel()
-                    if (level > 75) return Theme.getThemeVectorIcon("ic_battery_full_white_24dp")
-                    if (level > 50) return Theme.getThemeVectorIcon("ic_battery_3_bar_white_24dp")
-                    if (level > 25) return Theme.getThemeVectorIcon("ic_battery_2_bar_white_24dp")
-                    return Theme.getThemeVectorIcon("ic_battery_1_bar_white_24dp")
+                    if (level > 75) {
+                      let icon = Theme.getThemeVectorIcon("ic_battery_full_white_24dp")
+                      return icon || "qrc:/images/themes/default/mActionBattery.svg"
+                    }
+                    if (level > 50) {
+                      let icon = Theme.getThemeVectorIcon("ic_battery_3_bar_white_24dp")
+                      return icon || "qrc:/images/themes/default/mActionBattery.svg"
+                    }
+                    if (level > 25) {
+                      let icon = Theme.getThemeVectorIcon("ic_battery_2_bar_white_24dp")
+                      return icon || "qrc:/images/themes/default/mActionBattery.svg"
+                    }
+                    let icon = Theme.getThemeVectorIcon("ic_battery_1_bar_white_24dp")
+                    return icon || "qrc:/images/themes/default/mActionBattery.svg"
                   } catch (e) {
-                    return Theme.getThemeVectorIcon("ic_battery_unknown_white_24dp")
+                    let icon = Theme.getThemeVectorIcon("ic_battery_unknown_white_24dp")
+                    return icon || "qrc:/images/themes/default/mActionUnknown.svg"
                   }
                 }
                 sourceSize.width: 20
@@ -952,19 +972,15 @@ Popup {
                     if (cameraSettings.stamping) {
                       // Apply custom styling to the timestamp
                       let stampText = stampExpressionEvaluator.evaluate();
-                      let styledStamp = {
-                        "text": stampText,
-                        "color": cameraSettings.stampTextColor,
-                        "backgroundColor": cameraSettings.stampBackgroundColor,
-                        "fontSize": cameraSettings.stampFontSize,
-                        "padding": 10,
-                        "position": "bottomLeft" // Position in the image
-                      };
-                      // Pass both the text and styling parameters
-                      FileUtils.addImageStamp(currentPath, stampText, styledStamp);
+                      // Use only two parameters as per the updated FileUtils.addImageStamp function
+                      FileUtils.addImageStamp(currentPath, stampText);
                     }
                   }
                   cameraItem.finished(currentPath);
+                } else if (cameraItem.state == "PhotoAnnotation") {
+                  // Add handling for annotation mode to move to preview mode after annotating
+                  annotationContainer.mergeAnnotationsWithImage();
+                  cameraItem.state = "PhotoPreview";
                 }
               }
             }
@@ -1794,11 +1810,25 @@ Popup {
 
   Rectangle {
     id: stampBackground
-    visible: stampCheckBox.checked
+    visible: cameraSettings.stamping  // Changed from stampCheckBox.checked to use the cameraSettings property
     color: "#80000000"
-    height: dateStamp.height + 10 // Increased height to fully show the date
+    height: 50  // Fixed height instead of relying on dateStamp.height
     width: parent.width
     anchors.bottom: parent.bottom
+    anchors.bottomMargin: 15 // Add some margin to the bottom to move it lower
+    
+    // Add the dateStamp Text element
+    Text {
+      id: dateStamp
+      anchors.centerIn: parent
+      color: cameraSettings.stampTextColor
+      font.pixelSize: cameraSettings.stampFontSize
+      text: stampExpressionEvaluator.evaluate()
+      wrapMode: Text.WordWrap
+      width: parent.width - 20
+      horizontalAlignment: Text.AlignLeft
+      leftPadding: 10
+    }
   }
 
   // Improved rectangular accuracy indicator for camera

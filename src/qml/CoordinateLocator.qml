@@ -237,6 +237,7 @@ Item {
       strokeWidth: 2
       fillColor: "transparent"
 
+      // Top-left triangle
       PathMove {
         x: 0
         y: 0
@@ -245,16 +246,16 @@ Item {
         x: crosshairCircle.width * 0.25
         y: 0
       }
-      PathMove {
-        x: 0
-        y: 0
-      }
       PathLine {
         x: 0
         y: crosshairCircle.height * 0.25
       }
+      PathLine {
+        x: 0
+        y: 0
+      }
 
-      // Top-right corner (25% of each side)
+      // Top-right triangle
       PathMove {
         x: crosshairCircle.width
         y: 0
@@ -263,16 +264,16 @@ Item {
         x: crosshairCircle.width * 0.75
         y: 0
       }
-      PathMove {
-        x: crosshairCircle.width
-        y: 0
-      }
       PathLine {
         x: crosshairCircle.width
         y: crosshairCircle.height * 0.25
       }
+      PathLine {
+        x: crosshairCircle.width
+        y: 0
+      }
 
-      // Bottom-left corner (25% of each side)
+      // Bottom-left triangle
       PathMove {
         x: 0
         y: crosshairCircle.height
@@ -281,16 +282,16 @@ Item {
         x: crosshairCircle.width * 0.25
         y: crosshairCircle.height
       }
-      PathMove {
-        x: 0
-        y: crosshairCircle.height
-      }
       PathLine {
         x: 0
         y: crosshairCircle.height * 0.75
       }
+      PathLine {
+        x: 0
+        y: crosshairCircle.height
+      }
 
-      // Bottom-right corner (25% of each side)
+      // Bottom-right triangle
       PathMove {
         x: crosshairCircle.width
         y: crosshairCircle.height
@@ -299,13 +300,13 @@ Item {
         x: crosshairCircle.width * 0.75
         y: crosshairCircle.height
       }
-      PathMove {
-        x: crosshairCircle.width
-        y: crosshairCircle.height
-      }
       PathLine {
         x: crosshairCircle.width
         y: crosshairCircle.height * 0.75
+      }
+      PathLine {
+        x: crosshairCircle.width
+        y: crosshairCircle.height
       }
 
       // Center crosshair

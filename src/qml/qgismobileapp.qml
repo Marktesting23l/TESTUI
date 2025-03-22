@@ -860,6 +860,10 @@ ApplicationWindow {
       id: digitizingRubberband
 
       mapSettings: mapCanvas.mapSettings
+      // Change color from red to a more visible blue
+      color: '#3388FF'  // Bright blue for better visibility
+      // Make the line a bit wider
+      lineWidth: 5
 
       model: RubberbandModel {
         frozen: false
@@ -895,6 +899,120 @@ ApplicationWindow {
       visible: stateMachine.state === "digitize"
     }
 
+    // Add segment labels for digitizing mode
+    Item {
+      id: digitizingSegmentLabels
+      visible: stateMachine.state === "digitize" && digitizingRubberband.model.vertexCount > 1
+      anchors.fill: parent
+      
+      // Add a DistanceArea object to calculate segment lengths
+      DistanceArea {
+        id: digitizingDistanceArea
+        rubberbandModel: digitizingRubberband.model
+        crs: mapCanvas.mapSettings.destinationCrs
+        project: qgisProject
+      }
+      
+      // Define the segment labels
+      Repeater {
+        id: digitizingLabelRepeater
+        // We need one less label than vertices (for segments between vertices)
+        model: Math.max(0, digitizingRubberband.model.vertexCount - 1)
+        
+        delegate: Item {
+          id: segmentLabelItem
+          visible: digitizingRubberband.model.vertexCount > 1 && index < digitizingRubberband.model.vertexCount - 1
+          
+          // Calculate the position of the current and next vertex
+          property var currentVertex: digitizingRubberband.model.vertices[index]
+          property var nextVertex: digitizingRubberband.model.vertices[index + 1]
+          
+          // Convert to screen coordinates
+          MapToScreen {
+            id: currentVertexToScreen
+            mapSettings: mapCanvas.mapSettings
+            mapPoint: segmentLabelItem.currentVertex
+          }
+          
+          MapToScreen {
+            id: nextVertexToScreen
+            mapSettings: mapCanvas.mapSettings
+            mapPoint: segmentLabelItem.nextVertex
+          }
+          
+          // Calculate the midpoint of the segment
+          property real midX: (currentVertexToScreen.screenPoint.x + nextVertexToScreen.screenPoint.x) / 2
+          property real midY: (currentVertexToScreen.screenPoint.y + nextVertexToScreen.screenPoint.y) / 2
+          
+          // Calculate angle of the line segment to position label offset perpendicular to the line
+          property real deltaX: nextVertexToScreen.screenPoint.x - currentVertexToScreen.screenPoint.x
+          property real deltaY: nextVertexToScreen.screenPoint.y - currentVertexToScreen.screenPoint.y
+          property real angle: Math.atan2(deltaY, deltaX)
+          
+          // Offset perpendicular to the line (alternating sides based on index for better visibility)
+          property real offsetDistance: 15
+          property real offsetX: (index % 2 === 0 ? -1 : 1) * Math.sin(angle) * offsetDistance
+          property real offsetY: (index % 2 === 0 ? 1 : -1) * Math.cos(angle) * offsetDistance
+          
+          // Calculate the segment length
+          property real segmentLength: calculateSegmentLength(currentVertex, nextVertex)
+          
+          // Format the segment length with appropriate units
+          property string formattedLength: formatSegmentLength(segmentLength)
+          
+          // Position at the midpoint of the segment with offset
+          x: midX + offsetX
+          y: midY + offsetY
+          
+          // Segment label background
+          Rectangle {
+            id: labelBackground
+            anchors.centerIn: parent
+            width: segmentLengthText.width + 10
+            height: segmentLengthText.height + 6
+            color: "#ccf0f0f0"
+            border.color: "#96000000"
+            border.width: 1
+            radius: 4
+            // Add a subtle shadow for better visibility
+            Rectangle {
+              anchors.fill: parent
+              anchors.leftMargin: -1
+              anchors.topMargin: -1
+              anchors.rightMargin: -3
+              anchors.bottomMargin: -3
+              radius: 4
+              color: "#30000000"
+              z: -1
+            }
+          }
+          
+          // Segment length text
+          Text {
+            id: segmentLengthText
+            anchors.centerIn: labelBackground
+            text: segmentLabelItem.formattedLength
+            font.pixelSize: 12
+            color: "#000000"
+            font.bold: true
+          }
+          
+          function calculateSegmentLength(vertex1, vertex2) {
+            if (!vertex1 || !vertex2) return 0
+            return GeometryUtils.distanceBetweenPoints(vertex1, vertex2)
+          }
+          
+          function formatSegmentLength(length) {
+            if (typeof UnitTypes !== 'undefined' && projectInfo) {
+              return UnitTypes.formatDistance(digitizingDistanceArea.convertLengthMeansurement(length, projectInfo.distanceUnits), 2, projectInfo.distanceUnits)
+            } else {
+              return (Math.round(length * 100) / 100) + " m"
+            }
+          }
+        }
+      }
+    }
+
     GeometryRenderer {
       id: geometryEditorRenderer
     }
@@ -902,7 +1020,8 @@ ApplicationWindow {
     /** A rubberband for the different geometry editors **/
     Rubberband {
       id: geometryEditorsRubberband
-      color: '#96000000'
+      color: '#3388FF'  // Matching blue color for consistency
+      lineWidth: 5     // Matching line width
 
       mapSettings: mapCanvas.mapSettings
 

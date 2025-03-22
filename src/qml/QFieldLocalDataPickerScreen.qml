@@ -2193,7 +2193,6 @@ Page {
     if (directory) {
       console.log("Searching for GPKG files in directory:", directory)
       
-      // Make sure we have a valid directory path
       let dirPath = directory
       if (!dirPath.endsWith('/')) {
         dirPath += '/'

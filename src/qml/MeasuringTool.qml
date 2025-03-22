@@ -13,11 +13,23 @@ Item {
   property alias measuringRubberband: rubberband
   property bool isClosingArea: rubberband.model.vertexCount > 2 && vertexFirstLastDistance.screenDistance < 10
   property bool isArea: false
+  
+  // Property to access the project's distance units
+  property var projectInfo: qgisProject ? qgisProject.projectInfo : null
+  property var distanceUnits: projectInfo ? projectInfo.distanceUnits : Qgis.DistanceUnit.Meters
 
   MapToScreen {
     id: vertexFirstLastDistance
     mapSettings: rubberband.mapSettings
     mapDistance: GeometryUtils.distanceBetweenPoints(rubberband.model.firstCoordinate, rubberband.model.currentCoordinate)
+  }
+
+  // Add a DistanceArea object to calculate segment lengths
+  DistanceArea {
+    id: distanceArea
+    rubberbandModel: rubberband.model
+    crs: rubberband.mapSettings.destinationCrs
+    project: qgisProject
   }
 
   Repeater {
@@ -63,6 +75,105 @@ Item {
           radiusY: centerX
           startAngle: 0
           sweepAngle: 360
+        }
+      }
+    }
+  }
+
+  // Add segment labels
+  Repeater {
+    id: segmentLabels
+    // We need one less label than vertices (for segments between vertices)
+    model: Math.max(0, rubberband.model.vertexCount - 1)
+    
+    delegate: Item {
+      id: segmentLabelItem
+      visible: rubberband.model.vertexCount > 1 && index < rubberband.model.vertexCount - 1
+      
+      // Calculate the position of the current and next vertex
+      property var currentVertex: rubberband.model.vertices[index]
+      property var nextVertex: rubberband.model.vertices[index + 1]
+      
+      // Convert to screen coordinates
+      MapToScreen {
+        id: currentVertexToScreen
+        mapSettings: rubberband.mapSettings
+        mapPoint: segmentLabelItem.currentVertex
+      }
+      
+      MapToScreen {
+        id: nextVertexToScreen
+        mapSettings: rubberband.mapSettings
+        mapPoint: segmentLabelItem.nextVertex
+      }
+      
+      // Calculate the midpoint of the segment
+      property real midX: (currentVertexToScreen.screenPoint.x + nextVertexToScreen.screenPoint.x) / 2
+      property real midY: (currentVertexToScreen.screenPoint.y + nextVertexToScreen.screenPoint.y) / 2
+      
+      // Calculate angle of the line segment to position label offset perpendicular to the line
+      property real deltaX: nextVertexToScreen.screenPoint.x - currentVertexToScreen.screenPoint.x
+      property real deltaY: nextVertexToScreen.screenPoint.y - currentVertexToScreen.screenPoint.y
+      property real angle: Math.atan2(deltaY, deltaX)
+      
+      // Offset perpendicular to the line (alternating sides based on index for better visibility in case of parallel segments)
+      property real offsetDistance: 15
+      property real offsetX: (index % 2 === 0 ? -1 : 1) * Math.sin(angle) * offsetDistance
+      property real offsetY: (index % 2 === 0 ? 1 : -1) * Math.cos(angle) * offsetDistance
+      
+      // Calculate the segment length
+      property real segmentLength: calculateSegmentLength(currentVertex, nextVertex)
+      
+      // Format the segment length with appropriate units
+      property string formattedLength: formatSegmentLength(segmentLength)
+      
+      // Position at the midpoint of the segment with offset
+      x: midX + offsetX
+      y: midY + offsetY
+      
+      // Segment label background
+      Rectangle {
+        id: labelBackground
+        anchors.centerIn: parent
+        width: segmentLengthText.width + 10
+        height: segmentLengthText.height + 6
+        color: "#ccf0f0f0"
+        border.color: "#96000000"
+        border.width: 1
+        radius: 4
+        // Add a subtle shadow for better visibility
+        Rectangle {
+          anchors.fill: parent
+          anchors.leftMargin: -1
+          anchors.topMargin: -1
+          anchors.rightMargin: -3
+          anchors.bottomMargin: -3
+          radius: 4
+          color: "#30000000"
+          z: -1
+        }
+      }
+      
+      // Segment length text
+      Text {
+        id: segmentLengthText
+        anchors.centerIn: labelBackground
+        text: segmentLabelItem.formattedLength
+        font.pixelSize: 12
+        color: "#000000"
+        font.bold: true
+      }
+      
+      function calculateSegmentLength(vertex1, vertex2) {
+        if (!vertex1 || !vertex2) return 0
+        return GeometryUtils.distanceBetweenPoints(vertex1, vertex2)
+      }
+      
+      function formatSegmentLength(length) {
+        if (typeof UnitTypes !== 'undefined' && distanceUnits) {
+          return UnitTypes.formatDistance(distanceArea.convertLengthMeansurement(length, distanceUnits), 2, distanceUnits)
+        } else {
+          return (Math.round(length * 100) / 100) + " m"
         }
       }
     }

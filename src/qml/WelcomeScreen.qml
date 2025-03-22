@@ -1331,6 +1331,23 @@ Page {
         showSettings();
       }
     }
+    
+    QfToolButton {
+      id: infoButton
+      iconSource: Theme.getThemeVectorIcon('ic_info_outline_white_24dp')
+      iconColor: Theme.toolButtonColor
+      bgcolor: Theme.toolButtonBackgroundColor
+      round: true
+
+      onClicked: {
+        // Show the information panel
+        infoPanel.visible = true;
+      }
+      
+      ToolTip.visible: hovered || pressed
+      ToolTip.text: qsTr("Información de SIGPAC-Go")
+      ToolTip.delay: 500
+    }
   }
 
   QfToolButton {
@@ -1523,11 +1540,169 @@ Page {
 
   Keys.onReleased: event => {
     if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
-      if (qgisProject.fileName != '') {
+      if (infoPanel.visible) {
+        infoPanel.visible = false;
+        event.accepted = true;
+      } else if (qgisProject.fileName != '') {
         event.accepted = true;
         visible = false;
       } else {
         event.accepted = false;
+      }
+    }
+  }
+  
+  // Information Panel
+  Rectangle {
+    id: infoPanel
+    visible: false
+    anchors.fill: parent
+    color: "#80000000"
+    z: 999
+    
+    MouseArea {
+      anchors.fill: parent
+      onClicked: {
+        infoPanel.visible = false;
+      }
+    }
+    
+    Rectangle {
+      id: infoPanelContent
+      width: Math.min(parent.width * 0.9, 500)
+      height: Math.min(parent.height * 0.8, 600)
+      anchors.centerIn: parent
+      radius: 10
+      color: Theme.secondaryBackgroundColor
+      border.color: Theme.mainColor
+      border.width: 2
+      
+      // Prevent clicks on the panel from closing it
+      MouseArea {
+        anchors.fill: parent
+        onClicked: mouse.accepted = true
+      }
+      
+      ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 20
+        spacing: 15
+        
+        // Header with title and close button
+        RowLayout {
+          Layout.fillWidth: true
+          
+          Text {
+            text: qsTr("Información de SIGPAC-Go")
+            font.pointSize: Theme.defaultFont.pointSize + 4
+            font.bold: true
+            color: Theme.mainColor
+            Layout.fillWidth: true
+          }
+          
+          QfToolButton {
+            iconSource: Theme.getThemeVectorIcon('ic_close_white_24dp')
+            iconColor: Theme.toolButtonColor
+            bgcolor: Theme.toolButtonBackgroundColor
+            round: true
+            onClicked: {
+              infoPanel.visible = false;
+            }
+          }
+        }
+        
+        // Scrollable content area
+        ScrollView {
+          Layout.fillWidth: true
+          Layout.fillHeight: true
+          clip: true
+          ScrollBar.vertical: QfScrollBar {}
+          
+          ColumnLayout {
+            width: infoPanelContent.width - 40
+            spacing: 20
+            
+            // Logo
+            Image {
+              Layout.alignment: Qt.AlignHCenter
+              source: "qrc:/images/sigpacgo_logo.svg"
+              Layout.preferredWidth: 120
+              Layout.preferredHeight: 120
+              fillMode: Image.PreserveAspectFit
+            }
+            
+            // Version info
+            Rectangle {
+              Layout.fillWidth: true
+              Layout.preferredHeight: versionText.implicitHeight + 20
+              color: Qt.rgba(Theme.mainColor.r, Theme.mainColor.g, Theme.mainColor.b, 0.1)
+              radius: 5
+              
+              Text {
+                id: versionText
+                anchors.fill: parent
+                anchors.margins: 10
+                text: qsTr("Versión: beta1.1.0\nBasado en: QGIS 3.40.3 | QField 3.5.2")
+                color: Theme.mainColor
+                font.pointSize: Theme.defaultFont.pointSize
+                horizontalAlignment: Text.AlignHCenter
+              }
+            }
+            
+            // Information sections
+            Repeater {
+              model: [
+                { title: qsTr("Acerca de SIGPAC-Go"), content: qsTr("SIGPAC-Go es una aplicación de sistema de información geográfica (SIG) para el campo, especialmente diseñada para consultar y trabajar con datos SIGPAC en campo.") },
+                { title: qsTr("Funcionalidades"), content: qsTr("• Visualización de mapas offline\n• Edición de geometrías y atributos\n• Captura de datos con GPS\n• Toma de fotografías geolocalizadas\n• Consulta de parcelas SIGPAC") },
+                { title: qsTr("Guía rápida"), content: qsTr("1. Utilice el botón 'Abrir archivo local' para cargar sus propios mapas\n2. Use el 'Mapa Principal SIGPAC-Go' para acceder a la cartografía SIGPAC\n3. Pulse sobre cualquier proyecto reciente para abrirlo") }
+              ]
+              
+              delegate: ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 5
+                
+                Text {
+                  text: modelData.title
+                  font.pointSize: Theme.defaultFont.pointSize + 1
+                  font.bold: true
+                  color: Theme.mainTextColor
+                }
+                
+                Text {
+                  text: modelData.content
+                  font.pointSize: Theme.defaultFont.pointSize
+                  color: Theme.secondaryTextColor
+                  wrapMode: Text.WordWrap
+                  Layout.fillWidth: true
+                }
+                
+                Rectangle {
+                  Layout.fillWidth: true
+                  height: 1
+                  color: Theme.dividerColor
+                  visible: index < 2
+                }
+              }
+            }
+            
+            // Credits
+            Text {
+              Layout.fillWidth: true
+              text: qsTr("Desarrollado con ❤️ por IMAGRITOOLS")
+              font.pointSize: Theme.defaultFont.pointSize - 1
+              font.italic: true
+              color: Theme.secondaryTextColor
+              horizontalAlignment: Text.AlignHCenter
+              Layout.topMargin: 10
+            }
+            
+            // Extra space at bottom
+            Item {
+              Layout.fillWidth: true
+              Layout.preferredHeight: 10
+            }
+          }
+        }
       }
     }
   }
