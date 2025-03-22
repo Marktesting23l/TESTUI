@@ -960,6 +960,7 @@ Popup {
                         "padding": 10,
                         "position": "bottomLeft" // Position in the image
                       };
+                      // Pass both the text and styling parameters
                       FileUtils.addImageStamp(currentPath, stampText, styledStamp);
                     }
                   }

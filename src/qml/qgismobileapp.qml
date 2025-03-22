@@ -6436,7 +6436,15 @@ ApplicationWindow {
       }
       
       if (camera.cameraSettings.stamping) {
-        FileUtils.addImageStamp(qgisProject.homePath + '/' + relativePath, camera.stampExpressionEvaluator.evaluate())
+        let stampText = camera.stampExpressionEvaluator.evaluate();
+        let styledStamp = {
+          "color": camera.cameraSettings.stampTextColor,
+          "backgroundColor": camera.cameraSettings.stampBackgroundColor,
+          "fontSize": camera.cameraSettings.stampFontSize,
+          "padding": 10,
+          "position": "bottomLeft"
+        };
+        FileUtils.addImageStamp(qgisProject.homePath + '/' + relativePath, stampText, styledStamp);
       }
     }
     

@@ -738,7 +738,7 @@ Page {
 
               ComboBox {
                 id: languageComboBox
-                enabled: true
+                enabled: false
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
                 font: Theme.defaultFont
@@ -758,23 +758,22 @@ Page {
                 }
 
                 Component.onCompleted: {
-                  var customLanguageCode = settings.value('customLanguage', 'es');
-                  var languages = iface.availableLanguages();
-                  languageCodes = [""].concat(Object.keys(languages));
-                  var systemLanguage = qsTr("sistema");
-                  var systemLanguageSuffix = systemLanguage !== 'system' ? ' (system)' : '';
-                  var items = [systemLanguage + systemLanguageSuffix];
-                  languageComboBox.model = items.concat(Object.values(languages));
-                  languageComboBox.currentIndex = languageCodes.indexOf(customLanguageCode);
-                  currentLanguageCode = customLanguageCode || 'es';
+                  var customLanguageCode = 'es';
+                  settings.setValue('customLanguage', customLanguageCode);
+                  
+                  languageCodes = ["es"];
+                  var items = ["Español"];
+                  languageComboBox.model = items;
+                  languageComboBox.currentIndex = 0;
+                  currentLanguageCode = customLanguageCode;
                   languageTip.visible = false;
                 }
               }
 
               Label {
-                text: qsTr("Español dispoible, Inglés en proceso")
+                text: qsTr("Temporalmente solo español disponible")
                 font: Theme.tipFont
-                color: Theme.mainTextColor
+                color: Theme.warningColor
                 textFormat: Qt.RichText
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true

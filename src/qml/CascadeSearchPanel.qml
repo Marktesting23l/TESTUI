@@ -45,7 +45,7 @@ Drawer {
             }
             
             if (!found) {
-                console.warn("Could not find field for", standardName);
+                console.warn("No se encontró el campo", standardName);
                 detectedFieldNames[standardName] = possibleNames[0]; // Default to first option
             }
         }
@@ -8777,7 +8777,7 @@ Drawer {
         else {
             // If we don't have data for this province, use an empty object
             municipalityNames = {};
-            console.log("No municipality data available for province code: " + provinceCode);
+            console.log("No hay datos de municpio disponibles para la provincia: " + provinceCode);
         }
     }
          
@@ -8858,7 +8858,7 @@ Drawer {
             for (var i = 0; i < polygonValues.length; i++) {
                 polygonModel.append({
                     value: polygonValues[i],
-                    display: qsTr("Polygon %1").arg(polygonValues[i])
+                    display: qsTr("Polígono %1").arg(polygonValues[i])
                 });
             }
             
@@ -8910,7 +8910,7 @@ Drawer {
             for (var i = 0; i < parcelValues.length; i++) {
                 parcelModel.append({
                     value: parcelValues[i],
-                    display: qsTr("Parcel %1").arg(parcelValues[i])
+                    display: qsTr("Parcela %1").arg(parcelValues[i])
                 });
             }
             
@@ -8972,7 +8972,7 @@ Drawer {
             resultsView.visible = true;
             
             // Update the count label
-            resultsCountLabel.text = qsTr("%1 features found").arg(filteredFeatures.length);
+            resultsCountLabel.text = qsTr("%1 Resultados encontrados").arg(filteredFeatures.length);
             
             isSearching = false;
             busyIndicator.running = false;
@@ -9008,7 +9008,7 @@ Drawer {
                 highlightTimer.restart();
             }
         } catch (e) {
-            console.error("Error highlighting features:", e);
+            console.error("Error acentuando resultados:", e);
         }
     }
     
@@ -9025,14 +9025,14 @@ Drawer {
     
     function zoomToFeature(featureId) {
         if (!vectorLayer) {
-            displayToast(qsTr("No vector layer selected"), "warning");
+            displayToast(qsTr("No se ha seleccionado una capa vectorial"), "warning");
             return;
         }
         
         // Find the feature by ID
         var feature = FeatureUtils.getFeatureById(vectorLayer, featureId);
         if (!feature || !feature.geometry || feature.geometry.isNull) {
-            displayToast(qsTr("Feature has no valid geometry"), "warning");
+            displayToast(qsTr("Atributo no tiene geometŕia correcta"), "warning");
             return;
         }
         
@@ -9075,20 +9075,20 @@ Drawer {
                         cascadeSearchPanel.close();
                     }
                 } else {
-                    displayToast(qsTr("Could not zoom to feature - invalid extent dimensions"), "warning");
+                    displayToast(qsTr("No se pudo hacer zoom dimensión de canvas inválida "), "warning");
                 }
             } else {
-                displayToast(qsTr("Could not zoom to feature - invalid extent"), "warning");
+                displayToast(qsTr("No se pudo hacer zoom a la característica - dimensión inválida"), "warning");
             }
         } catch (e) {
-            console.error("Error zooming to feature:", e);
-            displayToast(qsTr("Error zooming to feature"), "error");
+            console.error("Error en zoom a resultado:", e);
+            displayToast(qsTr("Error en zoom a resultado"), "warning");
         }
     }
     
     function zoomToAllFeatures() {
         if (!vectorLayer || filteredFeatures.length === 0) {
-            displayToast(qsTr("No features to zoom to"), "warning");
+            displayToast(qsTr("Sin resultados a los que hacer zoom"), "warning");
             return;
         }
 
@@ -9171,7 +9171,7 @@ Drawer {
                 
                 return true;
             } catch (e) {
-                console.error("Error setting map extent:", e);
+                console.error("Error configurando canvas:", e);
                 return false;
             }
         }
@@ -9189,7 +9189,7 @@ Drawer {
         anchors.fill: parent
         
         header: QfPageHeader {
-            title: qsTr("Buscador Offline SIGPAC (leer información)")
+            title: qsTr("Buscador Offline SIGPAC (leer info)")
             showBackButton: false
             showApplyButton: false
             showCancelButton: false // Changed to false since we'll add our own reset button
@@ -9248,7 +9248,7 @@ Drawer {
                 anchors.verticalCenter: parent.verticalCenter
                 icon.source: Theme.getThemeIcon("ic_close_black_24dp")
                 icon.color: Theme.mainTextColor
-                ToolTip.text: qsTr("Close panel")
+                ToolTip.text: qsTr("Cerrar panel")
                 ToolTip.visible: hovered
                 
                 onClicked: {
@@ -9265,7 +9265,6 @@ Drawer {
             contentWidth: parent.width
             clip: true
             
-            // Enable both vertical and horizontal scrolling if needed
             ScrollBar.vertical.policy: ScrollBar.AsNeeded
             ScrollBar.horizontal.policy: ScrollBar.AsNeeded
             
@@ -9281,7 +9280,6 @@ Drawer {
                     title: selectedProvince ? qsTr("Provincia: %1").arg(formatProvinceDisplay(selectedProvince)) : qsTr("Selecciona provincia (CD_PROV)")
                     padding: 5
                     
-                    // Dynamically adjust height based on content
                     implicitHeight: provinceColumn.implicitHeight + padding * 2 + 30 // 30 for title
                     
                     ColumnLayout {
@@ -9322,7 +9320,6 @@ Drawer {
                                             item.visible = value.indexOf(searchTerm) >= 0 || name.indexOf(searchTermLower) >= 0;
                                         }
                                     }
-                                    // Force height update
                                     provinceListView.forceLayout();
                                     updateListViewHeights();
                                 }
@@ -9416,7 +9413,7 @@ Drawer {
                         Text {
                             Layout.fillWidth: true
                             visible: !selectedProvince && provinceModel.count > maxVisibleItems
-                            text: qsTr("Scroll para más resultados (%1 total)").arg(provinceModel.count)
+                            text: qsTr("Desliza para más resultados (%1 total)").arg(provinceModel.count)
                             font.italic: true
                             font.pointSize: Theme.tipFont.pointSize
                             color: Theme.secondaryTextColor
@@ -9430,7 +9427,7 @@ Drawer {
                     id: municipalitySelector
                     Layout.fillWidth: true
                     Layout.margins: 5
-                    title: selectedMunicipality ? qsTr("Municpio: %1").arg(formatMunicipalityDisplay(selectedMunicipality)) : qsTr("Selecciona Municpio (CD_MUN)")
+                    title: selectedMunicipality ? qsTr("Municipio: %1").arg(formatMunicipalityDisplay(selectedMunicipality)) : qsTr("Selecciona Municipio (CD_MUN)")
                     visible: false
                     padding: 5
                     
@@ -9451,7 +9448,6 @@ Drawer {
                             enabled: !isSearching // Disable during search
                             
                             onSearchTermChanged: {
-                                // Show all options when search bar is cleared
                                 if (searchTerm === "") {
                                     selectedMunicipality = null;
                                     for (var i = 0; i < municipalityListView.count; i++) {
@@ -9571,7 +9567,7 @@ Drawer {
                         Text {
                             Layout.fillWidth: true
                             visible: !selectedMunicipality && municipalityModel.count > maxVisibleItems
-                            text: qsTr("Scroll for more options (%1 total)").arg(municipalityModel.count)
+                            text: qsTr("Desliza para más resultados (%1 total)").arg(municipalityModel.count)
                             font.italic: true
                             font.pointSize: Theme.tipFont.pointSize
                             color: Theme.secondaryTextColor
@@ -9585,7 +9581,7 @@ Drawer {
                     id: polygonSelector
                     Layout.fillWidth: true
                     Layout.margins: 5
-                    title: selectedPolygon ? qsTr("Polygon: %1").arg(selectedPolygon) : qsTr("Select Polygon (CD_POL)")
+                    title: selectedPolygon ? qsTr("Polígono: %1").arg(selectedPolygon) : qsTr("Selecciona Polígono (CD_POL)")
                     visible: false
                     padding: 5
                     
@@ -9601,7 +9597,7 @@ Drawer {
                             id: polygonSearchBar
                             Layout.fillWidth: true
                             height: 36
-                            placeHolderText: selectedPolygon ? selectedPolygon : qsTr("Search polygon")
+                            placeHolderText: selectedPolygon ? selectedPolygon : qsTr("Búsqueda polígono")
                             visible: true // Always visible
                             enabled: !isSearching // Disable during search
                             
@@ -9720,7 +9716,7 @@ Drawer {
                         Text {
                             Layout.fillWidth: true
                             visible: !selectedPolygon && polygonModel.count > maxVisibleItems
-                            text: qsTr("Scroll for more options (%1 total)").arg(polygonModel.count)
+                            text: qsTr("Desliza para más resultados (%1 total)").arg(polygonModel.count)
                             font.italic: true
                             font.pointSize: Theme.tipFont.pointSize
                             color: Theme.secondaryTextColor
@@ -9734,7 +9730,7 @@ Drawer {
                     id: parcelSelector
                     Layout.fillWidth: true
                     Layout.margins: 5
-                    title: selectedParcel ? qsTr("Parcel: %1").arg(selectedParcel) : qsTr("Select Parcel (CD_PARCELA)")
+                    title: selectedParcel ? qsTr("Parcela: %1").arg(selectedParcel) : qsTr("Selecciona parcela (CD_PARCELA)")
                     visible: false
                     padding: 5
                     
@@ -9750,7 +9746,7 @@ Drawer {
                             id: parcelSearchBar
                             Layout.fillWidth: true
                             height: 36
-                            placeHolderText: selectedParcel ? selectedParcel : qsTr("Search parcel")
+                            placeHolderText: selectedParcel ? selectedParcel : qsTr("Busca Parcela")
                             visible: true // Always visible
                             enabled: !isSearching // Disable during search
                             

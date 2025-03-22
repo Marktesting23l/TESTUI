@@ -280,7 +280,7 @@ void FileUtils::addImageMetadata( const QString &imagePath, const GnssPositionIn
   }
 }
 
-void FileUtils::addImageStamp( const QString &imagePath, const QString &text )
+void FileUtils::addImageStamp( const QString &imagePath, const QString &text, const QVariantMap &styling )
 {
   if ( !QFileInfo::exists( imagePath ) || text.isEmpty() )
   {
@@ -297,8 +297,12 @@ void FileUtils::addImageStamp( const QString &imagePath, const QString &text )
     // Parse the text to get lines
     QStringList lines = text.split( QStringLiteral( "\n" ) );
     
-    // Calculate font size based on image dimensions
-    int baseFontSize = std::min( img.width(), img.height() ) / 40;
+    // Get styling parameters with defaults if not provided
+    int baseFontSize = styling.value("fontSize", std::min( img.width(), img.height() ) / 40).toInt();
+    QString textColor = styling.value("color", "#FFFFFF").toString(); // Default white text
+    QString bgColor = styling.value("backgroundColor", "#80000000").toString(); // Default semi-transparent black
+    int padding = styling.value("padding", 10).toInt();
+    QString position = styling.value("position", "bottomLeft").toString().toLower();
     
     // Create fonts for title and regular text
     QFont titleFont = painter.font();
@@ -326,42 +330,58 @@ void FileUtils::addImageStamp( const QString &imagePath, const QString &text )
     }
     
     // Add padding
-    textWidth += 40;  // 20px padding on each side
-    textHeight += 30; // 15px padding on top and bottom
+    textWidth += padding * 2;
+    textHeight += padding * 2;
     
-    // Create background rectangle
-    int rectX = 20;
-    int rectY = img.height() - textHeight - 20;
+    // Determine position based on setting
+    int rectX = padding;
+    int rectY = img.height() - textHeight - padding;
+    
+    if (position == "bottomright") {
+      rectX = img.width() - textWidth - padding;
+    } else if (position == "topleft") {
+      rectY = padding;
+    } else if (position == "topright") {
+      rectX = img.width() - textWidth - padding;
+      rectY = padding;
+    }
+    
+    // Parse colors
+    QColor textQColor(textColor);
+    QColor bgQColor(bgColor);
+    QColor accentColor = styling.value("accentColor", "#0078D7").toString(); // Default blue accent
     
     // Draw semi-transparent background
-    painter.setBrush(QColor(0, 0, 0, 180));
+    painter.setBrush(bgQColor);
     painter.setPen(Qt::NoPen);
     painter.drawRoundedRect(rectX, rectY, textWidth, textHeight, 10, 10);
     
     // Add accent bar on the left
-    painter.setBrush(QColor(0, 120, 215)); // Blue accent color
+    painter.setBrush(accentColor);
     painter.drawRoundedRect(rectX, rectY, 6, textHeight, 3, 3);
     
     // Draw text
-    int currentY = rectY + 15; // Start with padding from top
+    int currentY = rectY + padding;
     
     for (int i = 0; i < lines.size(); ++i) {
       // Use title font for first and last line (date and SIGPACGO line)
       if (i == 0 || i == lines.size() - 1) {
         painter.setFont(titleFont);
-        painter.setPen(i == lines.size() - 1 ? QColor(0, 180, 255) : Qt::white); // Blue for SIGPACGO line
+        painter.setPen(i == lines.size() - 1 ? accentColor : textQColor);
       } else {
         painter.setFont(regularFont);
-        painter.setPen(Qt::white);
+        painter.setPen(textQColor);
       }
       
-      // Draw text with shadow effect
-      painter.setPen(QColor(0, 0, 0, 120));
-      painter.drawText(rectX + 20 + 1, currentY + 1, lines[i]);
+      // Draw text with shadow effect if enabled
+      if (styling.value("shadow", true).toBool()) {
+        painter.setPen(QColor(0, 0, 0, 120));
+        painter.drawText(rectX + padding + 1, currentY + 1, lines[i]);
+      }
       
       // Draw actual text
-      painter.setPen(i == lines.size() - 1 ? QColor(0, 180, 255) : Qt::white);
-      painter.drawText(rectX + 20, currentY, lines[i]);
+      painter.setPen(i == lines.size() - 1 ? accentColor : textQColor);
+      painter.drawText(rectX + padding, currentY, lines[i]);
       
       // Move to next line
       currentY += (i == 0 || i == lines.size() - 1) ? 

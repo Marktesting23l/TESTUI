@@ -22,6 +22,7 @@
 #include <QCryptographicHash>
 #include <QObject>
 #include <qgsfeedback.h>
+#include <QVariantMap>
 
 class GnssPositionInformation;
 
@@ -60,7 +61,7 @@ class QFIELD_CORE_EXPORT FileUtils : public QObject
 
     Q_INVOKABLE void addImageMetadata( const QString &imagePath, const GnssPositionInformation &positionInformation );
 
-    Q_INVOKABLE void addImageStamp( const QString &imagePath, const QString &text );
+    Q_INVOKABLE void addImageStamp( const QString &imagePath, const QString &text, const QVariantMap &styling = QVariantMap() );
 
     static bool copyRecursively( const QString &sourceFolder, const QString &destFolder, QgsFeedback *feedback = nullptr, bool wipeDestFolder = true );
 
