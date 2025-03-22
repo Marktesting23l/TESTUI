@@ -71,14 +71,27 @@ void QgsGpkgFlusher::onLayersAdded( const QList<QgsMapLayer *> &layers )
         QFileInfo fi( filePath );
         QgsMessageLog::logMessage( QStringLiteral( "Added GPKG layer: %1" ).arg( filePath ) );
         
-        // Temporarily stop the flusher for this file to prevent first-time crashes
-        // We'll start it again after a delay
-        stop( filePath );
-        
-        // Schedule to start the flusher after some time to allow the database to initialize
-        QTimer::singleShot(2000, this, [this, filePath]() {
-          start( filePath );
-        });
+        // Check if this is a critical file that needs immediate flushing
+        if (filePath.contains("Mis_Datos.gpkg", Qt::CaseInsensitive)) {
+          // For critical files like Mis_Datos.gpkg, we need to ensure flushing works
+          // so we'll minimize the time the flusher is stopped
+          if (!isStopped(filePath)) {
+            // If not already stopped, don't stop it
+            QgsMessageLog::logMessage( QStringLiteral( "Keeping flusher enabled for critical file: %1" ).arg( filePath ) );
+          } else {
+            // If stopped, restart it quickly
+            QgsMessageLog::logMessage( QStringLiteral( "Re-enabling flusher for critical file with minimal delay: %1" ).arg( filePath ) );
+            QTimer::singleShot(100, this, [this, filePath]() {
+              start( filePath );
+            });
+          }
+        } else {
+          // For other GPKG files, use a shorter delay than before
+          stop( filePath );
+          QTimer::singleShot(500, this, [this, filePath]() {
+            start( filePath );
+          });
+        }
       }
       else
       {

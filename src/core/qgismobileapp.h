@@ -72,8 +72,18 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
 {
     Q_OBJECT
   public:
+    friend class FeatureModel; // Allow FeatureModel to access mGpkgFlusher directly for flushes
+    
+    //! Constructor
     explicit QgisMobileapp( QgsApplication *app, QObject *parent = nullptr );
+    //! Destructor
     ~QgisMobileapp() override;
+
+    /**
+     * Returns the singleton instance of QgisMobileapp.
+     * This is useful for other classes that need to access the app instance.
+     */
+    static QgisMobileapp* instance() { return sInstance; }
 
     /**
      * Returns a list of recent projects.
@@ -203,6 +213,35 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
 
     void loadTestingData(); // Only for desktop builds - will be removed
 
+    void setMapExtentFromSettings();
+
+    /**
+     * Helper to ensure GPKG flusher is enabled for a file.
+     * This is needed to ensure changes to GPKG files are properly saved.
+     */
+    void ensureGpkgFlusherEnabled( const QString &filePath );
+
+    /**
+     * Ensures all GPKG flushers in the project are enabled
+     * Called after project is fully loaded to make sure all 
+     * GPKG files can be properly edited and saved
+     */
+    void ensureAllGpkgFlushersEnabled();
+
+    /**
+     * Helper to get all GPKG files from a QgsVectorLayer
+     * \param layer The vector layer to check
+     * \return List of GPKG file paths used by the layer
+     */
+    QStringList getGpkgFilesFromLayer(QgsVectorLayer* layer);
+
+    /**
+     * Flushes all GPKG files and saves the project
+     * This ensures that all changes are properly written to disk
+     * before saving the project file.
+     */
+    void flushAllGpkgFilesAndSaveProject();
+
   signals:
     /**
      * Emitted when a project file is being loaded
@@ -238,6 +277,11 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
     void saveProjectPreviewImage();
     bool printAtlas( QgsPrintLayout *layoutToPrint, const QString &destination );
 
+    void initDeclarative();
+    void addVirtualLayers();
+    void loadProjectFile();
+    void loadLastProject();
+    
     QgsOfflineEditing *mOfflineEditing = nullptr;
     LayerTreeMapCanvasBridge *mLayerTreeCanvasBridge = nullptr;
     FlatLayerTreeModel *mFlatLayerTree = nullptr;
@@ -246,6 +290,7 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
     Settings mSettings;
     QPointer<QgsQuickMapCanvasMap> mMapCanvas;
     bool mFirstRenderingFlag;
+    bool mProjectLoaded = false;
     LegendImageProvider *mLegendImageProvider = nullptr;
     LocalFilesImageProvider *mLocalFilesImageProvider = nullptr;
     ProjectsImageProvider *mProjectsImageProvider = nullptr;
@@ -295,6 +340,8 @@ class QFIELD_CORE_EXPORT QgisMobileapp : public QQmlApplicationEngine
     // std::unique_ptr<QgsVertexMarker> mCenter = nullptr;
     // std::unique_ptr<QgsGpsConnection> mGpsConnection = nullptr;
     // QgsQuickCoordinateTransformerGpsDataProvider mGpsProvider;
+
+    static QgisMobileapp* sInstance;
 };
 
 /**

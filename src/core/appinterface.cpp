@@ -602,13 +602,19 @@ bool AppInterface::addLayerFromGeoPackage( const QString &gpkgPath, const QStrin
   }
   
   // Save the project to persist the added layer
-  if ( !QgsProject::instance()->write() )
+  QgisMobileapp* app = QgisMobileapp::instance();
+  if (app)
+  {
+    // Use our more robust method to ensure GPKG files are flushed before saving
+    app->flushAllGpkgFilesAndSaveProject();
+  }
+  else if ( !QgsProject::instance()->write() )
   {
     QgsMessageLog::logMessage( QStringLiteral( "Failed to save project after adding layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     // Continue anyway, the layer is still added to the current session
   }
   
-  QgsMessageLog::logMessage( QStringLiteral( "Successfully added layer from GeoPackage: %1, layer: %2" ).arg( gpkgPath, layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+  QgsMessageLog::logMessage( QStringLiteral( "Layer added successfully to project: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
   return true;
 }
 
@@ -664,7 +670,13 @@ bool AppInterface::addLayerToProject( const QString &gpkgPath, const QString &la
   }
   
   // Save the project to persist the added layer
-  if ( !QgsProject::instance()->write() )
+  QgisMobileapp* app = QgisMobileapp::instance();
+  if (app)
+  {
+    // Use our more robust method to ensure GPKG files are flushed before saving
+    app->flushAllGpkgFilesAndSaveProject();
+  }
+  else if ( !QgsProject::instance()->write() )
   {
     QgsMessageLog::logMessage( tr( "Failed to save project after adding layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     // Continue anyway, the layer is still added to the current session
@@ -704,7 +716,13 @@ bool AppInterface::removeLayerFromProject( const QString &layerId )
   QgsProject::instance()->removeMapLayer( layerId );
   
   // Save the project to persist the removal of the layer
-  if ( !QgsProject::instance()->write() )
+  QgisMobileapp* app = QgisMobileapp::instance();
+  if (app)
+  {
+    // Use our more robust method to ensure GPKG files are flushed before saving
+    app->flushAllGpkgFilesAndSaveProject();
+  }
+  else if ( !QgsProject::instance()->write() )
   {
     QgsMessageLog::logMessage( QStringLiteral( "Failed to save project after removing layer: %1" ).arg( layerName ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
     // Continue anyway, the layer is still removed from the current session
@@ -904,7 +922,13 @@ bool AppInterface::addLayerToGroup( const QString &gpkgPath, const QString &laye
                           .arg(layer->name(), targetGroup->name()), QStringLiteral("SIGPACGO"), Qgis::Info);
   
   // Save the project to ensure changes are persisted
-  if (!QgsProject::instance()->write())
+  QgisMobileapp* app = QgisMobileapp::instance();
+  if (app)
+  {
+    // Use our more robust method to ensure GPKG files are flushed before saving
+    app->flushAllGpkgFilesAndSaveProject();
+  }
+  else if (!QgsProject::instance()->write())
   {
     QgsMessageLog::logMessage(tr("Failed to save project after adding layer"), QStringLiteral("SIGPACGO"), Qgis::Warning);
   }
@@ -1008,7 +1032,13 @@ bool AppInterface::removeLayerGroup( const QString &groupName ) const
   parentGroup->removeChildNode(targetGroup);
   
   // Save the project
-  if ( !QgsProject::instance()->write() )
+  QgisMobileapp* app = QgisMobileapp::instance();
+  if (app)
+  {
+    // Use our more robust method to ensure GPKG files are flushed before saving
+    app->flushAllGpkgFilesAndSaveProject();
+  }
+  else if ( !QgsProject::instance()->write() )
   {
     QgsMessageLog::logMessage( tr( "Failed to save project after removing group" ), QStringLiteral( "SIGPACGO" ), Qgis::Warning );
   }

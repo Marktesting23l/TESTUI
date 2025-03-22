@@ -19,6 +19,7 @@
 #include "featuremodel.h"
 #include "layerutils.h"
 #include "vertexmodel.h"
+#include "qgismobileapp.h"
 
 #include <QJSValue>
 #include <QMutex>
@@ -474,18 +475,33 @@ QgsExpressionContext FeatureModel::createExpressionContext() const
 
 bool FeatureModel::save()
 {
+  bool isSuccess = false;
+
   if ( !mLayer )
     return false;
 
-  bool isSuccess = true;
+  // Check if this is a GPKG layer and ensure flusher is enabled
+  if (mLayer->dataProvider() && mLayer->dataProvider()->name() == "ogr")
+  {
+    QString source = mLayer->source();
+    if (source.toLower().contains(".gpkg"))
+    {
+      // Extract the GPKG path from the source URI
+      QString gpkgPath = source.left(source.indexOf("|"));
+      
+      // Get the QgisMobileapp instance to ensure flusher is enabled
+      QgisMobileapp *app = QgisMobileapp::instance();
+      if (app)
+      {
+        // Call the method directly
+        app->ensureGpkgFlusherEnabled(gpkgPath);
+      }
+    }
+  }
 
   if ( mBatchMode )
   {
-    // We take charge of default values that are set to be applied on feature update to take into account positioning and cloud context
-    updateDefaultValues();
-
-    QgsFeature temporaryFeature = mFeature;
-    isSuccess = !mLayer->updateFeature( temporaryFeature, true );
+    isSuccess = mLayer->updateFeature( mFeature );
   }
   else
   {
@@ -808,6 +824,29 @@ bool FeatureModel::create()
 
   bool isSuccess = true;
 
+  // Check if this is a GPKG layer and ensure flusher is enabled
+  bool isGpkg = false;
+  QString gpkgPath;
+  
+  if (mLayer->dataProvider() && mLayer->dataProvider()->name() == "ogr")
+  {
+    QString source = mLayer->source();
+    if (source.toLower().contains(".gpkg"))
+    {
+      isGpkg = true;
+      // Extract the GPKG path from the source URI
+      gpkgPath = source.left(source.indexOf("|"));
+      
+      // Get the QgisMobileapp instance to ensure flusher is enabled
+      QgisMobileapp *app = QgisMobileapp::instance();
+      if (app)
+      {
+        // Call the method directly
+        app->ensureGpkgFlusherEnabled(gpkgPath);
+      }
+    }
+  }
+
   // The connection below will be triggered when the new feature is committed and will provide
   // the saved feature ID needed to fetch the saved feature back from the data provider
   QgsFeatureId createdFeatureId;
@@ -843,15 +882,17 @@ bool FeatureModel::create()
         bool needsRevisit = false;
         for ( const int fieldIndex : rereferencedFields )
         {
-          if ( mLayer->dataProvider() && !mLayer->dataProvider()->defaultValueClause( fieldIndex ).isEmpty() )
+          const QgsField field = mLayer->fields()[fieldIndex];
+          if ( field.defaultValueDefinition().isValid() && ( field.defaultValueDefinition().applyOnUpdate() || !FID_IS_NEW( temporaryFeature.id() ) ) )
+            continue;
+
+          if ( relation.referencingLayer() )
           {
-            temporaryFeature.setAttribute( fieldIndex, QVariant() );
+            QgsFeatureRequest request;
+            request.setFilterExpression( QStringLiteral( "\"%1\" IS NULL" ).arg( relation.referencingFields()[rereferencedFields.indexOf( fieldIndex )] ) );
             needsRevisit = true;
+            revisitRelations.append( QPair<QgsRelation, QgsFeatureRequest>( relation, request ) );
           }
-        }
-        if ( needsRevisit )
-        {
-          revisitRelations << qMakePair( relation, relation.getRelatedFeaturesRequest( temporaryFeature ) );
         }
       }
     }
@@ -861,8 +902,29 @@ bool FeatureModel::create()
       if ( mProject && mProject->topologicalEditing() )
         mLayer->addTopologicalPoints( mFeature.geometry() );
 
+      // For GPKG layers, ensure flusher is enabled one more time right before commit
+      if (isGpkg && !gpkgPath.isEmpty())
+      {
+        QgisMobileapp *app = QgisMobileapp::instance();
+        if (app)
+        {
+          app->ensureGpkgFlusherEnabled(gpkgPath);
+        }
+      }
+
       if ( commit() )
       {
+        // For GPKG layers, force an immediate flush
+        if (isGpkg && !gpkgPath.isEmpty()) {
+          // Force an immediate flush by requesting it directly
+          QgsMessageLog::logMessage( QStringLiteral( "Requesting immediate flush for GPKG after feature creation: %1" ).arg( gpkgPath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+          
+          QgisMobileapp *app = QgisMobileapp::instance();
+          if (app && app->mGpkgFlusher) {
+            emit app->mGpkgFlusher->requestFlush(gpkgPath);
+          }
+        }
+        
         QgsFeature feat;
         if ( mLayer->getFeatures( QgsFeatureRequest().setFilterFid( createdFeatureId ) ).nextFeature( feat ) )
         {
@@ -932,15 +994,95 @@ bool FeatureModel::deleteFeature()
 
 bool FeatureModel::commit()
 {
-  if ( !mLayer->commitChanges() )
+  // Make sure any GPKG layer has its flusher enabled before commit
+  bool isGpkg = false;
+  QString gpkgPath;
+  
+  if (mLayer && mLayer->dataProvider() && mLayer->dataProvider()->name() == "ogr")
   {
-    QgsMessageLog::logMessage( tr( "Could not save changes. Rolling back." ), QStringLiteral( "SIGPACGO" ), Qgis::Critical );
-    mLayer->rollBack();
-    return false;
+    QString source = mLayer->source();
+    if (source.toLower().contains(".gpkg"))
+    {
+      isGpkg = true;
+      // Extract the GPKG path from the source URI
+      gpkgPath = source.left(source.indexOf("|"));
+      
+      // Get the QgisMobileapp instance to ensure flusher is enabled
+      QgisMobileapp *app = QgisMobileapp::instance();
+      if (app)
+      {
+        // Double-check that flusher is enabled directly before commit
+        app->ensureGpkgFlusherEnabled(gpkgPath);
+      }
+    }
+  }
+
+  // Try to commit changes
+  bool success = false;
+  
+  // Add retry logic for GPKG layers
+  int maxRetries = isGpkg ? 3 : 1;
+  int retryCount = 0;
+  QString lastError;
+  
+  while (retryCount < maxRetries && !success)
+  {
+    if (retryCount > 0)
+    {
+      QgsMessageLog::logMessage( tr( "Retry %1 of %2 for committing changes to layer" ).arg(retryCount).arg(maxRetries), 
+                                QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      
+      // For retries, ensure flusher is definitely enabled
+      if (isGpkg && !gpkgPath.isEmpty())
+      {
+        QgisMobileapp *app = QgisMobileapp::instance();
+        if (app)
+        {
+          app->ensureGpkgFlusherEnabled(gpkgPath);
+        }
+      }
+    }
+    
+    success = mLayer->commitChanges();
+    
+    if (!success)
+    {
+      lastError = mLayer->commitErrors().join(QStringLiteral("\n"));
+      retryCount++;
+      
+      if (retryCount < maxRetries)
+      {
+        // Wait a short time before retrying
+        QThread::msleep(200);
+      }
+    }
+  }
+  
+  if (success)
+  {
+    // For GPKG layers, force an immediate flush
+    if (isGpkg && !gpkgPath.isEmpty())
+    {
+      QgsMessageLog::logMessage( QStringLiteral( "Requesting immediate flush for GPKG after commit: %1" ).arg( gpkgPath ), 
+                                QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      
+      QgisMobileapp *app = QgisMobileapp::instance();
+      if (app && app->mGpkgFlusher)
+      {
+        emit app->mGpkgFlusher->requestFlush(gpkgPath);
+      }
+    }
+    
+    return true;
   }
   else
   {
-    return true;
+    QgsMessageLog::logMessage( tr( "Could not save changes after %1 attempts. Error: %2. Rolling back." )
+                              .arg(maxRetries)
+                              .arg(lastError),
+                              QStringLiteral( "SIGPACGO" ), Qgis::Critical );
+    mLayer->rollBack();
+    return false;
   }
 }
 

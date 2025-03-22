@@ -15,9 +15,17 @@ void Flusher::scheduleFlush( const QString &filename )
   if ( mStoppedFlushes.value( filename, false ) )
     return;
 
+  // Use shorter delay for critical files
+  int delayMs = 250; // Default to shorter delay for all files
+  
+  // For any other file, use the previous 500ms delay
+  if (!filename.contains("Mis_Datos.gpkg", Qt::CaseInsensitive)) {
+    delayMs = 500;
+  }
+
   if ( mScheduledFlushes.contains( filename ) )
   {
-    mScheduledFlushes.value( filename )->start( 500 );
+    mScheduledFlushes.value( filename )->start( delayMs );
   }
   else
   {
@@ -25,7 +33,7 @@ void Flusher::scheduleFlush( const QString &filename )
     connect( timer, &QTimer::timeout, this, [this, filename]() { flush( filename ); } );
     timer->setSingleShot( true );
     mScheduledFlushes.insert( filename, timer );
-    timer->start( 500 );
+    timer->start( delayMs );
   }
 }
 
@@ -44,8 +52,11 @@ void Flusher::flush( const QString &filename )
     QgsMessageLog::logMessage( QObject::tr( "Cannot flush database - file not accessible: %1" ).arg( filename ), QString(), Qgis::Critical );
     if ( mScheduledFlushes.contains(filename) )
     {
+      // Use shorter retry for critical files
+      int retryDelayMs = filename.contains("Mis_Datos.gpkg", Qt::CaseInsensitive) ? 500 : 1000;
+      
       // Re-schedule for later if file might become available
-      mScheduledFlushes[filename]->start( 1000 );
+      mScheduledFlushes[filename]->start( retryDelayMs );
     }
     return;
   }
@@ -63,7 +74,10 @@ void Flusher::flush( const QString &filename )
       // If we can't open the database, try again later rather than crashing
       if ( mScheduledFlushes.contains(filename) )
       {
-        mScheduledFlushes[filename]->start( 1000 );
+        // Use shorter retry for critical files
+        int retryDelayMs = filename.contains("Mis_Datos.gpkg", Qt::CaseInsensitive) ? 500 : 1000;
+        
+        mScheduledFlushes[filename]->start( retryDelayMs );
       }
       return;
     }
@@ -88,7 +102,10 @@ void Flusher::flush( const QString &filename )
       QgsMessageLog::logMessage( QObject::tr( "Could not flush database %1 (%2) " ).arg( filename, error ), QString(), Qgis::Critical );
       if ( mScheduledFlushes.contains(filename) )
       {
-        mScheduledFlushes[filename]->start( 1000 );
+        // Use shorter retry for critical files
+        int retryDelayMs = filename.contains("Mis_Datos.gpkg", Qt::CaseInsensitive) ? 500 : 1000;
+        
+        mScheduledFlushes[filename]->start( retryDelayMs );
       }
     }
   }
@@ -99,7 +116,10 @@ void Flusher::flush( const QString &filename )
     // Try again later
     if ( mScheduledFlushes.contains(filename) )
     {
-      mScheduledFlushes[filename]->start( 2000 );
+      // Use shorter retry for critical files, but longer overall since this was an exception
+      int retryDelayMs = filename.contains("Mis_Datos.gpkg", Qt::CaseInsensitive) ? 1000 : 2000;
+      
+      mScheduledFlushes[filename]->start( retryDelayMs );
     }
   }
   catch (...)

@@ -234,12 +234,19 @@ WmsRateLimiter *WmsRateLimiter::instance()
 // This will maintain visibility even if the instance variables are reset
 static QMap<QString, QMap<QString, bool>> sSavedProjectLayerVisibility;
 
+// Initialize static instance pointer
+QgisMobileapp* QgisMobileapp::sInstance = nullptr;
+
 QgisMobileapp::QgisMobileapp( QgsApplication *app, QObject *parent )
   : QQmlApplicationEngine( parent )
   , mIface( new AppInterface( this ) )
   , mFirstRenderingFlag( true )
   , mApp( app )
+  , mProjectLoaded( false )
 {
+  // Set the static instance pointer for singleton access
+  sInstance = this;
+  
   // Set a nicer default hyperlink color to be used in QML Text items
   QPalette palette = app->palette();
   palette.setColor( QPalette::Link, QColor( 128, 204, 40 ) );
@@ -2302,17 +2309,17 @@ void QgisMobileapp::readProjectFile()
     QDir projectDir = fi.dir();
     QStringList gpkgFiles = projectDir.entryList(QStringList() << "*.gpkg", QDir::Files);
     
-    // Delay re-enabling the GPKG flusher to avoid initial crashes
-    QTimer::singleShot(5000, [this, gpkgFiles, projectDir]() {
-      for (const QString &gpkgFile : gpkgFiles) {
-        QString fullPath = projectDir.filePath(gpkgFile);
-        // Removed log message to reduce log spam
-        
-        if (mGpkgFlusher) {
-          mGpkgFlusher->start(fullPath);
-        }
+    // Start essential flushers immediately for Mis_Datos.gpkg and other critical files
+    for (const QString &gpkgFile : gpkgFiles) {
+      QString fullPath = projectDir.filePath(gpkgFile);
+      if (fullPath.contains("Mis_Datos.gpkg", Qt::CaseInsensitive)) {
+        // Enable flusher immediately for the most critical files
+        ensureGpkgFlusherEnabled(fullPath);
       }
-    });
+    }
+    
+    // Use our new comprehensive method to ensure all flushers are enabled
+    QTimer::singleShot(1000, this, &QgisMobileapp::ensureAllGpkgFlushersEnabled);
   }
 }
 
@@ -2389,7 +2396,13 @@ bool QgisMobileapp::print( const QString &layoutName )
       QgsLayoutItemLabel *titleLabel = new QgsLayoutItemLabel(templateLayout.get());
       titleLabel->setText(tr("Map printed on %1 using SIGPACGO").arg("[%format_date(now(), 'yyyy-MM-dd @ hh:mm')%]"));
       titleLabel->setId("Title");
-      titleLabel->setFont(QFont("Arial", 16));
+      
+      // Use TextFormat instead of deprecated setFont
+      QgsTextFormat format = titleLabel->textFormat();
+      format.setFont(QFont("Arial", 16));
+      format.setSize(16);
+      titleLabel->setTextFormat(format);
+      
       titleLabel->adjustSizeToText();
       titleLabel->attemptSetSceneRect(QRectF(10, 5, 180, 10));
       templateLayout->addLayoutItem(titleLabel);
@@ -3495,5 +3508,120 @@ void QgisMobileapp::restoreLayerVisibilityState()
       QStringLiteral("SIGPACGO"),
       Qgis::Info
     );
+  }
+}
+
+// Add this function after the readProjectFile method
+void QgisMobileapp::ensureGpkgFlusherEnabled( const QString &filePath )
+{
+  if ( mGpkgFlusher && filePath.toLower().endsWith( ".gpkg" ) )
+  {
+    if ( mGpkgFlusher->isStopped( filePath ) )
+    {
+      QgsMessageLog::logMessage( tr( "Re-enabling GPKG flusher for: %1" ).arg( filePath ), QStringLiteral( "SIGPACGO" ), Qgis::Info );
+      mGpkgFlusher->start( filePath );
+    }
+  }
+}
+
+// New method to ensure all GPKG flushers in the project are enabled
+void QgisMobileapp::ensureAllGpkgFlushersEnabled()
+{
+  if (!mGpkgFlusher || !mProject)
+    return;
+
+  // Get project directory
+  QFileInfo projectFileInfo(mProjectFilePath);
+  QDir projectDir = projectFileInfo.dir();
+  
+  // Re-enable flusher for all GPKG files in project directory
+  QStringList gpkgFiles = projectDir.entryList(QStringList() << "*.gpkg", QDir::Files);
+  for (const QString &gpkgFile : gpkgFiles) {
+    QString fullPath = projectDir.filePath(gpkgFile);
+    ensureGpkgFlusherEnabled(fullPath);
+  }
+  
+  // Find all layers with GPKG sources
+  const QMap<QString, QgsMapLayer *> &layers = mProject->mapLayers();
+  for (auto it = layers.constBegin(); it != layers.constEnd(); ++it) {
+    QgsVectorLayer *vl = qobject_cast<QgsVectorLayer *>(it.value());
+    if (vl && vl->dataProvider()) {
+      QString dataSourceUri = vl->dataProvider()->dataSourceUri();
+      if (dataSourceUri.contains(".gpkg", Qt::CaseInsensitive)) {
+        QString filePath = dataSourceUri.left(dataSourceUri.indexOf('|'));
+        ensureGpkgFlusherEnabled(filePath);
+      }
+    }
+  }
+  
+  // Mark that the project is fully loaded
+  mProjectLoaded = true;
+}
+
+// Helper to get all GPKG files from a QgsVectorLayer
+QStringList QgisMobileapp::getGpkgFilesFromLayer(QgsVectorLayer* layer)
+{
+  QStringList result;
+  if (!layer || !layer->dataProvider())
+    return result;
+    
+  QString dataSourceUri = layer->dataProvider()->dataSourceUri();
+  if (dataSourceUri.contains(".gpkg", Qt::CaseInsensitive)) {
+    QString filePath = dataSourceUri.left(dataSourceUri.indexOf('|'));
+    if (!filePath.isEmpty())
+      result << filePath;
+  }
+  
+  return result;
+}
+
+// New method to flush all GPKG files and save the project
+void QgisMobileapp::flushAllGpkgFilesAndSaveProject()
+{
+  // First ensure all GPKG flushers are enabled
+  ensureAllGpkgFlushersEnabled();
+
+  // Force immediate flush for all layers in the project that are GPKG
+  if (mGpkgFlusher && mProject)
+  {
+    QMap<QString, QgsMapLayer *> layers = mProject->mapLayers();
+    for (auto it = layers.constBegin(); it != layers.constEnd(); ++it)
+    {
+      QgsVectorLayer *vl = qobject_cast<QgsVectorLayer *>(it.value());
+      if (vl && vl->dataProvider())
+      {
+        QString dataSourceUri = vl->dataProvider()->dataSourceUri();
+        if (dataSourceUri.contains(".gpkg", Qt::CaseInsensitive))
+        {
+          QString gpkgPath = dataSourceUri.left(dataSourceUri.indexOf('|'));
+          QgsMessageLog::logMessage(QStringLiteral("Requesting immediate flush for GPKG before saving project: %1").arg(gpkgPath), 
+                                    QStringLiteral("SIGPACGO"), Qgis::Info);
+          
+          // Request an immediate flush for this GPKG file
+          if (!mGpkgFlusher->isStopped(gpkgPath))
+          {
+            emit mGpkgFlusher->requestFlush(gpkgPath);
+            
+            // Give a short delay to allow the flush to complete
+            QThread::msleep(100);
+          }
+        }
+      }
+    }
+  }
+
+  // Now save the project 
+  if (mProject)
+  {
+    if (mProject->write())
+    {
+      QgsMessageLog::logMessage(QStringLiteral("Project saved successfully after flushing GPKG files"), 
+                                QStringLiteral("SIGPACGO"), Qgis::Info);
+    }
+    else
+    {
+      QgsMessageLog::logMessage(QStringLiteral("Failed to save project after flushing GPKG files"), 
+                                QStringLiteral("SIGPACGO"), Qgis::Warning);
+    }
   }
 }

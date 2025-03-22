@@ -25,6 +25,7 @@ import QtQuick.Shapes
 import QtQuick.Window
 import QtQml
 import QtSensors
+import QtMultimedia
 import org.qgis
 import org.qfield
 import Theme
@@ -53,6 +54,7 @@ ApplicationWindow {
   property double sceneTopMargin: platformUtilities.sceneMargins(mainWindow)["top"]
   property double sceneBottomMargin: platformUtilities.sceneMargins(mainWindow)["bottom"]
   property bool gpkgLayerDeleted: false  // Track GPKG layer deletion state
+  property bool isSIGPACGOProject: false // Flag to indicate we're dealing with the problematic SIGPACGO project
 
   onSceneLoadedChanged: {
     // This requires the scene to be fully loaded not to crash due to possibility of
@@ -465,7 +467,7 @@ ApplicationWindow {
     DragHandler {
       id: freehandHandler
       property bool isDigitizing: false
-      enabled: freehandButton.visible && freehandButton.freehandDigitizing && !digitizingToolbar.rubberbandModel.frozen && (!featureForm.visible || digitizingToolbar.geometryRequested)
+      enabled: freehandButton.visible && freehandButton.freehandDigitizing && (!digitizingToolbar.rubberbandModel || !digitizingToolbar.rubberbandModel.frozen) && (!featureForm.visible || digitizingToolbar.geometryRequested)
       acceptedDevices: !qfieldSettings.mouseAsTouchScreen ? PointerDevice.Stylus | PointerDevice.Mouse : PointerDevice.Stylus
       grabPermissions: PointerHandler.CanTakeOverFromHandlersOfSameType | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
 
